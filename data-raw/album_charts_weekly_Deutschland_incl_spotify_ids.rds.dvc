@@ -1,0 +1,5 @@
+outs:
+- md5: f5d370d913a759ffd09b485f26ea7fa7
+  size: 9388329
+  hash: md5
+  path: album_charts_weekly_Deutschland_incl_spotify_ids.rds

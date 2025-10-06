@@ -1,0 +1,5 @@
+outs:
+- md5: 9c6a1791c3baee56bb37a536a3b0fc38
+  size: 2339087
+  hash: md5
+  path: single_charts_weekly_Deutschland_incl_spotify_ids.rds
