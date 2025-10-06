@@ -2,3 +2,7 @@
 ^renv\.lock$
 ^README\.Rmd$
 ^LICENSE\.md$
+^data-raw$
+^scripts$
+^reports$
+^notebooks$
