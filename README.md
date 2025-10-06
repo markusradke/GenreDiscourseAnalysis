@@ -28,7 +28,7 @@ All necessary data is included in the 'data' folder. The main scripts for analys
 To replicate the analysis, please run the file ['scripts/run_full_replication.R'](scripts/run_full_replication.R) in the 'scripts' folder. This script will run all necessary steps to reproduce the results presented in our study.
 
 ## License
-This project is licensed under the CC BY 4.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the CC BY 4.0 License - see the LICENSE file for details.
 
 ## Contact the author
 Markus Radke
