@@ -35,9 +35,9 @@ n_only_spotify_charts <- poptrag |>
   nrow()
 ```
 
-The analysis is based on a data set with `r format(n_poptrag, big.mark = ',')` tracks that were popular in Germany within the last 50 year (**PopTraG**).  The tracks were collected from the following sources:
+We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ',')` tracks that were popular in Germany within the last 50 years (**PopTraG**).  The tracks were collected from the following sources:
 
--   **`r format(n_offcial_charts, big.mark = ',')`** tracks from the **[MediaControl](https://www.offiziellecharts.de/) single- and album charts** from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).
+-   **`r format(n_offcial_charts, big.mark = ',')`** tracks from the **weekly [MediaControl](https://www.offiziellecharts.de/) single- and album charts** from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).
 
 -   **`r format(n_recommendations, big.mark = ',')`** tracks from **Spotify recommendations** for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for "disney", min: 49 for "new release").
 
@@ -45,10 +45,10 @@ The analysis is based on a data set with `r format(n_poptrag, big.mark = ',')` t
 
 - **`r format(n_spotify_charts, big.mark = ',')`** tracks from the **[Daily Top 200 Spotify charts](https://spotifycharts.com/regional/de/weekly/latest)** for Germany from 01.01.2017 to 30.11.2024.
 
-`r format(n_only_spotify_charts, big.mark = ',')` tracks that were part of the data set but **only in the Daily Top 200 Spotify charts** and not in any other source were **excluded** from the analysis.
+`r format(n_only_spotify_charts, big.mark = ',')` tracks that were **only in the Spotify charts** and not in any other source were **excluded** from the analysis.
 
 :::{.callout-note}
-The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks). Additionally, only distinct combinations of track titles and principal artist names were permitted, and earlier release dates were preferred.
+The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.
 :::
 
 ## Preparation
