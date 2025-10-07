@@ -1,2 +1,5 @@
 /poptrag_selected.rds
 /poptrag_selected_wout_spotify_charts.rds
+
+/mb_tags.rds
+/poptrag_filtered_mb_genre.rds

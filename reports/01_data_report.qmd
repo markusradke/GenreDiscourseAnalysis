@@ -18,7 +18,7 @@ format:
 ---
 ## Sources
 
-```{r}
+```{r load_poptrag}
 poptrag <- readRDS('../data/poptrag_selected.rds')
 n_poptrag <- nrow(poptrag)
 n_offcial_charts <- sum(poptrag$source.officialcharts, na.rm = TRUE)
@@ -52,7 +52,34 @@ The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 
 :::
 
 ## Preparation
+### MusicBrainz network data
 
-For analysis of the MusicBrainz genre network: Filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (xxx tracks, xx%). Non-music genre tags were: xxx
+```{r musibrainz_genres}
+get_unique_tags_from_mb_taglist <- function(mb_tags) {
+  do.call(rbind, lapply(mb_tags, function(frame) frame['tag_name'])) |> 
+    dplyr::pull(tag_name) |> 
+    unique()
+}
 
-There were xx different genre tags in the MusicBrainz genre data set. Users assigned between x and y different tags to each track (median: xx, IQR: xx) and voted for each track between x and y times (median: xx, IQR: xx).
+poptrag_filtered_mb_genres <- readRDS('../data/poptrag_filtered_mb_genre.rds')
+mb_tags <- readRDS('../data/mb_tags.rds')
+mb_non_music_tags <- readRDS('../data/mb_non_music_tags.rds')
+
+n_diff_mb <- n_poptrag - nrow(poptrag_filtered_mb_genres)
+n_unique_mb_tags <- get_unique_tags_from_mb_taglist(mb_tags$mb.genres) |> length()
+
+tags_per_track <- dplyr::count(mb_tags, track.s.id) |> dplyr::pull(n)
+votes_per_track <- mb_tags |> 
+  dplyr::group_by(track.s.id) |> 
+  dplyr::summarize(n_votes = sum(tag_count)) |> 
+  dplyr::ungroup() |> 
+  dplyr::pull(n_votes)
+```
+
+We filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (`r format(n_diff_mb, big.mark = ',')` tracks, `r round(n_diff_mb / n_poptrag, 1)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ', ')`.
+
+This amounts to **N~MusicBrainz~ = `r format(nrow(poptrag_filtered_mb_genres), big.mark = ',')` tracks** with MusicBrainz music genre tags.
+
+There were `r format(n_unique_mb_tags, big.mark = ',')` different genre tags in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track)` and `r max(tags_per_track)` different tags to each track (median: `r median(tags_per_track)`, IQR: `r IQR(tags_per_track)`) and voted for each track between `r min(votes_per_track)` and `r max(votes_per_track)` times (median: `r median(votes_per_track)`, IQR: `r IQR(votes_per_track)`).
+
+### Discogs network data
