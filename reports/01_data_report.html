@@ -144,14 +144,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The analysis is based on a data set with 294,291 tracks that were popular in Germany within the last 50 year (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
+<p>We ground our analysis on a dataset with 294,291 tracks that were popular in Germany within the last 50 years (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
 <ul>
-<li><p><strong>253,719</strong> tracks from the <strong><a href="https://www.offiziellecharts.de/">MediaControl</a> single- and album charts</strong> from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).</p></li>
+<li><p><strong>253,719</strong> tracks from the <strong>weekly <a href="https://www.offiziellecharts.de/">MediaControl</a> single- and album charts</strong> from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).</p></li>
 <li><p><strong>28,134</strong> tracks from <strong>Spotify recommendations</strong> for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for “disney”, min: 49 for “new release”).</p></li>
 <li><p><strong>9,102</strong> tracks from 100 <strong>Spotify featured playlists</strong> with median 90 tracks each (IQR: 42, min: 28, max: 750) for the German market (retrieved on 29.11.2024).</p></li>
 <li><p><strong>12,926</strong> tracks from the <strong><a href="https://spotifycharts.com/regional/de/weekly/latest">Daily Top 200 Spotify charts</a></strong> for Germany from 01.01.2017 to 30.11.2024.</p></li>
 </ul>
-<p>8,277 tracks that were part of the data set but <strong>only in the Daily Top 200 Spotify charts</strong> and not in any other source were <strong>excluded</strong> from the analysis.</p>
+<p>8,277 tracks that were <strong>only in the Spotify charts</strong> and not in any other source were <strong>excluded</strong> from the analysis.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -162,14 +162,45 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks). Additionally, only distinct combinations of track titles and principal artist names were permitted, and earlier release dates were preferred.</p>
+<p>The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.</p>
 </div>
 </div>
 </section>
 <section id="preparation" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="preparation"><span class="header-section-number">2</span> Preparation</h2>
-<p>For analysis of the MusicBrainz genre network: Filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (xxx tracks, xx%). Non-music genre tags were: xxx</p>
-<p>There were xx different genre tags in the MusicBrainz genre data set. Users assigned between x and y different tags to each track (median: xx, IQR: xx) and voted for each track between x and y times (median: xx, IQR: xx).</p>
+<section id="musicbrainz-network-data" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_unique_tags_from_mb_taglist <span class="ot">&lt;-</span> <span class="cf">function</span>(mb_tags) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(mb_tags, <span class="cf">function</span>(frame) frame[<span class="st">'tag_name'</span>])) <span class="sc">|&gt;</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">pull</span>(tag_name) <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>poptrag_filtered_mb_genres <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/poptrag_filtered_mb_genre.rds'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mb_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/mb_tags.rds'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>mb_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/mb_non_music_tags.rds'</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>n_diff_mb <span class="ot">&lt;-</span> n_poptrag <span class="sc">-</span> <span class="fu">nrow</span>(poptrag_filtered_mb_genres)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>n_unique_mb_tags <span class="ot">&lt;-</span> <span class="fu">get_unique_tags_from_mb_taglist</span>(mb_tags<span class="sc">$</span>mb.genres) <span class="sc">|&gt;</span> <span class="fu">length</span>()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>tags_per_track <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(mb_tags, track.s.id) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>votes_per_track <span class="ot">&lt;-</span> mb_tags <span class="sc">|&gt;</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(track.s.id) <span class="sc">|&gt;</span> </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">n_votes =</span> <span class="fu">sum</span>(tag_count)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_votes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (39,731 tracks, 0.1%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
+<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 254,560 tracks</strong> with MusicBrainz music genre tags.</p>
+<p>There were 6,963 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 51 different tags to each track (median: 4, IQR: 5) and voted for each track between 1 and 167 times (median: 6, IQR: 10).</p>
+</section>
+<section id="discogs-network-data" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</h3>
+</section>
 </section>
 
 </main>
