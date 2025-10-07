@@ -1,0 +1,58 @@
+---
+title: "Data Report - Genre Discourse Analysis"
+author: "Markus Radke"
+date: "`r Sys.Date()`"
+format: 
+    html: 
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        toc: true
+        toc-location: left
+        toc-depth: 2
+        number-sections: true
+        theme: cosmo
+        code-links:
+        - text: Github Repository
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+---
+## Sources
+
+```{r}
+poptrag <- readRDS('../data/poptrag_selected.rds')
+n_poptrag <- nrow(poptrag)
+n_offcial_charts <- sum(poptrag$source.officialcharts, na.rm = TRUE)
+n_recommendations <- sum(poptrag$source.recommendations, na.rm = TRUE)
+n_featured_playlists <- sum(poptrag$source.featuredplaylists,na.rm = TRUE)
+n_spotify_charts <- sum(poptrag$source.spotifycharts, na.rm = TRUE)
+n_only_spotify_charts <- poptrag |>
+  dplyr::filter(
+    source.spotifycharts &
+      !source.officialcharts &
+      !source.recommendations &
+      !source.featuredplaylists
+  ) |>
+  nrow()
+```
+
+The analysis is based on a data set with `r format(n_poptrag, big.mark = ',')` tracks that were popular in Germany within the last 50 year (**PopTraG**).  The tracks were collected from the following sources:
+
+-   **`r format(n_offcial_charts, big.mark = ',')`** tracks from the **[MediaControl](https://www.offiziellecharts.de/) single- and album charts** from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).
+
+-   **`r format(n_recommendations, big.mark = ',')`** tracks from **Spotify recommendations** for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for "disney", min: 49 for "new release").
+
+-   **`r format(n_featured_playlists, big.mark = ',')`** tracks from 100 **Spotify featured playlists** with median 90 tracks each (IQR: 42, min: 28, max: 750) for the German market (retrieved on 29.11.2024).
+
+- **`r format(n_spotify_charts, big.mark = ',')`** tracks from the **[Daily Top 200 Spotify charts](https://spotifycharts.com/regional/de/weekly/latest)** for Germany from 01.01.2017 to 30.11.2024.
+
+`r format(n_only_spotify_charts, big.mark = ',')` tracks that were part of the data set but **only in the Daily Top 200 Spotify charts** and not in any other source were **excluded** from the analysis.
+
+:::{.callout-note}
+The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks). Additionally, only distinct combinations of track titles and principal artist names were permitted, and earlier release dates were preferred.
+:::
+
+## Preparation
+
+For analysis of the MusicBrainz genre network: Filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (xxx tracks, xx%). Non-music genre tags were: xxx
+
+There were xx different genre tags in the MusicBrainz genre data set. Users assigned between x and y different tags to each track (median: xx, IQR: xx) and voted for each track between x and y times (median: xx, IQR: xx).
