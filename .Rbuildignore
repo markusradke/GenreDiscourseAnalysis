@@ -3,6 +3,11 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^data-raw$
+^.dvc$
+^.vscode$
+^data$
 ^scripts$
 ^reports$
 ^notebooks$
+^air.toml$
+^.dvcignore$

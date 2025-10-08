@@ -89,17 +89,19 @@ unpack_mb_genre_tags <- function(input) {
       "mb.genres"
     )
   unpacked_mb_tags <- unpack_genre_tags(input_select$mb.genres)
-  input_select |>
-    dplyr::mutate(join_id = dplyr::row_number()) |>
-    dplyr::inner_join(unpacked_mb_tags) |>
-    dplyr::select(
-      "track.s.id",
-      "track.s.title",
-      "track.s.firstartist.name",
-      "mb.genres",
-      "tag_name",
-      "tag_count"
-    )
+  suppressMessages(
+    input_select |>
+      dplyr::mutate(join_id = dplyr::row_number()) |>
+      dplyr::inner_join(unpacked_mb_tags) |>
+      dplyr::select(
+        "track.s.id",
+        "track.s.title",
+        "track.s.firstartist.name",
+        "mb.genres",
+        "tag_name",
+        "tag_count"
+      )
+  )
 }
 
 unpack_genre_tags <- function(tags) {
