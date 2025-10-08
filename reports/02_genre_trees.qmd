@@ -1,0 +1,28 @@
+---
+title: "Genre Trees - Genre Discourse Analysis"
+author: "Markus Radke"
+date: "`r Sys.Date()`"
+format: 
+    html: 
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        toc: true
+        toc-location: left
+        toc-depth: 2
+        number-sections: true
+        theme: cosmo
+        code-links:
+        - text: Github Repository
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+---
+# Short Explanation
+include graphics from the Bayreuth Powerpoint
+
+# Genre Tree for Discogs
+include foldable hmtl depiction
+
+# Genre Tree for Musicbrainz
+Only here with votes
+
+# Genre Tree for Spotify
