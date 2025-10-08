@@ -14,6 +14,9 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     dplyr,
+    igraph,
     purrr,
+    rgexf,
     rlang,
+    stringr,
     tidyr
