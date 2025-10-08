@@ -1,6 +1,12 @@
-test_that("initialize_adjacency_matrix creates correct zero matrix", {
+library(testthat)
+
+# source the functions
+source("../../R/build_genre_tree.R")
+source("../../R/handle_io.R")
+
+test_that("create_empty_adjacency_matrix creates correct zero matrix", {
   tags <- c("rock", "pop", "jazz")
-  adj <- initialize_adjacency_matrix(tags)
+  adj <- create_empty_adjacency_matrix(tags)
 
   expect_equal(dim(adj), c(3, 3))
   expect_equal(rownames(adj), tags)
@@ -8,7 +14,7 @@ test_that("initialize_adjacency_matrix creates correct zero matrix", {
   expect_true(all(adj == 0))
 })
 
-test_that("make_combinations_frame creates valid tag combinations", {
+test_that("create_tag_combinations_within_tracks creates valid tag combinations", {
   tags <- data.frame(
     track.s.id = c("a", "a", "b", "b"),
     tag_name = c("rock", "pop", "rock", "jazz"),
@@ -16,7 +22,7 @@ test_that("make_combinations_frame creates valid tag combinations", {
     stringsAsFactors = FALSE
   )
 
-  combinations <- make_combinations_frame(tags)
+  combinations <- create_tag_combinations_within_tracks(tags)
 
   # should not have self-combinations
   expect_true(all(combinations$tag_name_i != combinations$tag_name_j))
@@ -31,7 +37,7 @@ test_that("make_combinations_frame creates valid tag combinations", {
   ))
 })
 
-test_that("make_directed_adjacency_matrix calculates weights correctly", {
+test_that("calculate_tag_cooccurrence_matrix calculates weights correctly", {
   tags <- data.frame(
     track.s.id = c(1, 1, 2),
     tag_name = c("rock", "pop", "rock"),
@@ -39,7 +45,7 @@ test_that("make_directed_adjacency_matrix calculates weights correctly", {
     stringsAsFactors = FALSE
   )
 
-  adj <- make_directed_adjacency_matrix(tags)
+  adj <- calculate_tag_cooccurrence_matrix(tags)
 
   # rock appears in 2 tracks, pop appears in 1 track
   # rock->pop: 1 co-occurrence out of 2 rock appearances = 0.5
@@ -49,24 +55,8 @@ test_that("make_directed_adjacency_matrix calculates weights correctly", {
   expect_equal(adj["rock", "rock"], 0) # no self-loops
 })
 
-test_that("get_weights_vector_from_frame maps weights correctly", {
-  weights_frame <- data.frame(
-    tag_name_j = c("pop", "jazz"),
-    weight = c(0.7, 0.3),
-    stringsAsFactors = FALSE
-  )
-  genres <- c("rock", "pop", "jazz", "blues")
 
-  weights_vec <- get_weights_vector_from_frame(weights_frame, genres)
-
-  expect_equal(length(weights_vec), 4)
-  expect_equal(weights_vec["pop"] |> unname(), 0.7)
-  expect_equal(weights_vec["jazz"] |> unname(), 0.3)
-  expect_equal(weights_vec["rock"] |> unname(), 0) # NA becomes 0
-  expect_equal(weights_vec["blues"] |> unname(), 0) # NA becomes 0
-})
-
-test_that("get_weights_genres_j_from_i calculates proportional weights", {
+test_that("calculate_vote_based_weights calculates proportional weights", {
   genre_i_only <- data.frame(
     track.s.id = c("a", "a", "b"),
     tag_name_i = c("rock", "rock", "rock"),
@@ -76,7 +66,7 @@ test_that("get_weights_genres_j_from_i calculates proportional weights", {
     stringsAsFactors = FALSE
   )
 
-  weights <- get_weights_genres_j_from_i(genre_i_only)
+  weights <- calculate_vote_based_weights(genre_i_only)
 
   expect_true("tag_name_j" %in% colnames(weights))
   expect_true("weight" %in% colnames(weights))
@@ -86,7 +76,7 @@ test_that("get_weights_genres_j_from_i calculates proportional weights", {
   expect_true(all(weights$weight > 0))
 })
 
-test_that("create_soft_child_of_network removes bidirectional edges correctly", {
+test_that("remove_weaker_bidirectional_edges removes bidirectional edges correctly", {
   # create a 3x3 adjacency matrix with known values
   adj <- matrix(
     c(
@@ -105,7 +95,7 @@ test_that("create_soft_child_of_network removes bidirectional edges correctly", 
   )
   rownames(adj) <- colnames(adj) <- c("A", "B", "C")
 
-  soft_child <- create_soft_child_of_network(adj)
+  soft_child <- remove_weaker_bidirectional_edges(adj)
 
   # A->B: 0.8 >= 0.3, so keep A->B (0.8-0.3=0.5), remove B->A
   expect_equal(soft_child["A", "B"], 0.5)
@@ -120,7 +110,7 @@ test_that("create_soft_child_of_network removes bidirectional edges correctly", 
   expect_equal(soft_child["C", "A"], 0)
 })
 
-test_that("get_democratic_parents selects strongest parent only", {
+test_that("select_strongest_parent_per_node selects strongest parent only", {
   # create child_of matrix where each row represents a node's connections
   child_of <- matrix(
     c(
@@ -139,7 +129,7 @@ test_that("get_democratic_parents selects strongest parent only", {
   )
   rownames(child_of) <- colnames(child_of) <- c("A", "B", "C")
 
-  democratic <- get_democratic_parents(child_of)
+  democratic <- select_strongest_parent_per_node(child_of)
 
   # A should connect only to B (strongest)
   expect_equal(democratic["A", "B"], 0.8)
@@ -154,7 +144,7 @@ test_that("get_democratic_parents selects strongest parent only", {
   expect_equal(democratic["C", "A"], 0)
 })
 
-test_that("get_unconnected_tags identifies missing nodes correctly", {
+test_that("find_unconnected_tags identifies missing nodes correctly", {
   skip_if_not_installed("igraph")
 
   # create graphs with different vertex sets
@@ -172,12 +162,12 @@ test_that("get_unconnected_tags identifies missing nodes correctly", {
   ))
   igraph::V(g_partial)$name <- c("A", "B")
 
-  unconnected <- get_unconnected_tags(g_partial, g_full)
+  unconnected <- find_unconnected_tags(g_partial, g_full)
 
   expect_equal(sort(unconnected), c("C", "D"))
 })
 
-test_that("get_vote_weighted_adjacency preserves matrix dimensions", {
+test_that("apply_vote_weighting preserves matrix dimensions", {
   tags <- data.frame(
     track.s.id = c("a", "a"),
     tag_name = c("rock", "pop"),
@@ -185,8 +175,8 @@ test_that("get_vote_weighted_adjacency preserves matrix dimensions", {
     stringsAsFactors = FALSE
   )
 
-  basic_adj <- make_directed_adjacency_matrix(tags)
-  weighted_adj <- get_vote_weighted_adjacency(basic_adj, tags)
+  basic_adj <- calculate_tag_cooccurrence_matrix(tags)
+  weighted_adj <- apply_vote_weighting(basic_adj, tags)
 
   expect_equal(dim(weighted_adj), dim(basic_adj))
   expect_equal(rownames(weighted_adj), rownames(basic_adj))
@@ -225,25 +215,25 @@ test_that("build_genre_tree handles small dataset without errors", {
   expect_true(file.exists("models/unconnected_tags.rds"))
 })
 
-test_that("performance critical loops handle edge cases", {
+test_that("performance critical functions handle edge cases", {
   # empty adjacency matrix
   empty_adj <- matrix(0, nrow = 0, ncol = 0)
-  expect_no_error(create_soft_child_of_network(empty_adj))
-  expect_no_error(get_democratic_parents(empty_adj))
+  expect_no_error(remove_weaker_bidirectional_edges(empty_adj))
+  expect_no_error(select_strongest_parent_per_node(empty_adj))
 
   # single node
   single_adj <- matrix(0, nrow = 1, ncol = 1)
   rownames(single_adj) <- colnames(single_adj) <- "A"
-  soft_single <- create_soft_child_of_network(single_adj)
-  demo_single <- get_democratic_parents(single_adj)
+  soft_single <- remove_weaker_bidirectional_edges(single_adj)
+  demo_single <- select_strongest_parent_per_node(single_adj)
   expect_equal(dim(soft_single), c(1, 1))
   expect_equal(dim(demo_single), c(1, 1))
 
   # matrix with all zeros (no connections)
   zero_adj <- matrix(0, nrow = 3, ncol = 3)
   rownames(zero_adj) <- colnames(zero_adj) <- c("A", "B", "C")
-  soft_zero <- create_soft_child_of_network(zero_adj)
-  demo_zero <- get_democratic_parents(zero_adj)
+  soft_zero <- remove_weaker_bidirectional_edges(zero_adj)
+  demo_zero <- select_strongest_parent_per_node(zero_adj)
   expect_true(all(soft_zero == 0))
   expect_true(all(demo_zero == 0))
 })
