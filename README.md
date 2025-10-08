@@ -16,7 +16,7 @@ git clone "https://github.com/markusradke/GenreDiscourseAnalysis.git"
 ```
 Please make sure you have R installed on your machine and restore the renv environment using (make sure you are in the project directory):
 ```R
-# install renv if you haven't already with install.packages("renv")s
+# install renv if you haven't already with install.packages("renv")
 renv::restore()
 ```
 
@@ -33,7 +33,8 @@ This project is licensed under the CC BY 4.0 License - see the LICENSE file for 
 ## Contact the author
 Markus Radke
 
-[markus.radke.1@campus.tu-berlin.de](mailto::markus.radke.1@campus.tu-berlin.de)
+[markus.radke@tu-berlin.de](mailto::markus.radke@tu-berlin.de)
 
 ## Status
-This project is currently in active development. Please check back for updates and new features.
+> [!CAUTION]
+> This project is currently in active development. Please check back for updates and new features.
