@@ -7,6 +7,10 @@ filter_valid_dc_genres <- function(input, non_music_tags) {
   filter_valid_genres(input, non_music_tags, get_combined_dc_tags, "dc.genres")
 }
 
+filter_valid_s_genres <- function(input, non_music_tags) {
+  filter_valid_genres(input, non_music_tags, get_combined_s_tags, "s.genres")
+}
+
 filter_valid_genres <- function(input, non_music_tags, combine_fun, genrecol) {
   combined <- combine_fun(input)
   non_empty <- filter_non_empty_tags(combined, genrecol)
@@ -39,7 +43,23 @@ get_combined_dc_tags <- function(input) {
         function(genres, styles) {
           tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
           data.frame(tag_name = tags, tag_count = rep(1, length(tags)))
-        }
+        },
+        .progress = "Combining DC genre and style tags ..."
+      )
+    )
+}
+
+get_combined_s_tags <- function(input) {
+  input |>
+    dplyr::mutate(
+      s.genres = purrr::map(
+        .data$artist.s.genres,
+        function(genres) {
+          genres |>
+            dplyr::rename(tag_name = "genre") |>
+            dplyr::mutate(tag_count = 1)
+        },
+        .progress = "Normalizing Spotify artist genre tags ..."
       )
     )
 }

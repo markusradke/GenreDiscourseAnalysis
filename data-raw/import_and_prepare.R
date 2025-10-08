@@ -86,4 +86,34 @@ saveRDS(filtered_dc_genres, "data/filtered_dc.rds")
 dc_long <- get_long_genre_tags(filtered_dc_genres, "dc.genres")
 saveRDS(dc_long, "data/filtered_dc_long.rds")
 
-# TODO: go on here with Spotify tags
+# Filter out tracks without any entries for Spotify genres ----
+s_non_music_tags <- c(
+  "432hz",
+  "528hz",
+  "asmr",
+  "binaural",
+  "children's folk",
+  "children's music",
+  "clean comedy",
+  "comic",
+  "escape room",
+  "field recording ambient",
+  "football",
+  "lo-fi sleep",
+  "lo-fi study",
+  "mediation",
+  "sleep",
+  "talent show",
+  "talentschau"
+)
+saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
+
+message("Filtering out tracks without valid Spotify genre tags ...")
+filtered_s_genres <- filter_valid_s_genres(
+  poptrag_wo_spotifycharts,
+  s_non_music_tags
+)
+saveRDS(filtered_s_genres, "data/filtered_s.rds")
+
+s_long <- get_long_genre_tags(filtered_s_genres, "s.genres")
+saveRDS(s_long, "data/filtered_s_long.rds")
