@@ -19,6 +19,25 @@ test_that("get_combined_dc_tags and normalize_tags handle NA and NULL", {
   expect_true(all(sapply(out$dc.genres, is.data.frame)))
 })
 
+test_that("get_combined_s_tags normalizes artist.s.genres to s.genres", {
+  df <- data.frame(track.s.id = c("a", "b"), stringsAsFactors = FALSE)
+  df$artist.s.genres <- list(
+    data.frame(genre = c("indie", "alt"), stringsAsFactors = FALSE),
+    data.frame(genre = character(0), stringsAsFactors = FALSE)
+  )
+
+  out <- get_combined_s_tags(df)
+  expect_true("s.genres" %in% colnames(out))
+  # first element should be a data.frame with tag_name and tag_count == 1
+  expect_true(is.data.frame(out$s.genres[[1]]))
+  expect_setequal(c("tag_name", "tag_count"), colnames(out$s.genres[[1]]))
+  expect_equal(out$s.genres[[1]]$tag_name, c("indie", "alt"))
+  expect_true(all(out$s.genres[[1]]$tag_count == 1))
+  # second element with zero-length genre should become 0-row data.frame
+  expect_true(is.data.frame(out$s.genres[[2]]))
+  expect_equal(nrow(out$s.genres[[2]]), 0)
+})
+
 
 test_that("erase_non_music_tags removes non-music tags", {
   tags <- list(
@@ -112,6 +131,22 @@ test_that("filter_valid_dc_genres composes the correct pipeline", {
   out <- filter_valid_dc_genres(df, non_music)
   expect_equal(nrow(out), 1)
   expect_true(all(sapply(out$dc.genres, function(x) {
+    is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
+  })))
+})
+
+test_that("filter_valid_s_genres composes the correct pipeline", {
+  df <- data.frame(track.s.id = c("a", "b", "c"), stringsAsFactors = FALSE)
+  df$artist.s.genres <- list(
+    data.frame(genre = c("indie", "alt"), stringsAsFactors = FALSE),
+    data.frame(genre = c("podcast"), stringsAsFactors = FALSE),
+    data.frame(genre = character(0), stringsAsFactors = FALSE)
+  )
+
+  non_music <- c("podcast")
+  out <- filter_valid_s_genres(df, non_music)
+  expect_equal(nrow(out), 1)
+  expect_true(all(sapply(out$s.genres, function(x) {
     is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
   })))
 })
