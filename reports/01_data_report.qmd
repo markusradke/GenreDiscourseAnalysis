@@ -55,7 +55,7 @@ The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 
 ### MusicBrainz network data
 
 ```{r musibrainz_genres}
-get_unique_tags_from_mb_taglist <- function(mb_tags) {
+get_unique_tags_from_taglist <- function(mb_tags) {
   do.call(rbind, lapply(mb_tags, function(frame) frame['tag_name'])) |> 
     dplyr::pull(tag_name) |> 
     unique()
@@ -68,8 +68,8 @@ mb_non_music_tags <- readRDS('../data/mb_non_music_tags.rds')
 n_diff_mb <- n_poptrag - nrow(poptrag_filtered_mb_genres)
 n_unique_mb_tags <- get_unique_tags_from_mb_taglist(mb_tags$mb.genres) |> length()
 
-tags_per_track <- dplyr::count(mb_tags, track.s.id) |> dplyr::pull(n)
-votes_per_track <- mb_tags |> 
+tags_per_track_mb <- dplyr::count(mb_tags, track.s.id) |> dplyr::pull(n)
+votes_per_track_mb <- mb_tags |> 
   dplyr::group_by(track.s.id) |> 
   dplyr::summarize(n_votes = sum(tag_count)) |> 
   dplyr::ungroup() |> 
@@ -80,6 +80,29 @@ We filtered out all songs without a genre tag or with only non-music genre tags 
 
 This amounts to **N~MusicBrainz~ = `r format(nrow(poptrag_filtered_mb_genres), big.mark = ',')` tracks** with MusicBrainz music genre tags.
 
-There were `r format(n_unique_mb_tags, big.mark = ',')` different genre tags in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track)` and `r max(tags_per_track)` different tags to each track (median: `r median(tags_per_track)`, IQR: `r IQR(tags_per_track)`) and voted for each track between `r min(votes_per_track)` and `r max(votes_per_track)` times (median: `r median(votes_per_track)`, IQR: `r IQR(votes_per_track)`).
+There were `r format(n_unique_mb_tags, big.mark = ',')` different genre tags in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track_mb)` and `r max(tags_per_track_mb)` different tags to each track (median: `r median(tags_per_track_mb)`, IQR: `r IQR(tags_per_track_mb)`) and voted for each track between `r min(votes_per_track_mb)` and `r max(votes_per_track_mb)` times (median: `r median(votes_per_track_mb)`, IQR: `r IQR(votes_per_track_mb)`).
 
 ### Discogs network data
+
+```{r discogs_genres}
+poptrag_filtered_discogs_genres <- readRDS('../data/poptrag_filtered_discogs_genre.rds')
+discogs_tags <- readRDS('../data/discogs_tags.rds')
+dc_non_music_tags <- readRDS('../data/dc_non_music_tags.rds')
+
+n_diff_dc <- n_poptrag - nrow(poptrag_filtered_mb_genres)
+n_unique_dc_tags <- get_unique_tags_from_mb_taglist(mb_tags$mb.genres) |> leng
+
+tags_per_track_dc <- dplyr::count(dc_tags, track.s.id) |> dplyr::pull(n)
+votes_per_track_dc <- dc_tags |> 
+  dplyr::group_by(track.s.id) |> 
+  dplyr::summarize(n_votes = sum(tag_count)) |> 
+  dplyr::ungroup() |> 
+  dplyr::pull(n_votes)
+```
+
+We filtered out all songs without a genre or style tag or with only non-music genre tags or style on Discogs (`r format(n_diff_dc, big.mark = ',')` tracks, `r round(n_diff_dc / n_poptrag, 1)`%). Non-music genre tags were: `r paste(sprintf('"%s"', dc_non_music_tags), collapse = ', ')`.
+
+This amounts to **N~Discogs~ = `r format(nrow(poptrag_filtered_dc_genres), big.mark = ',')` tracks** with Discogs music genre tags.
+
+There were `r format(n_unique_dc_tags, big.mark = ',')` different genre tags in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track_dc)` and `r max(tags_per_track_dc)` different tags to each track (median: `r median(tags_per_track_dc)`, IQR: `r IQR(tags_per_track_dc)`) and voted for each track between `r min(votes_per_track_dc)` and `r max(votes_per_track_dc)` times (median: `r median(votes_per_track_dc)`, IQR: `r IQR(votes_per_track_dc)`).
+

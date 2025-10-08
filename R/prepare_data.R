@@ -1,16 +1,20 @@
 # FUNCTIONS ----
 filter_valid_mb_genres <- function(input, non_music_tags) {
-  combined_tags <- get_combined_detailed_tags(input)
-  filtered_non_empty_tags <- filter_non_empty_tags(combined_tags)
-  filtered_valid_tags <- filter_music_tags(
-    filtered_non_empty_tags,
-    non_music_tags
-  )
-  filtered_valid_tags
+  filter_valid_genres(input, non_music_tags, get_combined_mb_tags, "mb.genres")
 }
 
+filter_valid_dc_genres <- function(input, non_music_tags) {
+  filter_valid_genres(input, non_music_tags, get_combined_dc_tags, "dc.genres")
+}
 
-get_combined_detailed_tags <- function(input) {
+filter_valid_genres <- function(input, non_music_tags, combine_fun, genrecol) {
+  combined <- combine_fun(input)
+  non_empty <- filter_non_empty_tags(combined, genrecol)
+  filtered <- filter_music_tags(non_empty, genrecol, non_music_tags)
+  filtered
+}
+
+get_combined_mb_tags <- function(input) {
   input |>
     dplyr::mutate(
       mb.genres = purrr::pmap(
@@ -24,6 +28,30 @@ get_combined_detailed_tags <- function(input) {
       )
     )
 }
+
+
+get_combined_dc_tags <- function(input) {
+  input |>
+    dplyr::mutate(
+      dc.genres = purrr::map2(
+        .data$album.dc.genres,
+        .data$album.dc.styles,
+        function(genres, styles) {
+          tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
+          data.frame(tag_name = tags, tag_count = rep(1, length(tags)))
+        }
+      )
+    )
+}
+
+normalize_tags <- function(x) {
+  if (is.null(x) || (length(x) == 1 && is.na(x))) {
+    character(0)
+  } else {
+    as.character(x)
+  }
+}
+
 
 choose_mb_tag_set <- function(
   track_tags,
@@ -48,11 +76,11 @@ choose_mb_tag_set <- function(
   artist_tags
 }
 
-filter_non_empty_tags <- function(input) {
-  input$is.nonempty <- lapply(input$mb.genres, function(x) nrow(x) > 0) |>
+filter_non_empty_tags <- function(input, genrecol) {
+  input$is.nonempty <- lapply(input[[genrecol]], function(x) nrow(x) > 0) |>
     as.logical() |>
     tidyr::replace_na(FALSE)
-  input$is.tag_name <- lapply(input$mb.genres, function(x) {
+  input$is.tag_name <- lapply(input[[genrecol]], function(x) {
     "tag_name" %in% colnames(x)
   }) |>
     as.logical()
@@ -60,35 +88,34 @@ filter_non_empty_tags <- function(input) {
     dplyr::select(-"is.nonempty", -"is.tag_name")
 }
 
-filter_music_tags <- function(input, non_music_tags) {
+filter_music_tags <- function(input, genrecol, non_music_tags) {
   # takes a while
-  input$mb.genres <- erase_non_music_tags(input$mb.genres, non_music_tags)
-  input$is.nonempty <- lapply(input$mb.genres, function(x) nrow(x) > 0) |>
+  input[[genrecol]] <- erase_non_music_tags(input[[genrecol]], non_music_tags)
+  input$is.nonempty <- lapply(input[[genrecol]], function(x) nrow(x) > 0) |>
     as.logical()
   dplyr::filter(input, .data$is.nonempty) |>
     dplyr::select(-"is.nonempty")
 }
 
-erase_non_music_tags <- function(mb_tags, non_music_tags) {
-  mb_tags_valid <- purrr::map(
-    mb_tags,
+erase_non_music_tags <- function(tags, non_music_tags) {
+  purrr::map(
+    tags,
     function(frame) {
       frame |> dplyr::filter(!.data$tag_name %in% non_music_tags)
     },
     .progress = "Filtering out non-music tags ..."
   )
-  mb_tags_valid
 }
 
-unpack_mb_genre_tags <- function(input) {
+get_long_genre_tags <- function(input, genrecol) {
   input_select <- input |>
     dplyr::select(
       "track.s.id",
       "track.s.title",
       "track.s.firstartist.name",
-      "mb.genres"
+      dplyr::all_of(genrecol),
     )
-  unpacked_mb_tags <- unpack_genre_tags(input_select$mb.genres)
+  unpacked_mb_tags <- unpack_genre_tags(input_select[[genrecol]])
   suppressMessages(
     input_select |>
       dplyr::mutate(join_id = dplyr::row_number()) |>
@@ -97,7 +124,7 @@ unpack_mb_genre_tags <- function(input) {
         "track.s.id",
         "track.s.title",
         "track.s.firstartist.name",
-        "mb.genres",
+        dplyr::all_of(genrecol),
         "tag_name",
         "tag_count"
       )

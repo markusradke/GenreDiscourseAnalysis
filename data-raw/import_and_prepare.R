@@ -2,7 +2,7 @@
 rm(list = ls())
 gc()
 
-message("Importing and selecting variables from PopTraG dataset ...")
+message("Importing PopTraG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
 poptrag_selected <- poptrag |>
   dplyr::select(
@@ -62,17 +62,28 @@ poptrag_filtered_mb_genre <- filter_valid_mb_genres(
 )
 saveRDS(poptrag_filtered_mb_genre, "data/poptrag_filtered_mb_genre.rds")
 
-mb_tags <- unpack_mb_genre_tags(poptrag_filtered_mb_genre)
+mb_tags <- get_long_genre_tags(poptrag_filtered_mb_genre, "mb.genres")
 saveRDS(mb_tags, "data/mb_tags.rds")
 
-# TODO: go on here with Discogs tags
 # Filter out tracks without any entries for Discogs genres and styles ----
+dc_non_music_tags <- c(
+  "Non-Music",
+  "Children's",
+  "Audiobook",
+  "Comedy",
+  "Speech",
+  "Spoken Word"
+)
+saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
+
 message("Filtering out tracks without valid Discogs genre tags ...")
-filtered_valid_dc_genres <- poptrag_wo_spotifycharts |>
-  dplyr::filter(!is.na(album.dc.firstgenre)) |>
-  dplyr::filter(
-    album.dc.firstgenre != "Non-Music" & album.dc.firstgenre != "Children's"
-  )
+filtered_valid_dc_genres <- filter_valid_dc_genres(
+  poptrag_wo_spotifycharts,
+  dc_non_music_tags
+)
 saveRDS(filtered_valid_dc_genres, "data/filtered_valid_dc_genres.rds")
 
-# Unpack Discogs genre and style tags ----
+dc_tags <- get_long_genre_tags(filtered_valid_dc_genres, "dc.genres")
+saveRDS(dc_tags, "data/dc_tags.rds")
+
+# TODO: go on here with Spotify tags

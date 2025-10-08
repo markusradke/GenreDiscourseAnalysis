@@ -3,3 +3,5 @@
 
 /mb_tags.rds
 /poptrag_filtered_mb_genre.rds
+/dc_tags.rds
+/filtered_valid_dc_genres.rds
