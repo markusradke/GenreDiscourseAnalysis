@@ -1,7 +1,6 @@
 /poptrag_selected.rds
 /poptrag_selected_wout_spotify_charts.rds
-
-/mb_tags.rds
-/poptrag_filtered_mb_genre.rds
-/dc_tags.rds
-/filtered_valid_dc_genres.rds
+/filtered_dc_long.rds
+/filtered_dc.rds
+/filtered_mb_long.rds
+/filtered_mb.rds

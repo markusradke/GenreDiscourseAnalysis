@@ -56,14 +56,14 @@ mb_non_music_tags <- c(
 )
 saveRDS(mb_non_music_tags, "data/mb_non_music_tags.rds")
 
-poptrag_filtered_mb_genre <- filter_valid_mb_genres(
+filtered_mb_genre <- filter_valid_mb_genres(
   poptrag_wo_spotifycharts,
   mb_non_music_tags
 )
-saveRDS(poptrag_filtered_mb_genre, "data/poptrag_filtered_mb_genre.rds")
+saveRDS(filtered_mb_genre, "data/filtered_mb.rds")
 
-mb_tags <- get_long_genre_tags(poptrag_filtered_mb_genre, "mb.genres")
-saveRDS(mb_tags, "data/mb_tags.rds")
+mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
+saveRDS(mb_long, "data/filtered_mb_long.rds")
 
 # Filter out tracks without any entries for Discogs genres and styles ----
 dc_non_music_tags <- c(
@@ -77,13 +77,13 @@ dc_non_music_tags <- c(
 saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
 
 message("Filtering out tracks without valid Discogs genre tags ...")
-filtered_valid_dc_genres <- filter_valid_dc_genres(
+filtered_dc_genres <- filter_valid_dc_genres(
   poptrag_wo_spotifycharts,
   dc_non_music_tags
 )
-saveRDS(filtered_valid_dc_genres, "data/filtered_valid_dc_genres.rds")
+saveRDS(filtered_dc_genres, "data/filtered_dc.rds")
 
-dc_tags <- get_long_genre_tags(filtered_valid_dc_genres, "dc.genres")
-saveRDS(dc_tags, "data/dc_tags.rds")
+dc_long <- get_long_genre_tags(filtered_dc_genres, "dc.genres")
+saveRDS(dc_long, "data/filtered_dc_long.rds")
 
 # TODO: go on here with Spotify tags
