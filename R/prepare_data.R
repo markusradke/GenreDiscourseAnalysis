@@ -19,49 +19,104 @@ filter_valid_genres <- function(input, non_music_tags, combine_fun, genrecol) {
 }
 
 get_combined_mb_tags <- function(input) {
-  input |>
-    dplyr::mutate(
-      mb.genres = purrr::pmap(
-        list(
-          .data$track.mb.genres,
-          .data$album.mb.genres,
-          .data$artist.mb.genres
-        ),
-        choose_mb_tag_set,
-        .progress = "Combining tag sets in the data ..."
-      )
-    )
+  combine_tag_columns(
+    input = input,
+    cols = c("track.mb.genres", "album.mb.genres", "artist.mb.genres"),
+    builder = choose_mb_tag_set,
+    outcol = "mb.genres",
+    msg = "Combining MusicBrainz tracks ..."
+  )
 }
 
-
 get_combined_dc_tags <- function(input) {
-  input |>
-    dplyr::mutate(
-      dc.genres = purrr::map2(
-        .data$album.dc.genres,
-        .data$album.dc.styles,
-        function(genres, styles) {
-          tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
-          data.frame(tag_name = tags, tag_count = rep(1, length(tags)))
-        },
-        .progress = "Combining DC genre and style tags ..."
-      )
-    )
+  combine_tag_columns(
+    input = input,
+    cols = c("album.dc.genres", "album.dc.styles"),
+    builder = dc_builder,
+    outcol = "dc.genres",
+    msg = "Combining DC genre and style tags ..."
+  )
+}
+
+combine_tag_columns <- function(input, cols, builder, outcol, msg = "") {
+  message(msg)
+  n <- nrow(input)
+  out_list <- vector("list", length = ifelse(is.null(n), 0, n))
+
+  if (is.null(n) || n == 0) {
+    input[[outcol]] <- out_list
+    return(input)
+  }
+
+  pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  out_list <- lapply(seq_len(n), function(i) {
+    utils::setTxtProgressBar(pb, i)
+    args <- lapply(cols, function(col) input[[col]][[i]])
+    do.call(builder, args)
+  })
+  close(pb)
+
+  input[[outcol]] <- out_list
+  input
 }
 
 get_combined_s_tags <- function(input) {
-  input |>
-    dplyr::mutate(
-      s.genres = purrr::map(
-        .data$artist.s.genres,
-        function(genres) {
-          genres |>
-            dplyr::rename(tag_name = "genre") |>
-            dplyr::mutate(tag_count = 1)
-        },
-        .progress = "Normalizing Spotify artist genre tags ..."
-      )
+  empty_tags_df <- function() {
+    data.frame(
+      tag_name = character(0),
+      tag_count = integer(0),
+      stringsAsFactors = FALSE
     )
+  }
+
+  process_one_sp <- function(genres) {
+    # genres may be: NULL, empty data.frame, data.frame with column "genre" or "tag_name",
+    if (is.null(genres)) {
+      return(empty_tags_df())
+    }
+
+    if (is.data.frame(genres)) {
+      if (nrow(genres) == 0) {
+        return(empty_tags_df())
+      }
+      if ("genre" %in% names(genres)) {
+        names(genres)[names(genres) == "genre"] <- "tag_name"
+      }
+      tags <- as.character(genres$tag_name)
+      tags <- unique(tags)
+      data.frame(
+        tag_name = tags,
+        tag_count = rep(1, length(tags)),
+        stringsAsFactors = FALSE
+      )
+    } else {
+      empty_tags_df()
+    }
+  }
+
+  message("Combining Spotify artist genres ...")
+  n <- nrow(input)
+  s_list <- vector("list", length = ifelse(is.null(n), 0, n))
+
+  if (is.null(n) || n == 0) {
+    input$s.genres <- s_list
+    return(input)
+  }
+
+  pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  s_list <- mapply(
+    function(genres, idx) {
+      utils::setTxtProgressBar(pb, idx)
+      process_one_sp(genres)
+    },
+    input$artist.s.genres,
+    seq_len(n),
+    SIMPLIFY = FALSE
+  )
+  close(pb)
+
+  input$s.genres <- s_list
+  input
 }
 
 normalize_tags <- function(x) {
@@ -94,6 +149,15 @@ choose_mb_tag_set <- function(
     return(album_tags)
   }
   artist_tags
+}
+
+dc_builder <- function(genres, styles) {
+  tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
+  data.frame(
+    tag_name = tags,
+    tag_count = rep(1, length(tags)),
+    stringsAsFactors = FALSE
+  )
 }
 
 filter_non_empty_tags <- function(input, genrecol) {
