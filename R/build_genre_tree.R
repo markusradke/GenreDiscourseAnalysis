@@ -45,12 +45,16 @@ save_results <- function(
     final_tree,
     sprintf("%s_genre_tree", platform_name)
   )
-  saveRDS(final_tree, "models/graph.rds")
-  saveRDS(unconnected_tags, "models/unconnected_tags.rds")
+  saveRDS(final_tree, sprintf("models/%s_graph.rds", platform_name))
+  saveRDS(
+    unconnected_tags,
+    sprintf("models/%s_unconnected_tags.rds", platform_name)
+  )
 }
 
 
 calculate_tag_cooccurrence_matrix <- function(tags) {
+  message("CALCULATE BASIC ADJACENCY MATRIX:")
   message("Counting appearance of individual tags...")
   tag_counts <- tags |> dplyr::count(.data$tag_name)
 
@@ -133,6 +137,7 @@ find_valid_coordinates <- function(coordinate_matrix) {
 
 
 apply_vote_weighting <- function(basic_adjacency, tags) {
+  message("APPLY VOTE WEIGHTING TO ADJACENCY MATRIX:")
   message("Preparing combinations of tags...")
   tag_combinations <- create_tag_combinations_within_tracks(tags)
 
@@ -147,9 +152,9 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
 
   message("Calculating vote weights for all genres...")
 
+  pb <- txtProgressBar(min = 0, max = length(genres), style = 3)
   for (i in seq_along(genres)) {
     current_genre <- genres[i]
-    message(sprintf("Calculating genre %d of %d", i, length(genres)))
 
     if (current_genre %in% names(combinations_by_genre)) {
       genre_combinations <- combinations_by_genre[[current_genre]]
@@ -164,7 +169,9 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
         )
       }
     }
+    setTxtProgressBar(pb, i)
   }
+  close(pb)
 
   basic_adjacency * vote_weights
 }
@@ -199,7 +206,6 @@ assign_weights_to_matrix <- function(
   }
 }
 
-# Optimized helper function with reduced data copying
 calculate_vote_based_weights <- function(genre_combinations) {
   if (nrow(genre_combinations) == 0) {
     return(data.frame(tag_name_j = character(0), weight = numeric(0)))

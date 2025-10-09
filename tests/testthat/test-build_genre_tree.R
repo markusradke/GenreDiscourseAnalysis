@@ -211,8 +211,10 @@ test_that("build_genre_tree handles small dataset without errors", {
   ))
 
   # check that files were created
-  expect_true(file.exists("models/graph.rds"))
-  expect_true(file.exists("models/unconnected_tags.rds"))
+  expect_true(file.exists("models/test_weighted_graph.rds"))
+  expect_true(file.exists("models/test_weighted_unconnected_tags.rds"))
+  file.remove("models/test_weighted_graph.rds")
+  file.remove("models/test_weighted_unconnected_tags.rds")
 })
 
 test_that("performance critical functions handle edge cases", {
