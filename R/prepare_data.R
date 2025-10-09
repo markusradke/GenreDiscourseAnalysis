@@ -128,37 +128,42 @@ erase_non_music_tags <- function(tags, non_music_tags) {
 }
 
 get_long_genre_tags <- function(input, genrecol) {
-  input_select <- input |>
-    dplyr::select(
-      "track.s.id",
-      "track.s.title",
-      "track.s.firstartist.name",
-      dplyr::all_of(genrecol),
-    )
-  unpacked_mb_tags <- unpack_genre_tags(input_select[[genrecol]])
-  suppressMessages(
-    input_select |>
-      dplyr::mutate(join_id = dplyr::row_number()) |>
-      dplyr::inner_join(unpacked_mb_tags) |>
-      dplyr::select(
-        "track.s.id",
-        "track.s.title",
-        "track.s.firstartist.name",
-        dplyr::all_of(genrecol),
-        "tag_name",
-        "tag_count"
-      )
+  unpacked_tags <- unpack_genre_tags(input[[genrecol]])
+  join_mapping <- data.frame(
+    join_id = seq_len(nrow(input)),
+    track.s.id = input$track.s.id,
+    track.s.title = input$track.s.title,
+    track.s.firstartist.name = input$track.s.firstartist.name,
+    stringsAsFactors = FALSE
   )
+
+  result <- merge(
+    join_mapping,
+    unpacked_tags,
+    by = "join_id",
+    sort = FALSE
+  )[, c(
+    "track.s.id",
+    "track.s.title",
+    "track.s.firstartist.name",
+    "tag_name",
+    "tag_count"
+  )]
+  result
 }
 
 unpack_genre_tags <- function(tags) {
-  purrr::map_df(
-    seq_along(tags),
-    function(i) {
-      df <- tags[[i]]
-      df$join_id <- i
-      df
-    },
-    .progress = "Unpacking genre tags ..."
-  )
+  tagged_frames <- vector("list", length(tags))
+  message("Unpacking genre tags ...")
+  pb <- utils::txtProgressBar(min = 0, max = length(tags), style = 3)
+  for (i in seq_along(tags)) {
+    idx <- tags[i]
+    df <- idx[[1]]
+    df$join_id <- i
+    tagged_frames[[i]] <- df
+    utils::setTxtProgressBar(pb = pb, value = i)
+  }
+  close(pb)
+  message("Done.")
+  do.call(rbind, tagged_frames)
 }

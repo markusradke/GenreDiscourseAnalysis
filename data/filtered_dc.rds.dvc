@@ -1,5 +1,0 @@
-outs:
-- md5: c47f97c0984bcca28c1b11db7ba1a3fc
-  size: 16989765
-  hash: md5
-  path: filtered_dc.rds

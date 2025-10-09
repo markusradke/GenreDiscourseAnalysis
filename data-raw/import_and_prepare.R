@@ -60,10 +60,8 @@ filtered_mb_genre <- filter_valid_mb_genres(
   poptrag_wo_spotifycharts,
   mb_non_music_tags
 )
-saveRDS(filtered_mb_genre, "data/filtered_mb.rds")
-
 mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
-saveRDS(mb_long, "data/filtered_mb_long.rds")
+save_feather_with_lists(mb_long, "data/filtered_mb_long")
 
 # Filter out tracks without any entries for Discogs genres and styles ----
 dc_non_music_tags <- c(
@@ -74,17 +72,14 @@ dc_non_music_tags <- c(
   "Speech",
   "Spoken Word"
 )
-saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
-
+saveRDS(dc_non_music_tags, "data/dc_non_music_tags")
 message("Filtering out tracks without valid Discogs genre tags ...")
 filtered_dc_genres <- filter_valid_dc_genres(
   poptrag_wo_spotifycharts,
   dc_non_music_tags
 )
-saveRDS(filtered_dc_genres, "data/filtered_dc.rds")
-
 dc_long <- get_long_genre_tags(filtered_dc_genres, "dc.genres")
-saveRDS(dc_long, "data/filtered_dc_long.rds")
+save_feather_with_lists(dc_long, "data/filtered_dc_long.rds")
 
 # Filter out tracks without any entries for Spotify genres ----
 s_non_music_tags <- c(
@@ -107,13 +102,10 @@ s_non_music_tags <- c(
   "talentschau"
 )
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
-
 message("Filtering out tracks without valid Spotify genre tags ...")
 filtered_s_genres <- filter_valid_s_genres(
   poptrag_wo_spotifycharts,
   s_non_music_tags
 )
-saveRDS(filtered_s_genres, "data/filtered_s.rds")
-
 s_long <- get_long_genre_tags(filtered_s_genres, "s.genres")
-saveRDS(s_long, "data/filtered_s_long.rds")
+save_feather_with_lists(s_long, "data/filtered_s_long")
