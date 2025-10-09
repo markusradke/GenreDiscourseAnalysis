@@ -30,3 +30,30 @@ test_that("export_graph_for_gephi_import writes GEXF and escapes ampersands", {
   edge_lines <- grep("<edge ", contents, fixed = TRUE)
   expect_equal(length(edge_lines), igraph::ecount(g))
 })
+
+test_that("save and read feather with lists round-trip works", {
+  skip_if_not_installed("arrow")
+
+  test_save_and_load_feather <- function(df, is_list_col) {
+    suppressMessages(save_feather_with_lists(df, "testfile"))
+    expect_true(file.exists("testfile.feather"))
+
+    out <- suppressMessages(read_feather_with_lists("testfile.feather"))
+    expect_equal(colnames(df), names(out))
+    expect_equal(out$id, df$id)
+    if (is_list_col) {
+      expect_equal(length(out$listcol), length(df$listcol))
+      expect_true(all(vapply(out$listcol, is.list, logical(1))))
+      for (i in seq_along(df$listcol)) {
+        expect_equal(out$listcol[[i]], df$listcol[[i]])
+      }
+    }
+
+    file.remove("testfile.feather")
+  }
+
+  df <- data.frame(id = 1:3, stringsAsFactors = FALSE)
+  test_save_and_load_feather(df, is_list_col = FALSE)
+  df$listcol <- list(list(a = 1), list(b = 2:3), list(c = "x"))
+  test_save_and_load_feather(df, is_list_col = TRUE)
+})
