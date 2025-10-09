@@ -15,6 +15,7 @@ filter_valid_genres <- function(input, non_music_tags, combine_fun, genrecol) {
   combined <- combine_fun(input)
   non_empty <- filter_non_empty_tags(combined, genrecol)
   filtered <- filter_music_tags(non_empty, genrecol, non_music_tags)
+  message("Done.")
   filtered
 }
 
@@ -49,13 +50,12 @@ combine_tag_columns <- function(input, cols, builder, outcol, msg = "") {
   }
 
   pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  on.exit(close(pb), add = TRUE)
   out_list <- lapply(seq_len(n), function(i) {
     utils::setTxtProgressBar(pb, i)
     args <- lapply(cols, function(col) input[[col]][[i]])
     do.call(builder, args)
   })
-  close(pb)
-
   input[[outcol]] <- out_list
   input
 }
@@ -104,6 +104,7 @@ get_combined_s_tags <- function(input) {
   }
 
   pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  on.exit(close(pb), add = TRUE)
   s_list <- mapply(
     function(genres, idx) {
       utils::setTxtProgressBar(pb, idx)
@@ -113,8 +114,6 @@ get_combined_s_tags <- function(input) {
     seq_len(n),
     SIMPLIFY = FALSE
   )
-  close(pb)
-
   input$s.genres <- s_list
   input
 }
@@ -182,13 +181,29 @@ filter_music_tags <- function(input, genrecol, non_music_tags) {
 }
 
 erase_non_music_tags <- function(tags, non_music_tags) {
-  purrr::map(
-    tags,
-    function(frame) {
-      frame |> dplyr::filter(!.data$tag_name %in% non_music_tags)
-    },
-    .progress = "Filtering out non-music tags ..."
-  )
+  message("Erasing non-music tags ...")
+  n <- length(tags)
+  if (n == 0) {
+    return(vector("list", 0))
+  }
+  if (length(non_music_tags) == 0) {
+    return(tags)
+  }
+
+  pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  on.exit(close(pb), add = TRUE)
+
+  out <- lapply(seq_len(n), function(i) {
+    utils::setTxtProgressBar(pb, i)
+    frame <- tags[[i]]
+    if (is.data.frame(frame) && "tag_name" %in% colnames(frame)) {
+      keep <- is.na(match(frame$tag_name, non_music_tags))
+      frame[keep, , drop = FALSE]
+    } else {
+      frame
+    }
+  })
+  out
 }
 
 get_long_genre_tags <- function(input, genrecol) {
@@ -201,6 +216,7 @@ get_long_genre_tags <- function(input, genrecol) {
     stringsAsFactors = FALSE
   )
 
+  message("Merging genre tags with track info ...")
   result <- merge(
     join_mapping,
     unpacked_tags,
@@ -213,6 +229,7 @@ get_long_genre_tags <- function(input, genrecol) {
     "tag_name",
     "tag_count"
   )]
+  message("Done.")
   result
 }
 
@@ -220,6 +237,8 @@ unpack_genre_tags <- function(tags) {
   tagged_frames <- vector("list", length(tags))
   message("Unpacking genre tags ...")
   pb <- utils::txtProgressBar(min = 0, max = length(tags), style = 3)
+  on.exit(close(pb), add = TRUE)
+
   for (i in seq_along(tags)) {
     idx <- tags[i]
     df <- idx[[1]]
@@ -227,7 +246,6 @@ unpack_genre_tags <- function(tags) {
     tagged_frames[[i]] <- df
     utils::setTxtProgressBar(pb = pb, value = i)
   }
-  close(pb)
-  message("Done.")
+  message("\nBinding tags ...")
   do.call(rbind, tagged_frames)
 }

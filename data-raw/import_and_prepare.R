@@ -72,14 +72,14 @@ dc_non_music_tags <- c(
   "Speech",
   "Spoken Word"
 )
-saveRDS(dc_non_music_tags, "data/dc_non_music_tags")
+saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
 message("Filtering out tracks without valid Discogs genre tags ...")
 filtered_dc_genres <- filter_valid_dc_genres(
   poptrag_wo_spotifycharts,
   dc_non_music_tags
 )
 dc_long <- get_long_genre_tags(filtered_dc_genres, "dc.genres")
-save_feather_with_lists(dc_long, "data/filtered_dc_long.rds")
+save_feather_with_lists(dc_long, "data/filtered_dc_long")
 
 # Filter out tracks without any entries for Spotify genres ----
 s_non_music_tags <- c(
