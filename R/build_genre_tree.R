@@ -153,6 +153,7 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
   message("Calculating vote weights for all genres...")
 
   pb <- utils::txtProgressBar(min = 0, max = length(genres), style = 3)
+  on.exit(close(pb), add = TRUE)
   for (i in seq_along(genres)) {
     current_genre <- genres[i]
 
@@ -171,8 +172,6 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
     }
     utils::setTxtProgressBar(pb, i)
   }
-  close(pb)
-
   basic_adjacency * vote_weights
 }
 
