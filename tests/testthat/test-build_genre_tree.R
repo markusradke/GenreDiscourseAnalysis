@@ -1,9 +1,3 @@
-library(testthat)
-
-# source the functions
-source("../../R/build_genre_tree.R")
-source("../../R/handle_io.R")
-
 test_that("create_empty_adjacency_matrix creates correct zero matrix", {
   tags <- c("rock", "pop", "jazz")
   adj <- create_empty_adjacency_matrix(tags)

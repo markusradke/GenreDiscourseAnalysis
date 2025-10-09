@@ -13,10 +13,12 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    arrow,
     dplyr,
     igraph,
     purrr,
     rgexf,
-    rlang,
+    stats,
     stringr,
-    tidyr
+    tidyr,
+    utils

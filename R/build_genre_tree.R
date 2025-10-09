@@ -93,7 +93,7 @@ count_tag_cooccurrences <- function(combinations) {
 }
 
 create_tag_count_lookup <- function(tag_counts) {
-  setNames(tag_counts$n, tag_counts$tag_name)
+  stats::setNames(tag_counts$n, tag_counts$tag_name)
 }
 
 calculate_cooccurrence_weights <- function(
@@ -152,7 +152,7 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
 
   message("Calculating vote weights for all genres...")
 
-  pb <- txtProgressBar(min = 0, max = length(genres), style = 3)
+  pb <- utils::txtProgressBar(min = 0, max = length(genres), style = 3)
   for (i in seq_along(genres)) {
     current_genre <- genres[i]
 
@@ -169,7 +169,7 @@ apply_vote_weighting <- function(basic_adjacency, tags) {
         )
       }
     }
-    setTxtProgressBar(pb, i)
+    utils::setTxtProgressBar(pb, i)
   }
   close(pb)
 
@@ -182,7 +182,7 @@ create_empty_weight_matrix <- function(genres) {
 }
 
 create_genre_index_lookup <- function(genres) {
-  setNames(seq_along(genres), genres)
+  stats::setNames(seq_along(genres), genres)
 }
 
 split_combinations_by_source_genre <- function(combinations) {
