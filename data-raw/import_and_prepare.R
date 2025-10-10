@@ -109,3 +109,7 @@ filtered_s_genres <- filter_valid_s_genres(
 )
 s_long <- get_long_genre_tags(filtered_s_genres, "s.genres")
 save_feather_with_lists(s_long, "data/filtered_s_long")
+
+# Generate data report ----
+message("Generating data report ...")
+generate_report("01_data_report")

@@ -17,6 +17,10 @@ format:
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
 ---
 ## Sources
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+devtools::load_all()
+```	
 
 ```{r load_poptrag}
 poptrag <- readRDS('../data/poptrag_selected.rds')
@@ -55,11 +59,11 @@ The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 
 ### MusicBrainz network data
 
 ```{r musibrainz_genres}
-poptrag_filtered_mb_genres <- readRDS('../data/filtered_mb.rds')
-mb_long <- readRDS('../data/filtered_mb_long.rds')
+mb_long <- read_feather_with_lists('../data/filtered_mb_long.feather')
 mb_non_music_tags <- readRDS('../data/mb_non_music_tags.rds')
 
-n_diff_mb <- n_poptrag - nrow(poptrag_filtered_mb_genres)
+n_mb <- length(unique(mb_long$track.s.id))
+n_diff_mb <- n_poptrag - n_mb
 n_unique_mb_tags <- unique(mb_long$tag_name) |> length()
 
 tags_per_track_mb <- dplyr::count(mb_long, track.s.id) |> dplyr::pull(n)
@@ -74,7 +78,7 @@ one_track_tags_mb <- dplyr::filter(dplyr::count(mb_long, tag_name), n == 1) |> n
 
 We filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (`r format(n_diff_mb, big.mark = ",")` tracks, `r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ', ')`.
 
-This amounts to **N~MusicBrainz~ = `r format(nrow(poptrag_filtered_mb_genres), big.mark = ",")` tracks** with MusicBrainz music genre tags.
+This amounts to **N~MusicBrainz~ = `r format(n_mb, big.mark = ",")` tracks** with MusicBrainz music genre tags.
 
 There are `r format(n_unique_mb_tags, big.mark = ",")` different genre tags in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track_mb)` and `r max(tags_per_track_mb)` different tags to each track (median: `r median(tags_per_track_mb)`, IQR: `r IQR(tags_per_track_mb)`) and voted for each track between `r min(votes_per_track_mb)` and `r max(votes_per_track_mb)` times (median: `r median(votes_per_track_mb)`, IQR: `r IQR(votes_per_track_mb)`).
 
@@ -83,11 +87,11 @@ There are `r format(n_unique_mb_tags, big.mark = ",")` different genre tags in t
 ### Discogs network data
 
 ```{r discogs_genres}
-poptrag_filtered_dc_genres <- readRDS('../data/filtered_dc.rds')
-dc_long <- readRDS('../data/filtered_dc_long.rds')
+dc_long <- read_feather_with_lists('../data/filtered_dc_long.feather')
 dc_non_music_tags <- readRDS('../data/dc_non_music_tags.rds')
 
-n_diff_dc <- n_poptrag - nrow(poptrag_filtered_dc_genres)
+n_dc <- length(unique(dc_long$track.s.id))
+n_diff_dc <- n_poptrag - n_dc
 n_unique_dc_tags <- unique(dc_long$tag_name) |> length()
 
 tags_per_track_dc <- dplyr::count(dc_long, track.s.id) |> dplyr::pull(n)
@@ -97,7 +101,7 @@ one_track_tags_dc <- dplyr::filter(dplyr::count(dc_long, tag_name), n == 1) |> n
 
 We filtered out all songs without a Discogs genre tag (Discogs "genre" and/or "style") or with only non-music genre tags (`r format(n_diff_dc, big.mark = ",")` tracks, `r round(n_diff_dc / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', dc_non_music_tags), collapse = ', ')`.
 
-This amounts to **N~Discogs~ = `r format(nrow(poptrag_filtered_dc_genres), big.mark = ",")` tracks** with Discogs music genre tags.
+This amounts to **N~Discogs~ = `r format(n_dc, big.mark = ",")` tracks** with Discogs music genre tags.
 
 There are `r format(n_unique_dc_tags, big.mark = ",")` different genre tags in the Discogs genre data set. Users assigned between `r min(tags_per_track_dc)` and `r max(tags_per_track_dc)` different tags to each track (median: `r median(tags_per_track_dc)`, IQR: `r IQR(tags_per_track_dc)`).
 
@@ -114,11 +118,11 @@ Discogs genre tags are **assigned to releases, not to tracks**. Therefore, all t
 ### Spotify network data
 
 ```{r spotify_genres}
-poptrag_filtered_s_genres <- readRDS('../data/filtered_s.rds')
-s_long <- readRDS('../data/filtered_s_long.rds')
+s_long <- read_feather_with_lists('../data/filtered_s_long.feather')
 s_non_music_tags <- readRDS('../data/s_non_music_tags.rds')
 
-n_diff_s <- n_poptrag - nrow(poptrag_filtered_s_genres)
+n_s <- length(unique(s_long$track.s.id))
+n_diff_s <- n_poptrag - n_s
 n_unique_s_tags <- unique(s_long$tag_name) |> length()
 
 tags_per_track_s <- dplyr::count(s_long, track.s.id) |> dplyr::pull(n)
@@ -128,7 +132,7 @@ one_track_tags_s <- dplyr::filter(dplyr::count(s_long, tag_name), n == 1) |> nro
 
 We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (`r format(n_diff_s, big.mark = ",")` tracks, `r round(n_diff_s / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', s_non_music_tags), collapse = ', ')`.
 
-This amounts to **N~Spotifys~ = `r format(nrow(poptrag_filtered_s_genres), big.mark = ",")` tracks** with Spotify music genre tags.
+This amounts to **N~Spotifys~ = `r format(n_s, big.mark = ",")` tracks** with Spotify music genre tags.
 
 There are `r format(n_unique_s_tags, big.mark = ",")` different genre tags in the Spotify genre data set. Users assigned between `r min(tags_per_track_s)` and `r max(tags_per_track_s)` different tags to each track (median: `r median(tags_per_track_s)`, IQR: `r IQR(tags_per_track_s)`).
 
