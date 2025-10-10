@@ -215,20 +215,19 @@ get_long_genre_tags <- function(input, genrecol) {
     track.s.firstartist.name = input$track.s.firstartist.name,
     stringsAsFactors = FALSE
   )
-
   message("Merging genre tags with track info ...")
-  result <- merge(
+  result <- dplyr::inner_join(
     join_mapping,
     unpacked_tags,
-    by = "join_id",
-    sort = FALSE
-  )[, c(
-    "track.s.id",
-    "track.s.title",
-    "track.s.firstartist.name",
-    "tag_name",
-    "tag_count"
-  )]
+    by = "join_id"
+  ) |>
+    dplyr::select(
+      "track.s.id",
+      "track.s.title",
+      "track.s.firstartist.name",
+      "tag_name",
+      "tag_count"
+    )
   message("Done.")
   result
 }
