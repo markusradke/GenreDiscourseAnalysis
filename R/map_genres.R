@@ -18,10 +18,11 @@ get_initial_genre_mapping <- function(tags, graph, platform) {
     unique(tags$track.s.id),
     initial_genres$track.s.id
   )
-  unrepresented_tracks <- data.frame(
-    track.s.id = unrepresented_ids,
-    initial_genre = rep(NA, length(unrepresented_ids))
-  )
+  unrepresented_tracks <- tags |>
+    dplyr::filter(.data$track.s.id %in% unrepresented_ids) |>
+    dplyr::select(-"tag_name", -"tag_count") |>
+    dplyr::mutate(initial_genre = NA) |>
+    dplyr::distinct()
   rbind(initial_genres, unrepresented_tracks) |>
     dplyr::arrange(.data$track.s.id)
 }
@@ -40,7 +41,12 @@ get_initial_genres_most_detailed <- function(tags, graph) {
     dplyr::arrange(-.data$hierarchy_level, .data$tag_count) |>
     dplyr::slice_head(n = 1) |>
     dplyr::ungroup() |>
-    dplyr::select("track.s.id", initial_genre = "tag_name")
+    dplyr::select(
+      "track.s.id",
+      "track.s.title",
+      "track.s.firstartist.name",
+      initial_genre = "tag_name"
+    )
 }
 
 get_distances_to_root <- function(graph) {
@@ -67,15 +73,20 @@ get_initial_genres_tree_and_votes_based <- function(mb_tags, graph) {
   mb_tags <- mb_tags |> dplyr::inner_join(total_votes_genres, by = "tag_name")
   tracks <- unique(mb_tags$track.s.id)
   res <- c()
-  for (track in tracks) {
-    if (track %% 500 == 0) {
-      message(sprintf("track %d of %d", track, length(tracks)))
+  for (i in seq_along(tracks)) {
+    if (i %% 500 == 0) {
+      message(sprintf("track %d of %d", track, length(tracks[i])))
     }
-    track_tags <- mb_tags |> dplyr::filter(track.s.id == track)
+    track_tags <- mb_tags |> dplyr::filter(track.s.id == tracks[i])
     initial_genre <- get_tree_and_votes_based_mapping(track_tags, graph)
     res <- rbind(
       res,
-      data.frame(track.s.id = track, initial_genre = initial_genre)
+      data.frame(
+        track.s.id = tracks[i],
+        initial_genre = initial_genre,
+        track.s.title = track_tags$track.s.title[1],
+        track.s.firstartist.name = track_tags$track.s.firstartist.name[1]
+      )
     )
   }
   res

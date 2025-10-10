@@ -21,6 +21,7 @@ build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
     isolated_tags,
     platform_name
   )
+  connected_component
 }
 
 create_igraph_from_matrix <- function(adjacency_matrix) {

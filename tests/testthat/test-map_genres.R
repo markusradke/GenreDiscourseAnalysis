@@ -1,6 +1,8 @@
 test_that("get_initial_genre_mapping dispatches correctly by platform", {
   tags <- data.frame(
     track.s.id = c(1, 1, 2, 2),
+    track.s.title = c("Song A", "Song A", "Song B", "Song B"),
+    track.s.firstartist.name = c("A", "A", "B", "B"),
     tag_name = c("rock", "music", "music", "rock"),
     tag_count = c(10, 5, 8, 3),
     stringsAsFactors = FALSE
@@ -53,6 +55,8 @@ test_that("get_distances_to_root calculates hierarchy levels correctly", {
 test_that("get_initial_genres_most_detailed selects deepest genres with least votes", {
   tags <- data.frame(
     track.s.id = c(1, 1, 2, 2, 2),
+    track.s.title = c("Song A", "Song A", "Song B", "Song B", "Song B"),
+    track.s.firstartist.name = c("A", "A", "B", "B", "B"),
     tag_name = c("metal", "rock", "pop", "rock", "music"),
     tag_count = c(1, 1, 1, 1, 1),
     stringsAsFactors = FALSE
@@ -70,8 +74,15 @@ test_that("get_initial_genres_most_detailed selects deepest genres with least vo
 
   result <- get_initial_genres_most_detailed(tags, graph)
   expect_true(is.data.frame(result))
-  expect_equal(ncol(result), 2)
-  expect_true(all(c("track.s.id", "initial_genre") %in% colnames(result)))
+  expect_setequal(
+    colnames(result),
+    c(
+      "track.s.id",
+      "initial_genre",
+      "track.s.title",
+      "track.s.firstartist.name"
+    )
+  )
   # Track 1 should prefer metal (deeper level) over rock
   track1_genre <- result[result$track.s.id == 1, "initial_genre", drop = TRUE]
   expect_equal(track1_genre, "metal")
@@ -83,6 +94,8 @@ test_that("get_initial_genres_most_detailed selects deepest genres with least vo
 test_that("get_tree_and_votes_based_mapping handles single tag case", {
   track_tags <- data.frame(
     track.s.id = 1,
+    track.s.title = "Song A",
+    track.s.firstartist.name = "A",
     tag_name = "rock",
     tag_count = 10,
     votes_total = 100,
@@ -101,6 +114,8 @@ test_that("get_tree_and_votes_based_mapping handles single tag case", {
 test_that("get_tree_and_votes_based_mapping handles multiple tags with hierarchy", {
   track_tags <- data.frame(
     track.s.id = c(1, 1, 1),
+    track.s.title = c("Song A", "Song A", "Song A"),
+    track.s.firstartist.name = c("A", "A", "A"),
     tag_name = c("metal", "rock", "music"),
     tag_count = c(15, 10, 5), # metal has most votes
     votes_total = c(200, 500, 1000), # but music has most total votes
@@ -125,6 +140,8 @@ test_that("get_tree_and_votes_based_mapping handles multiple tags with hierarchy
 test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
   mb_tags <- data.frame(
     track.s.id = c(1, 1, 2, 2),
+    track.s.title = c("Song A", "Song A", "Song B", "Song B"),
+    track.s.firstartist.name = c("A", "A", "B", "B"),
     tag_name = c("rock", "pop", "jazz", "blues"),
     # should return "rock" for track 1 and "jazz" for track 2
     tag_count = c(10, 5, 8, 3),
@@ -142,8 +159,15 @@ test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
   result <- get_initial_genres_tree_and_votes_based(mb_tags, graph)
 
   expect_true(is.data.frame(result))
-  expect_equal(ncol(result), 2)
-  expect_true(all(c("track.s.id", "initial_genre") %in% colnames(result)))
+  expect_setequal(
+    colnames(result),
+    c(
+      "track.s.id",
+      "track.s.title",
+      "track.s.firstartist.name",
+      "initial_genre"
+    )
+  )
   expect_equal(nrow(result), length(unique(mb_tags$track.s.id)))
   expect_equal(result$initial_genre, c("rock", "jazz"))
   expect_setequal(result$track.s.id, unique(mb_tags$track.s.id))
@@ -152,6 +176,8 @@ test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
 test_that("functions handle empty input gracefully", {
   empty_tags <- data.frame(
     track.s.id = numeric(0),
+    track.s.title = character(0),
+    track.s.firstartist.name = character(0),
     tag_name = character(0),
     tag_count = numeric(0),
     stringsAsFactors = FALSE
@@ -170,6 +196,8 @@ test_that("functions handle empty input gracefully", {
 test_that("handles cases where tags are not in the graph", {
   tags <- data.frame(
     track.s.id = c(1, 1),
+    track.s.title = c("Song A", "Song A"),
+    track.s.firstartist.name = c("A", "A"),
     tag_name = c("unknown_genre1", "unknown_genre2"),
     tag_count = c(10, 5),
     stringsAsFactors = FALSE
@@ -185,11 +213,27 @@ test_that("handles cases where tags are not in the graph", {
   })
   expect_true(is.data.frame(result))
   expect_equal(nrow(result), 1) # No valid genres found in graph
-  expect_equal(result, data.frame(track.s.id = 1, initial_genre = NA))
+  expect_equal(
+    result,
+    data.frame(
+      track.s.id = 1,
+      track.s.title = "Song A",
+      track.s.firstartist.name = "A",
+      initial_genre = NA
+    )
+  )
   expect_no_error({
     result <- get_initial_genre_mapping(tags, graph, "Spotify")
   })
   expect_true(is.data.frame(result))
   expect_equal(nrow(result), 1) # No valid genres found in graph
-  expect_equal(result, data.frame(track.s.id = 1, initial_genre = NA))
+  expect_equal(
+    result,
+    data.frame(
+      track.s.id = 1,
+      track.s.title = "Song A",
+      track.s.firstartist.name = "A",
+      initial_genre = NA
+    )
+  )
 })

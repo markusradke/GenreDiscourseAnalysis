@@ -8,3 +8,24 @@ message("\nBUILDING DISCOGS GENRE TREE")
 build_genre_tree(dc, 'Discogs', vote_weighted = FALSE)
 message("\nBUILDING SPOTIFY GENRE TREE")
 build_genre_tree(s, 'Spotify', vote_weighted = FALSE)
+
+message("\n MAP INITIAL GENRES MUSICBRAINZ")
+initial_genres_mb <- get_initial_genre_mapping(
+  mb,
+  readRDS('models/MusicBrainz_graph.rds'),
+  'MusicBrainz'
+)
+
+message("\n MAP INITIAL GENRES DISCOGS")
+initial_genres_dc <- get_initial_genre_mapping(
+  dc,
+  readRDS('models/Discogs_graph.rds'),
+  'Discogs'
+)
+
+message("\n MAP INITIAL GENRES SPOTIFY")
+initial_genres_s <- get_initial_genre_mapping(
+  s,
+  readRDS('models/Spotify_graph.rds'),
+  'Spotify'
+)
