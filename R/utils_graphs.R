@@ -17,3 +17,18 @@ get_subgraph <- function(graph, node_label) {
     igraph::V(graph)[components_info$membership == component_id]
   )
 }
+
+get_distances_to_root <- function(graph) {
+  root <- get_graph_root(graph)
+  distances <- igraph::distances(
+    graph,
+    v = igraph::V(graph),
+    mode = "out",
+    to = root,
+    weights = NA
+  )
+  distances <- data.frame(distances, tag_name = rownames(distances))
+  colnames(distances) <- c("hierarchy_level", "tag_name")
+  rownames(distances) <- NULL
+  distances
+}

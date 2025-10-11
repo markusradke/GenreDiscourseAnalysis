@@ -19,3 +19,25 @@ test_that("get_subgraph returns the component containing the node after removing
   sg2 <- get_subgraph(g, 2)
   expect_setequal(igraph::as_ids(igraph::V(sg2)), c("A", "B"))
 })
+
+test_that("get_distances_to_root calculates hierarchy levels correctly", {
+  # Create hierarchy: music (level 0) -> rock (level 1) -> metal (level 2)
+  #                   music (level 0) -> pop (level 1)
+  graph <- igraph::graph_from_data_frame(
+    data.frame(
+      from = c("metal", "rock", "pop"),
+      to = c("rock", "music", "music")
+    ),
+    directed = TRUE
+  )
+
+  distances <- get_distances_to_root(graph)
+
+  expect_true(is.data.frame(distances))
+  expect_equal(ncol(distances), 2)
+  expect_true(all(c("hierarchy_level", "tag_name") %in% colnames(distances)))
+  root_distance <- distances[distances$tag_name == "music", "hierarchy_level"]
+  expect_equal(root_distance, 0)
+  expect_true(all(distances$hierarchy_level >= 0))
+  expect_equal(nrow(distances), igraph::vcount(graph))
+})
