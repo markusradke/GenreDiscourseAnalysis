@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-10">
+<meta name="dcterms.date" content="2025-10-11">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 10, 2025</p>
+      <p class="date">October 11, 2025</p>
     </div>
   </div>
   
@@ -216,19 +216,6 @@ Note
 <p>This amounts to <strong>N<sub>Discogs</sub> = 260,918 tracks</strong> with Discogs music genre tags.</p>
 <p>There are 489 different genre tags in the Discogs genre data set. Users assigned between 1 and 30 different tags to each track (median: 3, IQR: 2).</p>
 <p>28 tags were assigned to only one track (6%, min: 1, max: 140,072, median: 110, IQR: 670).</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>All votes for tags per track were set to 1 for the Discgos data set, as Discogs does not provide the number of votes per tag.</p>
-</div>
-</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -240,6 +227,19 @@ Important
 </div>
 <div class="callout-body-container callout-body">
 <p>Discogs genre tags are <strong>assigned to releases, not to tracks</strong>. Therefore, all tracks on the same release have the same Discogs genre tags.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In addition to releases being the observational unit, Discogs provides no vote counts for tags on track basis. Thus, we calculated the vote for each track’s tags by counting the number of appearences of a tag within the corresponding artist.</p>
 </div>
 </div>
 </section>
@@ -264,19 +264,6 @@ Important
 <p>This amounts to <strong>N<sub>Spotifys</sub> = 263,954 tracks</strong> with Spotify music genre tags.</p>
 <p>There are 3,228 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
 <p>480 tags were assigned to only one track (15%, min: 1, max: 30,892, median: 19, IQR: 112).</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Also for the Spotify dataset, all votes for tags per track were set to 1. Also Spotify does not provide a number of votes per tag.</p>
-</div>
-</div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -288,6 +275,19 @@ Important
 </div>
 <div class="callout-body-container callout-body">
 <p>Spotify genre tags are <strong>assigned to artists, not to tracks</strong>. Therefore, all tracks by the same artist have the same Spotify genre tags.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. Thus, we calculated the vote for a each track’s tags by counting the total number of appearences of a tag in the whole data set.</p>
 </div>
 </div>
 </section>

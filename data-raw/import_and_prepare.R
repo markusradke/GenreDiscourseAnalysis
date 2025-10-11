@@ -78,7 +78,11 @@ filtered_dc_genres <- filter_valid_dc_genres(
   poptrag_wo_spotifycharts,
   dc_non_music_tags
 )
-dc_long <- get_long_genre_tags(filtered_dc_genres, "dc.genres")
+dc_long <- get_long_genre_tags(
+  filtered_dc_genres,
+  "dc.genres",
+  caluclate_tag_count = "artist"
+)
 save_feather_with_lists(dc_long, "data/filtered_dc_long")
 
 # Filter out tracks without any entries for Spotify genres ----
@@ -107,7 +111,11 @@ filtered_s_genres <- filter_valid_s_genres(
   poptrag_wo_spotifycharts,
   s_non_music_tags
 )
-s_long <- get_long_genre_tags(filtered_s_genres, "s.genres")
+s_long <- get_long_genre_tags(
+  filtered_s_genres,
+  "s.genres",
+  caluclate_tag_count = "total"
+)
 save_feather_with_lists(s_long, "data/filtered_s_long")
 
 # Generate data report ----

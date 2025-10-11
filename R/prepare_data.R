@@ -86,7 +86,7 @@ get_combined_s_tags <- function(input) {
       tags <- unique(tags)
       data.frame(
         tag_name = tags,
-        tag_count = rep(1, length(tags)),
+        tag_count = rep(NA, length(tags)),
         stringsAsFactors = FALSE
       )
     } else {
@@ -154,7 +154,7 @@ dc_builder <- function(genres, styles) {
   tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
   data.frame(
     tag_name = tags,
-    tag_count = rep(1, length(tags)),
+    tag_count = rep(NA, length(tags)),
     stringsAsFactors = FALSE
   )
 }
@@ -206,7 +206,11 @@ erase_non_music_tags <- function(tags, non_music_tags) {
   out
 }
 
-get_long_genre_tags <- function(input, genrecol) {
+get_long_genre_tags <- function(
+  input,
+  genrecol,
+  caluclate_tag_count = character()
+) {
   unpacked_tags <- unpack_genre_tags(input[[genrecol]])
   join_mapping <- data.frame(
     join_id = seq_len(nrow(input)),
@@ -228,6 +232,16 @@ get_long_genre_tags <- function(input, genrecol) {
       "tag_name",
       "tag_count"
     )
+  if (length(caluclate_tag_count) > 0) {
+    message("Calculating tag counts ...")
+    if (
+      !all(caluclate_tag_count %in% c("artist", "total")) |
+        length(caluclate_tag_count) > 1
+    ) {
+      stop("If caluclate_tag_count is used, it must be 'artist' or 'total'.")
+    }
+    result <- calculate_tag_counts(result, caluclate_tag_count)
+  }
   message("Done.")
   result
 }
@@ -247,4 +261,35 @@ unpack_genre_tags <- function(tags) {
   }
   message("\nBinding tags ...")
   do.call(rbind, tagged_frames)
+}
+
+calculate_tag_counts <- function(tags, method) {
+  tags <- tags |> dplyr::select(-"tag_count")
+  if (method == "artist") {
+    counts <- tags |>
+      dplyr::group_by(.data$tag_name, .data$track.s.firstartist.name) |>
+      dplyr::summarize(tag_count = dplyr::n(), .groups = "drop")
+    result <- dplyr::right_join(
+      tags,
+      counts,
+      by = c("tag_name", "track.s.firstartist.name")
+    )
+  } else if (method == "total") {
+    counts <- tags |>
+      dplyr::group_by(.data$tag_name) |>
+      dplyr::summarize(tag_count = dplyr::n(), .groups = "drop")
+    result <- dplyr::right_join(
+      tags,
+      counts,
+      by = c("tag_name")
+    )
+  }
+  result |>
+    dplyr::select(
+      "track.s.id",
+      "track.s.title",
+      "track.s.firstartist.name",
+      "tag_name",
+      "tag_count"
+    )
 }
