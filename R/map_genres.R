@@ -33,7 +33,7 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
   res <- c()
   for (i in seq_along(tracks)) {
     if (i %% 500 == 0) {
-      message(sprintf("track %d of %d", track, length(tracks[i])))
+      message(sprintf("track %d of %d", i, length(tracks[i])))
     }
     track_tags <- tags |> dplyr::filter(track.s.id == tracks[i])
     initial_genre <- get_tree_and_votes_based_mapping(track_tags, graph)
