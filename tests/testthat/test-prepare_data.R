@@ -32,7 +32,7 @@ test_that("get_combined_s_tags normalizes artist.s.genres to s.genres", {
   expect_true(is.data.frame(out$s.genres[[1]]))
   expect_setequal(c("tag_name", "tag_count"), colnames(out$s.genres[[1]]))
   expect_equal(out$s.genres[[1]]$tag_name, c("indie", "alt"))
-  expect_true(all(out$s.genres[[1]]$tag_count == 1))
+  expect_true(all(is.na(out$s.genres[[1]]$tag_count)))
   # second element with zero-length genre should become 0-row data.frame
   expect_true(is.data.frame(out$s.genres[[2]]))
   expect_equal(nrow(out$s.genres[[2]]), 0)
@@ -149,4 +149,28 @@ test_that("filter_valid_s_genres composes the correct pipeline", {
   expect_true(all(sapply(out$s.genres, function(x) {
     is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
   })))
+})
+
+test_that("calculate_tag_counts computes artist and total counts", {
+  tags <- data.frame(
+    track.s.id = c(1, 2, 3, 3),
+    track.s.title = c("Song A", "Song B", "Song C", "Song C"),
+    track.s.firstartist.name = c("A", "B", "B", "B"),
+    tag_name = c("x", "x", "y", "x"),
+    tag_count = c(NA, NA, NA, NA),
+    stringsAsFactors = FALSE
+  )
+  res <- calculate_tag_counts(tags, "artist")
+  expect_true("tag_count" %in% colnames(res))
+  expect_equal(nrow(res), 4)
+  expect_equal(colnames(res), colnames(tags))
+  expect_equal(res$tag_name, c("x", "x", "y", "x"))
+  expect_equal(res$tag_count, c(1L, 2L, 1L, 2L))
+
+  res <- calculate_tag_counts(tags, "total")
+  expect_true("tag_count" %in% colnames(res))
+  expect_equal(nrow(res), 4)
+  expect_equal(colnames(res), colnames(tags))
+  expect_equal(res$tag_name, c("x", "x", "y", "x"))
+  expect_equal(res$tag_count, c(3L, 3L, 1L, 3L))
 })

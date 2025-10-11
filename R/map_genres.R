@@ -3,7 +3,7 @@
 # todo optimize: This takes very long for large datasets
 get_initial_genre_mapping <- function(tags, graph) {
   tags_in_graph <- tags |>
-    dplyr::filter(tag_name %in% igraph::V(graph)$name)
+    dplyr::filter(.data$tag_name %in% igraph::V(graph)$name)
   initial_genres <- get_initial_genres_tree_and_votes_based(
     tags_in_graph,
     graph
@@ -26,7 +26,7 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
   # determines the initial genre for each track by following
   # the tree branch with most votes as far as possible
   total_votes_genres <- tags |>
-    dplyr::group_by(tag_name) |>
+    dplyr::group_by(.data$tag_name) |>
     dplyr::summarize(votes_total = sum(tag_count))
   tags <- tags |> dplyr::inner_join(total_votes_genres, by = "tag_name")
   tracks <- unique(tags$track.s.id)
@@ -56,19 +56,19 @@ get_tree_and_votes_based_mapping <- function(track_tags, graph) {
   }
   while (nrow(track_tags) > 1) {
     most_voted <- track_tags |>
-      dplyr::arrange(-tag_count, votes_total) |>
+      dplyr::arrange(-.data$tag_count, .data$votes_total) |>
       dplyr::first() |>
-      dplyr::pull(tag_name)
+      dplyr::pull(.data$tag_name)
     children <- get_subgraph(graph, most_voted) |>
       igraph::V() |>
       names()
     children <- children[children != most_voted]
-    track_tags <- track_tags |> dplyr::filter(tag_name %in% children)
+    track_tags <- track_tags |> dplyr::filter(.data$tag_name %in% children)
     if (nrow(track_tags) == 0) {
       genre <- most_voted
     }
     if (nrow(track_tags) == 1) {
-      genre <- track_tags |> dplyr::pull(tag_name)
+      genre <- track_tags |> dplyr::pull(.data$tag_name)
     }
   }
   genre

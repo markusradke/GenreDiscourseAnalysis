@@ -107,11 +107,11 @@ There are `r format(n_unique_dc_tags, big.mark = ",")` different genre tags in t
 
 `r one_track_tags_dc` tags were assigned to only one track (`r round(one_track_tags_dc / n_unique_dc_tags * 100)`%, min: `r min(tracks_per_tag_dc)`, max: `r format(max(tracks_per_tag_dc), big.mark = ",")`, median: `r median(tracks_per_tag_dc)`, IQR: `r IQR(tracks_per_tag_dc)`).
 
-:::{.callout-note}
-All votes for tags per track were set to 1 for the Discgos data set, as Discogs does not provide the number of votes per tag.
-:::
 :::{.callout-important}
 Discogs genre tags are **assigned to releases, not to tracks**. Therefore, all tracks on the same release have the same Discogs genre tags.
+:::
+:::{.callout-note}
+In addition to releases being the observational unit, Discogs provides no vote counts for tags on track basis. Thus, we calculated the vote for each track's tags by counting the number of appearences of a tag within the corresponding artist.
 :::
 
 
@@ -138,9 +138,9 @@ There are `r format(n_unique_s_tags, big.mark = ",")` different genre tags in th
 
 `r one_track_tags_s` tags were assigned to only one track (`r round(one_track_tags_s / n_unique_s_tags * 100)`%, min: `r min(tracks_per_tag_s)`, max: `r format(max(tracks_per_tag_s), big.mark = ",")`, median: `r median(tracks_per_tag_s)`, IQR: `r IQR(tracks_per_tag_s)`).
 
-:::{.callout-note}
-Also for the Spotify dataset, all votes for tags per track were set to 1. Also Spotify does not provide a number of votes per tag.
-:::
 :::{.callout-important}
 Spotify genre tags are **assigned to artists, not to tracks**. Therefore, all tracks by the same artist have the same Spotify genre tags.
 ::::
+:::{.callout-note}
+In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. Thus, we calculated the vote for a each track's tags by counting the total number of appearences of a tag in the whole data set.
+:::
