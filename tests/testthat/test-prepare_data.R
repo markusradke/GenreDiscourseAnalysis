@@ -173,4 +173,11 @@ test_that("calculate_tag_counts computes artist and total counts", {
   expect_equal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(3L, 3L, 1L, 3L))
+
+  res <- calculate_tag_counts(tags, "ones")
+  expect_true("tag_count" %in% colnames(res))
+  expect_equal(nrow(res), 4)
+  expect_equal(colnames(res), colnames(tags))
+  expect_equal(res$tag_name, c("x", "x", "y", "x"))
+  expect_equal(res$tag_count, c(1L, 1L, 1L, 1L))
 })
