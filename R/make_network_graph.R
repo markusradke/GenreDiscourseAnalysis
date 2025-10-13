@@ -1,3 +1,42 @@
+#' Plot Network Graph
+#'
+#' Creates either a static or interactive hierarchical network graph visualization
+#' using D3.js through the r2d3 package.
+#'
+#' @param graph An igraph object representing the hierarchical structure
+#' @param mapping A data frame containing track-to-genre mappings
+#' @param sizemode Character. Either "initial_genre" or "metagenre" for node sizing
+#' @param sortmode Character. How to sort nodes: "size", "meta-up_alphabetical", or "meta-up_size"
+#' @param fillmode Character. How to color nodes: "none", "metagenres", or "root"
+#' @param height Numeric. Height in pixels (ignored when interactive = TRUE, uses 1200px)
+#' @param nodesizes Numeric. Scaling factor for node sizes
+#' @param margin_left,margin_right,margin_top,margin_bottom Numeric. Margins in pixels (ignored when interactive = TRUE, uses 100px each)
+#' @param minFontSize,maxFontSize Numeric. Font size range for node labels
+#' @param interactive Logical. If TRUE, creates interactive plot with fold/expand functionality
+#'
+#' @details
+#' When interactive = TRUE:
+#' - Fixed height of 1200px with scrolling
+#' - Initially shows only root and first sublevel
+#' - Click nodes or labels to expand/collapse their children
+#' - Bold, underlined blue labels indicate expandable nodes
+#' - +/- symbols show expand/collapse state
+#' - Automatic visual feedback with hover effects
+#' - Built-in legend with instructions
+#' - Compatible with D3 version 6
+#'
+#' @return An r2d3 htmlwidget object
+#'
+#' @examples
+#' \dontrun{
+#' # Static plot
+#' plot_network_graph(graph, mapping, interactive = FALSE)
+#'
+#' # Interactive plot
+#' plot_network_graph(graph, mapping, interactive = TRUE)
+#' }
+#'
+#' @export
 plot_network_graph <- function(
   graph,
   mapping,
@@ -11,7 +50,8 @@ plot_network_graph <- function(
   margin_top = 0,
   margin_bottom = 0,
   minFontSize = 22,
-  maxFontSize = 36
+  maxFontSize = 36,
+  interactive = FALSE
 ) {
   root <- get_graph_root(graph)
   sizes_lookup <- get_sizes_lookup(
@@ -28,6 +68,7 @@ plot_network_graph <- function(
     fill_lookup,
     sortmode
   )
+
   data_d3 <- list(
     tree = sorted_hierarchy,
     margin_left = margin_left,
@@ -35,15 +76,20 @@ plot_network_graph <- function(
     margin_top = margin_top,
     margin_bottom = margin_bottom,
     minFontSize = minFontSize,
-
-    maxFontSize = maxFontSize
+    maxFontSize = maxFontSize,
+    height = height
   )
+
+  # Choose script based on interactive parameter
+  script_file <- if (interactive) {
+    "d3/interactive_network_plot.js"
+  } else {
+    "d3/network_plot.js"
+  }
+
   r2d3::r2d3(
     data = data_d3,
-    script = system.file(
-      "d3/network_plot.js",
-      package = "GenreDiscourseAnalysis"
-    ),
+    script = system.file(script_file, package = "GenreDiscourseAnalysis"),
     d3_version = "6",
     height = height
   )
