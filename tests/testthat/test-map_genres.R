@@ -64,7 +64,6 @@ test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
   )
 
   result <- get_initial_genres_tree_and_votes_based(mb_tags, graph)
-
   expect_true(is.data.frame(result))
   expect_setequal(
     colnames(result),
@@ -103,7 +102,7 @@ test_that("handles cases where tags are not in the graph", {
   expect_equal(
     result,
     data.frame(
-      track.s.id = 1,
+      track.s.id = "1",
       track.s.title = "Song A",
       track.s.firstartist.name = "A",
       initial_genre = NA
@@ -117,7 +116,7 @@ test_that("handles cases where tags are not in the graph", {
   expect_equal(
     result,
     data.frame(
-      track.s.id = 1,
+      track.s.id = "1",
       track.s.title = "Song A",
       track.s.firstartist.name = "A",
       initial_genre = NA
@@ -150,4 +149,29 @@ test_that("get_tree_and_votes_based_mapping uses votes for complete subtree", {
 
   result <- get_initial_genre_mapping(track_tags, graph)
   expect_equal(result$initial_genre, "jazz")
+})
+
+test_that("cache management works correctly", {
+  # Test that cache is properly managed
+  mb_tags <- data.frame(
+    track.s.id = c(1, 1),
+    track.s.title = c("Song A", "Song A"),
+    track.s.firstartist.name = c("A", "A"),
+    tag_name = c("rock", "pop"),
+    tag_count = c(10, 5),
+    stringsAsFactors = FALSE
+  )
+
+  graph <- igraph::graph_from_data_frame(
+    data.frame(from = c("rock", "pop"), to = c("music", "music")),
+    directed = TRUE
+  )
+
+  # Cache should be cleared before run
+  expect_no_error({
+    result <- get_initial_genre_mapping(mb_tags, graph)
+  })
+
+  expect_true(is.data.frame(result))
+  expect_equal(nrow(result), 1)
 })
