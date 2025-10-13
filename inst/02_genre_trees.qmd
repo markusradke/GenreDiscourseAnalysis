@@ -16,6 +16,11 @@ format:
         - text: Github Repository
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+devtools::load_all()
+```	
+
 # Short Explanation
 include graphics from the Bayreuth Powerpoint
 
@@ -26,3 +31,22 @@ include foldable hmtl depiction
 Only here with votes
 
 # Genre Tree for Spotify
+
+# Test D3 Chart
+```{r}	
+s_initial <- read_feather_with_lists("../models/initial_genres_s.feather")
+s_graph <- readRDS("../models/Spotify_graph.rds")
+
+
+
+plot_network_graph(
+  s_graph,
+  s_initial,
+  height = 130000,
+  minFontSize = 10,
+  maxFontSize = 28,
+  sizemode = "initial_genre",
+  sortmode = "size",
+  fillmode = "none"
+) 
+```

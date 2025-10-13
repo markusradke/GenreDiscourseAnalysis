@@ -241,7 +241,7 @@ test_that("quarto_render_move integrates all components", {
 test_that("generate_report throws error when qmd file not found", {
   expect_error(
     generate_report("non_existent_report"),
-    "Cannot find the .qmd file for report generation"
+    "Cannot find the .qmd file for report generation: 'non_existent_report'"
   )
 })
 

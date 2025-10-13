@@ -5,7 +5,10 @@ generate_report <- function(qmd_in_inst) {
   )
   if (!file.exists(qmd_file)) {
     stop(
-      "Cannot find the .qmd file for report generation: '01_data_report.qmd'.\nPlease install / load the package correctly."
+      sprintf(
+        "Cannot find the .qmd file for report generation: '%s'",
+        qmd_in_inst
+      )
     )
   }
   quarto_render_move(
@@ -14,7 +17,7 @@ generate_report <- function(qmd_in_inst) {
   )
   message(sprintf(
     "Report '%s' generated in 'reports/' directory.",
-    qmd_in_inst
+    qmd_file
   ))
 }
 
