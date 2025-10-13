@@ -1,7 +1,7 @@
 // Interactive Network Plot
 const fixedHeight = data.height;
 const fixedWidth = 1600;
-const margin = 100;
+const margin = 200;
 
 // Initialize SVG
 svg.attr("width", fixedWidth)
