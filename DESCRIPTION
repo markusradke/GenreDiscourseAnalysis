@@ -17,6 +17,7 @@ Imports:
     dplyr,
     igraph,
     quarto,
+    r2d3,
     rgexf,
     stats,
     stringr,
