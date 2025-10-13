@@ -12,59 +12,20 @@ message("\nBUILDING SPOTIFY GENRE TREE")
 build_genre_tree(s, 'Spotify', vote_weighted = FALSE)
 
 # Map initial genres ----
-# TODO: FIX MAPPING
-# TODO: OPTIMIZE (takes very long for large datasets)
 message("\n MAP INITIAL GENRES MUSICBRAINZ")
 initial_genres_mb <- get_initial_genre_mapping(
-  mb_test,
+  mb,
   readRDS('models/MusicBrainz_graph.rds')
 )
 
 message("\n MAP INITIAL GENRES DISCOGS")
 initial_genres_dc <- get_initial_genre_mapping(
-  dc_test,
+  dc,
   readRDS('models/Discogs_graph.rds')
 )
 
 message("\n MAP INITIAL GENRES SPOTIFY")
 initial_genres_s <- get_initial_genre_mapping(
-  s_test,
+  s,
   readRDS('models/Spotify_graph.rds')
-)
-
-# RANDOM QUICK FIX FOR MAPPING (initial genres_needed for visualization of trees) ----
-initial_genres_mb <- dplyr::distinct(mb, track.s.id, .keep_all = TRUE) |>
-  dplyr::select(-tag_name, -tag_count)
-genres_graph_mb <- igraph::V(readRDS('models/MusicBrainz_graph.rds'))$name
-initial_genres_mb$initial_genre <- rep(
-  genres_graph_mb,
-  length.out = nrow(initial_genres_mb)
-)
-save_feather_with_lists(
-  initial_genres_mb,
-  'models/initial_genres_mb'
-)
-
-initial_genres_dc <- dplyr::distinct(dc, track.s.id, .keep_all = TRUE) |>
-  dplyr::select(-tag_name, -tag_count)
-genres_graph_dc <- igraph::V(readRDS('models/Discogs_graph.rds'))$name
-initial_genres_dc$initial_genre <- rep(
-  genres_graph_dc,
-  length.out = nrow(initial_genres_dc)
-)
-save_feather_with_lists(
-  initial_genres_dc,
-  'models/initial_genres_dc'
-)
-
-initial_genres_s <- dplyr::distinct(s, track.s.id, .keep_all = TRUE) |>
-  dplyr::select(-tag_name, -tag_count)
-genres_graph_s <- igraph::V(readRDS('models/Discogs_graph.rds'))$name
-initial_genres_s$initial_genre <- rep(
-  genres_graph_s,
-  length.out = nrow(initial_genres_s)
-)
-save_feather_with_lists(
-  initial_genres_s,
-  'models/initial_genres_s'
 )

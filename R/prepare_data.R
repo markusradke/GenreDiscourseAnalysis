@@ -235,12 +235,13 @@ get_long_genre_tags <- function(
   if (length(caluclate_tag_count) > 0) {
     message("Calculating tag counts ...")
     if (
-      !all(caluclate_tag_count %in% c("artist", "total")) |
+      !all(caluclate_tag_count %in% c("artist", "total", "ones")) |
         length(caluclate_tag_count) > 1
     ) {
       stop("If caluclate_tag_count is used, it must be 'artist' or 'total'.")
+    } else {
+      result <- calculate_tag_counts(result, caluclate_tag_count)
     }
-    result <- calculate_tag_counts(result, caluclate_tag_count)
   }
   message("Done.")
   result
@@ -283,6 +284,11 @@ calculate_tag_counts <- function(tags, method) {
       counts,
       by = c("tag_name")
     )
+  } else if (method == "ones") {
+    tags$tag_count <- 1
+    result <- tags
+  } else {
+    stop("Unknown method for calculating tag counts.")
   }
   result |>
     dplyr::select(

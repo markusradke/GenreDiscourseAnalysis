@@ -1,5 +1,3 @@
-# todo write tests
-# todo test if it works for larger datasets
 # todo optimize: This takes very long for large datasets
 get_initial_genre_mapping <- function(tags, graph) {
   tags_in_graph <- tags |>
@@ -25,6 +23,8 @@ get_initial_genre_mapping <- function(tags, graph) {
 get_initial_genres_tree_and_votes_based <- function(tags, graph) {
   # determines the initial genre for each track by following
   # the tree branch with most votes as far as possible
+  # votes are summed over all tags in the subtree of a tag
+  # tie breaker: take the tag with lower total votes (more specific)
   total_votes_genres <- tags |>
     dplyr::group_by(.data$tag_name) |>
     dplyr::summarize(votes_total = sum(tag_count))
@@ -36,7 +36,7 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
       message(sprintf("track %d of %d", i, length(tracks[i])))
     }
     track_tags <- tags |> dplyr::filter(track.s.id == tracks[i])
-    initial_genre <- get_tree_and_votes_based_mapping(track_tags, graph)
+    initial_genre <- get_tree_and_votes_based_mapping(track_tags, graph, tags)
     res <- rbind(
       res,
       data.frame(
@@ -50,13 +50,17 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
   res
 }
 
-get_tree_and_votes_based_mapping <- function(track_tags, graph) {
+get_tree_and_votes_based_mapping <- function(track_tags, graph, tags) {
   if (nrow(track_tags) == 1) {
     return(track_tags$tag_name)
   }
   while (nrow(track_tags) > 1) {
     most_voted <- track_tags |>
-      dplyr::arrange(-.data$tag_count, .data$votes_total) |>
+      dplyr::mutate(
+        votes_sub = lapply(tag_name, get_subtree_votes, graph, tags) |>
+          as.integer()
+      ) |>
+      dplyr::arrange(-.data$votes_sub, .data$votes_total) |> # todo modify to use votes in subtree
       dplyr::first() |>
       dplyr::pull(.data$tag_name)
     children <- get_subgraph(graph, most_voted) |>
@@ -72,4 +76,13 @@ get_tree_and_votes_based_mapping <- function(track_tags, graph) {
     }
   }
   genre
+}
+
+get_subtree_votes <- function(root, graph, tags) {
+  subgraph <- get_subgraph(graph, root)
+  tags_subtree <- igraph::V(subgraph)$name
+  sum(
+    tags$tag_count[tags$tag_name %in% tags_subtree],
+    na.rm = TRUE
+  )
 }

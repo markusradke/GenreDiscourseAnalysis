@@ -114,7 +114,7 @@ filtered_s_genres <- filter_valid_s_genres(
 s_long <- get_long_genre_tags(
   filtered_s_genres,
   "s.genres",
-  caluclate_tag_count = "total"
+  caluclate_tag_count = "ones"
 )
 save_feather_with_lists(s_long, "data/filtered_s_long")
 

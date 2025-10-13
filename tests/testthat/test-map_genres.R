@@ -38,7 +38,7 @@ test_that("get_tree_and_votes_based_mapping handles multiple tags with hierarchy
     directed = TRUE
   )
 
-  result <- get_tree_and_votes_based_mapping(track_tags, graph)
+  result <- get_tree_and_votes_based_mapping(track_tags, graph, track_tags)
   expect_type(result, "character")
   expect_length(result, 1)
   expect_equal(result, "metal")
@@ -123,4 +123,31 @@ test_that("handles cases where tags are not in the graph", {
       initial_genre = NA
     )
   )
+})
+
+test_that("get_tree_and_votes_based_mapping uses votes for complete subtree", {
+  track_tags <- data.frame(
+    track.s.id = c(1, 1, 1, 1),
+    track.s.title = c(
+      "Song A",
+      "Song A",
+      "Song A",
+      "Song A"
+    ),
+    track.s.firstartist.name = c("A", "A", "A", "A"),
+    tag_name = c("music", "rock", "pop", "jazz"),
+    tag_count = c(1, 3, 1, 3),
+    stringsAsFactors = FALSE
+  )
+
+  graph <- igraph::graph_from_data_frame(
+    data.frame(
+      from = c("rock", "pop", "jazz"),
+      to = c("music", "music", "pop")
+    ),
+    directed = TRUE
+  )
+
+  result <- get_initial_genre_mapping(track_tags, graph)
+  expect_equal(result$initial_genre, "jazz")
 })
