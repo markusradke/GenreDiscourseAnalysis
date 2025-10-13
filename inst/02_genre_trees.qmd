@@ -31,9 +31,8 @@ include foldable hmtl depiction
 Only here with votes
 
 # Genre Tree for Spotify
-
-# Test D3 Chart
-```{r}	
+:::{.column-screen}
+```{r, include=FALSE}	
 s_initial <- read_feather_with_lists("../models/initial_genres_s.feather")
 s_graph <- readRDS("../models/Spotify_graph.rds")
 
@@ -50,3 +49,4 @@ plot_network_graph(
   fillmode = "none"
 ) 
 ```
+:::

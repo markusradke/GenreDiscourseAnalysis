@@ -35,11 +35,15 @@ plot_network_graph <- function(
     margin_top = margin_top,
     margin_bottom = margin_bottom,
     minFontSize = minFontSize,
+
     maxFontSize = maxFontSize
   )
   r2d3::r2d3(
     data = data_d3,
-    script = 'd3/network_plot.js',
+    script = system.file(
+      "d3/network_plot.js",
+      package = "GenreDiscourseAnalysis"
+    ),
     d3_version = "6",
     height = height
   )
