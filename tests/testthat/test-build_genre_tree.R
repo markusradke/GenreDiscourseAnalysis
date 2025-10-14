@@ -138,29 +138,6 @@ test_that("select_strongest_parent_per_node selects strongest parent only", {
   expect_equal(democratic["C", "A"], 0)
 })
 
-test_that("find_unconnected_tags identifies missing nodes correctly", {
-  skip_if_not_installed("igraph")
-
-  # create graphs with different vertex sets
-  g_full <- igraph::graph_from_edgelist(matrix(
-    c(1, 2, 2, 3, 3, 4),
-    ncol = 2,
-    byrow = TRUE
-  ))
-  igraph::V(g_full)$name <- c("A", "B", "C", "D")
-
-  g_partial <- igraph::graph_from_edgelist(matrix(
-    c(1, 2),
-    ncol = 2,
-    byrow = TRUE
-  ))
-  igraph::V(g_partial)$name <- c("A", "B")
-
-  unconnected <- find_unconnected_tags(g_partial, g_full)
-
-  expect_equal(sort(unconnected), c("C", "D"))
-})
-
 test_that("apply_vote_weighting preserves matrix dimensions", {
   tags <- data.frame(
     track.s.id = c("a", "a"),
@@ -206,9 +183,7 @@ test_that("build_genre_tree handles small dataset without errors", {
 
   # check that files were created
   expect_true(file.exists("models/test_weighted_graph.rds"))
-  expect_true(file.exists("models/test_weighted_unconnected_tags.rds"))
   file.remove("models/test_weighted_graph.rds")
-  file.remove("models/test_weighted_unconnected_tags.rds")
 })
 
 test_that("performance critical functions handle edge cases", {

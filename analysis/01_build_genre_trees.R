@@ -1,3 +1,4 @@
+rm(list = ls())
 # Load data ----
 mb <- read_feather_with_lists('data/filtered_mb_long.feather')
 dc <- read_feather_with_lists('data/filtered_dc_long.feather')
