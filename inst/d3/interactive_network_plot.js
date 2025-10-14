@@ -1,19 +1,116 @@
-// Interactive Network Plot
-const fixedHeight = data.height;
-const fixedWidth = 1600;
-const margin = 200;
+// Interactive Network Plot - Use r2d3 data dimensions directly
+const minNodeSpacing = 30; // Minimum spacing between nodes to prevent overlap
 
-// Initialize SVG
-svg.attr("width", fixedWidth)
-    .attr("height", fixedHeight)
-    .style("overflow", "auto");
+// Use dimensions from r2d3 data object, slightly reduced to prevent scrollbars
+const actualHeight = (data.height || 1000) - 4; // Reduce by 4px for borders/padding
+const actualWidth = (data.width || 1600) - 4;   // Reduce by 4px for borders/padding
 
-// Create container for tree
+// Calculate dynamic height based on tree structure
+function calculateRequiredHeight(root) {
+    const visibleNodes = root.descendants();
+    const nodesByDepth = {};
+
+    // Group nodes by depth level
+    visibleNodes.forEach(node => {
+        const depth = node.depth;
+        if (!nodesByDepth[depth]) {
+            nodesByDepth[depth] = [];
+        }
+        nodesByDepth[depth].push(node);
+    });
+
+    // Find the depth level with the most nodes
+    const maxNodesAtLevel = Math.max(...Object.values(nodesByDepth).map(nodes => nodes.length));
+
+    // Calculate required height: nodes * spacing (no margins needed with pan/zoom)
+    const requiredHeight = Math.max(
+        600, // Minimum height
+        maxNodesAtLevel * minNodeSpacing
+    );
+
+    return requiredHeight;
+}
+
+// Initialize with container height, will be recalculated for tree layout
+let currentHeight = actualHeight;
+
+// Set up the SVG to exactly match the container (no manual sizing)
+svg.attr("width", actualWidth)
+    .attr("height", actualHeight)
+    .style("background-color", "#fafafa")
+    .style("overflow", "hidden") // Remove scrollbars
+    .style("cursor", "grab")
+    .style("display", "block");
+
+// Add zoom behavior
+const zoom = d3.zoom()
+    .scaleExtent([0.1, 3]) // Zoom limits
+    .on("zoom", (event) => {
+        container.attr("transform", event.transform);
+        // Update cursor during pan
+        svg.style("cursor", event.sourceEvent && event.sourceEvent.type === "mousemove" ? "grabbing" : "grab");
+    });
+
+svg.call(zoom);
+
+// Create container for tree (this will be transformed by zoom/pan)
 const container = svg.append("g")
-    .attr("class", "tree-container")
-    .attr("transform", `translate(${margin}, ${margin})`);
+    .attr("class", "tree-container");
 
-// Copy data and create persistent hierarchy
+// Add center button
+const centerButton = svg.append("g")
+    .attr("class", "center-button")
+    .attr("transform", "translate(20, 20)")
+    .style("cursor", "pointer");
+
+// Button background
+centerButton.append("rect")
+    .attr("width", 100)
+    .attr("height", 30)
+    .attr("rx", 5)
+    .style("fill", "#007acc")
+    .style("stroke", "#005a9e")
+    .style("stroke-width", 1);
+
+// Button text
+centerButton.append("text")
+    .attr("x", 50)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("dy", "0.35em")
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("pointer-events", "none")
+    .text("Reset view");
+
+// Button click handler
+centerButton.on("click", function() {
+    centerOnRoot();
+});
+
+// Function to center the view on the root node
+function centerOnRoot() {
+    if (!hierarchyRoot) return;
+
+    // Find the actual root node position after tree layout
+    const rootNode = hierarchyRoot;
+    const rootX = rootNode.x || 0;
+    const rootY = rootNode.y || 0;
+
+    // Calculate transform to center the root in the actual viewport
+    const centerX = actualWidth / 2;
+    const centerY = actualHeight / 2; // Center in actual viewport
+
+    const transform = d3.zoomIdentity
+        .translate(centerX - rootY, centerY - rootX) // Note: x and y are swapped in horizontal tree
+        .scale(1); // Reset zoom to 1x
+
+    // Animate to center
+    svg.transition()
+        .duration(750)
+        .call(zoom.transform, transform);
+} // Copy data and create persistent hierarchy
 let currentData = JSON.parse(JSON.stringify(data.tree));
 let hierarchyRoot = null; // Keep the hierarchy root persistent
 let isFirstRender = true; // Track if this is the first render
@@ -56,7 +153,7 @@ function sortChildrenBySize(node) {
         // Recursively sort their children too
         node.children.forEach(child => sortChildrenBySize(child));
     }
-    
+
     // Sort hidden children (so they're in the right order when expanded)
     if (node._children) {
         node._children.sort((a, b) => calculateTotalSize(b) - calculateTotalSize(a));
@@ -114,28 +211,28 @@ function isCollapsed(nodeName) {
 // Calculate the total size of a node including all its descendants
 function calculateTotalSize(node) {
     let totalSize = node.data.size || 0;
-    
+
     // Add sizes from visible children
     if (node.children) {
         for (let child of node.children) {
             totalSize += calculateTotalSize(child);
         }
     }
-    
+
     // Add sizes from hidden children (collapsed nodes)
     if (node._children) {
         for (let child of node._children) {
             totalSize += calculateTotalSize(child);
         }
     }
-    
+
     return totalSize;
 }
 
 // Get the effective size for display (aggregated size for collapsed nodes)
 function getEffectiveSize(displayNode, nodeName) {
     const persistentNode = findNodeByName(hierarchyRoot, nodeName);
-    
+
     if (persistentNode && isCollapsed(nodeName)) {
         // For collapsed nodes, return the total aggregated size
         return calculateTotalSize(persistentNode);
@@ -175,7 +272,7 @@ function toggle(d) {
 
 // Update function
 function update() {
-    // Clear previous content
+    // Clear previous content (but keep the center button)
     container.selectAll("*").remove();
 
     // Create or use existing hierarchy
@@ -188,8 +285,23 @@ function update() {
     }
 
     const root = hierarchyRoot;
-    const treeLayout = d3.tree().size([fixedHeight - 2 * margin, fixedWidth - 2 * margin]);
+
+    // Calculate required height dynamically for tree layout
+    currentHeight = calculateRequiredHeight(root);
+
+    // Set up tree layout with full available space (no margins)
+    const treeLayout = d3.tree().size([currentHeight, actualWidth]);
     treeLayout(root);
+
+    // Position the tree centered in the actual viewport
+    const startX = 0; // No left margin needed
+    const startY = actualHeight / 2; // Center in actual viewport
+
+    // Adjust all node positions
+    root.descendants().forEach(d => {
+        d.x = d.x - currentHeight / 2 + startY; // Center in actual viewport
+        d.y = d.y + startX; // Start from left edge
+    });
 
     // Scale for node sizes - now considering aggregated sizes for collapsed nodes
     const allEffectiveSizes = root.descendants().map(d => getEffectiveSize(d, d.data.name));
@@ -226,6 +338,9 @@ function update() {
         .style('stroke', d => (d.data && hasExpandableChildren(d.data.name)) ? '#000' : 'none')
         .style('stroke-width', d => (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1)
         .on('click', function(event, d) {
+            // Prevent zoom behavior when clicking on nodes
+            event.stopPropagation();
+
             // Check persistent hierarchy instead of display node
             const persistentNode = findNodeByName(hierarchyRoot, d.data.name);
             if (persistentNode) {
@@ -269,6 +384,9 @@ function update() {
         .style('cursor', d => hasExpandableChildren(d.data.name) ? 'pointer' : 'default')
         .text(d => d.data.name)
         .on('click', function(event, d) {
+            // Prevent zoom behavior when clicking on text
+            event.stopPropagation();
+
             // Check persistent hierarchy instead of display node
             const persistentNode = findNodeByName(hierarchyRoot, d.data.name);
             if (persistentNode) {
@@ -291,7 +409,7 @@ function update() {
         .text(d => {
             const effectiveSize = getEffectiveSize(d, d.data.name);
             const originalSize = d.data.size || 0;
-            
+
             if (hasExpandableChildren(d.data.name)) {
                 const action = isCollapsed(d.data.name) ? 'expand' : 'collapse';
                 if (isCollapsed(d.data.name) && effectiveSize > originalSize) {
@@ -306,3 +424,8 @@ function update() {
 
 // Initial render
 update();
+
+// Center on root after initial render
+setTimeout(() => {
+    centerOnRoot();
+}, 100); // Small delay to ensure rendering is complete

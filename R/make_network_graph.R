@@ -8,7 +8,7 @@
 #' @param sizemode Character. Either "initial_genre" or "metagenre" for node sizing
 #' @param sortmode Character. How to sort nodes: "size", "meta-up_alphabetical", or "meta-up_size"
 #' @param fillmode Character. How to color nodes: "none", "metagenres", or "root"
-#' @param height Numeric. Height in pixels (ignored when interactive = TRUE, uses 1200px)
+#' @param height Numeric. Height in pixels (ignored when interactive = TRUE, uses 967px)
 #' @param nodesizes Numeric. Scaling factor for node sizes
 #' @param margin_left,margin_right,margin_top,margin_bottom Numeric. Margins in pixels (ignored when interactive = TRUE, uses 100px each)
 #' @param minFontSize,maxFontSize Numeric. Font size range for node labels
@@ -16,7 +16,7 @@
 #'
 #' @details
 #' When interactive = TRUE:
-#' - Fixed height of 1200px with scrolling
+#' - Fixed height of 967px with scrolling
 #' - Initially shows only root and first sublevel
 #' - Click nodes or labels to expand/collapse their children
 #' - Bold, underlined blue labels indicate expandable nodes
@@ -91,7 +91,16 @@ plot_network_graph <- function(
     data = data_d3,
     script = system.file(script_file, package = "GenreDiscourseAnalysis"),
     d3_version = "6",
-    height = height
+    width = "100%",
+    height = height,
+    options = if (interactive) {
+      list(
+        container = "div",
+        viewer = NULL
+      )
+    } else {
+      list()
+    }
   )
 }
 
