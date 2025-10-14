@@ -48,6 +48,23 @@ function collapseHierarchyToFirstLevel(node, depth = 0) {
     }
 }
 
+// Sort children by accumulated size (largest first)
+function sortChildrenBySize(node) {
+    // Sort visible children
+    if (node.children) {
+        node.children.sort((a, b) => calculateTotalSize(b) - calculateTotalSize(a));
+        // Recursively sort their children too
+        node.children.forEach(child => sortChildrenBySize(child));
+    }
+    
+    // Sort hidden children (so they're in the right order when expanded)
+    if (node._children) {
+        node._children.sort((a, b) => calculateTotalSize(b) - calculateTotalSize(a));
+        // Recursively sort their children too
+        node._children.forEach(child => sortChildrenBySize(child));
+    }
+}
+
 // Find a node in the hierarchy by name
 function findNodeByName(root, name) {
     if (root.data.name === name) {
@@ -94,6 +111,40 @@ function isCollapsed(nodeName) {
     return persistentNode && persistentNode._children && !persistentNode.children;
 }
 
+// Calculate the total size of a node including all its descendants
+function calculateTotalSize(node) {
+    let totalSize = node.data.size || 0;
+    
+    // Add sizes from visible children
+    if (node.children) {
+        for (let child of node.children) {
+            totalSize += calculateTotalSize(child);
+        }
+    }
+    
+    // Add sizes from hidden children (collapsed nodes)
+    if (node._children) {
+        for (let child of node._children) {
+            totalSize += calculateTotalSize(child);
+        }
+    }
+    
+    return totalSize;
+}
+
+// Get the effective size for display (aggregated size for collapsed nodes)
+function getEffectiveSize(displayNode, nodeName) {
+    const persistentNode = findNodeByName(hierarchyRoot, nodeName);
+    
+    if (persistentNode && isCollapsed(nodeName)) {
+        // For collapsed nodes, return the total aggregated size
+        return calculateTotalSize(persistentNode);
+    } else {
+        // For expanded nodes or leaf nodes, return their own size
+        return displayNode.data.size || 0;
+    }
+}
+
 // Toggle function
 function toggle(d) {
     // Safety check for data structure
@@ -116,6 +167,9 @@ function toggle(d) {
         persistentNode._children = null;
     }
 
+    // Re-sort the entire hierarchy to maintain size-based ordering
+    sortChildrenBySize(hierarchyRoot);
+
     update();
 }
 
@@ -128,6 +182,8 @@ function update() {
     if (isFirstRender) {
         hierarchyRoot = d3.hierarchy(currentData);
         collapseHierarchyToFirstLevel(hierarchyRoot, 0);
+        // Sort all nodes by accumulated size after initial setup
+        sortChildrenBySize(hierarchyRoot);
         isFirstRender = false;
     }
 
@@ -135,9 +191,10 @@ function update() {
     const treeLayout = d3.tree().size([fixedHeight - 2 * margin, fixedWidth - 2 * margin]);
     treeLayout(root);
 
-    // Scale for node sizes
+    // Scale for node sizes - now considering aggregated sizes for collapsed nodes
+    const allEffectiveSizes = root.descendants().map(d => getEffectiveSize(d, d.data.name));
     const sizeScale = d3.scaleLinear()
-        .domain([0, d3.max(root.descendants(), d => d.data.size) || 1])
+        .domain([0, d3.max(allEffectiveSizes) || 1])
         .range([4, 15]);
 
     // Create links
@@ -164,7 +221,7 @@ function update() {
 
     // Add circles
     nodes.append('circle')
-        .attr('r', d => sizeScale(d.data.size))
+        .attr('r', d => sizeScale(getEffectiveSize(d, d.data.name)))
         .style('fill', d => d.data.fill || '#69b3a2')
         .style('stroke', d => (d.data && hasExpandableChildren(d.data.name)) ? '#000' : 'none')
         .style('stroke-width', d => (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1)
@@ -232,10 +289,18 @@ function update() {
     // Add tooltips
     nodes.append('title')
         .text(d => {
+            const effectiveSize = getEffectiveSize(d, d.data.name);
+            const originalSize = d.data.size || 0;
+            
             if (hasExpandableChildren(d.data.name)) {
-                return `${d.data.name} (Click to ${isCollapsed(d.data.name) ? 'expand' : 'collapse'})`;
+                const action = isCollapsed(d.data.name) ? 'expand' : 'collapse';
+                if (isCollapsed(d.data.name) && effectiveSize > originalSize) {
+                    return `${d.data.name} (Click to ${action}) - Aggregated size: ${effectiveSize} (own: ${originalSize})`;
+                } else {
+                    return `${d.data.name} (Click to ${action}) - Size: ${effectiveSize}`;
+                }
             }
-            return d.data.name;
+            return `${d.data.name} - Size: ${effectiveSize}`;
         });
 }
 
