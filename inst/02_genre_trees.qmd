@@ -9,12 +9,25 @@ format:
         output-dir: reports
         toc: true
         toc-location: left
-        toc-depth: 2
+        toc-depth: 5
+        toc-expand: 5
         number-sections: true
         theme: cosmo
         code-links:
         - text: Github Repository
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+        - text: Corresponding Analysis script
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/analysis/01_build_genre_trees.R"
+        - text: Helper functions - Tree Building
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/build_genre_tree.R"
+        - text: Helper functions - Initial Genre Mapping
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/map_genres.R"
+        - text: Helper functions - Tree Plotting
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/make_network_graph.R"
         css: |
           .interactive-plot {
             border: 1px solid #ddd;
@@ -35,11 +48,47 @@ devtools::load_all()
 ```	
 
 # Short Explanation
-include graphics from the Bayreuth Powerpoint
+This report presents interactive genre trees for the MusicBrainz and Discogs folksonomies, as well as the digital music streaming platform Spotify. Each tree visualizes the **hierarchical structure of music genres** based on a dataset of popular tracks in Germany over the last 50 years (PopTraG). The trees allow users to explore sub-genres by clicking on nodes, with node size representing the number of tracks associated with each genre. 
 
+## The intital genre network
+In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the PopTraG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments, which are used to **weight the edges in the MusicBrainz genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear.
 
+```{mermaid}
+---
+title: "Example for Discogs and Spotify"
+---
+flowchart LR
+  rock -- P(metal|rock) --> metal
+  metal -- P(rock|metal) --> rock
+```
+
+```{mermaid}
+---
+title: "Example for MusicBrainz"
+---
+flowchart LR
+  rock -- P(metal|rock) * meanRelFreqVotes(metal|rock) --> metal
+  metal -- P(rock|metal) * meanRelFreqVotes(rock|metal) --> rock
+```
+
+## Network of descendant genres
+Next, we determine which genre is a descendant of the other. Genres with descendants should be distributed more evenly across multiple genres. Thus, in our initial genre network, we eliminate the weaker connection between the two genres. To account for the uncertainty in this decision, we subtract the weaker conditional probability from the conditional probability of the stronger connection (see the continued example).  
+
+```{mermaid}
+flowchart LR
+  rock -. P(metal|rock) .-x metal
+  metal -- P(rock|metal) - P(rock|metal) --> rock
+```
+
+## 'Radically democratic' genre trees
+Now, we transform the directed network of descendant genres into a hierarchical tree. We assume that the strongest link to a potential parent genre determines the most suitable parent genre. Thus, we eliminate all other outgoing links to potential parents (see the continued example).
+
+```{mermaid}
+flowchart LR
+   metal --> rock
+   metal -.-x pop
+```
 # Genre Tree for MusicBrainz
-Only here with votes
 
 :::{.column-screen}
 ```{r musicbrainz-interactive-tree, echo=FALSE}
