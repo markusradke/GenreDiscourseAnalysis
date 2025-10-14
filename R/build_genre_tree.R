@@ -10,18 +10,15 @@ build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
   initial_network <- create_igraph_from_matrix(final_adjacency)
   bidirectional_removed <- remove_weaker_bidirectional_edges(final_adjacency)
   tree_structure <- select_strongest_parent_per_node(bidirectional_removed)
-  final_tree <- create_igraph_from_matrix(tree_structure)
-
-  connected_component <- igraph::largest_component(final_tree)
-  isolated_tags <- find_unconnected_tags(connected_component, final_tree)
+  igraph_tree <- create_igraph_from_matrix(tree_structure)
+  final_tree <- add_popmusic_as_metagerne(igraph_tree)
 
   save_results(
     initial_network,
-    connected_component,
-    isolated_tags,
+    final_tree,
     platform_name
   )
-  connected_component
+  final_tree
 }
 
 create_igraph_from_matrix <- function(adjacency_matrix) {
@@ -32,10 +29,32 @@ create_igraph_from_matrix <- function(adjacency_matrix) {
   )
 }
 
+add_popmusic_as_metagerne <- function(graph) {
+  nodes_without_parents <- igraph::V(graph)[
+    igraph::degree(graph, mode = "out") == 0
+  ]$name
+
+  if (!"POPULAR MUSIC" %in% igraph::V(graph)$name) {
+    graph <- igraph::add_vertices(graph, 1, name = "POPULAR MUSIC")
+  } else {
+    warning(
+      "Graph already contains a node named 'POPULAR MUSIC', can't add metagenre."
+    )
+    return(graph)
+  }
+  for (node in nodes_without_parents) {
+    graph <- igraph::add_edges(
+      graph,
+      c(node, "POPULAR MUSIC"),
+      attr = list(weight = 0)
+    )
+  }
+  graph
+}
+
 save_results <- function(
   initial_graph,
   final_tree,
-  unconnected_tags,
   platform_name
 ) {
   export_graph_for_gephi_import(
@@ -47,10 +66,6 @@ save_results <- function(
     sprintf("%s_genre_tree", platform_name)
   )
   saveRDS(final_tree, sprintf("models/%s_graph.rds", platform_name))
-  saveRDS(
-    unconnected_tags,
-    sprintf("models/%s_unconnected_tags.rds", platform_name)
-  )
 }
 
 
@@ -330,10 +345,4 @@ create_empty_matrix_with_names <- function(template_matrix) {
     ncol = ncol(template_matrix),
     dimnames = list(rownames(template_matrix), colnames(template_matrix))
   )
-}
-
-find_unconnected_tags <- function(connected_graph, original_graph) {
-  connected_tags <- igraph::V(connected_graph) |> names()
-  all_tags <- igraph::V(original_graph) |> names()
-  all_tags[!all_tags %in% connected_tags]
 }
