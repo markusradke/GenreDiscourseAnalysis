@@ -17,14 +17,14 @@ initial_genres_mb <- get_initial_genre_mapping(
   mb,
   readRDS('models/MusicBrainz_graph.rds')
 )
-save_feather_with_lists(initial_genres_mb, "models/initial_genres_s")
+save_feather_with_lists(initial_genres_mb, "models/initial_genres_mb")
 
 message("\n MAP INITIAL GENRES DISCOGS")
 initial_genres_dc <- get_initial_genre_mapping(
   dc,
   readRDS('models/Discogs_graph.rds')
 )
-save_feather_with_lists(initial_genres_dc, "models/initial_genres_s")
+save_feather_with_lists(initial_genres_dc, "models/initial_genres_dc")
 
 message("\n MAP INITIAL GENRES SPOTIFY")
 initial_genres_s <- get_initial_genre_mapping(

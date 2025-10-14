@@ -1,5 +1,5 @@
 outs:
-- md5: 6ce946461a31e43fc66ac79e811e1fe7
-  size: 34839898
+- md5: 88a744dda5417d6da531fbf39e79a387
+  size: 27566234
   hash: md5
   path: filtered_mb_long.feather

@@ -55,10 +55,14 @@ mb_non_music_tags <- c(
   "standup comedy"
 )
 saveRDS(mb_non_music_tags, "data/mb_non_music_tags.rds")
+mb_whitelist <- readRDS("data-raw/musicbrainz_genre_whitelist_20250616.rds")
+unique_mb_tags <- get_unique_mb_tags(poptrag_wo_spotifycharts)
+non_whitelist_genres <- setdiff(unique_mb_tags, mb_whitelist)
+mb_non_valid_tags <- union(mb_non_music_tags, non_whitelist_genres)
 
 filtered_mb_genre <- filter_valid_mb_genres(
   poptrag_wo_spotifycharts,
-  mb_non_music_tags
+  mb_non_valid_tags
 )
 mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
 save_feather_with_lists(mb_long, "data/filtered_mb_long")

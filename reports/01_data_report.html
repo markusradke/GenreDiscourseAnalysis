@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-11">
+<meta name="dcterms.date" content="2025-10-14">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -79,14 +79,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
-  <nav id="TOC" role="doc-toc" class="toc-active">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="5">
     <h2 id="toc-title">Table of contents</h2>
    
-  <ul class="collapse">
+  <ul>
   <li><a href="#sources" id="toc-sources" class="nav-link active" data-scroll-target="#sources"><span class="header-section-number">1</span> Sources</a></li>
-  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">2</span> Preparation</a></li>
+  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">2</span> Preparation</a>
+  <ul>
+  <li><a href="#musicbrainz-network-data" id="toc-musicbrainz-network-data" class="nav-link" data-scroll-target="#musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</a></li>
+  <li><a href="#discogs-network-data" id="toc-discogs-network-data" class="nav-link" data-scroll-target="#discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</a></li>
+  <li><a href="#spotify-network-data" id="toc-spotify-network-data" class="nav-link" data-scroll-target="#spotify-network-data"><span class="header-section-number">2.3</span> Spotify network data</a></li>
+  </ul></li>
   </ul>
-<div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis"><i class="bi bi-link-45deg"></i>Github Repository</a></li></ul></div></nav>
+<div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis"><i class="bi bi-link-45deg"></i>Github Repository</a></li><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/data-raw/import_and_prepare.R"><i class="bi bi-file-code"></i>Data preparation script</a></li><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/prepare_data.R"><i class="bi bi-file-code"></i>Helper functions</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
@@ -111,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 11, 2025</p>
+      <p class="date">October 14, 2025</p>
     </div>
   </div>
   
@@ -123,8 +128,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="sources" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="sources"><span class="header-section-number">1</span> Sources</h2>
+<section id="sources" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Sources</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
@@ -166,10 +171,10 @@ Note
 </div>
 </div>
 </section>
-<section id="preparation" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="preparation"><span class="header-section-number">2</span> Preparation</h2>
-<section id="musicbrainz-network-data" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</h3>
+<section id="preparation" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Preparation</h1>
+<section id="musicbrainz-network-data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
@@ -190,13 +195,13 @@ Note
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>one_track_tags_mb <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(mb_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (39,731 tracks, 14%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
-<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 254,560 tracks</strong> with MusicBrainz music genre tags.</p>
-<p>There are 6,963 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 51 different tags to each track (median: 4, IQR: 5) and voted for each track between 1 and 167 times (median: 6, IQR: 10).</p>
-<p>2091 tags were assigned to only one track (30%, min: 1, max: 90,259, median: 6, IQR: 27).</p>
+<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025 (52,012 tracks, 18%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
+<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 242,279 tracks</strong> with MusicBrainz music genre tags.</p>
+<p>There are 991 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 25 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 156 times (median: 5, IQR: 8).</p>
+<p>101 tags were assigned to only one track (10%, min: 1, max: 90,259, median: 61, IQR: 379).</p>
 </section>
-<section id="discogs-network-data" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</h3>
+<section id="discogs-network-data" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
@@ -243,8 +248,8 @@ Note
 </div>
 </div>
 </section>
-<section id="spotify-network-data" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="spotify-network-data"><span class="header-section-number">2.3</span> Spotify network data</h3>
+<section id="spotify-network-data" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="spotify-network-data"><span class="header-section-number">2.3</span> Spotify network data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>

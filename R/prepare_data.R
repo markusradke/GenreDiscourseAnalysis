@@ -299,3 +299,23 @@ calculate_tag_counts <- function(tags, method) {
       "tag_count"
     )
 }
+
+
+get_unique_mb_tags <- function(mb_input) {
+  all_tags <- c(
+    unlist_mb_tags_dataframe(mb_input$track.mb.genres),
+    unlist_mb_tags_dataframe(mb_input$album.mb.genres),
+    unlist_mb_tags_dataframe(mb_input$artist.mb.genres)
+  )
+  unique(all_tags)
+}
+
+unlist_mb_tags_dataframe <- function(mb_tags) {
+  unlist(lapply(mb_tags, function(x) {
+    if (is.data.frame(x) && "tag_name" %in% colnames(x)) {
+      as.character(x$tag_name)
+    } else {
+      character(0)
+    }
+  }))
+}
