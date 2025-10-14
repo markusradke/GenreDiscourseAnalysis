@@ -1,2 +1,4 @@
 *.gexf
-*.feather
+/initial_genres_dc.feather
+/initial_genres_mb.feather
+/initial_genres_s.feather
