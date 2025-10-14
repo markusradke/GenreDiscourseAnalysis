@@ -29,17 +29,32 @@ format:
           icon: file-code
           href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/make_network_graph.R"
         css: |
-          .interactive-plot {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: auto;
-            max-height: 1200px;
-            background-color: #fafafa;
-          }
           .plot-container {
             width: 100%;
-            height: 1200px;
-            overflow: auto;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            position: relative;
+          }
+          
+          /* Let r2d3 control sizing, just prevent scrollbars */
+          .r2d3 {
+            overflow: hidden !important;
+          }
+          
+          .r2d3 svg {
+            overflow: hidden !important;
+          }
+          
+          .r2d3 > div {
+            overflow: hidden !important;
+          }
+          
+          .plot-instructions {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
           }
 ---
 ```{r setup, include=FALSE}
@@ -90,7 +105,11 @@ flowchart LR
 ```
 # Genre Tree for MusicBrainz
 
-:::{.column-screen}
+:::{.column-screen-inset-right}
+:::{.plot-container}
+<div class="plot-instructions">
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
+</div>
 ```{r musicbrainz-interactive-tree, echo=FALSE}
 mb_initial <- read_feather_with_lists("../models/initial_genres_mb.feather")
 mb_graph <- readRDS("../models/MusicBrainz_graph.rds")
@@ -98,7 +117,7 @@ mb_graph <- readRDS("../models/MusicBrainz_graph.rds")
 plot_network_graph(
   mb_graph,
   mb_initial,
-  height = 2000,
+  height = 1000,
   interactive = TRUE,
   minFontSize = 12,
   maxFontSize = 12,  # Fixed font size as requested
@@ -109,9 +128,14 @@ plot_network_graph(
 
 ```
 :::
+:::
 
 # Genre Tree for Discogs
-:::{.column-screen}
+:::{.column-screen-inset-right}
+:::{.plot-container}
+<div class="plot-instructions">
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
+</div>
 ```{r discogs-interactive-tree, echo=FALSE}
 dc_initial <- read_feather_with_lists("../models/initial_genres_dc.feather")
 dc_graph <- readRDS("../models/Discogs_graph.rds")
@@ -119,7 +143,7 @@ dc_graph <- readRDS("../models/Discogs_graph.rds")
 plot_network_graph(
   dc_graph,
   dc_initial,
-  height = 2000,
+  height = 1000,
   interactive = TRUE,
   minFontSize = 12,
   maxFontSize = 12,  # Fixed font size as requested
@@ -129,11 +153,16 @@ plot_network_graph(
 )
 ```
 :::
+:::
 
 # Genre Tree for Spotify
 Please click on the nodes to explore sub-genres. The font size is fixed to ensure readability. Node size represents the number of songs in each genre.
 
-:::{.column-screen}
+:::{.column-screen-inset-right}
+:::{.plot-container}
+<div class="plot-instructions">
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
+</div>
 ```{r spotify-interactive-tree, echo=FALSE}	
 s_initial <- read_feather_with_lists("../models/initial_genres_s.feather")
 s_graph <- readRDS("../models/Spotify_graph.rds")
@@ -141,7 +170,7 @@ s_graph <- readRDS("../models/Spotify_graph.rds")
 plot_network_graph(
   s_graph,
   s_initial,
-  height = 1200,
+  height = 1000,
   interactive = TRUE,
   minFontSize = 12,
   maxFontSize = 12,  # Fixed font size as requested
@@ -150,5 +179,6 @@ plot_network_graph(
   fillmode = "none"
 ) 
 ```
+:::
 
 :::
