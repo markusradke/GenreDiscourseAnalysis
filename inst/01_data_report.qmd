@@ -9,14 +9,21 @@ format:
         output-dir: reports
         toc: true
         toc-location: left
-        toc-depth: 2
+        toc-depth: 5
+        toc-expand: 5
         number-sections: true
         theme: cosmo
         code-links:
         - text: Github Repository
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+        - text: Data preparation script
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/data-raw/import_and_prepare.R"
+        - text: Helper functions
+          icon: file-code
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/prepare_data.R"
 ---
-## Sources
+# Sources
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 devtools::load_all()
@@ -55,8 +62,8 @@ We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ",")` t
 The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.
 :::
 
-## Preparation
-### MusicBrainz network data
+# Preparation
+## MusicBrainz network data
 
 ```{r musibrainz_genres}
 mb_long <- read_feather_with_lists('../data/filtered_mb_long.feather')
@@ -76,7 +83,7 @@ tracks_per_tag_mb <- dplyr::count(mb_long, tag_name) |> dplyr::pull(n)
 one_track_tags_mb <- dplyr::filter(dplyr::count(mb_long, tag_name), n == 1) |> nrow()
 ```
 
-We filtered out all songs without a genre tag or with only non-music genre tags on MusicBrainz (`r format(n_diff_mb, big.mark = ",")` tracks, `r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ', ')`.
+We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025 (`r format(n_diff_mb, big.mark = ",")` tracks, `r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ', ')`.
 
 This amounts to **N~MusicBrainz~ = `r format(n_mb, big.mark = ",")` tracks** with MusicBrainz music genre tags.
 
@@ -84,7 +91,7 @@ There are `r format(n_unique_mb_tags, big.mark = ",")` different genre tags in t
 
 `r one_track_tags_mb` tags were assigned to only one track (`r round(one_track_tags_mb / n_unique_mb_tags * 100)`%, min: `r min(tracks_per_tag_mb)`, max: `r format(max(tracks_per_tag_mb), big.mark = ",")`, median: `r median(tracks_per_tag_mb)`, IQR: `r IQR(tracks_per_tag_mb)`).
 
-### Discogs network data
+## Discogs network data
 
 ```{r discogs_genres}
 dc_long <- read_feather_with_lists('../data/filtered_dc_long.feather')
@@ -115,7 +122,7 @@ In addition to releases being the observational unit, Discogs provides no vote c
 :::
 
 
-### Spotify network data
+## Spotify network data
 
 ```{r spotify_genres}
 s_long <- read_feather_with_lists('../data/filtered_s_long.feather')

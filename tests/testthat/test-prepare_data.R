@@ -181,3 +181,20 @@ test_that("calculate_tag_counts computes artist and total counts", {
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(1L, 1L, 1L, 1L))
 })
+
+
+test_that("get_unique_mb_tags extracts unique tags", {
+  df <- data.frame(
+    track.s.id = c(1, 2),
+    stringsAsFactors = FALSE
+  )
+  df$track.mb.genres <- list(
+    data.frame(),
+    data.frame(tag_name = c("a", "b"), tag_count = c(1, 2))
+  )
+  df$album.mb.genres <- list(data.frame(tag_name = "b"), data.frame())
+  df$artist.mb.genres <- list(data.frame(), data.frame())
+  out <- get_unique_mb_tags(df)
+  expect_true(is.character(out))
+  expect_setequal(out, c("a", "b"))
+})
