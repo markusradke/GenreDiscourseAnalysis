@@ -108,11 +108,75 @@ centerButton.append("text")
     .style("font-size", "12px")
     .style("font-weight", "bold")
     .style("pointer-events", "none")
-    .text("Reset view");
+    .text("Center root");
 
 // Button click handler
 centerButton.on("click", function() {
     centerOnRoot();
+});
+
+// Add "Expand All" button
+const expandAllButton = svg.append("g")
+    .attr("class", "expand-all-button")
+    .attr("transform", "translate(20, 60)") // Position below center button
+    .style("cursor", "pointer");
+
+// Expand All button background
+expandAllButton.append("rect")
+    .attr("width", 100)
+    .attr("height", 30)
+    .attr("rx", 5)
+    .style("fill", "#28a745")
+    .style("stroke", "#1e7e34")
+    .style("stroke-width", 1);
+
+// Expand All button text
+expandAllButton.append("text")
+    .attr("x", 50)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("dy", "0em")
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("pointer-events", "none")
+    .text("Expand All");
+
+// Expand All button click handler
+expandAllButton.on("click", function() {
+    expandAll();
+});
+
+// Add "Fold All" button
+const foldAllButton = svg.append("g")
+    .attr("class", "fold-all-button")
+    .attr("transform", "translate(20, 100)") // Position below expand button
+    .style("cursor", "pointer");
+
+// Fold All button background
+foldAllButton.append("rect")
+    .attr("width", 100)
+    .attr("height", 30)
+    .attr("rx", 5)
+    .style("fill", "#dc3545")
+    .style("stroke", "#c82333")
+    .style("stroke-width", 1);
+
+// Fold All button text
+foldAllButton.append("text")
+    .attr("x", 50)
+    .attr("y", 20)
+    .attr("text-anchor", "middle")
+    .attr("dy", "0em")
+    .style("fill", "white")
+    .style("font-size", "12px")
+    .style("font-weight", "bold")
+    .style("pointer-events", "none")
+    .text("Fold All");
+
+// Fold All button click handler
+foldAllButton.on("click", function() {
+    foldAll();
 });
 
 // Function to center the view on the root node
@@ -294,6 +358,71 @@ function toggle(d) {
     sortChildrenBySize(hierarchyRoot);
 
     update();
+}
+
+// Expand All function
+function expandAll() {
+    if (!hierarchyRoot) return;
+
+    // Recursively expand all nodes
+    function expandAllNodes(node) {
+        if (node._children) {
+            node.children = node._children;
+            node._children = null;
+        }
+        if (node.children) {
+            node.children.forEach(child => expandAllNodes(child));
+        }
+    }
+
+    expandAllNodes(hierarchyRoot);
+    sortChildrenBySize(hierarchyRoot);
+    update();
+
+    // Center on root and zoom out 30%
+    setTimeout(() => {
+        if (!hierarchyRoot) return;
+
+        const rootNode = hierarchyRoot;
+        const rootX = rootNode.x || 0;
+        const rootY = rootNode.y || 0;
+
+        const centerX = actualWidth / 2;
+        const centerY = actualHeight / 2;
+
+        const transform = d3.zoomIdentity
+            .translate(centerX - rootY, centerY - rootX)
+            .scale(0.7); // Zoom out 30% (100% - 30% = 70%)
+
+        svg.transition()
+            .duration(750)
+            .call(zoom.transform, transform);
+    }, 100); // Small delay to let the tree update first
+}
+
+// Fold All function
+function foldAll() {
+    if (!hierarchyRoot) return;
+
+    // Collapse everything to root only (no children visible)
+    function collapseToRoot(node) {
+        if (node.children) {
+            node._children = node.children;
+            node.children = null;
+        }
+        if (node._children) {
+            node._children.forEach(child => collapseToRoot(child));
+        }
+    }
+
+    collapseToRoot(hierarchyRoot);
+    sortChildrenBySize(hierarchyRoot);
+    update();
+
+    // Center on root with normal zoom (same as center button)
+    setTimeout(() => {
+        centerOnRoot();
+    }, 100); // Small delay to let the tree update first
 }
 
 // Update function
