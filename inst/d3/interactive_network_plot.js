@@ -1,9 +1,26 @@
-// Interactive Network Plot - Use r2d3 data dimensions directly
+// Interactive Network Plot - Fully responsive dimensions
 const minNodeSpacing = 30; // Minimum spacing between nodes to prevent overlap
 
-// Use dimensions from r2d3 data object, slightly reduced to prevent scrollbars
+// Get responsive width from container with timing-safe approach
+const getResponsiveWidth = () => {
+    // Try multiple ways to get the container width
+    const svgNode = svg.node();
+    const computedStyle = window.getComputedStyle(svgNode);
+    if (computedStyle.width && computedStyle.width !== 'auto') {
+        const width = parseFloat(computedStyle.width);
+        if (width > 0) {
+            return width - 4;
+        }
+    }
+
+    // Fallback to viewport width
+    console.log("Using viewport fallback width");
+    return window.innerWidth * 0.8;
+};
+
+// Use responsive dimensions - prioritize container dimensions over r2d3 data
 const actualHeight = (data.height || 1000) - 4; // Reduce by 4px for borders/padding
-const actualWidth = (data.width || 1600) - 4;   // Reduce by 4px for borders/padding
+const actualWidth = getResponsiveWidth();
 
 // Calculate dynamic height based on tree structure
 function calculateRequiredHeight(root) {
@@ -42,6 +59,15 @@ svg.attr("width", actualWidth)
     .style("cursor", "grab")
     .style("display", "block");
 
+// Add resize handler for responsive width
+window.addEventListener('resize', function() {
+    const newWidth = getResponsiveWidth();
+    svg.attr("width", newWidth);
+
+    // If there's tree content, we might want to recalculate layout
+    // For now, just update the SVG width - the pan/zoom will handle positioning
+});
+
 // Add zoom behavior
 const zoom = d3.zoom()
     .scaleExtent([0.1, 3]) // Zoom limits
@@ -77,7 +103,7 @@ centerButton.append("text")
     .attr("x", 50)
     .attr("y", 20)
     .attr("text-anchor", "middle")
-    .attr("dy", "0.35em")
+    .attr("dy", "0em")
     .style("fill", "white")
     .style("font-size", "12px")
     .style("font-weight", "bold")
