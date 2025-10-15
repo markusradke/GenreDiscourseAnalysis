@@ -13,3 +13,4 @@
 ^.dvcignore$
 ^analysis$
 ^models$
+^\.github$

@@ -2,6 +2,7 @@
 # GenreDiscourseAnalysis
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/markusradke/GenreDiscourseAnalysis/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markusradke/GenreDiscourseAnalysis/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The question of the "correct" genre classification of popular music can lead to heated discussions among music fans, music journalists, and musicologists. Nevertheless, empirical studies of music preferences based on self-reported information often assume a uniform understanding among all respondents. In music psychology and music sociology, this assumption often leads to discussions about validity, replication problems, and the inability to compare studies. However, cultural studies research on popular music emphasizes the context- and perspective-dependent attribution of genres as a central phenomenon of everyday and historical discourse on popular music. So why not make a virtue out of necessity? Using genre classifications from different online music communities for 231,370 popular music titles listened to in Germany in recent decades, we present a method for creating a hierarchical genre family tree based on network analysis. 
