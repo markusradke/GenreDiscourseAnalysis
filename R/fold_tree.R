@@ -19,11 +19,14 @@ tune_tree_folding <- function(
   min_n_grid_min = 100,
   min_n_grid_max = integer(),
   min_n_grid_step = 20,
-  root = 'rock'
+  root = 'POPULAR MUSIC'
 ) {
-  graph_root <- get_subgraph(root, graph)
+  graph_root <- get_subgraph(graph, root)
+  if (!'metagenre' %in% colnames(initial_genres)) {
+    initial_genres <- dplyr::mutate(initial_genres, metagenre = root)
+  }
   initial_genres <- initial_genres |>
-    filter(metagenre == root)
+    dplyr::filter(metagenre == root)
 
   search_grid_min_n <- get_search_grid(
     min_n_grid_min,
@@ -90,12 +93,12 @@ get_search_grid <- function(
   initial_genres
 ) {
   if (length(min_n_grid_max) == 0) {
-    third_most_subgenre_n <- initial_genres |>
+    upper_bound <- initial_genres |>
+      dplyr::filter(!is.na(initial_genre)) |>
       dplyr::count(initial_genre, sort = T) |>
-      dplyr::nth(3) |>
-      dplyr::pull(n) +
-      1 # must reach nan Gini
-    min_n_grid_max <- third_most_subgenre_n
+      dplyr::first() |>
+      dplyr::pull(n)
+    min_n_grid_max <- upper_bound
   }
   seq(min_n_grid_min, min_n_grid_max, min_n_grid_step)
 }
@@ -111,7 +114,7 @@ tune_by_folding_genre_tree_bottom_to_top <- function(
   if ('metagenre' %in% colnames(initial_genres)) {
     initial_genres <- dplyr::rename(initial_genres, 'root' = 'metagenre')
   }
-  get_distances_to_root <- get_distances_to_root(graph_connected, root)
+  get_distances_to_root <- get_distances_to_root(graph_connected)
   for (i in seq_along(min_n_grid)) {
     message(sprintf('Folding tree for minimum n = %d...', min_n_grid[i]))
     temp <- fold_genre_tree_bottom_to_top(
@@ -153,7 +156,7 @@ fold_genre_tree_bottom_to_top <- function(
   min_n,
   root = 'rock'
 ) {
-  hierarchy <- get_distances_to_root(graph_connected, root) |>
+  hierarchy <- get_distances_to_root(graph_connected) |>
     dplyr::mutate(checked = F)
   current_mapping <- initial_genres |> dplyr::mutate(genre = initial_genre)
   current_graph <- graph_connected
@@ -163,7 +166,7 @@ fold_genre_tree_bottom_to_top <- function(
   repeat {
     current_genre <- get_current_genre(hierarchy, n_songs)
     if (
-      filter(hierarchy, tag_name == current_genre) |>
+      dplyr::filter(hierarchy, tag_name == current_genre) |>
         dplyr::pull(hierarchy_level) ==
         0
     ) {
@@ -224,8 +227,8 @@ get_metagenre_graph <- function(mapping, graph) {
 
 
 integrate_genre_and_siblings <- function(genre, mapping, graph, hierarchy) {
-  supergenre <- names(neighbors(graph, genre, mode = "out"))
-  all_subgenres <- names(neighbors(graph, supergenre, mode = 'in'))
+  supergenre <- names(igraph::neighbors(graph, genre, mode = "out"))
+  all_subgenres <- names(igraph::neighbors(graph, supergenre, mode = 'in'))
   new_mapping <- mapping |>
     dplyr::mutate(genre = ifelse(genre %in% all_subgenres, supergenre, genre))
   n_songs <- dplyr::count(new_mapping, genre)
@@ -236,7 +239,7 @@ integrate_genre_and_siblings <- function(genre, mapping, graph, hierarchy) {
 
 get_current_genre <- function(hierarchy, n_songs) {
   hierarchy |>
-    dplyr::left_join(n_songs, by = join_by('tag_name' == 'genre')) |>
+    dplyr::left_join(n_songs, by = dplyr::join_by('tag_name' == 'genre')) |>
     dplyr::mutate(n = ifelse(is.na(n), 0, n)) |>
     dplyr::filter(!checked) |>
     dplyr::arrange(-hierarchy_level, -n) |>
@@ -245,11 +248,11 @@ get_current_genre <- function(hierarchy, n_songs) {
 }
 
 is_parent_and_remaining_larger_min_n <- function(genre, graph, n_songs, min_n) {
-  supergenre <- names(neighbors(graph, genre, mode = "out"))
+  supergenre <- names(igraph::neighbors(graph, genre, mode = "out"))
   if (length(supergenre) == 0) {
     return()
   }
-  other_subgenres <- names(neighbors(graph, supergenre, mode = 'in'))
+  other_subgenres <- names(igraph::neighbors(graph, supergenre, mode = 'in'))
   other_subgenres <- other_subgenres[other_subgenres != genre]
   remaining <- c(supergenre, other_subgenres)
   dplyr::filter(n_songs, genre %in% remaining) |>
@@ -260,7 +263,7 @@ is_parent_and_remaining_larger_min_n <- function(genre, graph, n_songs, min_n) {
 
 get_current_genre_n <- function(current_genre, n_songs) {
   current_n <- n_songs |>
-    filter(genre == current_genre) |>
+    dplyr::filter(genre == current_genre) |>
     dplyr::pull(n)
   if (length(current_n) == 0) {
     current_n <- 0
@@ -286,7 +289,7 @@ get_gini_coefficient <- function(metagenres, get_distances_to_root) {
     dplyr::mutate(relfreq = n / nrow(metagenres)) |>
     dplyr::left_join(
       get_distances_to_root,
-      by = join_by('metagenre' == 'tag_name')
+      by = dplyr::join_by('metagenre' == 'tag_name')
     ) |>
     dplyr::filter(!is.na(hierarchy_level))
   ginis <- relfreqs |>
@@ -298,7 +301,7 @@ get_gini_coefficient <- function(metagenres, get_distances_to_root) {
   weighted_gini <- ginis |>
     dplyr::inner_join(
       counts,
-      by = join_by('hierarchy_level' == 'hierarchy_level')
+      by = dplyr::join_by('hierarchy_level' == 'hierarchy_level')
     ) |>
     dplyr::mutate(addend = gini * n)
   weighted_gini <- sum(weighted_gini$addend) / sum(weighted_gini$n)
