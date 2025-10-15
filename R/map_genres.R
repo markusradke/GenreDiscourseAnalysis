@@ -10,7 +10,7 @@ get_initial_genre_mapping <- function(tags, graph) {
 
   if (nrow(tags_in_graph > 0)) {
     # Process represented tracks
-    initial_genres <- get_initial_genres_tree_and_votes_based(
+    initial_genres <- get_initial_genres_tree_based(
       tags_in_graph,
       graph
     )
@@ -37,7 +37,7 @@ get_initial_genre_mapping <- function(tags, graph) {
       ) |>
       dplyr::mutate(
         initial_genre = NA,
-        track.s.id = as.character(track.s.id)
+        track.s.id = as.character(.data$track.s.id)
       ) |>
       dplyr::distinct()
 
@@ -54,7 +54,7 @@ get_initial_genre_mapping <- function(tags, graph) {
 }
 
 
-get_initial_genres_tree_and_votes_based <- function(tags, graph) {
+get_initial_genres_tree_based <- function(tags, graph) {
   # determines the initial genre for each track by following
   # the tree branch with most votes as far as possible
   # votes are summed over all tags in the subtree of a tag
@@ -63,7 +63,7 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
   # Pre-compute total votes for all genres (vectorized)
   total_votes_genres <- tags |>
     dplyr::group_by(.data$tag_name) |>
-    dplyr::summarize(votes_total = sum(tag_count), .groups = "drop")
+    dplyr::summarize(votes_total = sum(.data$tag_count), .groups = "drop")
 
   tags <- tags |> dplyr::inner_join(total_votes_genres, by = "tag_name")
 
@@ -114,7 +114,7 @@ get_initial_genres_tree_and_votes_based <- function(tags, graph) {
     # Process batch using lapply (much faster than loop + rbind)
     batch_results <- lapply(batch_track_ids, function(track_id) {
       track_tags <- tags_by_track[[track_id]]
-      initial_genre <- get_tree_and_votes_based_mapping_optimized(
+      initial_genre <- get_tree_based_mapping(
         track_tags,
         graph
       )
@@ -178,7 +178,7 @@ get_subtree_votes_cached <- function(root, graph, tags) {
 }
 
 # Optimized version that uses pre-computed subtree votes
-get_tree_and_votes_based_mapping_optimized <- function(track_tags, graph) {
+get_tree_based_mapping <- function(track_tags, graph) {
   if (nrow(track_tags) == 1) {
     return(track_tags$tag_name[1])
   }
@@ -219,8 +219,7 @@ get_tree_and_votes_based_mapping_optimized <- function(track_tags, graph) {
   if (is.na(genre) && nrow(track_tags) > 0) {
     genre <- track_tags$tag_name[1]
   }
-
-  return(genre)
+  genre
 }
 
 # Function to clear cache (useful for testing or memory management)
@@ -228,33 +227,6 @@ clear_subgraph_cache <- function() {
   rm(list = ls(envir = .subgraph_cache), envir = .subgraph_cache)
 }
 
-get_tree_and_votes_based_mapping <- function(track_tags, graph, tags) {
-  if (nrow(track_tags) == 1) {
-    return(track_tags$tag_name)
-  }
-  while (nrow(track_tags) > 1) {
-    most_voted <- track_tags |>
-      dplyr::mutate(
-        votes_sub = lapply(tag_name, get_subtree_votes, graph, tags) |>
-          as.integer()
-      ) |>
-      dplyr::arrange(-.data$votes_sub, .data$votes_total) |> # todo modify to use votes in subtree
-      dplyr::first() |>
-      dplyr::pull(.data$tag_name)
-    children <- get_subgraph(graph, most_voted) |>
-      igraph::V() |>
-      names()
-    children <- children[children != most_voted]
-    track_tags <- track_tags |> dplyr::filter(.data$tag_name %in% children)
-    if (nrow(track_tags) == 0) {
-      genre <- most_voted
-    }
-    if (nrow(track_tags) == 1) {
-      genre <- track_tags |> dplyr::pull(.data$tag_name)
-    }
-  }
-  genre
-}
 
 get_subtree_votes <- function(root, graph, tags) {
   subgraph <- get_subgraph(graph, root)

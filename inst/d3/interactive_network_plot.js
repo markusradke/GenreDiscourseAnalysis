@@ -6,7 +6,7 @@ const getResponsiveWidth = () => {
     // Try multiple ways to get the container width
     const svgNode = svg.node();
     const computedStyle = window.getComputedStyle(svgNode);
-    if (computedStyle.width && computedStyle.width !== 'auto') {
+    if (computedStyle.width && computedStyle.width !== "auto") {
         const width = parseFloat(computedStyle.width);
         if (width > 0) {
             return width - 4;
@@ -60,11 +60,11 @@ svg.attr("width", actualWidth)
     .style("display", "block");
 
 // Add resize handler for responsive width
-window.addEventListener('resize', function() {
+window.addEventListener("resize", function() {
     const newWidth = getResponsiveWidth();
     svg.attr("width", newWidth);
 
-    // If there's tree content, we might want to recalculate layout
+    // If there"s tree content, we might want to recalculate layout
     // For now, just update the SVG width - the pan/zoom will handle positioning
 });
 
@@ -244,7 +244,7 @@ function sortChildrenBySize(node) {
         node.children.forEach(child => sortChildrenBySize(child));
     }
 
-    // Sort hidden children (so they're in the right order when expanded)
+    // Sort hidden children (so they"re in the right order when expanded)
     if (node._children) {
         node._children.sort((a, b) => calculateTotalSize(b) - calculateTotalSize(a));
         // Recursively sort their children too
@@ -336,13 +336,13 @@ function getEffectiveSize(displayNode, nodeName) {
 function toggle(d) {
     // Safety check for data structure
     if (!d.data) {
-        console.error('Node data is undefined, skipping toggle');
+        console.error("Node data is undefined, skipping toggle");
         return;
     }
     // Find the corresponding node in our persistent hierarchy
     const persistentNode = findNodeByName(hierarchyRoot, d.data.name);
     if (!persistentNode) {
-        console.error('Could not find node in persistent hierarchy:', d.data.name);
+        console.error("Could not find node in persistent hierarchy:", d.data.name);
         return;
     }
 
@@ -465,34 +465,34 @@ function update() {
         .range([4, 15]);
 
     // Create links
-    const links = container.selectAll('.link')
+    const links = container.selectAll(".link")
         .data(root.links())
         .enter()
-        .append('path')
-        .attr('class', 'link')
-        .attr('d', d3.linkHorizontal()
+        .append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkHorizontal()
             .x(d => d.y)
             .y(d => d.x))
-        .style('fill', 'none')
-        .style('stroke', '#ccc')
-        .style('stroke-width', 2);
+        .style("fill", "none")
+        .style("stroke", "#ccc")
+        .style("stroke-width", 2);
 
     // Create node groups
-    const nodes = container.selectAll('.node')
+    const nodes = container.selectAll(".node")
         .data(root.descendants())
         .enter()
-        .append('g')
-        .attr('class', 'node')
-        .attr('transform', d => `translate(${d.y}, ${d.x})`)
-        .style('cursor', d => (d.data && hasExpandableChildren(d.data.name)) ? 'pointer' : 'default');
+        .append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.y}, ${d.x})`)
+        .style("cursor", d => (d.data && hasExpandableChildren(d.data.name)) ? "pointer" : "default");
 
     // Add circles
-    nodes.append('circle')
-        .attr('r', d => sizeScale(getEffectiveSize(d, d.data.name)))
-        .style('fill', d => d.data.fill || '#69b3a2')
-        .style('stroke', d => (d.data && hasExpandableChildren(d.data.name)) ? '#000' : 'none')
-        .style('stroke-width', d => (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1)
-        .on('click', function(event, d) {
+    nodes.append("circle")
+        .attr("r", d => sizeScale(getEffectiveSize(d, d.data.name)))
+        .style("fill", d => d.data.fill || "#69b3a2")
+        .style("stroke", d => (d.data && hasExpandableChildren(d.data.name)) ? "#000" : "none")
+        .style("stroke-width", d => (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1)
+        .on("click", function(event, d) {
             // Prevent zoom behavior when clicking on nodes
             event.stopPropagation();
 
@@ -504,41 +504,41 @@ function update() {
                 }
             }
         })
-        .on('mouseover', function(event, d) {
+        .on("mouseover", function(event, d) {
             if (d.data && hasExpandableChildren(d.data.name)) {
-                d3.select(this).style('stroke-width', 4);
+                d3.select(this).style("stroke-width", 4);
             }
         })
-        .on('mouseout', function(event, d) {
-            d3.select(this).style('stroke-width', (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1);
+        .on("mouseout", function(event, d) {
+            d3.select(this).style("stroke-width", (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1);
         });
 
     // Add +/- indicators
     nodes.filter(d => d.data && hasExpandableChildren(d.data.name))
-        .append('text')
-        .attr('text-anchor', 'middle')
-        .attr('dy', 4)
-        .style('font-size', '10px')
-        .style('font-weight', 'bold')
-        .style('fill', 'white')
-        .style('pointer-events', 'none')
-        .text(d => isCollapsed(d.data.name) ? '+' : '−');
+        .append("text")
+        .attr("text-anchor", "middle")
+        .attr("dy", 4)
+        .style("font-size", "10px")
+        .style("font-weight", "bold")
+        .style("fill", "white")
+        .style("pointer-events", "none")
+        .text(d => isCollapsed(d.data.name) ? "+" : "−");
 
     // Add labels
-    nodes.append('text')
-        .attr('dy', 3)
-        .attr('x', d => hasExpandableChildren(d.data.name) ? -18 : 18)
-        .style('text-anchor', d => hasExpandableChildren(d.data.name) ? 'end' : 'start')
-        .style('font-size', '12pt')
-        .style('font-weight', d => hasExpandableChildren(d.data.name) ? 'bold' : 'normal')
-        .style('text-decoration', d => hasExpandableChildren(d.data.name) ? 'underline' : 'none')
-        .style('fill', d => {
-            if (hasExpandableChildren(d.data.name)) return '#0066cc'; // Expandable nodes = blue
-            return '#333'; // Leaf nodes = dark gray
+    nodes.append("text")
+        .attr("dy", 3)
+        .attr("x", d => hasExpandableChildren(d.data.name) ? -18 : 18)
+        .style("text-anchor", d => hasExpandableChildren(d.data.name) ? "end" : "start")
+        .style("font-size", "12pt")
+        .style("font-weight", d => hasExpandableChildren(d.data.name) ? "bold" : "normal")
+        .style("text-decoration", d => hasExpandableChildren(d.data.name) ? "underline" : "none")
+        .style("fill", d => {
+            if (hasExpandableChildren(d.data.name)) return "#0066cc"; // Expandable nodes = blue
+            return "#333"; // Leaf nodes = dark gray
         })
-        .style('cursor', d => hasExpandableChildren(d.data.name) ? 'pointer' : 'default')
+        .style("cursor", d => hasExpandableChildren(d.data.name) ? "pointer" : "default")
         .text(d => d.data.name)
-        .on('click', function(event, d) {
+        .on("click", function(event, d) {
             // Prevent zoom behavior when clicking on text
             event.stopPropagation();
 
@@ -550,23 +550,23 @@ function update() {
                 }
             }
         })
-        .on('mouseover', function(event, d) {
+        .on("mouseover", function(event, d) {
             if (hasExpandableChildren(d.data.name)) {
-                d3.select(this).style('fill', '#0044aa');
+                d3.select(this).style("fill", "#0044aa");
             }
         })
-        .on('mouseout', function(event, d) {
-            d3.select(this).style('fill', hasExpandableChildren(d.data.name) ? '#0066cc' : '#333');
+        .on("mouseout", function(event, d) {
+            d3.select(this).style("fill", hasExpandableChildren(d.data.name) ? "#0066cc" : "#333");
         });
 
     // Add tooltips
-    nodes.append('title')
+    nodes.append("title")
         .text(d => {
             const effectiveSize = getEffectiveSize(d, d.data.name);
             const originalSize = d.data.size || 0;
 
             if (hasExpandableChildren(d.data.name)) {
-                const action = isCollapsed(d.data.name) ? 'expand' : 'collapse';
+                const action = isCollapsed(d.data.name) ? "expand" : "collapse";
                 if (isCollapsed(d.data.name) && effectiveSize > originalSize) {
                     return `${d.data.name} (Click to ${action}) - Aggregated size: ${effectiveSize} (own: ${originalSize})`;
                 } else {

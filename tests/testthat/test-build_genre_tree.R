@@ -8,7 +8,7 @@ test_that("create_empty_adjacency_matrix creates correct zero matrix", {
   expect_true(all(adj == 0))
 })
 
-test_that("create_tag_combinations_within_tracks creates valid tag combinations", {
+test_that("get_within_track_combinations creates valid tag combinations", {
   tags <- data.frame(
     track.s.id = c("a", "a", "b", "b"),
     tag_name = c("rock", "pop", "rock", "jazz"),
@@ -16,7 +16,7 @@ test_that("create_tag_combinations_within_tracks creates valid tag combinations"
     stringsAsFactors = FALSE
   )
 
-  combinations <- create_tag_combinations_within_tracks(tags)
+  combinations <- get_within_track_combinations(tags)
 
   # should not have self-combinations
   expect_true(all(combinations$tag_name_i != combinations$tag_name_j))
@@ -31,7 +31,7 @@ test_that("create_tag_combinations_within_tracks creates valid tag combinations"
   ))
 })
 
-test_that("calculate_tag_cooccurrence_matrix calculates weights correctly", {
+test_that("get_tag_cooccurrence_matrix calculates weights correctly", {
   tags <- data.frame(
     track.s.id = c(1, 1, 2),
     tag_name = c("rock", "pop", "rock"),
@@ -39,7 +39,7 @@ test_that("calculate_tag_cooccurrence_matrix calculates weights correctly", {
     stringsAsFactors = FALSE
   )
 
-  adj <- calculate_tag_cooccurrence_matrix(tags)
+  adj <- get_tag_cooccurrence_matrix(tags)
 
   # rock appears in 2 tracks, pop appears in 1 track
   # rock->pop: 1 co-occurrence out of 2 rock appearances = 0.5
@@ -70,7 +70,7 @@ test_that("calculate_vote_based_weights calculates proportional weights", {
   expect_true(all(weights$weight > 0))
 })
 
-test_that("remove_weaker_bidirectional_edges removes bidirectional edges correctly", {
+test_that("remove_weaker_direction removes bidirectional edges correctly", {
   # create a 3x3 adjacency matrix with known values
   adj <- matrix(
     c(
@@ -89,7 +89,7 @@ test_that("remove_weaker_bidirectional_edges removes bidirectional edges correct
   )
   rownames(adj) <- colnames(adj) <- c("A", "B", "C")
 
-  soft_child <- remove_weaker_bidirectional_edges(adj)
+  soft_child <- remove_weaker_direction(adj)
 
   # A->B: 0.8 >= 0.3, so keep A->B (0.8-0.3=0.5), remove B->A
   expect_equal(soft_child["A", "B"], 0.5)
@@ -104,7 +104,7 @@ test_that("remove_weaker_bidirectional_edges removes bidirectional edges correct
   expect_equal(soft_child["C", "A"], 0)
 })
 
-test_that("select_strongest_parent_per_node selects strongest parent only", {
+test_that("select_strongest_parent selects strongest parent only", {
   # create child_of matrix where each row represents a node's connections
   child_of <- matrix(
     c(
@@ -123,7 +123,7 @@ test_that("select_strongest_parent_per_node selects strongest parent only", {
   )
   rownames(child_of) <- colnames(child_of) <- c("A", "B", "C")
 
-  democratic <- select_strongest_parent_per_node(child_of)
+  democratic <- select_strongest_parent(child_of)
 
   # A should connect only to B (strongest)
   expect_equal(democratic["A", "B"], 0.8)
@@ -146,7 +146,7 @@ test_that("apply_vote_weighting preserves matrix dimensions", {
     stringsAsFactors = FALSE
   )
 
-  basic_adj <- calculate_tag_cooccurrence_matrix(tags)
+  basic_adj <- get_tag_cooccurrence_matrix(tags)
   weighted_adj <- apply_vote_weighting(basic_adj, tags)
 
   expect_equal(dim(weighted_adj), dim(basic_adj))
@@ -189,22 +189,22 @@ test_that("build_genre_tree handles small dataset without errors", {
 test_that("performance critical functions handle edge cases", {
   # empty adjacency matrix
   empty_adj <- matrix(0, nrow = 0, ncol = 0)
-  expect_no_error(remove_weaker_bidirectional_edges(empty_adj))
-  expect_no_error(select_strongest_parent_per_node(empty_adj))
+  expect_no_error(remove_weaker_direction(empty_adj))
+  expect_no_error(select_strongest_parent(empty_adj))
 
   # single node
   single_adj <- matrix(0, nrow = 1, ncol = 1)
   rownames(single_adj) <- colnames(single_adj) <- "A"
-  soft_single <- remove_weaker_bidirectional_edges(single_adj)
-  demo_single <- select_strongest_parent_per_node(single_adj)
+  soft_single <- remove_weaker_direction(single_adj)
+  demo_single <- select_strongest_parent(single_adj)
   expect_equal(dim(soft_single), c(1, 1))
   expect_equal(dim(demo_single), c(1, 1))
 
   # matrix with all zeros (no connections)
   zero_adj <- matrix(0, nrow = 3, ncol = 3)
   rownames(zero_adj) <- colnames(zero_adj) <- c("A", "B", "C")
-  soft_zero <- remove_weaker_bidirectional_edges(zero_adj)
-  demo_zero <- select_strongest_parent_per_node(zero_adj)
+  soft_zero <- remove_weaker_direction(zero_adj)
+  demo_zero <- select_strongest_parent(zero_adj)
   expect_true(all(soft_zero == 0))
   expect_true(all(demo_zero == 0))
 })

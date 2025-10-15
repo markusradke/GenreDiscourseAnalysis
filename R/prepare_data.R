@@ -70,7 +70,8 @@ get_combined_s_tags <- function(input) {
   }
 
   process_one_sp <- function(genres) {
-    # genres may be: NULL, empty data.frame, data.frame with column "genre" or "tag_name",
+    # genres may be: NULL, empty data.frame,
+    # data.frame with column "genre" or "tag_name"
     if (is.null(genres)) {
       return(empty_tags_df())
     }
@@ -235,7 +236,7 @@ get_long_genre_tags <- function(
   if (length(caluclate_tag_count) > 0) {
     message("Calculating tag counts ...")
     if (
-      !all(caluclate_tag_count %in% c("artist", "total", "ones")) |
+      !all(caluclate_tag_count %in% c("artist", "total", "ones")) ||
         length(caluclate_tag_count) > 1
     ) {
       stop("If caluclate_tag_count is used, it must be 'artist' or 'total'.")
