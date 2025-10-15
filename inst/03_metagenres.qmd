@@ -1,0 +1,49 @@
+---
+title: "Metagenres - Genre Discourse Analysis"
+author: "Markus Radke"
+date: "`r Sys.Date()`"
+format: 
+    html: 
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        toc: true
+        toc-location: left
+        toc-depth: 5
+        toc-expand: 5
+        number-sections: true
+        theme: cosmo
+        code-links:
+        - text: Github Repository
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+devtools::load_all()
+```	
+
+# Algorithm for folding the genre tree to get metagenres
+```{mermaid}
+flowchart TD
+    A["Start with initial music genres and hierarchy tree"] --> B["Try different minimum song counts (grid search)"]
+    B --> C["For each minimum count: Start folding process"]
+    C --> D["Find leaf genre with most songs at deepest level"]
+    D --> E{"Does this genre have enough songs?"}
+    E -->|Yes| F{"Would parent + siblings have enough songs combined?"}
+    E -->|No| G["Merge genre with parent and all siblings"]
+    F -->|Yes| H["Remove genre from tree (fold upward)"]
+    F -->|No| G
+    G --> I["Update song counts and mark genres as processed"]
+    H --> I
+    I --> J{"Are we at the root level?"}
+    J -->|No| D
+    J -->|Yes| K["Calculate diversity score (Gini coefficient)"]
+    K --> L{"Can we calculate a valid diversity score?"}
+    L -->|Yes| M["Save this solution and try next minimum count"]
+    L -->|No| N["Stop search - no more valid solutions"]
+    M --> O{"More minimum counts to try?"}
+    O -->|Yes| C
+    O -->|No| P["Remove duplicate solutions and return best options"]
+    N --> P
+    P --> Q["End: Return optimized genre groupings"]
+```	
