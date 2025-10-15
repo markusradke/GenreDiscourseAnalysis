@@ -23,7 +23,9 @@ tune_dc <- tune_tree_folding(
 tune_s <- tune_tree_folding(
   read_feather_with_lists("models/initial_genres_s.feather"),
   readRDS("models/Spotify_graph.rds"),
-  min_n_grid_min = min_n,
-  min_n_grid_step = step,
+  # min_n_grid_min = min_n,
+  min_n_grid_min = 3000,
+  min_n_grid_step = 500,
+  min_n_grid_max = 5000,
   optimal_solution_range_n_metagenres = optimal_range
 )

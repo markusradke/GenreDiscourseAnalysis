@@ -1,16 +1,33 @@
 #' Fold genre tree and caluclate weighted ginis
 #'
-#' Folds a given genre tree from the end of branches, so that all remaining genres have at least a minimum number of observations. Caluclates a weighted Gini for each solution (Gini is caluclated for each level in the hierarchy accross all Genres in the level with their prevalences and ist then averaged, weighted by the number of songs in each level).
+#' Folds a given genre tree from the end of branches, so that all remaining
+#' genres have at least a minimum number of observations. Caluclates a
+#' weighted Gini for each solution (Gini is caluclated for each level in the
+#' hierarchy accross all Genres in the level with their prevalences and is
+#' then averaged, weighted by the number of songs in each level).
 #'
-#' @param initial_genres data.frame with initial genres (and id for later mapping). When searching for subgenres, a column "metagenre" must also be given.
+#' @param initial_genres data.frame with initial genres (and id for later
+#' mapping). When searching for subgenres, a column "metagenre" must also
+#' be given.
 #' @param graph hierarchical genre tree
-#' @param optimal_solution_range_n_metagenres optimal range of number of metagenres for solution. Used for choosing the suggested solution (chooses local optima within range with highest number of metagenres). If no local optima for the Gini are found within solution range, the local optiima below the solution range with the highest number of metagenres is chosen. If no local optima below solution range, Take lowest gini within solution range. If no solution within solution range take global local minimum of Gini.
+#' @param optimal_solution_range_n_metagenres optimal range of number of
+#' metagenres for solution. Used for choosing the suggested solution
+#' (chooses local optima within range with highest number of metagenres).
+#'  If no local optima for the Gini are found within solution range, the
+#' local optiima below the solution range with the highest number of
+#' metagenres is chosen. If no local optima below solution range, Take
+#' lowest gini within solution range. If no solution within solution range
+#' take global local minimum of Gini.
 #' @param min_n_grid_min Training grid minimum of minimum n.
-#' @param min_n_grid_max Training grid minimum of minimum n. Optional, defaults to highest possible whith at least one split in the resulting tree.
+#' @param min_n_grid_max Training grid minimum of minimum n.
+#' Optional, defaults to highest possible whith at least one split in the
+#' resulting tree.
 #' @param min_n_grid_step Granularity of the grid.
 #' @param root Root genre of the tree.
 
-#' @returns List object with all solutions (min n as string is name of solution), a dataframe with gini metrics, a suggested solution in the optimal range, and a weighted Gini plot.
+#' @returns List object with all solutions (min n as string is name of
+#' solution), a dataframe with gini metrics, a suggested solution in the
+#' optimal range, and a weighted Gini plot.
 #'
 tune_tree_folding <- function(
   initial_genres,
@@ -100,7 +117,11 @@ get_search_grid <- function(
       dplyr::pull(n)
     min_n_grid_max <- upper_bound
   }
-  seq(min_n_grid_min, min_n_grid_max, min_n_grid_step)
+  grid <- seq(min_n_grid_min, min_n_grid_max, min_n_grid_step)
+  if (!min_n_grid_max %in% grid) {
+    grid <- c(grid, min_n_grid_max)
+  }
+  grid
 }
 
 tune_by_folding_genre_tree_bottom_to_top <- function(
@@ -134,8 +155,8 @@ tune_by_folding_genre_tree_bottom_to_top <- function(
         )
       )
     )
+    res[[toString(min_n_grid[i])]] <- temp
     if (i > 1) {
-      res[[toString(min_n_grid[i])]] <- temp
       is_new_n_metagenres <- ginis$n_metagenres[i] != ginis$n_metagenres[i - 1]
       if (!is_new_n_metagenres) {
         res[[toString(min_n_grid[i - 1])]] <- NULL
@@ -222,7 +243,7 @@ fold_genre_tree_bottom_to_top <- function(
 
 get_metagenre_graph <- function(mapping, graph) {
   metagenres <- unique(mapping$genre)
-  igraph::induced_subgraph(graph, V(graph)[name %in% metagenres])
+  igraph::induced_subgraph(graph, igraph::V(graph)[name %in% metagenres])
 }
 
 
@@ -257,7 +278,7 @@ is_parent_and_remaining_larger_min_n <- function(genre, graph, n_songs, min_n) {
   remaining <- c(supergenre, other_subgenres)
   dplyr::filter(n_songs, genre %in% remaining) |>
     dplyr::pull(n) |>
-    sum() >
+    sum() >=
     min_n
 }
 
