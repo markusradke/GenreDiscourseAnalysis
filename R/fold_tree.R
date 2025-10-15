@@ -272,9 +272,8 @@ get_current_genre_n <- function(current_genre, n_songs) {
 }
 
 fold_new_metagenre_from_graph <- function(current_genre, current_graph) {
-  require(igraph)
-  outgoing_edge <- E(current_graph)[.from(current_genre)]
-  delete_edges(current_graph, outgoing_edge)
+  outgoing_edge <- igraph::E(current_graph)[.from(current_genre)]
+  igraph::delete_edges(current_graph, outgoing_edge)
 }
 
 set_checked_flag_current_genre <- function(current_genre, hierarchy) {
@@ -283,7 +282,6 @@ set_checked_flag_current_genre <- function(current_genre, hierarchy) {
 }
 
 get_gini_coefficient <- function(metagenres, get_distances_to_root) {
-  require(DescTools)
   relfreqs <- metagenres |>
     dplyr::count(metagenre) |>
     dplyr::mutate(relfreq = n / nrow(metagenres)) |>
@@ -311,8 +309,12 @@ get_gini_coefficient <- function(metagenres, get_distances_to_root) {
 get_local_minima_candidates <- function(ginis) {
   candidate_pool <- ginis |>
     dplyr::arrange(n_metagenres, -min_n) |>
-    dplyr::distinct(weighted_gini, n_metagenres, .keep_all = TRUE) |>
-    dplyr::bind_rows(data.frame(weighted_gini = 1, n_metagenres = 1), .) |>
+    dplyr::distinct(weighted_gini, n_metagenres, .keep_all = TRUE)
+  candidate_pool <-
+    dplyr::bind_rows(
+      data.frame(weighted_gini = 1, n_metagenres = 1),
+      candidate_pool
+    ) |>
     dplyr::bind_rows(data.frame(weighted_gini = 0, n_metagenres = Inf))
   from_left <- which(diff(candidate_pool$weighted_gini) < 0) + 1
   from_right <- nrow(candidate_pool) -

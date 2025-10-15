@@ -4,7 +4,7 @@ plot_tuning_results <- function(
   best_candidate = 20,
   gini_range = c(0, 1)
 ) {
-  if (nrow(distinct(ginis, n_metagenres)) < 2) {
+  if (nrow(dplyr::distinct(ginis, n_metagenres)) < 2) {
     message('Found only a single solution. Thus, no plot will be generated.')
     return(NULL)
   }
@@ -28,7 +28,7 @@ plot_tuning_results <- function(
     ggplot2::geom_line(color = 'grey30', linewidth = 1) +
     ggplot2::geom_point(
       data = candidates,
-      mapping = aes(x = n_metagenres, y = weighted_gini),
+      mapping = ggplot2::aes(x = n_metagenres, y = weighted_gini),
       color = '#c40d20',
       size = 3
     ) +
@@ -61,7 +61,7 @@ plot_tuning_results <- function(
     ) +
     ggrepel::geom_label_repel(
       data = candidates,
-      mapping = aes(
+      mapping = ggplot2::aes(
         x = n_metagenres,
         y = weighted_gini,
         label = label,
@@ -73,7 +73,7 @@ plot_tuning_results <- function(
     ggplot2::scale_color_manual(values = c('black', 'grey30')) +
     ggplot2::geom_point(
       data = data.frame(x = 0, y = 1),
-      aes(x = x, y = y),
+      ggplot2::aes(x = x, y = y),
       color = '#c40d20',
       size = 3
     ) +

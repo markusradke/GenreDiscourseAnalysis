@@ -12,7 +12,7 @@ build_genre_tree(dc, "Discogs", vote_weighted = FALSE)
 message("\nBUILDING SPOTIFY GENRE TREE")
 build_genre_tree(s, "Spotify", vote_weighted = FALSE)
 
-# Map initial genres ----
+# Map initial genres ----d
 message("\n MAP INITIAL GENRES MUSICBRAINZ")
 initial_genres_mb <- get_initial_genre_mapping(
   mb,
