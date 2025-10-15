@@ -1,4 +1,4 @@
-test_that("get_tree_and_votes_based_mapping handles single tag case", {
+test_that("get_tree_based_mapping handles single tag case", {
   track_tags <- data.frame(
     track.s.id = 1,
     track.s.title = "Song A",
@@ -14,12 +14,15 @@ test_that("get_tree_and_votes_based_mapping handles single tag case", {
     directed = TRUE
   )
 
-  result <- get_tree_and_votes_based_mapping(track_tags, graph)
+  result <- get_tree_based_mapping(
+    track_tags,
+    graph
+  )
   expect_equal(result, "rock")
 })
 
-test_that("get_tree_and_votes_based_mapping handles multiple tags with hierarchy", {
-  track_tags <- data.frame(
+test_that("get_tree_based_mapping handles multiple tags with hierarchy", {
+  tags <- data.frame(
     track.s.id = c(1, 1, 1),
     track.s.title = c("Song A", "Song A", "Song A"),
     track.s.firstartist.name = c("A", "A", "A"),
@@ -37,14 +40,22 @@ test_that("get_tree_and_votes_based_mapping handles multiple tags with hierarchy
     ),
     directed = TRUE
   )
-
-  result <- get_tree_and_votes_based_mapping(track_tags, graph, track_tags)
+  subtree_votes_cache <- compute_all_subtree_votes(
+    unique(tags$tag_name),
+    graph,
+    tags
+  )
+  tags <- tags |> dplyr::left_join(subtree_votes_cache, by = "tag_name")
+  result <- get_tree_based_mapping(
+    tags,
+    graph
+  )
   expect_type(result, "character")
   expect_length(result, 1)
   expect_equal(result, "metal")
 })
 
-test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
+test_that("get_initial_genres_tree_based processes multiple tracks", {
   mb_tags <- data.frame(
     track.s.id = c(1, 1, 2, 2),
     track.s.title = c("Song A", "Song A", "Song B", "Song B"),
@@ -63,7 +74,7 @@ test_that("get_initial_genres_tree_and_votes_based processes multiple tracks", {
     directed = TRUE
   )
 
-  result <- get_initial_genres_tree_and_votes_based(mb_tags, graph)
+  result <- get_initial_genres_tree_based(mb_tags, graph)
   expect_true(is.data.frame(result))
   expect_setequal(
     colnames(result),
@@ -124,7 +135,7 @@ test_that("handles cases where tags are not in the graph", {
   )
 })
 
-test_that("get_tree_and_votes_based_mapping uses votes for complete subtree", {
+test_that("get_tree_based_mapping uses votes for complete subtree", {
   track_tags <- data.frame(
     track.s.id = c(1, 1, 1, 1),
     track.s.title = c(

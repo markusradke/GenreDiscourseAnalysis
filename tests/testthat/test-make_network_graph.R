@@ -130,7 +130,8 @@ test_that("get_fill_lookup assigns colors correctly", {
   # Test 'root' fillmode
   fill_lookup_root <- get_fill_lookup(mapping, graph, "root")
   # Root fillmode should highlight nodes that are in the root column
-  # In our test data, root column has "music" values, but our initial_genre are rock/pop/jazz
+  # In our test data, root column has "music" values,
+  # but our initial_genre are rock/pop/jazz
   # So no highlighting should occur unless there's a match
   expect_type(fill_lookup_root, "character")
 })
@@ -161,7 +162,7 @@ test_that("get_padded_lookup_full_graph pads missing nodes", {
   expect_equal(as.numeric(padded["music"]), 0)
 })
 
-test_that("get_sorted_hierarchy_for_plotting creates valid hierarchy", {
+test_that("get_sorted_hierarchy creates valid hierarchy", {
   mapping <- data.frame(
     track.s.id = 1:3,
     initial_genre = c("rock", "pop", "jazz"),
@@ -180,7 +181,7 @@ test_that("get_sorted_hierarchy_for_plotting creates valid hierarchy", {
   sizes_lookup <- get_sizes_lookup(mapping, graph)
   fill_lookup <- get_fill_lookup(mapping, graph, "none")
 
-  hierarchy <- get_sorted_hierarchy_for_plotting(
+  hierarchy <- get_sorted_hierarchy(
     graph,
     root,
     sizes_lookup,
@@ -349,7 +350,4 @@ test_that("interactive parameter affects output correctly", {
   expect_no_error({
     interactive_plot <- plot_network_graph(graph, mapping, interactive = TRUE)
   })
-
-  # Interactive plot should have fixed height of 800
-  # (We can't easily test the actual height without rendering, but we can test the function call)
 })

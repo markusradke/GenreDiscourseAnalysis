@@ -1,16 +1,16 @@
 write_test_qmd <- function() {
   temp_dir <- tempdir()
   temp_qmd <- file.path(temp_dir, "test_report.qmd")
-  qmd_content <- '---
-title: "Test Report"
+  qmd_content <- "---
+title: 'Test Report'
 format: 
   html:
-    output-file: "test_output.html"
+    output-file: 'test_output.html'
 ---
 
 # Test Content
 This is a test report.
-'
+"
   writeLines(qmd_content, temp_qmd)
 }
 
@@ -251,15 +251,15 @@ test_that("paths construction handles different file extensions", {
 
   temp_dir <- tempdir()
   pdf_qmd <- file.path(temp_dir, "test_pdf.qmd")
-  pdf_content <- '---
-title: "PDF Test"
+  pdf_content <- "---
+title: 'PDF Test'
 format: 
   pdf:
-    output-file: "test_output.pdf"
+    output-file: 'test_output.pdf'
 ---
 
 # PDF Content
-'
+"
 
   writeLines(pdf_content, pdf_qmd)
   paths <- get_paths_from_qmd(pdf_qmd, "output")

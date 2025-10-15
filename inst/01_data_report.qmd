@@ -30,11 +30,11 @@ devtools::load_all()
 ```	
 
 ```{r load_poptrag}
-poptrag <- readRDS('../data/poptrag_selected.rds')
+poptrag <- readRDS("../data/poptrag_selected.rds")
 n_poptrag <- nrow(poptrag)
 n_offcial_charts <- sum(poptrag$source.officialcharts, na.rm = TRUE)
 n_recommendations <- sum(poptrag$source.recommendations, na.rm = TRUE)
-n_featured_playlists <- sum(poptrag$source.featuredplaylists,na.rm = TRUE)
+n_featured_playlists <- sum(poptrag$source.featuredplaylists, na.rm = TRUE)
 n_spotify_charts <- sum(poptrag$source.spotifycharts, na.rm = TRUE)
 n_only_spotify_charts <- poptrag |>
   dplyr::filter(
@@ -66,24 +66,25 @@ The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 
 ## MusicBrainz network data
 
 ```{r musibrainz_genres}
-mb_long <- read_feather_with_lists('../data/filtered_mb_long.feather')
-mb_non_music_tags <- readRDS('../data/mb_non_music_tags.rds')
+mb_long <- read_feather_with_lists("../data/filtered_mb_long.feather")
+mb_non_music_tags <- readRDS("../data/mb_non_music_tags.rds")
 
 n_mb <- length(unique(mb_long$track.s.id))
 n_diff_mb <- n_poptrag - n_mb
 n_unique_mb_tags <- unique(mb_long$tag_name) |> length()
 
 tags_per_track_mb <- dplyr::count(mb_long, track.s.id) |> dplyr::pull(n)
-votes_per_track_mb <- mb_long |> 
-  dplyr::group_by(track.s.id) |> 
-  dplyr::summarize(n_votes = sum(tag_count)) |> 
-  dplyr::ungroup() |> 
+votes_per_track_mb <- mb_long |>
+  dplyr::group_by(track.s.id) |>
+  dplyr::summarize(n_votes = sum(tag_count)) |>
+  dplyr::ungroup() |>
   dplyr::pull(n_votes)
 tracks_per_tag_mb <- dplyr::count(mb_long, tag_name) |> dplyr::pull(n)
-one_track_tags_mb <- dplyr::filter(dplyr::count(mb_long, tag_name), n == 1) |> nrow()
+one_track_tags_mb <- dplyr::filter(dplyr::count(mb_long, tag_name), n == 1) |>
+  nrow()
 ```
 
-We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025 (`r format(n_diff_mb, big.mark = ",")` tracks, `r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ', ')`.
+We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025 (`r format(n_diff_mb, big.mark = ",")` tracks, `r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ", ")`.
 
 This amounts to **N~MusicBrainz~ = `r format(n_mb, big.mark = ",")` tracks** with MusicBrainz music genre tags.
 
@@ -94,8 +95,8 @@ There are `r format(n_unique_mb_tags, big.mark = ",")` different genre tags in t
 ## Discogs network data
 
 ```{r discogs_genres}
-dc_long <- read_feather_with_lists('../data/filtered_dc_long.feather')
-dc_non_music_tags <- readRDS('../data/dc_non_music_tags.rds')
+dc_long <- read_feather_with_lists("../data/filtered_dc_long.feather")
+dc_non_music_tags <- readRDS("../data/dc_non_music_tags.rds")
 
 n_dc <- length(unique(dc_long$track.s.id))
 n_diff_dc <- n_poptrag - n_dc
@@ -103,10 +104,11 @@ n_unique_dc_tags <- unique(dc_long$tag_name) |> length()
 
 tags_per_track_dc <- dplyr::count(dc_long, track.s.id) |> dplyr::pull(n)
 tracks_per_tag_dc <- dplyr::count(dc_long, tag_name) |> dplyr::pull(n)
-one_track_tags_dc <- dplyr::filter(dplyr::count(dc_long, tag_name), n == 1) |> nrow()
+one_track_tags_dc <- dplyr::filter(dplyr::count(dc_long, tag_name), n == 1) |>
+  nrow()
 ```
 
-We filtered out all songs without a Discogs genre tag (Discogs "genre" and/or "style") or with only non-music genre tags (`r format(n_diff_dc, big.mark = ",")` tracks, `r round(n_diff_dc / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', dc_non_music_tags), collapse = ', ')`.
+We filtered out all songs without a Discogs genre tag (Discogs "genre" and/or "style") or with only non-music genre tags (`r format(n_diff_dc, big.mark = ",")` tracks, `r round(n_diff_dc / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', dc_non_music_tags), collapse = ", ")`.
 
 This amounts to **N~Discogs~ = `r format(n_dc, big.mark = ",")` tracks** with Discogs music genre tags.
 
@@ -125,8 +127,8 @@ In addition to releases being the observational unit, Discogs provides no vote c
 ## Spotify network data
 
 ```{r spotify_genres}
-s_long <- read_feather_with_lists('../data/filtered_s_long.feather')
-s_non_music_tags <- readRDS('../data/s_non_music_tags.rds')
+s_long <- read_feather_with_lists("../data/filtered_s_long.feather")
+s_non_music_tags <- readRDS("../data/s_non_music_tags.rds")
 
 n_s <- length(unique(s_long$track.s.id))
 n_diff_s <- n_poptrag - n_s
@@ -134,10 +136,11 @@ n_unique_s_tags <- unique(s_long$tag_name) |> length()
 
 tags_per_track_s <- dplyr::count(s_long, track.s.id) |> dplyr::pull(n)
 tracks_per_tag_s <- dplyr::count(s_long, tag_name) |> dplyr::pull(n)
-one_track_tags_s <- dplyr::filter(dplyr::count(s_long, tag_name), n == 1) |> nrow()
+one_track_tags_s <- dplyr::filter(dplyr::count(s_long, tag_name), n == 1) |>
+  nrow()
 ```
 
-We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (`r format(n_diff_s, big.mark = ",")` tracks, `r round(n_diff_s / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', s_non_music_tags), collapse = ', ')`.
+We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (`r format(n_diff_s, big.mark = ",")` tracks, `r round(n_diff_s / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', s_non_music_tags), collapse = ", ")`.
 
 This amounts to **N~Spotifys~ = `r format(n_s, big.mark = ",")` tracks** with Spotify music genre tags.
 

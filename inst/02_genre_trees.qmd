@@ -36,8 +36,6 @@ format:
             background-color: #fafafa;
             position: relative;
           }
-          
-          /* Let r2d3 control sizing, just prevent scrollbars */
           .r2d3 {
             overflow: hidden !important;
           }
@@ -48,13 +46,6 @@ format:
           
           .r2d3 > div {
             overflow: hidden !important;
-          }
-          
-          .plot-instructions {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 10px;
-            font-style: italic;
           }
 ---
 ```{r setup, include=FALSE}
@@ -73,8 +64,8 @@ In the initial genre network, **each node represents a genre tag** on the corres
 title: "Example for Discogs and Spotify"
 ---
 flowchart LR
-  rock -- P(metal|rock) --> metal
-  metal -- P(rock|metal) --> rock
+rock -- P(metal|rock) --> metal
+metal -- P(rock|metal) --> rock
 ```
 
 ```{mermaid}
@@ -82,8 +73,8 @@ flowchart LR
 title: "Example for MusicBrainz"
 ---
 flowchart LR
-  rock -- P(metal|rock) * meanRelFreqVotes(metal|rock) --> metal
-  metal -- P(rock|metal) * meanRelFreqVotes(rock|metal) --> rock
+rock -- P(metal|rock) * meanRelFreqVotes(metal|rock) --> metal
+metal -- P(rock|metal) * meanRelFreqVotes(rock|metal) --> rock
 ```
 
 ## Network of descendant genres
@@ -91,8 +82,8 @@ Next, we determine which genre is a descendant of the other. Genres with descend
 
 ```{mermaid}
 flowchart LR
-  rock -. P(metal|rock) .-x metal
-  metal -- P(rock|metal) - P(rock|metal) --> rock
+rock -. P(metal|rock) .-x metal
+metal -- P(rock|metal) - P(rock|metal) --> rock
 ```
 
 ## 'Radically democratic' genre trees
@@ -100,16 +91,14 @@ Now, we transform the directed network of descendant genres into a hierarchical 
 
 ```{mermaid}
 flowchart LR
-   metal --> rock
-   metal -.-x pop
+metal --> rock
+metal -.-x pop
 ```
 # Genre Tree for MusicBrainz
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-<div class="plot-instructions">
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
-</div>
 ```{r musicbrainz-interactive-tree, echo=FALSE}
 mb_initial <- read_feather_with_lists("../models/initial_genres_mb.feather")
 mb_graph <- readRDS("../models/MusicBrainz_graph.rds")
@@ -119,13 +108,12 @@ plot_network_graph(
   mb_initial,
   height = 1200,
   interactive = TRUE,
-  minFontSize = 12,
-  maxFontSize = 12,  # Fixed font size as requested
+  min_font_size = 12,
+  max_font_size = 12,  # Fixed font size as requested
   sizemode = "initial_genre",
   sortmode = "size",
   fillmode = "none"
-) 
-
+)
 ```
 :::
 :::
@@ -133,9 +121,7 @@ plot_network_graph(
 # Genre Tree for Discogs
 :::{.column-screen-inset-right}
 :::{.plot-container}
-<div class="plot-instructions">
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
-</div>
 ```{r discogs-interactive-tree, echo=FALSE}
 dc_initial <- read_feather_with_lists("../models/initial_genres_dc.feather")
 dc_graph <- readRDS("../models/Discogs_graph.rds")
@@ -145,8 +131,8 @@ plot_network_graph(
   dc_initial,
   height = 1200,
   interactive = TRUE,
-  minFontSize = 12,
-  maxFontSize = 12,  # Fixed font size as requested
+  min_font_size = 12,
+  max_font_size = 12,  # Fixed font size as requested
   sizemode = "initial_genre",
   sortmode = "size",
   fillmode = "none"
@@ -160,9 +146,7 @@ Please click on the nodes to explore sub-genres. The font size is fixed to ensur
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-<div class="plot-instructions">
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
-</div>
 ```{r spotify-interactive-tree, echo=FALSE}	
 s_initial <- read_feather_with_lists("../models/initial_genres_s.feather")
 s_graph <- readRDS("../models/Spotify_graph.rds")
@@ -172,12 +156,12 @@ plot_network_graph(
   s_initial,
   height = 1200,
   interactive = TRUE,
-  minFontSize = 12,
-  maxFontSize = 12,  # Fixed font size as requested
+  min_font_size = 12,
+  max_font_size = 12,  # Fixed font size as requested
   sizemode = "initial_genre",
   sortmode = "size",
   fillmode = "none"
-) 
+)
 ```
 :::
 
