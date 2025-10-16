@@ -16,6 +16,25 @@ format:
         code-links:
         - text: Github Repository
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+        css: |
+          .plot-container {
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            position: relative;
+          }
+          .r2d3 {
+            overflow: hidden !important;
+          }
+          
+          .r2d3 svg {
+            overflow: hidden !important;
+          }
+          
+          .r2d3 > div {
+            overflow: hidden !important;
+          }
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -25,7 +44,7 @@ devtools::load_all()
 # Algorithm for folding the genre tree to get metagenres
 <!-- TODO: Add a little explanation on the algorithm (see Bayreuth slides) -->
 
-```{mermaid}
+```{mermaid folding_algorithm}
 flowchart TD
     A["Start with initial music genres and hierarchy tree"] --> B["Try different minimum song counts (grid search)"]
     B --> C["For each minimum count: Start folding process"]
@@ -50,20 +69,56 @@ flowchart TD
     P --> Q["End: Return optimized genre groupings"]
 ```	
 
-<!-- TODO: Show Gini plot and suggested metagenres (interactive network plot) for each platform -->
-# MusicBrainz Metagenres
-<!-- ```{r}
-#| fig-cap: "Within-hieararchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n per genre of X songs. Resulting number of metagenres ranged from Y to Z."
-tuning <- readRDS("../models/metagenres/tune_mb_metagenres.rds")
-tuning$plot
+# Tuning results and suggested solutions
+```{r read_results}
+mb_tuning_metadata <- readRDS("../models/metagenres/tune_mb_metadata.rds")
+mb_gini_plot <- readRDS("../models/metagenres/tune_mb_gini_plot.rds")
+mb_suggested_solution <- readRDS("../models/metagenres/metagenres_mb_suggested_solution.rds")
 
-plot_network_graph(graph = tuning$suggested_solution$metagenre_graph, 
-                   mapping = tuning$suggested_solution$mapping, 
+dc_gini_plot <- readRDS("../models/metagenres/tune_dc_gini_plot.rds")
+dc_tuning_metadata <- readRDS("../models/metagenres/tune_dc_metadata.rds")
+dc_suggested_solution <- readRDS("../models/metagenres/metagenres_dc_suggested_solution.rds")
+
+s_tuning_metadata <- readRDS("../models/metagenres/tune_s_metadata.rds")
+s_gini_plot <- readRDS("../models/metagenres/tune_s_gini_plot.rds")
+s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_solution.rds")
+```
+
+## MusicBrainz Metagenres
+:::{#fig-musicbrainz-gini}
+```{r gini_plot_musicbrainz}
+mb_gini_plot
+```
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n tracks per genre of `r format(mb_tuning_metadata$min_min_n, big.mark = ",")` to `r format(mb_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r mb_tuning_metadata$min_n_metagenre` to `r mb_tuning_metadata$max_n_metagenre`.
+:::
+
+
+
+## Discogs Metagenres
+:::{#fig-discogs-gini}
+```{r gini_plot_discogs}
+dc_gini_plot
+```
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Discogs genre tree. Calculated for a minimum n tracks per genre of `r format(dc_tuning_metadata$min_min_n, big.mark = ",")` to `r format(dc_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r dc_tuning_metadata$min_n_metagenre` to `r dc_tuning_metadata$max_n_metagenre`.
+:::
+
+
+## Spotify Metagenres
+:::{#fig-spotify-gini}
+```{r gini_plot_spotify}
+s_gini_plot
+```
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Spotify genre tree. Calculated for a minimum n tracks per genre of `r format(s_tuning_metadata$min_min_n, big.mark = ",")` to `r format(s_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r s_tuning_metadata$min_n_metagenre` to `r s_tuning_metadata$max_n_metagenre`.
+:::
+
+:::{.column-screen-inset-right}
+:::{.plot-container}
+```{r network_plot_spotify}
+plot_network_graph(graph = s_suggested_solution$metagenre_graph, 
+                   mapping = s_suggested_solution$mapping, 
                    sizemode = "metagenre", 
                    height = 1000, 
                    interactive = TRUE)
-```	 -->
-
-# Discogs Metagenres
-
-# Spotify Metagenres
+```	
+:::
+:::
