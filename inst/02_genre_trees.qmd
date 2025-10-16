@@ -100,8 +100,8 @@ metal -.-x pop
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
 ```{r musicbrainz-interactive-tree, echo=FALSE}
-mb_initial <- read_feather_with_lists("../models/initial_genres_mb.feather")
-mb_graph <- readRDS("../models/MusicBrainz_graph.rds")
+mb_initial <- read_feather_with_lists("../models/trees/initial_genres_mb.feather")
+mb_graph <- readRDS("../models/trees/MusicBrainz_graph.rds")
 
 plot_network_graph(
   mb_graph,
@@ -123,8 +123,8 @@ plot_network_graph(
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
 ```{r discogs-interactive-tree, echo=FALSE}
-dc_initial <- read_feather_with_lists("../models/initial_genres_dc.feather")
-dc_graph <- readRDS("../models/Discogs_graph.rds")
+dc_initial <- read_feather_with_lists("../models/trees/initial_genres_dc.feather")
+dc_graph <- readRDS("../models/trees/Discogs_graph.rds")
 
 plot_network_graph(
   dc_graph,
@@ -148,8 +148,8 @@ Please click on the nodes to explore sub-genres. The font size is fixed to ensur
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
 ```{r spotify-interactive-tree, echo=FALSE}	
-s_initial <- read_feather_with_lists("../models/initial_genres_s.feather")
-s_graph <- readRDS("../models/Spotify_graph.rds")
+s_initial <- read_feather_with_lists("../models/trees/initial_genres_s.feather")
+s_graph <- readRDS("../models/trees/Spotify_graph.rds")
 
 plot_network_graph(
   s_graph,

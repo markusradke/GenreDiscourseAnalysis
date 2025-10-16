@@ -14,12 +14,11 @@ test_that("export_graph_for_gephi_import writes GEXF and escapes ampersands", {
   tmp <- tempdir()
   on.exit(setwd(oldwd), add = TRUE)
   setwd(tmp)
-
-  dir.create("models", showWarnings = FALSE)
+  dir.create("models/trees", showWarnings = FALSE, recursive = TRUE)
   name <- paste0("testgraph_", as.integer(Sys.time()))
   suppressMessages(export_graph_for_gephi_import(g, name))
 
-  gexf_path <- file.path("models", paste0(name, ".gexf"))
+  gexf_path <- file.path("models/trees", paste0(name, ".gexf"))
   expect_true(file.exists(gexf_path))
 
   # read file and check that ampersands were escaped
@@ -29,6 +28,7 @@ test_that("export_graph_for_gephi_import writes GEXF and escapes ampersands", {
   # check edges: number of <edge ...> lines should equal ecount
   edge_lines <- grep("<edge ", contents, fixed = TRUE)
   expect_equal(length(edge_lines), igraph::ecount(g))
+  unlink(tmp, recursive = TRUE)
 })
 
 test_that("save and read feather with lists round-trip works", {

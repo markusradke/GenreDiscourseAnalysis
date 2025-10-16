@@ -156,6 +156,7 @@ test_that("apply_vote_weighting preserves matrix dimensions", {
   expect_true(all(weighted_adj <= basic_adj | is.na(weighted_adj)))
 })
 
+# TODO FIX
 test_that("build_genre_tree handles small dataset without errors", {
   skip_if_not_installed("igraph")
 
@@ -169,7 +170,11 @@ test_that("build_genre_tree handles small dataset without errors", {
   # use temporary directory to avoid polluting workspace
   old_wd <- getwd()
   tmp_dir <- tempdir()
-  dir.create(file.path(tmp_dir, "models"), showWarnings = FALSE)
+  dir.create(
+    file.path(tmp_dir, "models/trees"),
+    showWarnings = FALSE,
+    recursive = TRUE
+  )
   setwd(tmp_dir)
   on.exit(setwd(old_wd), add = TRUE)
 
@@ -182,8 +187,9 @@ test_that("build_genre_tree handles small dataset without errors", {
   ))
 
   # check that files were created
-  expect_true(file.exists("models/test_weighted_graph.rds"))
-  file.remove("models/test_weighted_graph.rds")
+  expect_true(file.exists("models/trees/test_weighted_graph.rds"))
+  file.remove("models/trees/test_weighted_graph.rds")
+  unlink(tmp_dir, recursive = TRUE)
 })
 
 test_that("performance critical functions handle edge cases", {
