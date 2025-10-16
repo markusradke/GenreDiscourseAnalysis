@@ -128,7 +128,7 @@ tune_by_folding_genre_tree_bottom_to_top <- function(
   initial_genres,
   graph_connected,
   min_n_grid,
-  root = 'rock'
+  root
 ) {
   res <- list()
 
@@ -206,7 +206,7 @@ fold_genre_tree_bottom_to_top <- function(
   initial_genres,
   graph_connected,
   min_n,
-  root = 'rock',
+  root,
   neighbor_cache = NULL
 ) {
   # Create neighbor cache if not provided (for backwards compatibility)
