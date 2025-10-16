@@ -53,6 +53,7 @@ flowchart TD
 <!-- TODO: Show Gini plot and suggested metagenres (interactive network plot) for each platform -->
 # MusicBrainz Metagenres
 <!-- ```{r}
+#| fig-cap: "Within-hieararchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n per genre of X songs. Resulting number of metagenres ranged from Y to Z."
 tuning <- readRDS("../models/metagenres/tune_mb_metagenres.rds")
 tuning$plot
 

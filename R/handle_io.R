@@ -63,3 +63,33 @@ read_feather_with_lists <- function(filepath) {
   message(sprintf("File read: %s.feather", filepath))
   output
 }
+
+
+save_tuning <- function(tune, platform = "") {
+  message("Saving tuning results...")
+  saveRDS(tune, sprintf("models/metagenres/tune_%s_metagenres.rds", platform))
+  saveRDS(
+    tune$suggested_solution,
+    sprintf("models/metagenres/metagenres_%s_suggested_solution.rds", platform)
+  )
+  saveRDS(
+    tune$plot,
+    sprintf("models/metagenres/tune_%s_gini_plot.rds", platform)
+  )
+  saveRDS(
+    get_tuning_metadata(tune),
+    sprintf("models/metagenres/tune_%s_metadata.rds", platform)
+  )
+}
+
+get_tuning_metadata <- function(tune) {
+  list(
+    min_min_n = min(tune$ginis$min_n),
+    max_min_n = max(tune$ginis$min_n),
+    step = unique(diff(tune$ginis$min_n)),
+    min_n_metagenre = min(tune$ginis$n_metagenres),
+    max_n_metagenre = max(tune$ginis$n_metagenres),
+    optimal_min_n = tune$suggested_solution$min_n,
+    optimal_n_metagenres = tune$suggested_solution$n_metagenres
+  )
+}
