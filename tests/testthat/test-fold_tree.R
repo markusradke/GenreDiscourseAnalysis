@@ -316,3 +316,205 @@ test_that("handle_non_gini_solutions works correctly", {
   expect_equal(nrow(result_valid$ginis), 2) # Should remove last NaN
   expect_equal(length(result_valid$solutions), 2) # Should remove last solution
 })
+
+test_that("metagenres have valid parent structure", {
+  # Test that each metagenre (except root) has its parent also as a metagenre
+
+  edges <- data.frame(
+    from = c(
+      "metal",
+      "rock",
+      "pop",
+      "jazz",
+      "blues",
+      "electronic",
+      "techno",
+      "house"
+    ),
+    to = c(
+      "rock",
+      "root",
+      "root",
+      "root",
+      "jazz",
+      "root",
+      "electronic",
+      "electronic"
+    )
+  )
+  graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  initial_genres <- data.frame(
+    id = 1:200,
+    initial_genre = c(
+      rep("metal", 25),
+      rep("rock", 35),
+      rep("pop", 50),
+      rep("blues", 15),
+      rep("jazz", 20),
+      rep("techno", 30),
+      rep("house", 25)
+    ),
+    root = rep("root", 200)
+  )
+
+  # Cause some folding
+  result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
+  metagenres <- unique(result$mapping$metagenre)
+
+  # For each metagenre except root, check that its parent is also a metagenre
+  for (metagenre in metagenres) {
+    if (metagenre != "root") {
+      parent_vertices <- names(igraph::neighbors(
+        graph,
+        metagenre,
+        mode = "out"
+      ))
+      expect_length(parent_vertices, 1)
+
+      parent <- parent_vertices[1]
+      expect_true(
+        parent %in% metagenres,
+        label = paste(
+          "Parent",
+          parent,
+          "of metagenre",
+          metagenre,
+          "should also be a metagenre. Found metagenres:",
+          paste(metagenres, collapse = ", ")
+        )
+      )
+    }
+  }
+
+  metagenre_graph <- result$metagenre_graph
+  expect_true(igraph::is_connected(metagenre_graph, mode = "weak"))
+  metagenre_root <- get_graph_root(metagenre_graph)$name
+  expect_equal(metagenre_root, "root")
+})
+
+
+test_that("algorithm handles edge cases that might occur in large datasets", {
+  # Test highly skewed distributions (common in real data)
+
+  # Create a hierarchy with many leaf nodes
+  edges <- data.frame(
+    from = paste0("subgenre_", 1:50), # 50 leaf nodes
+    to = rep(c("pop", "rock", "electronic", "jazz", "classical"), each = 10)
+  )
+  edges <- rbind(
+    edges,
+    data.frame(
+      from = c("pop", "rock", "electronic", "jazz", "classical"),
+      to = rep("root", 5)
+    )
+  )
+
+  graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  # Highly skewed distribution: one dominant genre
+  initial_genres <- data.frame(
+    id = 1:1000,
+    initial_genre = c(
+      rep("subgenre_1", 800), # 80% of data in one subgenre
+      rep("subgenre_2", 50),
+      rep("subgenre_3", 30),
+      sample(paste0("subgenre_", 4:50), 120, replace = TRUE) # Rest scattered
+    ),
+    root = rep("root", 1000)
+  )
+
+  # This should handle the skew gracefully
+  result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
+
+  # Check basic properties still hold
+  expect_equal(sum(result$n_songs$n), 1000)
+  expect_true(all(result$n_songs$n >= 40 | result$n_songs$genre == "root"))
+
+  # Test with very strict min_n (should collapse to root)
+  result_strict <- fold_genre_tree_bottom_to_top(
+    initial_genres,
+    graph,
+    900,
+    "root"
+  )
+  expect_equal(nrow(result_strict$n_songs), 1) # Only root should remain
+  expect_equal(result_strict$n_songs$genre[1], "root")
+})
+
+test_that("algorithm consistency across sample sizes", {
+  # Test that algorithm behavior is consistent across different sample sizes
+
+  # Create a problematic case that might trigger issues in large datasets
+  test_case <- create_problematic_test_case("parent_violation")
+
+  # Test with increasing sample sizes
+  scaling_results <- test_algorithm_scaling(
+    test_case$initial_genres,
+    test_case$graph,
+    min_n = 30,
+    root_genre = "root",
+    sample_sizes = c(100, 200, 300, 400)
+  )
+
+  # Check that all sample sizes produce valid results
+  for (size_name in names(scaling_results)) {
+    result <- scaling_results[[size_name]]
+
+    # No parent violations should occur
+    expect_equal(
+      length(result$parent_violations),
+      0,
+      label = paste("No parent violations for sample size", size_name)
+    )
+
+    # Tree properties should be valid
+    expect_true(
+      result$tree_properties$is_tree,
+      label = paste("Valid tree for sample size", size_name)
+    )
+    expect_true(
+      result$tree_properties$is_connected,
+      label = paste("Connected graph for sample size", size_name)
+    )
+  }
+
+  # Results should be somewhat consistent across sizes
+  metagenre_counts <- sapply(scaling_results, function(x) x$n_metagenres)
+  expect_true(
+    max(metagenre_counts) - min(metagenre_counts) <= 3,
+    label = "Metagenre counts should be roughly consistent across sample sizes"
+  )
+})
+
+test_that("algorithm handles known problematic patterns", {
+  # Test specific patterns that might cause issues in large datasets
+
+  test_case <- create_problematic_test_case("parent_violation")
+
+  # Test with various min_n values
+  for (min_n in c(10, 25, 50, 75)) {
+    result <- fold_genre_tree_bottom_to_top(
+      test_case$initial_genres,
+      test_case$graph,
+      min_n,
+      "root"
+    )
+
+    # Check for violations
+    violations <- check_parent_violations(result)
+    expect_equal(
+      length(violations),
+      0,
+      label = paste("No parent violations for min_n =", min_n)
+    )
+
+    # Check tree properties
+    tree_props <- check_tree_properties(result)
+    browser()
+    expect_true(
+      tree_props$is_tree,
+      label = paste("Valid tree structure for min_n =", min_n)
+    )
+  }
+})
