@@ -1,4 +1,6 @@
 rm(list = ls())
+devtools::load_all()
+
 # Load data ----
 mb <- read_feather_with_lists("data/filtered_mb_long.feather")
 dc <- read_feather_with_lists("data/filtered_dc_long.feather")
@@ -16,22 +18,22 @@ build_genre_tree(s, "Spotify", vote_weighted = FALSE)
 message("\n MAP INITIAL GENRES MUSICBRAINZ")
 initial_genres_mb <- get_initial_genre_mapping(
   mb,
-  readRDS("models/MusicBrainz_graph.rds")
+  readRDS("models/trees/MusicBrainz_graph.rds")
 )
-save_feather_with_lists(initial_genres_mb, "models/initial_genres_mb")
+save_feather_with_lists(initial_genres_mb, "models/trees/initial_genres_mb")
 
 message("\n MAP INITIAL GENRES DISCOGS")
 initial_genres_dc <- get_initial_genre_mapping(
   dc,
-  readRDS("models/Discogs_graph.rds")
+  readRDS("models/trees/Discogs_graph.rds")
 )
-save_feather_with_lists(initial_genres_dc, "models/initial_genres_dc")
+save_feather_with_lists(initial_genres_dc, "models/trees/initial_genres_dc")
 
 message("\n MAP INITIAL GENRES SPOTIFY")
 initial_genres_s <- get_initial_genre_mapping(
   s,
-  readRDS("models/Spotify_graph.rds")
+  readRDS("models/trees/Spotify_graph.rds")
 )
-save_feather_with_lists(initial_genres_s, "models/initial_genres_s")
+save_feather_with_lists(initial_genres_s, "models/trees/initial_genres_s")
 
 generate_report("02_genre_trees")

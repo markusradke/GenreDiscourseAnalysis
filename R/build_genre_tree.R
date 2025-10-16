@@ -65,7 +65,7 @@ save_results <- function(
     final_tree,
     sprintf("%s_genre_tree", platform_name)
   )
-  saveRDS(final_tree, sprintf("models/%s_graph.rds", platform_name))
+  saveRDS(final_tree, sprintf("models/trees/%s_graph.rds", platform_name))
 }
 
 

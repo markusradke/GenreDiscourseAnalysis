@@ -26,7 +26,7 @@ export_graph_for_gephi_import <- function(graph, name) {
     edges = edges_df,
     edgesWeight = edges_weight,
     defaultedgetype = "directed",
-    output = sprintf("models/%s.gexf", name)
+    output = sprintf("models/trees/%s.gexf", name)
   )
 }
 

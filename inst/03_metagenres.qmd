@@ -23,6 +23,8 @@ devtools::load_all()
 ```	
 
 # Algorithm for folding the genre tree to get metagenres
+<!-- TODO: Add a little explanation on the algorithm (see Bayreuth slides) -->
+
 ```{mermaid}
 flowchart TD
     A["Start with initial music genres and hierarchy tree"] --> B["Try different minimum song counts (grid search)"]
@@ -47,3 +49,20 @@ flowchart TD
     N --> P
     P --> Q["End: Return optimized genre groupings"]
 ```	
+
+<!-- TODO: Show Gini plot and suggested metagenres (interactive network plot) for each platform -->
+# MusicBrainz Metagenres
+<!-- ```{r}
+tuning <- readRDS("../models/metagenres/tune_mb_metagenres.rds")
+tuning$plot
+
+plot_network_graph(graph = tuning$suggested_solution$metagenre_graph, 
+                   mapping = tuning$suggested_solution$mapping, 
+                   sizemode = "metagenre", 
+                   height = 1000, 
+                   interactive = TRUE)
+```	 -->
+
+# Discogs Metagenres
+
+# Spotify Metagenres
