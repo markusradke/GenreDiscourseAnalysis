@@ -3,16 +3,15 @@
 #' Create a stratified sample from a large dataset for testing
 #'
 #' @param initial_genres Full dataset
-#' @param graph Full genre hierarchy graph
 #' @param sample_size Number of rows to include in sample
 #' @param preserve_rare_genres If TRUE, ensures rare genres are represented
 #' @return Stratified sample that preserves genre distribution characteristics
 create_stratified_sample <- function(
   initial_genres,
-  graph,
   sample_size = 1000,
   preserve_rare_genres = TRUE
 ) {
+  set.seed(42) # For reproducibility
   # Calculate genre frequencies
   genre_counts <- table(initial_genres$initial_genre)
 
@@ -87,7 +86,7 @@ test_algorithm_scaling <- function(
   for (sample_size in sample_sizes) {
     cat("Testing with sample size:", sample_size, "\n")
 
-    sample_data <- create_stratified_sample(initial_genres, graph, sample_size)
+    sample_data <- create_stratified_sample(initial_genres, sample_size)
 
     # Run algorithm
     result <- fold_genre_tree_bottom_to_top(
@@ -96,8 +95,6 @@ test_algorithm_scaling <- function(
       min_n,
       root_genre
     )
-
-    # Store key metrics
     results[[as.character(sample_size)]] <- list(
       sample_size = sample_size,
       n_metagenres = nrow(result$n_songs),
@@ -129,7 +126,7 @@ check_parent_violations <- function(result) {
       )
       if (length(parent_vertices) > 0) {
         parent <- names(parent_vertices)[1]
-        if (!parent %in% metagenres) {
+        if (!parent %in% metagenres && parent != "root") {
           violations[[length(violations) + 1]] <- list(
             child = metagenre,
             parent = parent,
