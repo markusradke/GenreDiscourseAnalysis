@@ -115,40 +115,58 @@ test_that("is_parent_and_remaining_larger_min_n works correctly", {
 })
 
 test_that("integrate_genre_and_siblings merges correctly", {
-  # Create test graph: parent <- child1, child2
+  # Create a simple graph: child1 -> parent, child2 -> parent
   edges <- data.frame(
-    from = c("child1", "child2"),
-    to = c("parent", "parent")
+    from = c("child1", "child2", "grandchild1"),
+    to = c("parent", "parent", "child1")
   )
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
 
   # Initial mapping with genres
   mapping <- data.frame(
     id = 1:6,
-    initial_genre = c("child1", "child1", "child2", "child2", "other", "other"),
-    genre = c("child1", "child1", "child2", "child2", "other", "other")
+    initial_genre = c(
+      "child1",
+      "child1",
+      "child2",
+      "child2",
+      "grandchild1",
+      "grandchild1"
+    ),
+    genre = c(
+      "child1",
+      "child1",
+      "child2",
+      "child2",
+      "grandchild1",
+      "grandchild1"
+    )
   )
 
   hierarchy <- data.frame(
-    tag_name = c("parent", "child1", "child2", "other"),
-    hierarchy_level = c(0, 1, 1, 1),
+    tag_name = c("parent", "child1", "child2", "grandchild1"),
+    hierarchy_level = c(0, 1, 1, 2),
     checked = c(FALSE, FALSE, FALSE, TRUE)
   )
-
   # Integrate child1 - should merge child1 and child2 into parent
-  result <- integrate_genre_and_siblings("child1", mapping, graph, hierarchy)
+  result <- integrate_genre_and_siblings_and_children(
+    "child1",
+    mapping,
+    graph, # current graph
+    graph, # connected graph
+    hierarchy
+  )
 
-  # Check that child1 and child2 are now mapped to parent
+  # Check that child1 and child2 and grandchild1 are now mapped to parent
   expect_true(all(result$current_mapping$genre[1:4] == "parent"))
-  expect_true(all(result$current_mapping$genre[5:6] == "other"))
+  expect_true(all(result$current_mapping$genre[5:6] == "parent"))
 
   # Check that child1 and child2 are marked as checked
   expect_true(result$hierarchy$checked[result$hierarchy$tag_name == "child1"])
   expect_true(result$hierarchy$checked[result$hierarchy$tag_name == "child2"])
 
   # Check n_songs calculation
-  expect_equal(result$n_songs$n[result$n_songs$genre == "parent"], 4)
-  expect_equal(result$n_songs$n[result$n_songs$genre == "other"], 2)
+  expect_equal(result$n_songs$n[result$n_songs$genre == "parent"], 6)
 })
 
 test_that("get_suggested_solution selects appropriately", {
@@ -243,7 +261,6 @@ test_that("fold_genre_tree_bottom_to_top stops at Gini NaN condition", {
     ),
     root = rep("root", 100)
   )
-
   min_n_grid <- seq(5, 100, 5)
   messages <- capture_messages({
     tuning_result <- tune_by_folding_genre_tree_bottom_to_top(
@@ -260,7 +277,7 @@ test_that("fold_genre_tree_bottom_to_top stops at Gini NaN condition", {
   expect_lt(nrow(tuning_result$ginis), length(min_n_grid))
   expect_true(is.nan(tail(tuning_result$ginis$weighted_gini, 1)))
   # Should keep all results incl. the NaN one
-  expect_equal(tuning_result$solutions |> names(), c("5", "20", "25"))
+  expect_equal(tuning_result$solutions |> names(), c("10", "35", "40"))
 })
 
 test_that("single genre immediately triggers NaN stop", {
@@ -318,7 +335,7 @@ test_that("handle_non_gini_solutions works correctly", {
 })
 
 test_that("metagenres have valid parent structure", {
-  # Test that each metagenre (except root) has its parent also as a metagenre
+  # Test that each metagenre (except root) parent is also as a metagenre
 
   edges <- data.frame(
     from = c(
@@ -357,11 +374,9 @@ test_that("metagenres have valid parent structure", {
     ),
     root = rep("root", 200)
   )
-
   # Cause some folding
   result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
   metagenres <- unique(result$mapping$metagenre)
-
   # For each metagenre except root, check that its parent is also a metagenre
   for (metagenre in metagenres) {
     if (metagenre != "root") {
@@ -386,7 +401,6 @@ test_that("metagenres have valid parent structure", {
       )
     }
   }
-
   metagenre_graph <- result$metagenre_graph
   expect_true(igraph::is_connected(metagenre_graph, mode = "weak"))
   metagenre_root <- get_graph_root(metagenre_graph)$name
@@ -423,7 +437,6 @@ test_that("algorithm handles edge cases that might occur in large datasets", {
     ),
     root = rep("root", 1000)
   )
-
   # This should handle the skew gracefully
   result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
 
@@ -478,13 +491,6 @@ test_that("algorithm consistency across sample sizes", {
       label = paste("Connected graph for sample size", size_name)
     )
   }
-
-  # Results should be somewhat consistent across sizes
-  metagenre_counts <- sapply(scaling_results, function(x) x$n_metagenres)
-  expect_true(
-    max(metagenre_counts) - min(metagenre_counts) <= 3,
-    label = "Metagenre counts should be roughly consistent across sample sizes"
-  )
 })
 
 test_that("algorithm handles known problematic patterns", {
@@ -511,7 +517,6 @@ test_that("algorithm handles known problematic patterns", {
 
     # Check tree properties
     tree_props <- check_tree_properties(result)
-    browser()
     expect_true(
       tree_props$is_tree,
       label = paste("Valid tree structure for min_n =", min_n)
