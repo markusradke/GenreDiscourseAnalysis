@@ -46,18 +46,6 @@ plot_tuning_results <- function(
       axis.text.x = ggplot2::element_text(color = 'grey30', size = 12),
       axis.text.y = ggplot2::element_text(color = c('grey30'), size = 12),
       panel.grid = ggplot2::element_blank(),
-      plot.subtitle = ggplot2::element_text(color = 'grey30', size = 12)
-    ) +
-    ggplot2::labs(
-      title = 'Weighted within-level Gini for different minimum n per metagenre',
-      subtitle = sprintf(
-        'caluclated for min n from %d to %d in steps of %d\n# of resulting metagenres ranged from %d to %d ',
-        min(ginis$min_n),
-        max(ginis$min_n),
-        unique(diff(ginis$min_n)),
-        min(ginis$n_metagenres),
-        max(ginis$n_metagenres)
-      )
     ) +
     ggrepel::geom_label_repel(
       data = candidates,

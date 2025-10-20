@@ -77,6 +77,14 @@ flowchart LR
 metal --> rock
 metal -.-x pop
 ```
+
+## Genre mapping
+For performing classification tasks later on, we need to transform our multilabel genre assignments into single-label assignements. Therefore, we choose the initial genre from each track's user assigned tags. We identify the most appropriate initial genre by following the path from the root of the tree to the leaf genres, always choosing the path with the highest number of votes down all sub-branches in the tracks genre list. When we reach a genre that has no heirs in the track's genre list, we assign this genre as the initial genre for this track.
+
+<!-- Was ist mit einem Fall, wo zwar ein Track in einem Tiefen Genre ist, aber nicht der gesamte Path? Das könnte zum Beispiel Classical erklären in den Leafs? Die bleiben vielleicht alle bei Classic Rock stecken und kommen gar nicht zu classical -->
+
+<!-- TODO: Make an example plot / multiple example plots -->
+
 # Genre Tree for MusicBrainz
 
 :::{.column-screen-inset-right}
