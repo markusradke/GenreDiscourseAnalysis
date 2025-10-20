@@ -16,25 +16,8 @@ format:
         code-links:
         - text: Github Repository
           href: "https://github.com/markusradke/GenreDiscourseAnalysis"
-        css: |
-          .plot-container {
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid #ddd;
-            background-color: #fafafa;
-            position: relative;
-          }
-          .r2d3 {
-            overflow: hidden !important;
-          }
-          
-          .r2d3 svg {
-            overflow: hidden !important;
-          }
-          
-          .r2d3 > div {
-            overflow: hidden !important;
-          }
+        css: 
+          styles.css
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
@@ -47,17 +30,40 @@ Root of the tree is "other" genre. This is why it does not need to fulfill the m
 
 We need to ensure that when merging genres, we merge all siblings and all grandchildren of the parent genre to avoid dangling nodes in the tree. Due to how the trees are created, merging grand children that already fulfilled the min n requirement will not occur often (genres that are closer to the root are expected to appear more frequent in initial genres than genres further away from the root).
 
-<!-- Eigentlich müsste es sogar so sein, das,,s der bei unterschreiten der Pfad mit der kleineren Summe eingeklappt wird, oder? -->
+<!-- Eigentlich müsste es sogar so sein, das,,s der bei unterschreiten der Pfad mit der kleineren Summe eingeklappt wird, oder? Leider sind die Merging-Regeln noch kompliziertere nämlich: 
+Im Prinzip ist die Frage: Wie umgehen mit schwach besetzten Genres in der nähe von Root, wenn Genres in die detailierter sind, zahlreicher vertreten sind? 
+Problemfall: Ich habe ein starkes Genre, das zum Metagenre wird. Das Elterngenre ist aber schwach besetzt und müsste nach Algorithmus eingeklappt werden. 
+Aktuelle Lösung: dann inklusive des als Metagenre dedachten Genres einklappen, weil sonst der Baum nicht konsistent ist oder die min n Forderung nicht erfüllt ist. 
+-->
 
 The algorithm works as follows:
 ```{mermaid folding_algorithm}
+%%{init: {
+  'flowchart': {
+    'nodeSpacing': 50, 
+    'rankSpacing': 80,
+    'useMaxWidth': true,
+    'htmlLabels': false,
+    'curve': 'basis'
+  }, 
+  'theme': 'base',
+  'themeVariables': {
+    'fontSize': '22px',
+    'fontFamily': 'Arial, sans-serif',
+    'primaryColor': '#ffffff',
+    'primaryTextColor': '#333333',
+    'primaryBorderColor': '#cccccc', 
+    'lineColor': '#666666',
+    'textColor': '#333333'
+  }
+}}%%
 flowchart TD
     A["Start with initial music genres and hierarchy tree"] --> B["Try different minimum song counts (grid search)"]
     B --> C["For each minimum count: Start folding process"]
     C --> D["Find leaf genre with most songs at deepest level"]
     D --> E{"Does this genre have enough songs?"}
     E -->|Yes| F{"Is the parent genre the root of the tree?"}
-    E -->|No| G["Merge genre with parent and all siblings and all grandchildren of parent"]
+    E -->|No| G["Merge genre with parent and all siblings and all grandchildren of parent that were already metagenres"]
     F -->|No| FF{"Would parent + siblings have enough songs combined?"}
     FF --> |Yes| H["Pluck genre from tree (cut connection to parent)"]
     FF -->|No| G

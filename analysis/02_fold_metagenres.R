@@ -1,9 +1,9 @@
 rm(list = ls())
 devtools::load_all()
 
-min_n <- 2000
-step <- 250
-max_n <- 5000
+min_n <- 1000
+step <- 20
+max_n <- 300000
 optimal_range <- c(20, 30)
 
 tune_mb <- tune_tree_folding(
