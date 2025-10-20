@@ -1,0 +1,20 @@
+/* Style plot containers and hide scrolling bars for interactive network plots */
+.plot-container {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    position: relative;
+}
+
+.r2d3 {
+    overflow: hidden !important;
+}
+
+.r2d3 svg {
+    overflow: hidden !important;
+}
+
+.r2d3>div {
+    overflow: hidden !important;
+}

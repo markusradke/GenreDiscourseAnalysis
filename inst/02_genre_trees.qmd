@@ -28,25 +28,8 @@ format:
         - text: Helper functions - Tree Plotting
           icon: file-code
           href: "https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/make_network_graph.R"
-        css: |
-          .plot-container {
-            width: 100%;
-            overflow: hidden;
-            border: 1px solid #ddd;
-            background-color: #fafafa;
-            position: relative;
-          }
-          .r2d3 {
-            overflow: hidden !important;
-          }
-          
-          .r2d3 svg {
-            overflow: hidden !important;
-          }
-          
-          .r2d3 > div {
-            overflow: hidden !important;
-          }
+        css: 
+          styles.css
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
