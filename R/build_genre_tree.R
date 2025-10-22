@@ -15,6 +15,7 @@ build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
 
   save_results(
     initial_network,
+    bidirectional_removed,
     final_tree,
     platform_name
   )
@@ -54,12 +55,17 @@ add_popmusic_as_metagerne <- function(graph) {
 
 save_results <- function(
   initial_graph,
+  bidirectional_removed,
   final_tree,
   platform_name
 ) {
   export_graph_for_gephi_import(
     initial_graph,
     sprintf("%s_initial_genre_network", platform_name)
+  )
+  export_graph_for_gephi_import(
+    create_igraph_from_matrix(bidirectional_removed),
+    sprintf("%s_child_of_network", platform_name)
   )
   export_graph_for_gephi_import(
     final_tree,

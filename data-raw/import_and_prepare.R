@@ -28,20 +28,6 @@ poptrag_selected <- poptrag |>
   )
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 
-# Filter out tracks that are in only in Spotify Charts ----
-message("Filtering out tracks that are only in Spotify Charts ...")
-poptrag_wo_spotifycharts <- poptrag_selected |>
-  dplyr::filter(
-    source.officialcharts |
-      source.recommendations |
-      source.featuredplaylists
-  )
-saveRDS(
-  poptrag_wo_spotifycharts,
-  "data/poptrag_selected_wout_spotify_charts.rds"
-)
-
-
 # Filter out tracks with valid MusicBrainz genre tags ----
 # TODO? filter out non-whitelist tags
 message("Filtering out tracks without valid MusicBrainz genre tags ...")
@@ -56,12 +42,12 @@ mb_non_music_tags <- c(
 )
 saveRDS(mb_non_music_tags, "data/mb_non_music_tags.rds")
 mb_whitelist <- readRDS("data-raw/musicbrainz_genre_whitelist_20250616.rds")
-unique_mb_tags <- get_unique_mb_tags(poptrag_wo_spotifycharts)
+unique_mb_tags <- get_unique_mb_tags(poptrag_selected)
 non_whitelist_genres <- setdiff(unique_mb_tags, mb_whitelist)
 mb_non_valid_tags <- union(mb_non_music_tags, non_whitelist_genres)
 
 filtered_mb_genre <- filter_valid_mb_genres(
-  poptrag_wo_spotifycharts,
+  poptrag_selected,
   mb_non_valid_tags
 )
 mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
@@ -79,7 +65,7 @@ dc_non_music_tags <- c(
 saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
 message("Filtering out tracks without valid Discogs genre tags ...")
 filtered_dc_genres <- filter_valid_dc_genres(
-  poptrag_wo_spotifycharts,
+  poptrag_selected,
   dc_non_music_tags
 )
 dc_long <- get_long_genre_tags(
@@ -112,7 +98,7 @@ s_non_music_tags <- c(
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
 message("Filtering out tracks without valid Spotify genre tags ...")
 filtered_s_genres <- filter_valid_s_genres(
-  poptrag_wo_spotifycharts,
+  poptrag_selected,
   s_non_music_tags
 )
 s_long <- get_long_genre_tags(
