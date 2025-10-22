@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-14">
+<meta name="dcterms.date" content="2025-10-20">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 14, 2025</p>
+      <p class="date">October 20, 2025</p>
     </div>
   </div>
   
@@ -133,20 +133,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>poptrag <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/poptrag_selected.rds'</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>poptrag <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../data/poptrag_selected.rds"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n_poptrag <span class="ot">&lt;-</span> <span class="fu">nrow</span>(poptrag)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_offcial_charts <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.officialcharts, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n_recommendations <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.recommendations, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n_featured_playlists <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.featuredplaylists,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_spotify_charts <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.spotifycharts, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n_only_spotify_charts <span class="ot">&lt;-</span> poptrag <span class="sc">|&gt;</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    source.spotifycharts <span class="sc">&amp;</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>source.officialcharts <span class="sc">&amp;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>source.recommendations <span class="sc">&amp;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span>source.featuredplaylists</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n_featured_playlists <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.featuredplaylists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_spotify_charts <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.spotifycharts, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We ground our analysis on a dataset with 294,291 tracks that were popular in Germany within the last 50 years (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
@@ -156,7 +148,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>9,102</strong> tracks from 100 <strong>Spotify featured playlists</strong> with median 90 tracks each (IQR: 42, min: 28, max: 750) for the German market (retrieved on 29.11.2024).</p></li>
 <li><p><strong>12,926</strong> tracks from the <strong><a href="https://spotifycharts.com/regional/de/weekly/latest">Daily Top 200 Spotify charts</a></strong> for Germany from 01.01.2017 to 30.11.2024.</p></li>
 </ul>
-<p>8,277 tracks that were <strong>only in the Spotify charts</strong> and not in any other source were <strong>excluded</strong> from the analysis.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -178,35 +169,36 @@ Note
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mb_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">'../data/filtered_mb_long.feather'</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mb_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/mb_non_music_tags.rds'</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mb_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">"../data/filtered_mb_long.feather"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mb_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../data/mb_non_music_tags.rds"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>n_mb <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(mb_long<span class="sc">$</span>track.s.id))</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n_diff_mb <span class="ot">&lt;-</span> n_poptrag <span class="sc">-</span> n_mb</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>n_unique_mb_tags <span class="ot">&lt;-</span> <span class="fu">unique</span>(mb_long<span class="sc">$</span>tag_name) <span class="sc">|&gt;</span> <span class="fu">length</span>()</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>tags_per_track_mb <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(mb_long, track.s.id) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>votes_per_track_mb <span class="ot">&lt;-</span> mb_long <span class="sc">|&gt;</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(track.s.id) <span class="sc">|&gt;</span> </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">n_votes =</span> <span class="fu">sum</span>(tag_count)) <span class="sc">|&gt;</span> </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>votes_per_track_mb <span class="ot">&lt;-</span> mb_long <span class="sc">|&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(track.s.id) <span class="sc">|&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarize</span>(<span class="at">n_votes =</span> <span class="fu">sum</span>(tag_count)) <span class="sc">|&gt;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_votes)</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>tracks_per_tag_mb <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(mb_long, tag_name) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>one_track_tags_mb <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(mb_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>one_track_tags_mb <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(mb_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025 (52,012 tracks, 18%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
-<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 242,279 tracks</strong> with MusicBrainz music genre tags.</p>
-<p>There are 991 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 25 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 156 times (median: 5, IQR: 8).</p>
-<p>101 tags were assigned to only one track (10%, min: 1, max: 90,259, median: 61, IQR: 379).</p>
+<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025 (45,770 tracks, 16%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
+<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 248,521 tracks</strong> with MusicBrainz music genre tags.</p>
+<p>There are 996 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 25 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 156 times (median: 5, IQR: 8).</p>
+<p>102 tags were assigned to only one track (10%, min: 1, max: 90,428, median: 61, IQR: 389).</p>
 </section>
 <section id="discogs-network-data" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dc_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">'../data/filtered_dc_long.feather'</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dc_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/dc_non_music_tags.rds'</span>)</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dc_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">"../data/filtered_dc_long.feather"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dc_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../data/dc_non_music_tags.rds"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n_dc <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(dc_long<span class="sc">$</span>track.s.id))</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>n_diff_dc <span class="ot">&lt;-</span> n_poptrag <span class="sc">-</span> n_dc</span>
@@ -214,13 +206,14 @@ Note
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>tags_per_track_dc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(dc_long, track.s.id) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>tracks_per_tag_dc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(dc_long, tag_name) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>one_track_tags_dc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(dc_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>one_track_tags_dc <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(dc_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Discogs genre tag (Discogs “genre” and/or “style”) or with only non-music genre tags (33,373 tracks, 11%). Non-music genre tags were: “Non-Music”, “Children’s”, “Audiobook”, “Comedy”, “Speech”, “Spoken Word”.</p>
-<p>This amounts to <strong>N<sub>Discogs</sub> = 260,918 tracks</strong> with Discogs music genre tags.</p>
-<p>There are 489 different genre tags in the Discogs genre data set. Users assigned between 1 and 30 different tags to each track (median: 3, IQR: 2).</p>
-<p>28 tags were assigned to only one track (6%, min: 1, max: 140,072, median: 110, IQR: 670).</p>
+<p>We filtered out all songs without a Discogs genre tag (Discogs “genre” and/or “style”) or with only non-music genre tags (29,582 tracks, 10%). Non-music genre tags were: “Non-Music”, “Children’s”, “Audiobook”, “Comedy”, “Speech”, “Spoken Word”.</p>
+<p>This amounts to <strong>N<sub>Discogs</sub> = 264,709 tracks</strong> with Discogs music genre tags.</p>
+<p>There are 491 different genre tags in the Discogs genre data set. Users assigned between 1 and 30 different tags to each track (median: 3, IQR: 2).</p>
+<p>28 tags were assigned to only one track (6%, min: 1, max: 140,382, median: 110, IQR: 685).</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -253,8 +246,8 @@ Note
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>s_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">'../data/filtered_s_long.feather'</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>s_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'../data/s_non_music_tags.rds'</span>)</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>s_long <span class="ot">&lt;-</span> <span class="fu">read_feather_with_lists</span>(<span class="st">"../data/filtered_s_long.feather"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>s_non_music_tags <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../data/s_non_music_tags.rds"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>n_s <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(s_long<span class="sc">$</span>track.s.id))</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>n_diff_s <span class="ot">&lt;-</span> n_poptrag <span class="sc">-</span> n_s</span>
@@ -262,13 +255,14 @@ Note
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tags_per_track_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, track.s.id) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>tracks_per_tag_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, tag_name) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>one_track_tags_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>one_track_tags_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (30,337 tracks, 10%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”.</p>
-<p>This amounts to <strong>N<sub>Spotifys</sub> = 263,954 tracks</strong> with Spotify music genre tags.</p>
-<p>There are 3,228 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
-<p>480 tags were assigned to only one track (15%, min: 1, max: 30,892, median: 19, IQR: 112).</p>
+<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (22,491 tracks, 8%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”.</p>
+<p>This amounts to <strong>N<sub>Spotifys</sub> = 271,800 tracks</strong> with Spotify music genre tags.</p>
+<p>There are 3,269 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
+<p>489 tags were assigned to only one track (15%, min: 1, max: 30,958, median: 19, IQR: 112).</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
