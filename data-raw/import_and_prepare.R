@@ -28,19 +28,6 @@ poptrag_selected <- poptrag |>
     source.spotifycharts
   )
 
-# combine Spotify artists genres ----
-message("Combining Spotify artist genres ...")
-poptrag_selected$n_artists <- lapply(
-  poptrag_selected$track.s.artists,
-  nrow
-) |>
-  unlist()
-spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
-poptrag_selected <- combine_spotify_artist_genres(
-  poptrag_selected,
-  spotify_artist_genres
-)
-
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 # Filter out tracks with valid MusicBrainz genre tags ----
 message("Filtering out tracks without valid MusicBrainz genre tags ...")
@@ -89,6 +76,8 @@ dc_long <- get_long_genre_tags(
 save_feather_with_lists(dc_long, "data/filtered_dc_long")
 
 # Filter out tracks without any entries for Spotify genres ----
+# Combine the gener tags of all artists involved in a track
+spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
 s_non_music_tags <- c(
   "432hz",
   "528hz",
@@ -113,7 +102,8 @@ saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
 message("Filtering out tracks without valid Spotify genre tags ...")
 filtered_s_genres <- filter_valid_s_genres(
   poptrag_selected,
-  s_non_music_tags
+  s_non_music_tags,
+  spotify_artist_genres
 )
 s_long <- get_long_genre_tags(
   filtered_s_genres,

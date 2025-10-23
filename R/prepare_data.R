@@ -7,12 +7,28 @@ filter_valid_dc_genres <- function(input, non_music_tags) {
   filter_valid_genres(input, non_music_tags, get_combined_dc_tags, "dc.genres")
 }
 
-filter_valid_s_genres <- function(input, non_music_tags) {
-  filter_valid_genres(input, non_music_tags, get_combined_s_tags, "s.genres")
+filter_valid_s_genres <- function(
+  input,
+  non_music_tags,
+  spotify_artist_genres
+) {
+  filter_valid_genres(
+    input,
+    non_music_tags,
+    get_combined_s_tags,
+    "s.genres",
+    spotify_artist_genres
+  )
 }
 
-filter_valid_genres <- function(input, non_music_tags, combine_fun, genrecol) {
-  combined <- combine_fun(input)
+filter_valid_genres <- function(
+  input,
+  non_music_tags,
+  combine_fun,
+  genrecol,
+  ...
+) {
+  combined <- combine_fun(input, ...)
   non_empty <- filter_non_empty_tags(combined, genrecol)
   filtered <- filter_music_tags(non_empty, genrecol, non_music_tags)
   message("Done.")
@@ -60,64 +76,50 @@ combine_tag_columns <- function(input, cols, builder, outcol, msg = "") {
   input
 }
 
-get_combined_s_tags <- function(input) {
-  empty_tags_df <- function() {
-    data.frame(
-      tag_name = character(0),
-      tag_count = integer(0),
-      stringsAsFactors = FALSE
-    )
-  }
-
-  process_one_sp <- function(genres) {
-    # genres may be: NULL, empty data.frame,
-    # data.frame with column "genre" or "tag_name"
-    if (is.null(genres)) {
-      return(empty_tags_df())
-    }
-
-    if (is.data.frame(genres)) {
-      if (nrow(genres) == 0) {
-        return(empty_tags_df())
-      }
-      if ("genre" %in% names(genres)) {
-        names(genres)[names(genres) == "genre"] <- "tag_name"
-      }
-      tags <- as.character(genres$tag_name)
-      tags <- unique(tags)
-      data.frame(
-        tag_name = tags,
-        tag_count = rep(NA, length(tags)),
-        stringsAsFactors = FALSE
-      )
-    } else {
-      empty_tags_df()
-    }
-  }
-
-  message("Combining Spotify artist genres ...")
+get_combined_s_tags <- function(input, spotify_artist_genres) {
   n <- nrow(input)
-  s_list <- vector("list", length = ifelse(is.null(n), 0, n))
+  combined_genres <- vector("list", length = ifelse(is.null(n), 0, n))
 
   if (is.null(n) || n == 0) {
-    input$s.genres <- s_list
+    input$s.genres <- combined_genres
     return(input)
   }
 
   pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
   on.exit(close(pb), add = TRUE)
-  s_list <- mapply(
-    function(genres, idx) {
-      utils::setTxtProgressBar(pb, idx)
-      process_one_sp(genres)
-    },
-    input$artist.s.genres,
-    seq_len(n),
-    SIMPLIFY = FALSE
-  )
-  input$s.genres <- s_list
+  combined_genres <- lapply(seq_len(n), function(i) {
+    utils::setTxtProgressBar(pb, i)
+    track_artists <- input$track.s.artists[[i]]
+    if (is.null(track_artists) || nrow(track_artists) == 0) {
+      return(data.frame(
+        genre = character(0),
+        stringsAsFactors = FALSE
+      ))
+    }
+    artist_ids <- as.character(track_artists$id)
+    genre_list <- lapply(artist_ids, function(artist_id) {
+      genres <- dplyr::filter(
+        spotify_artist_genres,
+        artist.s.id == artist_id
+      ) |>
+        dplyr::pull("artist.s.genres")
+      if (is.null(genres)) {
+        data.frame(
+          genre = character(0),
+          stringsAsFactors = FALSE
+        )
+      } else {
+        genres
+      }
+    })
+    combined <- data.frame(genre = unlist(genre_list), stringsAsFactors = FALSE)
+    dplyr::count(combined, genre) |>
+      dplyr::rename(tag_name = genre, tag_count = n)
+  })
+  input$s.genres <- combined_genres
   input
 }
+
 
 normalize_tags <- function(x) {
   if (is.null(x) || (length(x) == 1 && is.na(x))) {
@@ -321,7 +323,7 @@ unlist_mb_tags_dataframe <- function(mb_tags) {
   }))
 }
 
-combine_spotify_artist_genres <- function(input, spotify_artist_genres) {
+get_combined_s_tags <- function(input, spotify_artist_genres) {
   n <- nrow(input)
   combined_genres <- vector("list", length = ifelse(is.null(n), 0, n))
 

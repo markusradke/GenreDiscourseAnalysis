@@ -19,25 +19,6 @@ test_that("get_combined_dc_tags and normalize_tags handle NA and NULL", {
   expect_true(all(sapply(out$dc.genres, is.data.frame)))
 })
 
-test_that("get_combined_s_tags normalizes artist.s.genres to s.genres", {
-  df <- data.frame(track.s.id = c("a", "b"), stringsAsFactors = FALSE)
-  df$artist.s.genres <- list(
-    data.frame(genre = c("indie", "alt"), stringsAsFactors = FALSE),
-    data.frame(genre = character(0), stringsAsFactors = FALSE)
-  )
-
-  out <- get_combined_s_tags(df)
-  expect_true("s.genres" %in% colnames(out))
-  # first element should be a data.frame with tag_name and tag_count == 1
-  expect_true(is.data.frame(out$s.genres[[1]]))
-  expect_setequal(c("tag_name", "tag_count"), colnames(out$s.genres[[1]]))
-  expect_equal(out$s.genres[[1]]$tag_name, c("indie", "alt"))
-  expect_true(all(is.na(out$s.genres[[1]]$tag_count)))
-  # second element with zero-length genre should become 0-row data.frame
-  expect_true(is.data.frame(out$s.genres[[2]]))
-  expect_equal(nrow(out$s.genres[[2]]), 0)
-})
-
 
 test_that("erase_non_music_tags removes non-music tags", {
   tags <- list(
@@ -136,19 +117,39 @@ test_that("filter_valid_dc_genres composes the correct pipeline", {
 })
 
 test_that("filter_valid_s_genres composes the correct pipeline", {
-  df <- data.frame(track.s.id = c("a", "b", "c"), stringsAsFactors = FALSE)
-  df$artist.s.genres <- list(
-    data.frame(genre = c("indie", "alt"), stringsAsFactors = FALSE),
-    data.frame(genre = c("podcast"), stringsAsFactors = FALSE),
-    data.frame(genre = character(0), stringsAsFactors = FALSE)
+  df <- data.frame(
+    track.s.id = c("ta", "tb", "tc", "td"),
+    track.s.artists = I(
+      list(
+        data.frame(id = c("a", "b)")),
+        data.frame(id = "b"),
+        data.frame(id = "c"),
+        data.frame(id = c("a", "d"))
+      )
+    )
   )
 
+  spotify_artist_genres <- data.frame(
+    artist.s.id = c("a", "b", "c", "d"),
+    artist.s.genres = I(list(
+      c("indie", "alt"),
+      c("podcast"),
+      character(0),
+      c("rock", "indie")
+    )),
+    stringsAsFactors = FALSE
+  )
   non_music <- c("podcast")
-  out <- filter_valid_s_genres(df, non_music)
-  expect_equal(nrow(out), 1)
-  expect_true(all(sapply(out$s.genres, function(x) {
-    is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
-  })))
+  out <- filter_valid_s_genres(df, non_music, spotify_artist_genres)
+  expect_equal(nrow(out), 2)
+  expect_equal(
+    out$s.genres[[1]],
+    data.frame(tag_name = c("alt", "indie"), tag_count = c(1, 1))
+  )
+  expect_equal(
+    out$s.genres[[2]],
+    data.frame(tag_name = c("alt", "indie", "rock"), tag_count = c(1, 2, 1))
+  )
 })
 
 test_that("calculate_tag_counts computes artist and total counts", {
@@ -218,7 +219,7 @@ test_that("combines spotify artist genres correctly", {
     )),
     stringsAsFactors = FALSE
   )
-  out <- combine_spotify_artist_genres(df, spotify_artist_genres)
+  out <- get_combined_s_tags(df, spotify_artist_genres)
   expect_true("s.genres" %in% colnames(out))
   expect_equal(nrow(out), 2)
   expect_true(all(sapply(out$s.genres, is.data.frame)))
