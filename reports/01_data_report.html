@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-20">
+<meta name="dcterms.date" content="2025-10-23">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 20, 2025</p>
+      <p class="date">October 23, 2025</p>
     </div>
   </div>
   
@@ -141,12 +141,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_spotify_charts <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.spotifycharts, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We ground our analysis on a dataset with 294,291 tracks that were popular in Germany within the last 50 years (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
+<p>We ground our analysis on a dataset with 254,334 tracks that were popular in Germany within the last 50 years (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
 <ul>
-<li><p><strong>253,719</strong> tracks from the <strong>weekly <a href="https://www.offiziellecharts.de/">MediaControl</a> single- and album charts</strong> from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).</p></li>
-<li><p><strong>28,134</strong> tracks from <strong>Spotify recommendations</strong> for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for “disney”, min: 49 for “new release”).</p></li>
-<li><p><strong>9,102</strong> tracks from 100 <strong>Spotify featured playlists</strong> with median 90 tracks each (IQR: 42, min: 28, max: 750) for the German market (retrieved on 29.11.2024).</p></li>
-<li><p><strong>12,926</strong> tracks from the <strong><a href="https://spotifycharts.com/regional/de/weekly/latest">Daily Top 200 Spotify charts</a></strong> for Germany from 01.01.2017 to 30.11.2024.</p></li>
+<li><p><strong>215,702</strong> tracks from the <strong>weekly <a href="https://www.offiziellecharts.de/">MediaControl</a> single- and album charts</strong> from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).</p></li>
+<li><p><strong>26,949</strong> tracks from <strong>Spotify recommendations</strong> for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for “disney”, min: 49 for “new release”).</p></li>
+<li><p><strong>8,801</strong> tracks from 100 <strong>Spotify featured playlists</strong> with median 90 tracks each (IQR: 42, min: 28, max: 750) for the German market (retrieved on 29.11.2024).</p></li>
+<li><p><strong>11,994</strong> tracks from the <strong><a href="https://spotifycharts.com/regional/de/weekly/latest">Daily Top 200 Spotify charts</a></strong> for Germany from 01.01.2017 to 30.11.2024.</p></li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -158,7 +158,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.</p>
+<p>The dataset excluded songs shorter than 30 seconds (most likely interludes; 853 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.</p>
 </div>
 </div>
 </section>
@@ -187,10 +187,10 @@ Note
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025 (45,770 tracks, 16%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
-<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 248,521 tracks</strong> with MusicBrainz music genre tags.</p>
-<p>There are 996 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 25 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 156 times (median: 5, IQR: 8).</p>
-<p>102 tags were assigned to only one track (10%, min: 1, max: 90,428, median: 61, IQR: 389).</p>
+<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025 (42,982 tracks, 17%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
+<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 211,352 tracks</strong> with MusicBrainz music genre tags.</p>
+<p>There are 996 different genre tags in the MusicBrainz genre data set. Users assigned between 1 and 25 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 156 times (median: 5, IQR: 7).</p>
+<p>108 tags were assigned to only one track (11%, min: 1, max: 75,678, median: 54, IQR: 316).</p>
 </section>
 <section id="discogs-network-data" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</h2>
@@ -210,10 +210,10 @@ Note
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Discogs genre tag (Discogs “genre” and/or “style”) or with only non-music genre tags (29,582 tracks, 10%). Non-music genre tags were: “Non-Music”, “Children’s”, “Audiobook”, “Comedy”, “Speech”, “Spoken Word”.</p>
-<p>This amounts to <strong>N<sub>Discogs</sub> = 264,709 tracks</strong> with Discogs music genre tags.</p>
+<p>We filtered out all songs without a Discogs genre tag (Discogs “genre” and/or “style”) or with only non-music genre tags (27,269 tracks, 11%). Non-music genre tags were: “Non-Music”, “Children’s”, “Audiobook”, “Comedy”, “Speech”, “Spoken Word”.</p>
+<p>This amounts to <strong>N<sub>Discogs</sub> = 227,065 tracks</strong> with Discogs music genre tags.</p>
 <p>There are 491 different genre tags in the Discogs genre data set. Users assigned between 1 and 30 different tags to each track (median: 3, IQR: 2).</p>
-<p>28 tags were assigned to only one track (6%, min: 1, max: 140,382, median: 110, IQR: 685).</p>
+<p>28 tags were assigned to only one track (6%, min: 1, max: 118,212, median: 102, IQR: 599.5).</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -259,10 +259,10 @@ Note
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (22,491 tracks, 8%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”.</p>
-<p>This amounts to <strong>N<sub>Spotifys</sub> = 271,800 tracks</strong> with Spotify music genre tags.</p>
-<p>There are 3,269 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
-<p>489 tags were assigned to only one track (15%, min: 1, max: 30,958, median: 19, IQR: 112).</p>
+<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (22,629 tracks, 9%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
+<p>This amounts to <strong>N<sub>Spotifys</sub> = 231,705 tracks</strong> with Spotify music genre tags.</p>
+<p>There are 3,308 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
+<p>497 tags were assigned to only one track (15%, min: 1, max: 22,249, median: 17, IQR: 100).</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

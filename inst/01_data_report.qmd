@@ -49,7 +49,7 @@ We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ",")` t
 - **`r format(n_spotify_charts, big.mark = ",")`** tracks from the **[Daily Top 200 Spotify charts](https://spotifycharts.com/regional/de/weekly/latest)** for Germany from 01.01.2017 to 30.11.2024.
 
 :::{.callout-note}
-The dataset excluded songs shorter than 30 seconds (most likely interludes; 994 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.
+The dataset excluded songs shorter than 30 seconds (most likely interludes; 853 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.
 :::
 
 # Preparation
