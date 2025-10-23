@@ -320,3 +320,47 @@ unlist_mb_tags_dataframe <- function(mb_tags) {
     }
   }))
 }
+
+combine_spotify_artist_genres <- function(input, spotify_artist_genres) {
+  n <- nrow(input)
+  combined_genres <- vector("list", length = ifelse(is.null(n), 0, n))
+
+  if (is.null(n) || n == 0) {
+    input$s.genres <- combined_genres
+    return(input)
+  }
+
+  pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
+  on.exit(close(pb), add = TRUE)
+  combined_genres <- lapply(seq_len(n), function(i) {
+    utils::setTxtProgressBar(pb, i)
+    track_artists <- input$track.s.artists[[i]]
+    if (is.null(track_artists) || nrow(track_artists) == 0) {
+      return(data.frame(
+        genre = character(0),
+        stringsAsFactors = FALSE
+      ))
+    }
+    artist_ids <- as.character(track_artists$id)
+    genre_list <- lapply(artist_ids, function(artist_id) {
+      genres <- dplyr::filter(
+        spotify_artist_genres,
+        artist.s.id == artist_id
+      ) |>
+        dplyr::pull("artist.s.genres")
+      if (is.null(genres)) {
+        data.frame(
+          genre = character(0),
+          stringsAsFactors = FALSE
+        )
+      } else {
+        genres
+      }
+    })
+    combined <- data.frame(genre = unlist(genre_list), stringsAsFactors = FALSE)
+    dplyr::count(combined, genre) |>
+      dplyr::rename(tag_name = genre, tag_count = n)
+  })
+  input$s.genres <- combined_genres
+  input
+}

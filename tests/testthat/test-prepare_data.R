@@ -198,3 +198,32 @@ test_that("get_unique_mb_tags extracts unique tags", {
   expect_true(is.character(out))
   expect_setequal(out, c("a", "b"))
 })
+
+
+test_that("combines spotify artist genres correctly", {
+  df <- data.frame(
+    track.s.id = c("t1", "t2"),
+    track.s.artists = I(list(
+      data.frame(id = c("a1", "a2"), name = c("Artist 1", "Artist 2")),
+      data.frame(id = c("a3"), name = c("Artist 3"))
+    )),
+    stringsAsFactors = FALSE
+  )
+  spotify_artist_genres <- data.frame(
+    artist.s.id = c("a1", "a2", "a3"),
+    artist.s.genres = I(list(
+      c("rock", "pop"),
+      c("pop"),
+      c("jazz", "blues")
+    )),
+    stringsAsFactors = FALSE
+  )
+  out <- combine_spotify_artist_genres(df, spotify_artist_genres)
+  expect_true("s.genres" %in% colnames(out))
+  expect_equal(nrow(out), 2)
+  expect_true(all(sapply(out$s.genres, is.data.frame)))
+  expect_equal(out$s.genres[[1]]$tag_name, c("pop", "rock"))
+  expect_equal(out$s.genres[[1]]$tag_count, c(2, 1))
+  expect_equal(out$s.genres[[2]]$tag_name, c("blues", "jazz"))
+  expect_equal(out$s.genres[[2]]$tag_count, c(1, 1))
+})

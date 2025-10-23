@@ -8,6 +8,7 @@ poptrag_selected <- poptrag |>
   dplyr::select(
     track.s.id,
     track.s.title,
+    track.s.artists,
     track.s.firstartist.name,
     artist.s.id,
     artist.s.name,
@@ -26,10 +27,22 @@ poptrag_selected <- poptrag |>
     source.featuredplaylists,
     source.spotifycharts
   )
-saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 
+# combine Spotify artists genres ----
+message("Combining Spotify artist genres ...")
+poptrag_selected$n_artists <- lapply(
+  poptrag_selected$track.s.artists,
+  nrow
+) |>
+  unlist()
+spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
+poptrag_selected <- combine_spotify_artist_genres(
+  poptrag_selected,
+  spotify_artist_genres
+)
+
+saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 # Filter out tracks with valid MusicBrainz genre tags ----
-# TODO? filter out non-whitelist tags
 message("Filtering out tracks without valid MusicBrainz genre tags ...")
 mb_non_music_tags <- c(
   "non-music",
@@ -93,7 +106,8 @@ s_non_music_tags <- c(
   "mediation",
   "sleep",
   "talent show",
-  "talentschau"
+  "talentschau",
+  "kindermusik"
 )
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
 message("Filtering out tracks without valid Spotify genre tags ...")

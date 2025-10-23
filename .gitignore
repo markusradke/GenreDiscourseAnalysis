@@ -2,3 +2,4 @@
 .vscode
 air.toml
 /.quarto/
+notebooks

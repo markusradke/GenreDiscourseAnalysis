@@ -1,0 +1,5 @@
+outs:
+- md5: 3d39425431aa7e458b8c7639e3aec94c
+  size: 1185367
+  hash: md5
+  path: spotify_artist_genres_lookup.rds
