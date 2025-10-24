@@ -15,6 +15,7 @@ poptrag_selected <- poptrag |>
     artist.s.genres,
     album.s.id,
     album.s.title,
+    album.dc.id,
     album.dc.genres,
     album.dc.styles,
     album.dc.firstgenre,
@@ -28,6 +29,9 @@ poptrag_selected <- poptrag |>
     source.spotifycharts
   ) |>
   dplyr::mutate(
+    trackartists.s.id = sapply(.data$track.s.artists, function(x) {
+      paste(x$id, collapse = ";")
+    }),
     n_artists = sapply(.data$track.s.artists, function(x) as.integer(nrow(x)))
   )
 

@@ -137,7 +137,7 @@ extract_artist_ids <- function(track_artists) {
 
 lookup_genres_for_ids <- function(ids, genre_map) {
   lapply(ids, function(aid) {
-    g <- genre_map[[aid]]
+    g <- genre_map[[aid]]$genre
     if (is.null(g)) character(0) else as.character(g)
   })
 }
@@ -259,6 +259,8 @@ get_long_genre_tags <- function(
   join_mapping <- data.frame(
     join_id = seq_len(nrow(input)),
     track.s.id = input$track.s.id,
+    album.dc.id = input$album.dc.id,
+    trackartists.s.id = input$trackartists.s.id,
     track.s.title = input$track.s.title,
     track.s.firstartist.name = input$track.s.firstartist.name,
     stringsAsFactors = FALSE
@@ -271,6 +273,8 @@ get_long_genre_tags <- function(
   ) |>
     dplyr::select(
       "track.s.id",
+      "album.dc.id",
+      "trackartists.s.id",
       "track.s.title",
       "track.s.firstartist.name",
       "tag_name",
@@ -337,6 +341,8 @@ calculate_tag_counts <- function(tags, method) {
   result |>
     dplyr::select(
       "track.s.id",
+      "album.dc.id",
+      "trackartists.s.id",
       "track.s.title",
       "track.s.firstartist.name",
       "tag_name",
