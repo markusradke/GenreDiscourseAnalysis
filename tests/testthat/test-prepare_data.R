@@ -57,12 +57,23 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
   input <- data.frame(
     track.s.id = c(1, 2),
     track.s.title = c("t1", "t2"),
+    album.dc.id = c("a1", "a2"),
+    trackartists.s.id = c("sa1", "sa2"),
     track.s.firstartist.name = c("a1", "a2"),
     stringsAsFactors = FALSE
   )
   input$genres <- tags
   out <- get_long_genre_tags(input, "genres")
-  expect_true(all(c("track.s.id", "tag_name", "tag_count") %in% colnames(out)))
+  expect_true(all(
+    c(
+      "track.s.id",
+      "album.dc.id",
+      "trackartists.s.id",
+      "tag_name",
+      "tag_count"
+    ) %in%
+      colnames(out)
+  ))
   expect_equal(nrow(out), 3)
 })
 
@@ -117,25 +128,23 @@ test_that("filter_valid_dc_genres composes the correct pipeline", {
 })
 
 test_that("filter_valid_s_genres composes the correct pipeline", {
-  df <- data.frame(
+  df <- tibble::tibble(
     track.s.id = c("ta", "tb", "tc", "td"),
-    track.s.artists = I(
-      list(
-        data.frame(id = c("a", "b)")),
-        data.frame(id = "b"),
-        data.frame(id = "c"),
-        data.frame(id = c("a", "d"))
-      )
+    track.s.artists = list(
+      tibble::tibble(id = c("a", "b)")),
+      tibble::tibble(id = "b"),
+      tibble::tibble(id = "c"),
+      tibble::tibble(id = c("a", "d"))
     )
   )
 
   spotify_artist_genres <- data.frame(
     artist.s.id = c("a", "b", "c", "d"),
     artist.s.genres = I(list(
-      c("indie", "alt"),
-      c("podcast"),
-      character(0),
-      c("rock", "indie")
+      tibble::tibble(genre = c("indie", "alt")),
+      tibble::tibble(genre = "podcast"),
+      tibble::tibble(genre = character(0)),
+      tibble::tibble(genre = c("rock", "indie"))
     )),
     stringsAsFactors = FALSE
   )
@@ -157,6 +166,8 @@ test_that("calculate_tag_counts computes artist and total counts", {
     track.s.id = c(1, 2, 3, 3),
     track.s.title = c("Song A", "Song B", "Song C", "Song C"),
     track.s.firstartist.name = c("A", "B", "B", "B"),
+    album.dc.id = c("ALB1", "ALB2", "ALB2", "ALB2"),
+    trackartists.s.id = c("A", "B", "B", "B"),
     tag_name = c("x", "x", "y", "x"),
     tag_count = c(NA, NA, NA, NA),
     stringsAsFactors = FALSE
@@ -164,21 +175,21 @@ test_that("calculate_tag_counts computes artist and total counts", {
   res <- calculate_tag_counts(tags, "artist")
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
-  expect_equal(colnames(res), colnames(tags))
+  expect_setequal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(1L, 2L, 1L, 2L))
 
   res <- calculate_tag_counts(tags, "total")
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
-  expect_equal(colnames(res), colnames(tags))
+  expect_setequal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(3L, 3L, 1L, 3L))
 
   res <- calculate_tag_counts(tags, "ones")
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
-  expect_equal(colnames(res), colnames(tags))
+  expect_setequal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(1L, 1L, 1L, 1L))
 })
@@ -202,22 +213,21 @@ test_that("get_unique_mb_tags extracts unique tags", {
 
 
 test_that("combines spotify artist genres correctly", {
-  df <- data.frame(
+  df <- tibble::tibble(
     track.s.id = c("t1", "t2"),
-    track.s.artists = I(list(
+    track.s.artists = list(
       data.frame(id = c("a1", "a2"), name = c("Artist 1", "Artist 2")),
       data.frame(id = c("a3"), name = c("Artist 3"))
-    )),
+    ),
     stringsAsFactors = FALSE
   )
-  spotify_artist_genres <- data.frame(
+  spotify_artist_genres <- tibble::tibble(
     artist.s.id = c("a1", "a2", "a3"),
-    artist.s.genres = I(list(
-      c("rock", "pop"),
-      c("pop"),
-      c("jazz", "blues")
-    )),
-    stringsAsFactors = FALSE
+    artist.s.genres = list(
+      tibble::tibble(genre = c("rock", "pop")),
+      tibble::tibble(genre = "pop"),
+      tibble::tibble(genre = c("jazz", "blues"))
+    )
   )
   out <- get_combined_s_tags(df, spotify_artist_genres)
   expect_true("s.genres" %in% colnames(out))

@@ -84,12 +84,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#sources" id="toc-sources" class="nav-link active" data-scroll-target="#sources"><span class="header-section-number">1</span> Sources</a></li>
-  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation"><span class="header-section-number">2</span> Preparation</a>
+  <li><a href="#extracting-genre-tags" id="toc-extracting-genre-tags" class="nav-link" data-scroll-target="#extracting-genre-tags"><span class="header-section-number">2</span> Extracting genre tags</a>
   <ul>
   <li><a href="#musicbrainz-network-data" id="toc-musicbrainz-network-data" class="nav-link" data-scroll-target="#musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</a></li>
   <li><a href="#discogs-network-data" id="toc-discogs-network-data" class="nav-link" data-scroll-target="#discogs-network-data"><span class="header-section-number">2.2</span> Discogs network data</a></li>
   <li><a href="#spotify-network-data" id="toc-spotify-network-data" class="nav-link" data-scroll-target="#spotify-network-data"><span class="header-section-number">2.3</span> Spotify network data</a></li>
   </ul></li>
+  <li><a href="#denoising" id="toc-denoising" class="nav-link" data-scroll-target="#denoising"><span class="header-section-number">3</span> Denoising</a></li>
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis"><i class="bi bi-link-45deg"></i>Github Repository</a></li><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/data-raw/import_and_prepare.R"><i class="bi bi-file-code"></i>Data preparation script</a></li><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis/blob/main/R/prepare_data.R"><i class="bi bi-file-code"></i>Helper functions</a></li></ul></div></nav>
 </div>
@@ -162,8 +163,8 @@ Note
 </div>
 </div>
 </section>
-<section id="preparation" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Preparation</h1>
+<section id="extracting-genre-tags" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Extracting genre tags</h1>
 <section id="musicbrainz-network-data" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="musicbrainz-network-data"><span class="header-section-number">2.1</span> MusicBrainz network data</h2>
 <div class="cell">
@@ -291,10 +292,13 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 13% of tracks (33,010) featured multiple artists.</p>
+<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 33,010 tracks (13%) featured multiple artists.</p>
 </div>
 </div>
 </section>
+</section>
+<section id="denoising" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Denoising</h1>
 </section>
 
 </main>
