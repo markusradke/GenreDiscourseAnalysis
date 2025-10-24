@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-23">
+<meta name="dcterms.date" content="2025-10-24">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 23, 2025</p>
+      <p class="date">October 24, 2025</p>
     </div>
   </div>
   
@@ -256,13 +256,18 @@ Note
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tags_per_track_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, track.s.id) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>tracks_per_tag_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, tag_name) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">pull</span>(n)</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>one_track_tags_s <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(dplyr<span class="sc">::</span><span class="fu">count</span>(s_long, tag_name), n <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>n_multiple_artists <span class="ot">&lt;-</span> poptrag <span class="sc">|&gt;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(track.s.id <span class="sc">%in%</span> s_long<span class="sc">$</span>track.s.id) <span class="sc">|&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(n_artists <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (22,629 tracks, 9%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
-<p>This amounts to <strong>N<sub>Spotifys</sub> = 231,705 tracks</strong> with Spotify music genre tags.</p>
-<p>There are 3,308 different genre tags in the Spotify genre data set. Users assigned between 1 and 15 different tags to each track (median: 3, IQR: 3).</p>
-<p>497 tags were assigned to only one track (15%, min: 1, max: 22,249, median: 17, IQR: 100).</p>
+<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (1,147 tracks, 0%). Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
+<p>This amounts to <strong>N<sub>Spotifys</sub> = 253,187 tracks</strong> with Spotify music genre tags.</p>
+<p>There are 10,695 different genre tags in the Spotify genre data set. Users assigned between 1 and 19 different tags to each track (median: 1, IQR: 0).</p>
+<p>3329 tags were assigned to only one track (31%, min: 1, max: 31,567, median: 3, IQR: 17).</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -286,7 +291,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. Thus, we calculated the vote for a each track’s tags by counting the total number of appearences of a tag in the whole data set.</p>
+<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 13% of tracks (33,010) featured multiple artists.</p>
 </div>
 </div>
 </section>

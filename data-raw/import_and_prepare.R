@@ -26,6 +26,9 @@ poptrag_selected <- poptrag |>
     source.recommendations,
     source.featuredplaylists,
     source.spotifycharts
+  ) |>
+  dplyr::mutate(
+    n_artists = sapply(.data$track.s.artists, function(x) as.integer(nrow(x)))
   )
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
@@ -107,8 +110,7 @@ filtered_s_genres <- filter_valid_s_genres(
 )
 s_long <- get_long_genre_tags(
   filtered_s_genres,
-  "s.genres",
-  caluclate_tag_count = "ones"
+  "s.genres"
 )
 save_feather_with_lists(s_long, "data/filtered_s_long")
 

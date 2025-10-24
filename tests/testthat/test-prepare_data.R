@@ -225,6 +225,6 @@ test_that("combines spotify artist genres correctly", {
   expect_true(all(sapply(out$s.genres, is.data.frame)))
   expect_equal(out$s.genres[[1]]$tag_name, c("pop", "rock"))
   expect_equal(out$s.genres[[1]]$tag_count, c(2, 1))
-  expect_equal(out$s.genres[[2]]$tag_name, c("blues", "jazz"))
+  expect_equal(out$s.genres[[2]]$tag_name, c("jazz", "blues"))
   expect_equal(out$s.genres[[2]]$tag_count, c(1, 1))
 })
