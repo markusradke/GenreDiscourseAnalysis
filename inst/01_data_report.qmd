@@ -52,7 +52,7 @@ We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ",")` t
 The dataset excluded songs shorter than 30 seconds (most likely interludes; 853 tracks in the sources). Additionally, only distinct combinations of track titles and principal artist names were permitted, while earlier release dates were preferred.
 :::
 
-# Preparation
+# Extracting genre tags
 ## MusicBrainz network data
 
 ```{r musibrainz_genres}
@@ -128,6 +128,11 @@ tags_per_track_s <- dplyr::count(s_long, track.s.id) |> dplyr::pull(n)
 tracks_per_tag_s <- dplyr::count(s_long, tag_name) |> dplyr::pull(n)
 one_track_tags_s <- dplyr::filter(dplyr::count(s_long, tag_name), n == 1) |>
   nrow()
+
+n_multiple_artists <- poptrag |>
+  dplyr::filter(track.s.id %in% s_long$track.s.id) |>
+  dplyr::filter(n_artists > 1) |>
+  nrow() 
 ```
 
 We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags (`r format(n_diff_s, big.mark = ",")` tracks, `r round(n_diff_s / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', s_non_music_tags), collapse = ", ")`.
@@ -142,5 +147,7 @@ There are `r format(n_unique_s_tags, big.mark = ",")` different genre tags in th
 Spotify genre tags are **assigned to artists, not to tracks**. Therefore, all tracks by the same artist have the same Spotify genre tags.
 ::::
 :::{.callout-note}
-In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. Thus, we calculated the vote for a each track's tags by counting the total number of appearences of a tag in the whole data set.
+In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track's tags by combining all track artists' tags and counting the number of tag appearences per track. `r format(n_multiple_artists, big.mark = ",")` tracks (`r round(n_multiple_artists / n_s* 100)`%) featured multiple artists.
 :::
+
+# Denoising
