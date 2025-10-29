@@ -35,7 +35,7 @@ test_that("save and read feather with lists round-trip works", {
   skip_if_not_installed("arrow")
 
   test_save_and_load_feather <- function(df, is_list_col) {
-    suppressMessages(save_feather_with_lists(df, "testfile"))
+    suppressMessages(save_feather_with_lists(df, "testfile.feather"))
     expect_true(file.exists("testfile.feather"))
 
     out <- suppressMessages(read_feather_with_lists("testfile.feather"))

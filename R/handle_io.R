@@ -43,8 +43,8 @@ save_feather_with_lists <- function(input, filepath) {
   } else {
     message("No list cols found.")
   }
-  arrow::write_feather(input, sprintf("%s.feather", filepath))
-  message(sprintf("File saved as %s.feather.", filepath))
+  arrow::write_feather(input, filepath)
+  message(sprintf("File saved as %s.", filepath))
 }
 
 read_feather_with_lists <- function(filepath) {
