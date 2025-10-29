@@ -60,7 +60,7 @@ read_feather_with_lists <- function(filepath) {
   } else {
     message("No binary format cols found.")
   }
-  message(sprintf("File read: %s.feather", filepath))
+  message(sprintf("File read: %s", filepath))
   output
 }
 

@@ -40,21 +40,11 @@ devtools::load_all()
 This report presents interactive genre trees for the MusicBrainz and Discogs folksonomies, as well as the digital music streaming platform Spotify. Each tree visualizes the **hierarchical structure of music genres** based on a dataset of popular tracks in Germany over the last 50 years (PopTraG). The trees allow users to explore sub-genres by clicking on nodes, with node size representing the number of tracks associated with each genre. 
 
 ## The intital genre network
-In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the PopTraG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments, which are used to **weight the edges in the MusicBrainz genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear.
+In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the PopTraG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments (for Spotify we used multiple artists per track to generate votes), which are used to **weight the edges genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear. The more users voted for a genre, i.e. the more unambigously a track can be assigned to a genre, the stronger the connection becomes (see continued example).
+
+
 
 ```{mermaid}
----
-title: "Example for Discogs and Spotify"
----
-flowchart LR
-rock -- P(metal|rock) --> metal
-metal -- P(rock|metal) --> rock
-```
-
-```{mermaid}
----
-title: "Example for MusicBrainz"
----
 flowchart LR
 rock -- P(metal|rock) * meanRelFreqVotes(metal|rock) --> metal
 metal -- P(rock|metal) * meanRelFreqVotes(rock|metal) --> rock
@@ -91,19 +81,12 @@ For performing classification tasks later on, we need to transform our multilabe
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
 ```{r musicbrainz-interactive-tree, echo=FALSE}
-mb_initial <- read_feather_with_lists("../models/trees/initial_genres_mb.feather")
-mb_graph <- readRDS("../models/trees/MusicBrainz_graph.rds")
-
+mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
 plot_network_graph(
-  mb_graph,
-  mb_initial,
-  height = 1200,
-  interactive = TRUE,
-  min_font_size = 12,
-  max_font_size = 12,  # Fixed font size as requested
-  sizemode = "initial_genre",
-  sortmode = "size",
-  fillmode = "none"
+  readRDS("../models/trees/MusicBrainz_graph.rds"),
+  get_sizes_lookup(mb),
+  get_fills_lookup(mb), 
+  height = 1000
 )
 ```
 :::
@@ -116,19 +99,12 @@ Please click on the nodes to explore sub-genres. The font size is fixed to ensur
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
 ```{r spotify-interactive-tree, echo=FALSE}	
-s_initial <- read_feather_with_lists("../models/trees/initial_genres_s.feather")
-s_graph <- readRDS("../models/trees/Spotify_graph.rds")
-
+s <- read_feather_with_lists("../data/filtered_s_long.feather")
 plot_network_graph(
-  s_graph,
-  s_initial,
-  height = 1200,
-  interactive = TRUE,
-  min_font_size = 12,
-  max_font_size = 12,  # Fixed font size as requested
-  sizemode = "initial_genre",
-  sortmode = "size",
-  fillmode = "none"
+  readRDS("../models/trees/Spotify_graph.rds"),
+  get_sizes_lookup(s),
+  get_fills_lookup(s), 
+  height = 1000
 )
 ```
 :::
