@@ -9,17 +9,6 @@ test_that("choose_mb_tag_set prefers track over album over artist", {
   expect_equal(choose_mb_tag_set(empty, empty, artist), artist)
 })
 
-test_that("erase_non_music_tags removes non-music tags", {
-  tags <- list(
-    data.frame(tag_name = c("rock", "non-music"), tag_count = c(10, 1)),
-    data.frame(tag_name = c("pop"), tag_count = 5)
-  )
-  non_music <- c("non-music", "interview")
-  out <- erase_non_music_tags(tags, non_music)
-  expect_true(all(sapply(out, function(df) !any(df$tag_name %in% non_music))))
-  expect_equal(out[[2]]$tag_name, "pop")
-})
-
 test_that("filter_non_empty_tags filters by provided genre column", {
   df <- data.frame(track.s.id = 1:3, stringsAsFactors = FALSE)
   df$genres <- list(
@@ -48,6 +37,7 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
     track.s.title = c("t1", "t2"),
     album.dc.id = c("a1", "a2"),
     trackartists.s.id = c("sa1", "sa2"),
+    track.s.firstartist.id = c("a1", "a2"),
     track.s.firstartist.name = c("a1", "a2"),
     stringsAsFactors = FALSE
   )
@@ -57,6 +47,7 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
     c(
       "track.s.id",
       "album.dc.id",
+      "track.s.firstartist.id",
       "trackartists.s.id",
       "tag_name",
       "tag_count"
@@ -66,19 +57,7 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
   expect_equal(nrow(out), 3)
 })
 
-test_that("filter_music_tags removes rows with only non-music tags", {
-  df <- data.frame(track.s.id = c(1, 2), stringsAsFactors = FALSE)
-  df$genres <- list(
-    data.frame(tag_name = c("non-music"), tag_count = 1),
-    data.frame(tag_name = c("rock"), tag_count = 2)
-  )
-  non_music <- c("non-music")
-  res <- filter_music_tags(df, "genres", non_music)
-  expect_equal(nrow(res), 1)
-  expect_equal(res$track.s.id, 2)
-})
-
-test_that("filter_valid_mb_genres composes the correct pipeline", {
+test_that("combine_mb_genres composes the correct pipeline", {
   df <- data.frame(track.s.id = 1:2, stringsAsFactors = FALSE)
   df$track.mb.genres <- list(
     data.frame(tag_name = c("a"), tag_count = 1),
@@ -93,37 +72,33 @@ test_that("filter_valid_mb_genres composes the correct pipeline", {
     data.frame()
   )
 
-  non_music <- c("non-music")
-  out <- filter_valid_mb_genres(df, non_music)
+  out <- combine_mb_genres(df)
   expect_equal(nrow(out), 2)
   expect_true(all(sapply(out$mb.genres, function(x) {
     is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
   })))
 })
 
-test_that("filter_valid_s_genres composes the correct pipeline", {
+test_that("combine_s_genres composes the correct pipeline", {
   df <- tibble::tibble(
-    track.s.id = c("ta", "tb", "tc", "td"),
+    track.s.id = c("ta", "tc", "td"),
     track.s.artists = list(
       tibble::tibble(id = c("a", "b)")),
-      tibble::tibble(id = "b"),
       tibble::tibble(id = "c"),
       tibble::tibble(id = c("a", "d"))
     )
   )
 
   spotify_artist_genres <- data.frame(
-    artist.s.id = c("a", "b", "c", "d"),
+    artist.s.id = c("a", "c", "d"),
     artist.s.genres = I(list(
       tibble::tibble(genre = c("indie", "alt")),
-      tibble::tibble(genre = "podcast"),
       tibble::tibble(genre = character(0)),
       tibble::tibble(genre = c("rock", "indie"))
     )),
     stringsAsFactors = FALSE
   )
-  non_music <- c("podcast")
-  out <- filter_valid_s_genres(df, non_music, spotify_artist_genres)
+  out <- combine_s_genres(df, spotify_artist_genres)
   expect_equal(nrow(out), 2)
   expect_equal(
     out$s.genres[[1]],
@@ -139,6 +114,7 @@ test_that("calculate_tag_counts computes artist and total counts", {
   tags <- data.frame(
     track.s.id = c(1, 2, 3, 3),
     track.s.title = c("Song A", "Song B", "Song C", "Song C"),
+    track.s.firstartist.id = c("A", "B", "B", "B"),
     track.s.firstartist.name = c("A", "B", "B", "B"),
     album.dc.id = c("ALB1", "ALB2", "ALB2", "ALB2"),
     trackartists.s.id = c("A", "B", "B", "B"),
@@ -211,4 +187,41 @@ test_that("combines spotify artist genres correctly", {
   expect_equal(out$s.genres[[1]]$tag_count, c(2, 1))
   expect_equal(out$s.genres[[2]]$tag_name, c("jazz", "blues"))
   expect_equal(out$s.genres[[2]]$tag_count, c(1, 1))
+})
+
+test_that("filter_non_valid_tags removes non valid tags from long df", {
+  df <- data.frame(
+    track.s.id = c(1, 2, 3),
+    track.s.firstartist.name = c("A", "B", "C"),
+    tag_name = c("rock", "non-music", "popx"),
+    tag_count = c(1, 2, 3),
+    stringsAsFactors = FALSE
+  )
+  non_valid_tags <- c("non-music", "popx")
+  out <- filter_non_valid_tags(df, non_valid_tags)
+  expect_equal(nrow(out), 1)
+  expect_equal(out$tag_name, "rock")
+})
+
+test_that("filter_tags_by_artist_occurrences filters tags correctly", {
+  df <- data.frame(
+    track.s.id = c(1, 1, 2, 3, 4, 4, 4, 5),
+    track.s.firstartist.id = c("A", "A", "B", "B", "C", "C", "C", "D"),
+    tag_name = c(
+      "rock",
+      "pop",
+      "metal",
+      "rock",
+      "pop",
+      "jazz",
+      "blues",
+      "classical"
+    ),
+    stringsAsFactors = FALSE
+  )
+  n_artists_threshold <- 2
+  out <- filter_tags_by_artist_occurrences(df, n_artists_threshold)
+  expect_equal(nrow(out), 4)
+  expect_setequal(out$tag_name, c("rock", "pop"))
+  expect_true("n_artists" %in% colnames(out))
 })
