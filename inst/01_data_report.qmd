@@ -82,38 +82,6 @@ There are `r format(n_unique_mb_tags, big.mark = ",")` different genre tags in t
 
 `r one_track_tags_mb` tags were assigned to only one track (`r round(one_track_tags_mb / n_unique_mb_tags * 100)`%, min: `r min(tracks_per_tag_mb)`, max: `r format(max(tracks_per_tag_mb), big.mark = ",")`, median: `r median(tracks_per_tag_mb)`, IQR: `r IQR(tracks_per_tag_mb)`).
 
-## Discogs network data
-
-```{r discogs_genres}
-dc_long <- read_feather_with_lists("../data/filtered_dc_long.feather")
-dc_non_music_tags <- readRDS("../data/dc_non_music_tags.rds")
-
-n_dc <- length(unique(dc_long$track.s.id))
-n_diff_dc <- n_poptrag - n_dc
-n_unique_dc_tags <- unique(dc_long$tag_name) |> length()
-
-tags_per_track_dc <- dplyr::count(dc_long, track.s.id) |> dplyr::pull(n)
-tracks_per_tag_dc <- dplyr::count(dc_long, tag_name) |> dplyr::pull(n)
-one_track_tags_dc <- dplyr::filter(dplyr::count(dc_long, tag_name), n == 1) |>
-  nrow()
-```
-
-We filtered out all songs without a Discogs genre tag (Discogs "genre" and/or "style") or with only non-music genre tags (`r format(n_diff_dc, big.mark = ",")` tracks, `r round(n_diff_dc / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', dc_non_music_tags), collapse = ", ")`.
-
-This amounts to **N~Discogs~ = `r format(n_dc, big.mark = ",")` tracks** with Discogs music genre tags.
-
-There are `r format(n_unique_dc_tags, big.mark = ",")` different genre tags in the Discogs genre data set. Users assigned between `r min(tags_per_track_dc)` and `r max(tags_per_track_dc)` different tags to each track (median: `r median(tags_per_track_dc)`, IQR: `r IQR(tags_per_track_dc)`).
-
-`r one_track_tags_dc` tags were assigned to only one track (`r round(one_track_tags_dc / n_unique_dc_tags * 100)`%, min: `r min(tracks_per_tag_dc)`, max: `r format(max(tracks_per_tag_dc), big.mark = ",")`, median: `r median(tracks_per_tag_dc)`, IQR: `r IQR(tracks_per_tag_dc)`).
-
-:::{.callout-important}
-Discogs genre tags are **assigned to releases, not to tracks**. Therefore, all tracks on the same release have the same Discogs genre tags.
-:::
-:::{.callout-note}
-In addition to releases being the observational unit, Discogs provides no vote counts for tags on track basis. Thus, we calculated the vote for each track's tags by counting the number of appearences of a tag within the corresponding artist.
-:::
-
-
 ## Spotify network data
 
 ```{r spotify_genres}

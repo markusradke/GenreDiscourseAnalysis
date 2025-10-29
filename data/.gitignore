@@ -1,8 +1,6 @@
 /poptrag_selected.rds
 /poptrag_selected_wout_spotify_charts.rds
-/filtered_dc_long.rds
 /filtered_mb_long.rds
 /filtered_s_long.rds
-/filtered_dc_long.feather
 /filtered_mb_long.feather
 /filtered_s_long.feather

@@ -1,5 +1,0 @@
-outs:
-- md5: 37537450dc12cec0c80134d76cfb897d
-  size: 26020930
-  hash: md5
-  path: filtered_dc_long.feather

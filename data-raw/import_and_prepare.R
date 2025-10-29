@@ -60,28 +60,6 @@ filtered_mb_genre <- filter_valid_mb_genres(
 mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
 save_feather_with_lists(mb_long, "data/filtered_mb_long")
 
-# Filter out tracks without any entries for Discogs genres and styles ----
-dc_non_music_tags <- c(
-  "Non-Music",
-  "Children's",
-  "Audiobook",
-  "Comedy",
-  "Speech",
-  "Spoken Word"
-)
-saveRDS(dc_non_music_tags, "data/dc_non_music_tags.rds")
-message("Filtering out tracks without valid Discogs genre tags ...")
-filtered_dc_genres <- filter_valid_dc_genres(
-  poptrag_selected,
-  dc_non_music_tags
-)
-dc_long <- get_long_genre_tags(
-  filtered_dc_genres,
-  "dc.genres",
-  caluclate_tag_count = "artist"
-)
-save_feather_with_lists(dc_long, "data/filtered_dc_long")
-
 # Filter out tracks without any entries for Spotify genres ----
 # Combine the gener tags of all artists involved in a track
 spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")

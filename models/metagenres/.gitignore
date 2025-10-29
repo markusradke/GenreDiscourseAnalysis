@@ -1,12 +1,8 @@
 /tune_mb_metagenres.rds
-/tune_dc_metagenres.rds
 /tune_s_metagenres.rds
-/metagenres_dc_suggested_solution.rds
 /metagenres_mb_suggested_solution.rds
 /metagenres_s_suggested_solution.rds
-/tune_dc_gini_plot.rds
 /tune_mb_gini_plot.rds
 /tune_s_gini_plot.rds
-/tune_dc_metadata.rds
 /tune_mb_metadata.rds
 /tune_s_metadata.rds
