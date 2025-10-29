@@ -189,11 +189,11 @@ Note
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_artists)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025. Additionally, we excluded tags that did not occur with at least 100 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 48,191 tracks from the data set (19%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
-<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 206,143 tracks</strong> with MusicBrainz music genre tags.</p>
-<p>There are <strong>137 different genre tags</strong> in the MusicBrainz genre data set. Users assigned between 1 and 20 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 135 times (median: 4, IQR: 6).</p>
-<p>Track-based statistics on tag assignement: * min 417 tracks per tag * max 75,678 tracks per tag * median 2001 tracks per tag * IQR 3206 tracks per tag</p>
-<p>Artist-based statistics on tag assignement: * min 101 artists per tag * max 4,381 artists per tag * median 224 artists per tag * IQR 309 artists per tag</p>
+<p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025. Additionally, we excluded tags that did not occur with at least 50 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 46,149 tracks from the data set (18%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
+<p>This amounts to <strong>N<sub>MusicBrainz</sub> = 208,185 tracks</strong> with MusicBrainz music genre tags.</p>
+<p>There are <strong>223 different genre tags</strong> in the MusicBrainz genre data set. Users assigned between 1 and 21 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 135 times (median: 5, IQR: 7).</p>
+<p>Track-based statistics on tag assignement: * min 114 tracks per tag * max 75,678 tracks per tag * median 1134 tracks per tag * IQR 2001 tracks per tag</p>
+<p>Artist-based statistics on tag assignement: * min 50 artists per tag * max 4,381 artists per tag * median 129 artists per tag * IQR 200 artists per tag</p>
 </section>
 <section id="spotify-network-data" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="spotify-network-data"><span class="header-section-number">2.2</span> Spotify network data</h2>
@@ -221,12 +221,12 @@ Note
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_artists)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags. Additionally, we excluded tags that did not occur with at least 100 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 84,112 tracks from the data set (33%).Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
-<p>This amounts to <strong>N<sub>Spotify</sub> = 170,222 tracks</strong> with Spotify music genre tags.</p>
-<p>There are <strong>151 different genre tags</strong> in the Spotify genre data set. Users assigned between 1 and 16 different tags to each track (median: 2, IQR: 2).</p>
+<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags. Additionally, we excluded tags that did not occur with at least 50 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 46,906 tracks from the data set (18%).Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
+<p>This amounts to <strong>N<sub>Spotify</sub> = 207,428 tracks</strong> with Spotify music genre tags.</p>
+<p>There are <strong>374 different genre tags</strong> in the Spotify genre data set. Users assigned between 1 and 18 different tags to each track (median: 2, IQR: 3).</p>
 <p>Track-based statistics on tag assignement:<br>
-* min 159 tracks per tag * max 22,573 tracks per tag * median 1471 tracks per tag * IQR 2411 tracks per tag</p>
-<p>Artist-based statistics on tag assignement: * min 100 artists per tag * max 747 artists per tag * median 158 artists per tag * IQR 84 artists per tag</p>
+* min 82 tracks per tag * max 22,573 tracks per tag * median 646 tracks per tag * IQR 1504.5 tracks per tag</p>
+<p>Artist-based statistics on tag assignement: * min 50 artists per tag * max 747 artists per tag * median 87 artists per tag * IQR 78 artists per tag</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -250,7 +250,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 25,932 tracks (15%) featured multiple artists.</p>
+<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 29,300 tracks (14%) featured multiple artists.</p>
 </div>
 </div>
 </section>

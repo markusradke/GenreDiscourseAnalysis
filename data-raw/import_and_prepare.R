@@ -3,7 +3,7 @@ rm(list = ls())
 gc()
 # minimum number of unique artists a genre tag must be associated with to not be considered noise
 settings <- list(
-  n_artists_threshold = 100
+  n_artists_threshold = 50
 )
 saveRDS(settings, "data/settings_data_prep.rds")
 
@@ -91,7 +91,9 @@ s_non_music_tags <- c(
   "sleep",
   "talent show",
   "talentschau",
-  "kindermusik"
+  "kindermusik",
+  "rain",
+  "white noise"
 )
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
 

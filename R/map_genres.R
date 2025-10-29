@@ -1,4 +1,3 @@
-# Optimized version: Uses caching and vectorized operations
 get_initial_genre_mapping <- function(tags, graph) {
   # Clear cache at start for fresh run
   clear_subgraph_cache()

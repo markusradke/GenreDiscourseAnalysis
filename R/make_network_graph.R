@@ -4,24 +4,16 @@
 #' using D3.js through the r2d3 package.
 #'
 #' @param graph An igraph object representing the hierarchical structure
-#' @param mapping A data frame containing track-to-genre mappings
-#' @param sizemode Character. Either "initial_genre" or "metagenre" for
-#' node sizing
-#' @param sortmode Character. How to sort nodes: "size",
-#' "meta-up_alphabetical", or "meta-up_size" (only relevant for static plots)
-#' @param fillmode Character. How to color nodes: "none", "metagenres", or
-#' "root"
-#' @param height Numeric. Height in pixels (ignored when interactive = TRUE,
-#' uses 967px)
+#' @param sizes_lookup Named numeric vector. Node sizes lookup. Tag names as names.
+#' @param fill_lookup Named character vector. Node fill colors lookup. Tag names as names.
 #' @param nodesizes Numeric. Scaling factor for node sizes
 #' @param margin_left,margin_right,margin_top,margin_bottom Numeric. Margins
 #'  in pixels (ignored when interactive = TRUE, uses 100px each)
+#' @param height Numeric. Height of the plot in pixels
 #' @param min_font_size,max_font_size Numeric. Font size range for node labels
-#' @param interactive Logical. If TRUE, creates interactive plot with
-#' fold/expand functionality
 #'
 #' @details
-#' When interactive = TRUE:
+#'Interactive features include:
 #' - Fixed height of 967px with scrolling
 #' - Initially shows only root and first sublevel
 #' - Click nodes or labels to expand/collapse their children
@@ -45,34 +37,23 @@
 #' @export
 plot_network_graph <- function(
   graph,
-  mapping,
-  sizemode = "initial_genre",
-  sortmode = "size",
-  fillmode = "none",
-  height = 950,
+  sizes_lookup,
+  fill_lookup,
   nodesizes = 1,
+  height = 1000,
   margin_left = 150,
   margin_right = 350,
   margin_top = 0,
   margin_bottom = 0,
   min_font_size = 22,
-  max_font_size = 36,
-  interactive = FALSE
+  max_font_size = 36
 ) {
   root <- get_graph_root(graph)
-  sizes_lookup <- get_sizes_lookup(
-    mapping,
-    graph,
-    sizemode = sizemode,
-    factor = nodesizes
-  )
-  fill_lookup <- get_fill_lookup(mapping, graph, fillmode)
   sorted_hierarchy <- get_sorted_hierarchy(
     graph,
     root,
     sizes_lookup,
-    fill_lookup,
-    sortmode
+    fill_lookup
   )
 
   data_d3 <- list(
@@ -82,93 +63,34 @@ plot_network_graph <- function(
     margin_top = margin_top,
     margin_bottom = margin_bottom,
     min_font_size = min_font_size,
-    max_font_size = max_font_size,
-    height = height
+    max_font_size = max_font_size
   )
 
-  # Choose script based on interactive parameter
-  script_file <- if (interactive) {
-    "d3/interactive_network_plot.js"
-  } else {
-    "d3/network_plot.js"
-  }
+  script_file <- "d3/interactive_network_plot.js"
 
   r2d3::r2d3(
     data = data_d3,
     script = system.file(script_file, package = "GenreDiscourseAnalysis"),
     d3_version = "6",
-    width = "100%",
     height = height,
-    options = if (interactive) {
-      list(
-        container = "div",
-        viewer = NULL
-      )
-    } else {
-      list()
-    }
-  )
-}
-
-get_sizes_lookup <- function(
-  mapping,
-  full_graph,
-  sizemode = "initial_genre",
-  factor = 1
-) {
-  if (sizemode != "initial_genre" && sizemode != "metagenre") {
-    stop("sizemode must be 'initial_genre' or 'metagenre'")
-  }
-  if (!"metagenre" %in% colnames(mapping)) {
-    sizemode <- "initial_genre"
-  }
-  sizes <- mapping |> dplyr::count(.data[[sizemode]])
-  sizes_lookup <- sizes$n * 0.0025 * factor
-  names(sizes_lookup) <- sizes[[sizemode]]
-  get_padded_lookup_full_graph(sizes_lookup, full_graph, 0)
-}
-
-get_fill_lookup <- function(mapping, full_graph, fillmode) {
-  if (fillmode == "metagenres") {
-    colored_nodes <- unique(mapping$metagenre)
-  } else if (fillmode == "root") {
-    colored_nodes <- unique(mapping$root)
-  } else {
-    colored_nodes <- c()
-  }
-  fills <- mapping |>
-    dplyr::distinct(.data$initial_genre) |>
-    dplyr::mutate(
-      fill = ifelse(
-        .data$initial_genre %in% colored_nodes,
-        "#c40d20",
-        "#494949ff"
-      )
+    width = "100%",
+    options = list(
+      container = "div",
+      viewer = NULL
     )
-  fill_lookup <- fills$fill
-  names(fill_lookup) <- fills$initial_genre
-  get_padded_lookup_full_graph(fill_lookup, full_graph, "#494949ff")
-}
-
-get_padded_lookup_full_graph <- function(lookup, full_graph, value) {
-  all_tags <- igraph::V(full_graph) |> names()
-  zero_example_tags <- all_tags[!all_tags %in% names(lookup)]
-  zero_example_tags_lookup <- rep(value, length(zero_example_tags))
-  names(zero_example_tags_lookup) <- zero_example_tags
-  c(lookup, zero_example_tags_lookup)
+  )
 }
 
 get_sorted_hierarchy <- function(
   graph,
   root,
   sizes_lookup,
-  fill_lookup,
-  sortmode
+  fill_lookup
 ) {
   subgraph <- get_subgraph(graph, root)
   edges <- igraph::as_data_frame(subgraph, what = "edges")
   hierarchy <- create_hierarchy(root$name, edges, sizes_lookup, fill_lookup)
-  sort_nested_list(hierarchy, mode = sortmode)
+  hierarchy
 }
 
 create_hierarchy <- function(node_id, edges, sizes_lookup, fill_lookup) {
@@ -195,37 +117,25 @@ create_hierarchy <- function(node_id, edges, sizes_lookup, fill_lookup) {
   }
 }
 
-sort_nested_list <- function(x, mode = "size") {
-  has_children <- sapply(x$children, function(child) !is.null(child$children))
-  df <- data.frame(
-    name = sapply(x$children, function(child) child$name),
-    size = sapply(x$children, function(child) child$size),
-    has_children = has_children,
-    stringsAsFactors = FALSE
-  )
 
-  if (mode == "meta-up_alphabetical") {
-    df <- df[order(-df$has_children, df$name), ]
-  }
-  if (mode == "meta-up_size") {
-    df <- df[order(-df$has_children, -df$size), ]
-  }
-  if (mode == "size") {
-    df <- df[order(-df$size), ]
-  }
+get_sizes_lookup <- function(long) {
+  # based on relative tag counts per track
+  sizes_lookup <- long |>
+    dplyr::group_by(track.s.id, tag_name) |>
+    dplyr::summarise(size = sum(tag_count, na.rm = TRUE)) |>
+    dplyr::mutate(size = size / sum(size)) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(tag_name) |>
+    dplyr::summarise(size = sum(size, na.rm = TRUE))
+  sizes_lookup <- setNames(sizes_lookup$size, sizes_lookup$tag_name) |>
+    c("POPULAR MUSIC" = 0.001) # add small size for root (has no tag count)
+  sizes_lookup
+}
 
-  sorted_children <- lapply(df$name, function(name) {
-    child_index <- which(sapply(x$children, function(child) child$name == name))
-    child <- x$children[[child_index]]
-    if (!is.null(child$children) && length(child$children) > 0) {
-      child <- sort_nested_list(child, mode)
-    }
-    child
-  })
-  list(
-    name = x$name,
-    size = x$size,
-    fill = x$fill,
-    children = sorted_children
-  )
+get_fills_lookup <- function(long) {
+  fill_lookup <- long |>
+    dplyr::distinct(tag_name) |>
+    dplyr::mutate(fill = "#808080ff")
+  setNames(fill_lookup$fill, fill_lookup$tag_name) |>
+    c("POPULAR MUSIC" = "#000000ff") # add fill for root
 }
