@@ -89,10 +89,6 @@ mb_tuning_metadata <- readRDS("../models/metagenres/tune_mb_metadata.rds")
 mb_gini_plot <- readRDS("../models/metagenres/tune_mb_gini_plot.rds")
 mb_suggested_solution <- readRDS("../models/metagenres/metagenres_mb_suggested_solution.rds")
 
-dc_gini_plot <- readRDS("../models/metagenres/tune_dc_gini_plot.rds")
-dc_tuning_metadata <- readRDS("../models/metagenres/tune_dc_metadata.rds")
-dc_suggested_solution <- readRDS("../models/metagenres/metagenres_dc_suggested_solution.rds")
-
 s_tuning_metadata <- readRDS("../models/metagenres/tune_s_metadata.rds")
 s_gini_plot <- readRDS("../models/metagenres/tune_s_gini_plot.rds")
 s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_solution.rds")
@@ -111,26 +107,6 @@ Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0
 ```{r network_plot_mb}
 plot_network_graph(graph = mb_suggested_solution$metagenre_graph, 
                    mapping = mb_suggested_solution$mapping, 
-                   sizemode = "metagenre", 
-                   height = 1000, 
-                   interactive = TRUE)
-```	
-:::
-:::
-
-## Discogs Metagenres
-:::{#fig-discogs-gini}
-```{r gini_plot_discogs}
-dc_gini_plot
-```
-Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Discogs genre tree. Calculated for a minimum n tracks per genre of `r format(dc_tuning_metadata$min_min_n, big.mark = ",")` to `r format(dc_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r dc_tuning_metadata$min_n_metagenre` to `r dc_tuning_metadata$max_n_metagenre`.
-:::
-
-:::{.column-screen-inset-right}
-:::{.plot-container}
-```{r net_dc}
-plot_network_graph(graph = dc_suggested_solution$metagenre_graph, 
-                   mapping = dc_suggested_solution$mapping, 
                    sizemode = "metagenre", 
                    height = 1000, 
                    interactive = TRUE)

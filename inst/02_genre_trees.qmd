@@ -109,29 +109,6 @@ plot_network_graph(
 :::
 :::
 
-# Genre Tree for Discogs
-:::{.column-screen-inset-right}
-:::{.plot-container}
-**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
-```{r discogs-interactive-tree, echo=FALSE}
-dc_initial <- read_feather_with_lists("../models/trees/initial_genres_dc.feather")
-dc_graph <- readRDS("../models/trees/Discogs_graph.rds")
-
-plot_network_graph(
-  dc_graph,
-  dc_initial,
-  height = 1200,
-  interactive = TRUE,
-  min_font_size = 12,
-  max_font_size = 12,  # Fixed font size as requested
-  sizemode = "initial_genre",
-  sortmode = "size",
-  fillmode = "none"
-)
-```
-:::
-:::
-
 # Genre Tree for Spotify
 Please click on the nodes to explore sub-genres. The font size is fixed to ensure readability. Node size represents the number of songs in each genre.
 
