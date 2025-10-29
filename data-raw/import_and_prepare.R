@@ -1,8 +1,13 @@
-# Import PopTraG datset and select relevant variables ----
+# Clean workspace and set parameters ----
 rm(list = ls())
 gc()
-n_artists_threshold <- 100
+# minimum number of unique artists a genre tag must be associated with to not be considered noise
+settings <- list(
+  n_artists_threshold = 100
+)
+saveRDS(settings, "data/settings_data_prep.rds")
 
+# Import PopTraG datset and select relevant variables ----
 message("Importing PopTraG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
 poptrag_selected <- poptrag |>
@@ -10,6 +15,7 @@ poptrag_selected <- poptrag |>
     track.s.id,
     track.s.title,
     track.s.artists,
+    track.s.firstartist.id,
     track.s.firstartist.name,
     artist.s.id,
     artist.s.name,
@@ -38,10 +44,7 @@ poptrag_selected <- poptrag |>
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 
-# Denoise Musicbrainz ----
-message(
-  "Filtering out tracks without valid MusicBrainz genre tags and tags with too few occurences  ..."
-)
+# Prepare Musicbrainz ----
 mb_non_music_tags <- c(
   "non-music",
   "interview",
@@ -57,15 +60,18 @@ unique_mb_tags <- get_unique_mb_tags(poptrag_selected)
 non_whitelist_genres <- setdiff(unique_mb_tags, mb_whitelist)
 mb_non_valid_tags <- union(mb_non_music_tags, non_whitelist_genres)
 
-filtered_mb_genre <- filter_valid_mb_genres(
-  poptrag_selected,
-  mb_non_valid_tags
+combined_mb_genres <- combine_mb_genres(poptrag_selected)
+mb_long <- get_long_genre_tags(combined_mb_genres, "mb.genres")
+mb_long_music <- filter_non_valid_tags(mb_long, mb_non_valid_tags)
+mb_long_denoise <- filter_tags_by_artist_occurrences(
+  mb_long_music,
+  n_min_artists = settings$n_artists_threshold
 )
-mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
-save_feather_with_lists(mb_long, "data/filtered_mb_long")
+save_feather_with_lists(mb_long_denoise, "data/filtered_mb_long.feather")
 
-# Denoise Spotify ----
+# Prepare Spotify ----
 # Combine the genre tags of all artists involved in a track
+# Infer votings based on the combination of artist genres
 spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
 s_non_music_tags <- c(
   "432hz",
@@ -88,19 +94,15 @@ s_non_music_tags <- c(
   "kindermusik"
 )
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
-message(
-  "Filtering out tracks without valid Spotify genre tags and tags with too few occurences  ..."
+
+combined_s_genres <- combine_s_genres(poptrag_selected, spotify_artist_genres)
+s_long <- get_long_genre_tags(combined_s_genres, "s.genres")
+s_long_music <- filter_non_valid_tags(s_long, s_non_music_tags)
+s_long_denoise <- filter_tags_by_artist_occurrences(
+  s_long_music,
+  n_min_artists = settings$n_artists_threshold
 )
-filtered_s_genres <- filter_valid_s_genres(
-  poptrag_selected,
-  s_non_music_tags,
-  spotify_artist_genres
-)
-s_long <- get_long_genre_tags(
-  filtered_s_genres,
-  "s.genres"
-)
-save_feather_with_lists(s_long, "data/filtered_s_long")
+save_feather_with_lists(s_long_denoise, "data/filtered_s_long.feather")
 
 # Generate data report ----
 message("Generating data report ...")

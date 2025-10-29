@@ -1,34 +1,30 @@
 # FUNCTIONS ----
-filter_valid_mb_genres <- function(input, non_music_tags) {
-  filter_valid_genres(input, non_music_tags, get_combined_mb_tags, "mb.genres")
+combine_mb_genres <- function(input) {
+  combine_genres(input, get_combined_mb_tags, "mb.genres")
 }
 
-filter_valid_s_genres <- function(
+combine_s_genres <- function(
   input,
-  non_music_tags,
   spotify_artist_genres
 ) {
-  filter_valid_genres(
+  combine_genres(
     input,
-    non_music_tags,
     get_combined_s_tags,
     "s.genres",
     spotify_artist_genres
   )
 }
 
-filter_valid_genres <- function(
+combine_genres <- function(
   input,
-  non_music_tags,
   combine_fun,
   genrecol,
   ...
 ) {
   combined <- combine_fun(input, ...)
   non_empty <- filter_non_empty_tags(combined, genrecol)
-  filtered <- filter_music_tags(non_empty, genrecol, non_music_tags)
   message("Done.")
-  filtered
+  non_empty
 }
 
 get_combined_mb_tags <- function(input) {
@@ -147,16 +143,6 @@ combine_genre_counts <- function(genre_lists, n_artists) {
   }
 }
 
-
-normalize_tags <- function(x) {
-  if (is.null(x) || (length(x) == 1 && is.na(x))) {
-    character(0)
-  } else {
-    as.character(x)
-  }
-}
-
-
 choose_mb_tag_set <- function(
   track_tags,
   album_tags,
@@ -180,7 +166,6 @@ choose_mb_tag_set <- function(
   artist_tags
 }
 
-
 filter_non_empty_tags <- function(input, genrecol) {
   input$is.nonempty <- lapply(input[[genrecol]], function(x) nrow(x) > 0) |>
     as.logical() |>
@@ -191,41 +176,6 @@ filter_non_empty_tags <- function(input, genrecol) {
     as.logical()
   dplyr::filter(input, .data$is.nonempty & .data$is.tag_name) |>
     dplyr::select(-"is.nonempty", -"is.tag_name")
-}
-
-filter_music_tags <- function(input, genrecol, non_music_tags) {
-  # takes a while
-  input[[genrecol]] <- erase_non_music_tags(input[[genrecol]], non_music_tags)
-  input$is.nonempty <- lapply(input[[genrecol]], function(x) nrow(x) > 0) |>
-    as.logical()
-  dplyr::filter(input, .data$is.nonempty) |>
-    dplyr::select(-"is.nonempty")
-}
-
-erase_non_music_tags <- function(tags, non_music_tags) {
-  message("Erasing non-music tags ...")
-  n <- length(tags)
-  if (n == 0) {
-    return(vector("list", 0))
-  }
-  if (length(non_music_tags) == 0) {
-    return(tags)
-  }
-
-  pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
-  on.exit(close(pb), add = TRUE)
-
-  out <- lapply(seq_len(n), function(i) {
-    utils::setTxtProgressBar(pb, i)
-    frame <- tags[[i]]
-    if (is.data.frame(frame) && "tag_name" %in% colnames(frame)) {
-      keep <- is.na(match(frame$tag_name, non_music_tags))
-      frame[keep, , drop = FALSE]
-    } else {
-      frame
-    }
-  })
-  out
 }
 
 get_long_genre_tags <- function(
@@ -240,6 +190,7 @@ get_long_genre_tags <- function(
     album.dc.id = input$album.dc.id,
     trackartists.s.id = input$trackartists.s.id,
     track.s.title = input$track.s.title,
+    track.s.firstartist.id = input$track.s.firstartist.id,
     track.s.firstartist.name = input$track.s.firstartist.name,
     stringsAsFactors = FALSE
   )
@@ -254,6 +205,7 @@ get_long_genre_tags <- function(
       "album.dc.id",
       "trackartists.s.id",
       "track.s.title",
+      "track.s.firstartist.id",
       "track.s.firstartist.name",
       "tag_name",
       "tag_count"
@@ -322,6 +274,7 @@ calculate_tag_counts <- function(tags, method) {
       "album.dc.id",
       "trackartists.s.id",
       "track.s.title",
+      "track.s.firstartist.id",
       "track.s.firstartist.name",
       "tag_name",
       "tag_count"
@@ -346,4 +299,27 @@ unlist_mb_tags_dataframe <- function(mb_tags) {
       character(0)
     }
   }))
+}
+
+filter_non_valid_tags <- function(long, non_music_tags) {
+  dplyr::filter(
+    long,
+    !(.data$tag_name %in% non_music_tags)
+  )
+}
+
+filter_tags_by_artist_occurrences <- function(long, n_min_artists) {
+  tag_artist_counts <- long |>
+    dplyr::group_by(.data$tag_name) |>
+    dplyr::summarize(
+      n_artists = dplyr::n_distinct(.data$track.s.firstartist.id),
+      .groups = "drop"
+    ) |>
+    dplyr::filter(.data$n_artists >= n_min_artists)
+
+  dplyr::inner_join(
+    long,
+    tag_artist_counts,
+    by = "tag_name"
+  )
 }
