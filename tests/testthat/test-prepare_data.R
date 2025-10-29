@@ -9,17 +9,6 @@ test_that("choose_mb_tag_set prefers track over album over artist", {
   expect_equal(choose_mb_tag_set(empty, empty, artist), artist)
 })
 
-test_that("get_combined_dc_tags and normalize_tags handle NA and NULL", {
-  df <- data.frame(
-    album.dc.genres = I(list(NA, c("Rock"))),
-    album.dc.styles = I(list(NULL, c("Indie")))
-  )
-  out <- get_combined_dc_tags(df)
-  expect_true("dc.genres" %in% colnames(out))
-  expect_true(all(sapply(out$dc.genres, is.data.frame)))
-})
-
-
 test_that("erase_non_music_tags removes non-music tags", {
   tags <- list(
     data.frame(tag_name = c("rock", "non-music"), tag_count = c(10, 1)),
@@ -108,21 +97,6 @@ test_that("filter_valid_mb_genres composes the correct pipeline", {
   out <- filter_valid_mb_genres(df, non_music)
   expect_equal(nrow(out), 2)
   expect_true(all(sapply(out$mb.genres, function(x) {
-    is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
-  })))
-})
-
-test_that("filter_valid_dc_genres composes the correct pipeline", {
-  df <- data.frame(
-    track.s.id = c("a", "b", "c"),
-    album.dc.genres = I(list(NA, c("Rock"), c("Children's"))),
-    album.dc.styles = I(list(NULL, c("Indie"), NA))
-  )
-
-  non_music <- c("Children's")
-  out <- filter_valid_dc_genres(df, non_music)
-  expect_equal(nrow(out), 1)
-  expect_true(all(sapply(out$dc.genres, function(x) {
     is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
   })))
 })

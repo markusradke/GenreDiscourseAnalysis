@@ -3,10 +3,6 @@ filter_valid_mb_genres <- function(input, non_music_tags) {
   filter_valid_genres(input, non_music_tags, get_combined_mb_tags, "mb.genres")
 }
 
-filter_valid_dc_genres <- function(input, non_music_tags) {
-  filter_valid_genres(input, non_music_tags, get_combined_dc_tags, "dc.genres")
-}
-
 filter_valid_s_genres <- function(
   input,
   non_music_tags,
@@ -42,16 +38,6 @@ get_combined_mb_tags <- function(input) {
     builder = choose_mb_tag_set,
     outcol = "mb.genres",
     msg = "Combining MusicBrainz tracks ..."
-  )
-}
-
-get_combined_dc_tags <- function(input) {
-  combine_tag_columns(
-    input = input,
-    cols = c("album.dc.genres", "album.dc.styles"),
-    builder = dc_builder,
-    outcol = "dc.genres",
-    msg = "Combining DC genre and style tags ..."
   )
 }
 
@@ -194,14 +180,6 @@ choose_mb_tag_set <- function(
   artist_tags
 }
 
-dc_builder <- function(genres, styles) {
-  tags <- unique(c(normalize_tags(genres), normalize_tags(styles)))
-  data.frame(
-    tag_name = tags,
-    tag_count = rep(NA, length(tags)),
-    stringsAsFactors = FALSE
-  )
-}
 
 filter_non_empty_tags <- function(input, genrecol) {
   input$is.nonempty <- lapply(input[[genrecol]], function(x) nrow(x) > 0) |>

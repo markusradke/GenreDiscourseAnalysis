@@ -1,6 +1,7 @@
 # Import PopTraG datset and select relevant variables ----
 rm(list = ls())
 gc()
+n_artists_threshold <- 100
 
 message("Importing PopTraG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
@@ -36,8 +37,11 @@ poptrag_selected <- poptrag |>
   )
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
-# Filter out tracks with valid MusicBrainz genre tags ----
-message("Filtering out tracks without valid MusicBrainz genre tags ...")
+
+# Denoise Musicbrainz ----
+message(
+  "Filtering out tracks without valid MusicBrainz genre tags and tags with too few occurences  ..."
+)
 mb_non_music_tags <- c(
   "non-music",
   "interview",
@@ -60,8 +64,8 @@ filtered_mb_genre <- filter_valid_mb_genres(
 mb_long <- get_long_genre_tags(filtered_mb_genre, "mb.genres")
 save_feather_with_lists(mb_long, "data/filtered_mb_long")
 
-# Filter out tracks without any entries for Spotify genres ----
-# Combine the gener tags of all artists involved in a track
+# Denoise Spotify ----
+# Combine the genre tags of all artists involved in a track
 spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
 s_non_music_tags <- c(
   "432hz",
@@ -84,7 +88,9 @@ s_non_music_tags <- c(
   "kindermusik"
 )
 saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
-message("Filtering out tracks without valid Spotify genre tags ...")
+message(
+  "Filtering out tracks without valid Spotify genre tags and tags with too few occurences  ..."
+)
 filtered_s_genres <- filter_valid_s_genres(
   poptrag_selected,
   s_non_music_tags,
