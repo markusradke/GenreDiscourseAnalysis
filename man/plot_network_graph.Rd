@@ -6,47 +6,33 @@
 \usage{
 plot_network_graph(
   graph,
-  mapping,
-  sizemode = "initial_genre",
-  sortmode = "size",
-  fillmode = "none",
-  height = 950,
+  sizes_lookup,
+  fill_lookup,
   nodesizes = 1,
+  height = 1000,
   margin_left = 150,
   margin_right = 350,
   margin_top = 0,
   margin_bottom = 0,
   min_font_size = 22,
-  max_font_size = 36,
-  interactive = FALSE
+  max_font_size = 36
 )
 }
 \arguments{
 \item{graph}{An igraph object representing the hierarchical structure}
 
-\item{mapping}{A data frame containing track-to-genre mappings}
+\item{sizes_lookup}{Named numeric vector. Node sizes lookup. Tag names as names.}
 
-\item{sizemode}{Character. Either "initial_genre" or "metagenre" for
-node sizing}
-
-\item{sortmode}{Character. How to sort nodes: "size",
-"meta-up_alphabetical", or "meta-up_size" (only relevant for static plots)}
-
-\item{fillmode}{Character. How to color nodes: "none", "metagenres", or
-"root"}
-
-\item{height}{Numeric. Height in pixels (ignored when interactive = TRUE,
-uses 967px)}
+\item{fill_lookup}{Named character vector. Node fill colors lookup. Tag names as names.}
 
 \item{nodesizes}{Numeric. Scaling factor for node sizes}
+
+\item{height}{Numeric. Height of the plot in pixels}
 
 \item{margin_left, margin_right, margin_top, margin_bottom}{Numeric. Margins
 in pixels (ignored when interactive = TRUE, uses 100px each)}
 
 \item{min_font_size, max_font_size}{Numeric. Font size range for node labels}
-
-\item{interactive}{Logical. If TRUE, creates interactive plot with
-fold/expand functionality}
 }
 \value{
 An r2d3 htmlwidget object
@@ -56,7 +42,7 @@ Creates either a static or interactive hierarchical network graph
 using D3.js through the r2d3 package.
 }
 \details{
-When interactive = TRUE:
+Interactive features include:
 \itemize{
 \item Fixed height of 967px with scrolling
 \item Initially shows only root and first sublevel

@@ -36,7 +36,8 @@ tune_tree_folding <- function(
     min_n_grid_min,
     min_n_grid_max,
     min_n_grid_step,
-    long
+    long,
+    root
   )
   tuning <- tune_by_folding_genre_tree_bottom_to_top(
     long,
@@ -85,9 +86,9 @@ remove_non_gini_solutions <- function(tuning) {
   tuning
 }
 
-get_search_grid <- function(min_n_min, min_n_max, step, long) {
+get_search_grid <- function(min_n_min, min_n_max, step, long, root) {
   if (length(min_n_max) == 0) {
-    sizes <- get_sizes_lookup(long)
+    sizes <- get_sizes_lookup(long, root)
     upper <- ceiling(max(sizes))
     min_n_max <- upper
   }
@@ -151,7 +152,7 @@ fold_genre_tree_bottom_to_top <- function(
   current_mapping <- long |>
     dplyr::distinct(tag_name) |>
     dplyr::mutate(genre = tag_name)
-  sizes <- get_sizes_lookup(long)
+  sizes <- get_sizes_lookup(long, root)
   n_songs <- data.frame(
     genre = names(sizes),
     n = as.numeric(sizes),

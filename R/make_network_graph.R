@@ -118,7 +118,7 @@ create_hierarchy <- function(node_id, edges, sizes_lookup, fill_lookup) {
 }
 
 
-get_sizes_lookup <- function(long) {
+get_sizes_lookup <- function(long, root = "POPULAR MUSIC") {
   # based on relative tag counts per track
   sizes_lookup <- long |>
     dplyr::group_by(track.s.id, tag_name) |>
@@ -128,7 +128,7 @@ get_sizes_lookup <- function(long) {
     dplyr::group_by(tag_name) |>
     dplyr::summarise(size = sum(size, na.rm = TRUE))
   sizes_lookup <- setNames(sizes_lookup$size, sizes_lookup$tag_name) |>
-    c("POPULAR MUSIC" = 0.001) # add small size for root (has no tag count)
+    c(root = 0.001) # add small size for root (has no tag count)
   sizes_lookup
 }
 
