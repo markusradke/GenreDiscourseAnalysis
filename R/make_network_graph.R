@@ -127,15 +127,15 @@ get_sizes_lookup <- function(long, root = "POPULAR MUSIC") {
     dplyr::ungroup() |>
     dplyr::group_by(tag_name) |>
     dplyr::summarise(size = sum(size, na.rm = TRUE))
-  sizes_lookup <- setNames(sizes_lookup$size, sizes_lookup$tag_name) |>
-    c(root = 0.001) # add small size for root (has no tag count)
+  sizes_lookup <- setNames(sizes_lookup$size, sizes_lookup$tag_name)
+  sizes_lookup <- c(sizes_lookup, setNames(0.001, root))
   sizes_lookup
 }
 
-get_fills_lookup <- function(long) {
+get_fills_lookup <- function(long, root) {
   fill_lookup <- long |>
     dplyr::distinct(tag_name) |>
     dplyr::mutate(fill = "#808080ff")
-  setNames(fill_lookup$fill, fill_lookup$tag_name) |>
-    c("POPULAR MUSIC" = "#000000ff") # add fill for root
+  fill_lookup <- setNames(fill_lookup$fill, fill_lookup$tag_name)
+  fill_lookup <- c(fill_lookup, setNames("#000000ff", root))
 }
