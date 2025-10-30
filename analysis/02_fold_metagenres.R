@@ -1,13 +1,13 @@
 rm(list = ls())
 devtools::load_all()
 
-min_n <- 1000
+min_n <- 1500
 step <- 500
-max_n <- 3000
+max_n <- 2000
 optimal_range <- c(40, 50)
 
 tune_mb <- tune_tree_folding(
-  read_feather_with_lists("models/trees/initial_genres_mb.feather"),
+  read_feather_with_lists("data/filtered_mb_long.feather"),
   readRDS("models/trees/MusicBrainz_graph.rds"),
   min_n_grid_min = min_n,
   min_n_grid_step = step,
@@ -17,7 +17,7 @@ tune_mb <- tune_tree_folding(
 save_tuning(tune_mb, "mb")
 
 tune_s <- tune_tree_folding(
-  read_feather_with_lists("models/trees/initial_genres_s.feather"),
+  read_feather_with_lists("data/filtered_s_long.feather"),
   readRDS("models/trees/Spotify_graph.rds"),
   min_n_grid_min = min_n,
   min_n_grid_step = step,
@@ -25,4 +25,5 @@ tune_s <- tune_tree_folding(
   optimal_solution_range_n_metagenres = optimal_range
 )
 save_tuning(tune_s, "s")
+
 generate_report("03_ metagenres")

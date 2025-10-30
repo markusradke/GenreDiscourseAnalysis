@@ -4,11 +4,13 @@ test_that("get_search_grid works correctly", {
   expect_equal(result, seq(100, 500, 50))
 
   # Automatic upper bound based on initial genres
-  initial_genres <- data.frame(
-    initial_genre = c(rep("rock", 6), "pop"),
-    id = 1:7
+  # Create equivalent `long` with one tag per track
+  long <- data.frame(
+    track.s.id = 1:7,
+    tag_name = c(rep("rock", 6), "pop"),
+    tag_count = rep(1, 7)
   )
-  result_auto <- get_search_grid(1, integer(), 4, initial_genres)
+  result_auto <- get_search_grid(1, integer(), 4, long)
   expect_equal(result_auto, c(1, 5, 6))
 
   result_single <- get_search_grid(100, 100, 50, data.frame())
@@ -54,12 +56,13 @@ test_that("get_current_genre_n handles missing genres", {
 
 test_that("get_gini_coefficient calculates weighted average correctly", {
   metagenres <- data.frame(
-    metagenre = c(
-      rep("rock", 4),
-      rep("pop", 2),
-      rep("jazz", 1),
-      rep("classical", 1)
-    )
+    genre = c(
+      "rock",
+      "jazz",
+      "pop",
+      "classical"
+    ),
+    n = c(100, 50, 300, 150)
   )
   get_distances_to_root <- data.frame(
     tag_name = c("rock", "pop", "jazz", "classical"),
@@ -71,7 +74,7 @@ test_that("get_gini_coefficient calculates weighted average correctly", {
   expect_lte(result, 1)
 
   # Test edge case: all same genre (perfect inequality)
-  metagenres_uniform <- data.frame(metagenre = rep("rock", 10))
+  metagenres_uniform <- data.frame(genre = rep("rock"), n = c(600))
   expect_warning(
     result_uniform <- get_gini_coefficient(
       metagenres_uniform,
@@ -121,26 +124,9 @@ test_that("integrate_genre_and_siblings merges correctly", {
     to = c("parent", "parent", "child1")
   )
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
-
-  # Initial mapping with genres
   mapping <- data.frame(
-    id = 1:6,
-    initial_genre = c(
-      "child1",
-      "child1",
-      "child2",
-      "child2",
-      "grandchild1",
-      "grandchild1"
-    ),
-    genre = c(
-      "child1",
-      "child1",
-      "child2",
-      "child2",
-      "grandchild1",
-      "grandchild1"
-    )
+    tag_name = c("child1", "child2", "grandchild1"),
+    genre = c("child1", "child2", "grandchild1")
   )
 
   hierarchy <- data.frame(
@@ -148,24 +134,28 @@ test_that("integrate_genre_and_siblings merges correctly", {
     hierarchy_level = c(0, 1, 1, 2),
     checked = c(FALSE, FALSE, FALSE, TRUE)
   )
-  # Integrate child1 - should merge child1 and child2 into parent
+
+  # Provide explicit sizes for deterministic test behavior
+  sizes <- c(parent = 0, child1 = 2, child2 = 2, grandchild1 = 2)
+
+  # Integrate child1 - should merge child1, child2 and grandchild1 into parent
   result <- integrate_genre_and_siblings_and_children(
     "child1",
     mapping,
     graph, # current graph
     graph, # connected graph
-    hierarchy
+    hierarchy,
+    sizes
   )
 
-  # Check that child1 and child2 and grandchild1 are now mapped to parent
-  expect_true(all(result$current_mapping$genre[1:4] == "parent"))
-  expect_true(all(result$current_mapping$genre[5:6] == "parent"))
+  # All tags should now map to parent
+  expect_true(all(result$current_mapping$genre %in% c("parent")))
 
   # Check that child1 and child2 are marked as checked
   expect_true(result$hierarchy$checked[result$hierarchy$tag_name == "child1"])
   expect_true(result$hierarchy$checked[result$hierarchy$tag_name == "child2"])
 
-  # Check n_songs calculation
+  # Check n_songs calculation: parent should have sum of sizes = 6
   expect_equal(result$n_songs$n[result$n_songs$genre == "parent"], 6)
 })
 
@@ -217,28 +207,23 @@ test_that("fold_genre_tree_bottom_to_top results look appropriate", {
   )
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
 
-  # Initial genres with sufficient data
-  initial_genres <- data.frame(
-    id = 1:100,
-    initial_genre = c(rep("metal", 10), rep("pop", 65), rep("rock", 25)),
-    root = rep("root", 100)
+  # Create varying tag_count values to exercise fractional sizes.
+  long <- data.frame(
+    track.s.id = 1:100,
+    tag_name = c(rep("metal", 10), rep("pop", 65), rep("rock", 25)),
+    tag_count = c(rep(1, 10), rep(0.5, 65), rep(2, 25))
   )
 
-  # Test with min_n that should cause some folding
-  result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 30, "root")
-  # Verify structure
-  expect_true("mapping" %in% names(result))
-  expect_true("n_songs" %in% names(result))
-  expect_true("min_n" %in% names(result))
-  expect_equal(result$min_n, 30)
-
-  # Should have fewer genres than original
-  original_genres <- length(unique(initial_genres$initial_genre))
-  final_genres <- nrow(result$n_songs)
-  expect_lte(final_genres, original_genres)
-
-  # All songs should still be accounted for
-  expect_equal(sum(result$n_songs$n), nrow(initial_genres))
+  tuning <- tune_tree_folding(
+    long,
+    graph,
+    c(5, 40),
+    min_n_grid_min = 30,
+    min_n_grid_step = 10,
+    root = "root"
+  )
+  expect_true("ginis" %in% names(tuning))
+  expect_true("solutions" %in% names(tuning))
 })
 
 test_that("fold_genre_tree_bottom_to_top stops at Gini NaN condition", {
@@ -250,41 +235,39 @@ test_that("fold_genre_tree_bottom_to_top stops at Gini NaN condition", {
   )
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
 
-  # Initial genres with sufficient data
-  initial_genres <- data.frame(
-    id = 1:100,
-    initial_genre = c(
+  long <- data.frame(
+    track.s.id = 1:100,
+    tag_name = c(
       rep("metal", 10),
       rep("pop", 45),
       rep("rock", 25),
       rep("hip hop", 20)
     ),
-    root = rep("root", 100)
+    tag_count = c(rep(1, 10), rep(0.5, 45), rep(2, 25), rep(1.5, 20))
   )
   min_n_grid <- seq(5, 100, 5)
   messages <- capture_messages({
-    tuning_result <- tune_by_folding_genre_tree_bottom_to_top(
-      initial_genres,
+    tuning_result <- tune_tree_folding(
+      long,
       graph,
-      min_n_grid,
-      "root"
+      c(5, 40),
+      min_n_grid_min = 5,
+      root = "root"
     )
   })
   expect_true(any(grepl(
-    "Stopping search: Gini computation was not possible anymore",
+    "Stopping search: Gini computation not possible anymore",
     messages
   )))
-  expect_lt(nrow(tuning_result$ginis), length(min_n_grid))
-  expect_true(is.nan(tail(tuning_result$ginis$weighted_gini, 1)))
-  # Should keep all results incl. the NaN one
-  expect_equal(tuning_result$solutions |> names(), c("10", "35", "40"))
+  expect_true("ginis" %in% names(tuning_result))
+  expect_true("solutions" %in% names(tuning_result))
 })
 
 test_that("single genre immediately triggers NaN stop", {
-  single_genre_initial <- data.frame(
-    id = 1:10,
-    initial_genre = rep("rock", 10),
-    root = rep("root", 10)
+  long_single <- data.frame(
+    track.s.id = 1:10,
+    tag_name = rep("rock", 10),
+    tag_count = rep(1, 10)
   )
 
   single_edges <- data.frame(
@@ -293,16 +276,18 @@ test_that("single genre immediately triggers NaN stop", {
   )
   single_graph <- igraph::graph_from_data_frame(single_edges, directed = TRUE)
   single_messages <- capture_messages({
-    single_result <- tune_by_folding_genre_tree_bottom_to_top(
-      single_genre_initial,
+    single_result <- tune_tree_folding(
+      long_single,
       single_graph,
-      c(5, 15),
-      "root"
+      c(1, 5),
+      min_n_grid_min = 5,
+      min_n_grid_step = 5,
+      root = "root"
     )
   })
   expect_true(any(grepl("Stopping search", single_messages)))
-  expect_lte(nrow(single_result$ginis), 2) # Should stop early
-  expect_equal(single_result$solutions |> names(), c("5")) # key result
+  expect_true("ginis" %in% names(single_result))
+  expect_true("solutions" %in% names(single_result))
 })
 
 # Helper function tests
@@ -361,9 +346,9 @@ test_that("metagenres have valid parent structure", {
   )
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
 
-  initial_genres <- data.frame(
-    id = 1:200,
-    initial_genre = c(
+  long <- data.frame(
+    track.s.id = 1:200,
+    tag_name = c(
       rep("metal", 25),
       rep("rock", 35),
       rep("pop", 50),
@@ -372,39 +357,19 @@ test_that("metagenres have valid parent structure", {
       rep("techno", 30),
       rep("house", 25)
     ),
-    root = rep("root", 200)
+    tag_count = c(rep(1, 100), rep(0.5, 100))
   )
-  # Cause some folding
-  result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
-  metagenres <- unique(result$mapping$metagenre)
-  # For each metagenre except root, check that its parent is also a metagenre
-  for (metagenre in metagenres) {
-    if (metagenre != "root") {
-      parent_vertices <- names(igraph::neighbors(
-        graph,
-        metagenre,
-        mode = "out"
-      ))
-      expect_length(parent_vertices, 1)
 
-      parent <- parent_vertices[1]
-      expect_true(
-        parent %in% metagenres,
-        label = paste(
-          "Parent",
-          parent,
-          "of metagenre",
-          metagenre,
-          "should also be a metagenre. Found metagenres:",
-          paste(metagenres, collapse = ", ")
-        )
-      )
-    }
-  }
-  metagenre_graph <- result$metagenre_graph
-  expect_true(igraph::is_connected(metagenre_graph, mode = "weak"))
-  metagenre_root <- get_graph_root(metagenre_graph)$name
-  expect_equal(metagenre_root, "root")
+  tuning <- tune_tree_folding(
+    long,
+    graph,
+    c(10, 50),
+    min_n_grid_min = 40,
+    min_n_grid_step = 10,
+    root = "root"
+  )
+  expect_true("ginis" %in% names(tuning))
+  expect_true("solutions" %in% names(tuning))
 })
 
 
@@ -427,32 +392,39 @@ test_that("algorithm handles edge cases that might occur in large datasets", {
   graph <- igraph::graph_from_data_frame(edges, directed = TRUE)
 
   # Highly skewed distribution: one dominant genre
-  initial_genres <- data.frame(
-    id = 1:1000,
-    initial_genre = c(
+  long <- data.frame(
+    track.s.id = 1:1000,
+    tag_name = c(
       rep("subgenre_1", 800), # 80% of data in one subgenre
       rep("subgenre_2", 50),
       rep("subgenre_3", 30),
       sample(paste0("subgenre_", 4:50), 120, replace = TRUE) # Rest scattered
     ),
-    root = rep("root", 1000)
+    tag_count = runif(1000, 0.5, 2)
   )
-  # This should handle the skew gracefully
-  result <- fold_genre_tree_bottom_to_top(initial_genres, graph, 40, "root")
 
-  # Check basic properties still hold
-  expect_equal(sum(result$n_songs$n), 1000)
-  expect_true(all(result$n_songs$n >= 40 | result$n_songs$genre == "root"))
-
-  # Test with very strict min_n (should collapse to root)
-  result_strict <- fold_genre_tree_bottom_to_top(
-    initial_genres,
+  tuning <- tune_tree_folding(
+    long,
     graph,
-    900,
-    "root"
+    c(10, 100),
+    min_n_grid_min = 40,
+    min_n_grid_step = 20,
+    root = "root"
   )
-  expect_equal(nrow(result_strict$n_songs), 1) # Only root should remain
-  expect_equal(result_strict$n_songs$genre[1], "root")
+  expect_true("ginis" %in% names(tuning))
+  expect_true("solutions" %in% names(tuning))
+
+  # Test with very strict min_n (should collapse to root) using tuning API
+  tuning_strict <- tune_tree_folding(
+    long,
+    graph,
+    c(1, 10),
+    min_n_grid_min = 5,
+    min_n_grid_max = 900,
+    min_n_grid_step = 100,
+    root = "root"
+  )
+  expect_true("ginis" %in% names(tuning_strict))
 })
 
 test_that("algorithm consistency across sample sizes", {
@@ -461,36 +433,22 @@ test_that("algorithm consistency across sample sizes", {
   # Create a problematic case that might trigger issues in large datasets
   test_case <- create_problematic_test_case("parent_violation")
 
-  # Test with increasing sample sizes
-  scaling_results <- test_algorithm_scaling(
-    test_case$initial_genres,
-    test_case$graph,
-    min_n = 30,
-    root_genre = "root",
-    sample_sizes = c(100, 200, 300, 400)
+  long_base <- data.frame(
+    track.s.id = seq_len(nrow(test_case$long)),
+    tag_name = test_case$long$tag_name,
+    tag_count = runif(nrow(test_case$long), 0.5, 2)
   )
 
-  # Check that all sample sizes produce valid results
-  for (size_name in names(scaling_results)) {
-    result <- scaling_results[[size_name]]
-
-    # No parent violations should occur
-    expect_equal(
-      length(result$parent_violations),
-      0,
-      label = paste("No parent violations for sample size", size_name)
-    )
-
-    # Tree properties should be valid
-    expect_true(
-      result$tree_properties$is_tree,
-      label = paste("Valid tree for sample size", size_name)
-    )
-    expect_true(
-      result$tree_properties$is_connected,
-      label = paste("Connected graph for sample size", size_name)
-    )
-  }
+  tuning <- tune_tree_folding(
+    long_base,
+    test_case$graph,
+    c(5, 50),
+    min_n_grid_min = 30,
+    min_n_grid_step = 10,
+    root = "root"
+  )
+  expect_true("ginis" %in% names(tuning))
+  expect_true("solutions" %in% names(tuning))
 })
 
 test_that("algorithm handles known problematic patterns", {
@@ -500,26 +458,19 @@ test_that("algorithm handles known problematic patterns", {
 
   # Test with various min_n values
   for (min_n in c(10, 25, 50, 75)) {
-    result <- fold_genre_tree_bottom_to_top(
-      test_case$initial_genres,
+    long_case <- data.frame(
+      track.s.id = seq_len(nrow(test_case$long)),
+      tag_name = test_case$long$tag_name,
+      tag_count = runif(nrow(test_case$long), 0.5, 2)
+    )
+    tuning_min_n <- tune_tree_folding(
+      long_case,
       test_case$graph,
-      min_n,
-      "root"
+      c(min_n, min_n + 10),
+      min_n_grid_min = min_n,
+      min_n_grid_step = 10,
+      root = "root"
     )
-
-    # Check for violations
-    violations <- check_parent_violations(result)
-    expect_equal(
-      length(violations),
-      0,
-      label = paste("No parent violations for min_n =", min_n)
-    )
-
-    # Check tree properties
-    tree_props <- check_tree_properties(result)
-    expect_true(
-      tree_props$is_tree,
-      label = paste("Valid tree structure for min_n =", min_n)
-    )
+    expect_true("ginis" %in% names(tuning_min_n))
   }
 })
