@@ -30,11 +30,6 @@ Root of the tree is "other" genre. This is why it does not need to fulfill the m
 
 We need to ensure that when merging genres, we merge all siblings and all grandchildren of the parent genre to avoid dangling nodes in the tree. Due to how the trees are created, merging grand children that already fulfilled the min n requirement will not occur often (genres that are closer to the root are expected to appear more frequent in initial genres than genres further away from the root).
 
-<!-- Eigentlich müsste es sogar so sein, das,,s der bei unterschreiten der Pfad mit der kleineren Summe eingeklappt wird, oder? Leider sind die Merging-Regeln noch kompliziertere nämlich: 
-Im Prinzip ist die Frage: Wie umgehen mit schwach besetzten Genres in der nähe von Root, wenn Genres in die detailierter sind, zahlreicher vertreten sind? 
-Problemfall: Ich habe ein starkes Genre, das zum Metagenre wird. Das Elterngenre ist aber schwach besetzt und müsste nach Algorithmus eingeklappt werden. 
-Aktuelle Lösung: dann inklusive des als Metagenre dedachten Genres einklappen, weil sonst der Baum nicht konsistent ist oder die min n Forderung nicht erfüllt ist. 
--->
 
 The algorithm works as follows:
 ```{mermaid folding_algorithm}
@@ -85,10 +80,12 @@ flowchart TD
 
 # Tuning results and suggested solutions
 ```{r read_results}
+mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
 mb_tuning_metadata <- readRDS("../models/metagenres/tune_mb_metadata.rds")
 mb_gini_plot <- readRDS("../models/metagenres/tune_mb_gini_plot.rds")
 mb_suggested_solution <- readRDS("../models/metagenres/metagenres_mb_suggested_solution.rds")
 
+s <- read_feather_with_lists("../data/filtered_s_long.feather")
 s_tuning_metadata <- readRDS("../models/metagenres/tune_s_metadata.rds")
 s_gini_plot <- readRDS("../models/metagenres/tune_s_gini_plot.rds")
 s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_solution.rds")
@@ -105,11 +102,15 @@ Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0
 :::{.column-screen-inset-right}
 :::{.plot-container}
 ```{r network_plot_mb}
+mb_long_metagenres <- mb %>%
+  dplyr::left_join(mb_suggested_solution$mapping, by = "tag_name") %>%
+  dplyr::select(-tag_name) %>%
+  dplyr::rename(tag_name = metagenre)
+
 plot_network_graph(graph = mb_suggested_solution$metagenre_graph, 
-                   mapping = mb_suggested_solution$mapping, 
-                   sizemode = "metagenre", 
-                   height = 1000, 
-                   interactive = TRUE)
+                   get_sizes_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
+                   get_fills_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
+                   height = 1000)
 ```	
 :::
 :::
@@ -125,11 +126,14 @@ Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0
 :::{.column-screen-inset-right}
 :::{.plot-container}
 ```{r network_plot_spotify}
+s_long_metagenres <- s %>%
+  dplyr::left_join(s_suggested_solution$mapping, by = "tag_name") %>%
+  dplyr::select(-tag_name) %>%
+  dplyr::rename(tag_name = metagenre)
 plot_network_graph(graph = s_suggested_solution$metagenre_graph, 
-                   mapping = s_suggested_solution$mapping, 
-                   sizemode = "metagenre", 
-                   height = 1000, 
-                   interactive = TRUE)
+                   get_sizes_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
+                   get_fills_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
+                   height = 1000)
 ```	
 :::
 :::
