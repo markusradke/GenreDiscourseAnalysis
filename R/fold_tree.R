@@ -1,36 +1,21 @@
-#' Fold genre tree and caluclate weighted ginis
+#' Tune genre-tree folding and return candidate solutions
 #'
-#' Folds a given genre tree from the end of branches, so that all remaining
-#' genres have at least a minimum number of observations. Caluclates a
-#' weighted Gini for each solution (Gini is caluclated for each level in the
-#' hierarchy accross all Genres in the level with their prevalences and is
-#' then averaged, weighted by the number of songs in each level).
+#' This function folds a hierarchical genre graph from the leaves up,
+#' producing solutions for a grid of minimum-genre sizes. For each
+#' solution it computes a weighted Gini across hierarchy levels and
+#' returns candidate local minima and a suggested solution in the
+#' requested range.
 #'
-#' @param initial_genres data.frame with initial genres (and id for later
-#' mapping). When searching for subgenres, a column "metagenre" must also
-#' be given.
-#' @param graph hierarchical genre tree
-#' @param optimal_solution_range_n_metagenres optimal range of number of
-#' metagenres for solution. Used for choosing the suggested solution
-#' (chooses local optima within range with highest number of metagenres).
-#'  If no local optima for the Gini are found within solution range, the
-#' local optiima below the solution range with the highest number of
-#' metagenres is chosen. If no local optima below solution range, Take
-#' lowest gini within solution range. If no solution within solution range
-#' take global local minimum of Gini.
-#' @param min_n_grid_min Training grid minimum of minimum n.
-#' @param min_n_grid_max Training grid minimum of minimum n.
-#' Optional, defaults to highest possible whith at least one split in the
-#' resulting tree.
-#' @param min_n_grid_step Granularity of the grid.
-#' @param root Root genre of the tree.
-
-#' @returns List object with all solutions (min n as string is name of
-#' solution), a dataframe with gini metrics, a suggested solution in the
-#' optimal range, and a weighted Gini plot.
-#'
+#' @param long data.frame with columns track.s.id, tag_name, tag_count.
+#' @param graph igraph object representing full genre hierarchy.
+#' @param optimal_solution_range_n_metagenres integer vector length 2.
+#' @param min_n_grid_min integer starting minimum n for grid.
+#' @param min_n_grid_max integer upper bound for grid or integer().
+#' @param min_n_grid_step integer step for grid.
+#' @param root character root genre name.
+#' @return list with solutions, ginis, suggested_solution, candidates, plot.
 tune_tree_folding <- function(
-  initial_genres,
+  long,
   graph,
   optimal_solution_range_n_metagenres,
   min_n_grid_min = 100,
@@ -38,200 +23,167 @@ tune_tree_folding <- function(
   min_n_grid_step = 20,
   root = 'POPULAR MUSIC'
 ) {
-  graph_root <- get_subgraph(graph, root)
-  if (!'metagenre' %in% colnames(initial_genres)) {
-    initial_genres <- dplyr::mutate(initial_genres, metagenre = root)
+  if (
+    !all(
+      c('track.s.id', 'tag_name', 'tag_count') %in%
+        colnames(long)
+    )
+  ) {
+    stop('tune_tree_folding: long must have track.s.id, tag_name, tag_count')
   }
-  initial_genres <- initial_genres |>
-    dplyr::filter(metagenre == root)
-
-  search_grid_min_n <- get_search_grid(
+  graph_root <- get_subgraph(graph, root)
+  search_grid <- get_search_grid(
     min_n_grid_min,
     min_n_grid_max,
     min_n_grid_step,
-    initial_genres
+    long
   )
-
   tuning <- tune_by_folding_genre_tree_bottom_to_top(
-    initial_genres,
+    long,
     graph_root,
-    search_grid_min_n,
+    search_grid,
     root
   )
   tuning$root <- root
   tuning <- handle_non_gini_solutions(tuning)
   tuning$candidates <- get_local_minima_candidates(tuning$ginis)
-  if (nrow(tuning$ginis) > 0) {
-    tuning$suggested_solution <- get_suggested_solution(
-      tuning,
-      optimal_solution_range_n_metagenres
-    )
+  tuning$suggested_solution <- if (nrow(tuning$ginis) > 0) {
+    get_suggested_solution(tuning, optimal_solution_range_n_metagenres)
   } else {
-    tuning$suggested_solution <- tuning$solutions[[1]]
+    tuning$solutions[[1]]
   }
-  n_metagenres_suggested <- tuning$suggested_solution$n_songs |> nrow()
+  n_meta <- nrow(tuning$suggested_solution$n_songs)
   tuning$plot <- plot_tuning_results(
     tuning$ginis,
     xlimits = c(0, min(max(tuning$ginis$n_metagenres), 50)),
-    best_candidate = n_metagenres_suggested,
+    best_candidate = n_meta
   )
   tuning
 }
 
 handle_non_gini_solutions <- function(tuning) {
-  is_only_nan_gini <- tuning$ginis |>
+  only_nan <- tuning$ginis |>
     dplyr::filter(!is.na(weighted_gini)) |>
     nrow() ==
     0
-  if (is_only_nan_gini) {
+  if (only_nan) {
     tuning <- get_non_gini_solutions(tuning)
   } else {
     tuning <- remove_non_gini_solutions(tuning)
   }
+  tuning
 }
 
 get_non_gini_solutions <- function(tuning) {
   tuning$ginis <- head(tuning$ginis, 0)
-  tuning$solutions <- tuning$solutions
   tuning
 }
 
 remove_non_gini_solutions <- function(tuning) {
-  # nan Gini is always the last solution calculated
   tuning$solutions <- head(tuning$solutions, -1)
   tuning$ginis <- head(tuning$ginis, -1)
   tuning
 }
 
-get_search_grid <- function(
-  min_n_grid_min,
-  min_n_grid_max,
-  min_n_grid_step,
-  initial_genres
-) {
-  if (length(min_n_grid_max) == 0) {
-    upper_bound <- initial_genres |>
-      dplyr::filter(!is.na(initial_genre)) |>
-      dplyr::count(initial_genre, sort = T) |>
-      dplyr::first() |>
-      dplyr::pull(n)
-    min_n_grid_max <- upper_bound
+get_search_grid <- function(min_n_min, min_n_max, step, long) {
+  if (length(min_n_max) == 0) {
+    sizes <- get_sizes_lookup(long)
+    upper <- ceiling(max(sizes))
+    min_n_max <- upper
   }
-  grid <- seq(min_n_grid_min, min_n_grid_max, min_n_grid_step)
-  if (!min_n_grid_max %in% grid) {
-    grid <- c(grid, min_n_grid_max)
+  grid <- seq(min_n_min, min_n_max, step)
+  if (!min_n_max %in% grid) {
+    grid <- c(grid, min_n_max)
   }
   grid
 }
 
 tune_by_folding_genre_tree_bottom_to_top <- function(
-  initial_genres,
+  long,
   graph_connected,
   min_n_grid,
   root
 ) {
-  res <- list()
-
-  # Pre-allocate and prepare
+  res_list <- list()
   ginis <- data.frame(
     n_metagenres = integer(length(min_n_grid)),
     min_n = integer(length(min_n_grid)),
     weighted_gini = numeric(length(min_n_grid))
   )
-  solution_names <- as.character(min_n_grid)
-
-  if ('metagenre' %in% colnames(initial_genres)) {
-    initial_genres <- dplyr::rename(initial_genres, 'root' = 'metagenre')
-  }
-
+  sol_names <- as.character(min_n_grid)
   for (i in seq_along(min_n_grid)) {
     message(sprintf('Folding tree for minimum n = %d...', min_n_grid[i]))
     temp <- fold_genre_tree_bottom_to_top(
-      initial_genres,
+      long,
       graph_connected,
       min_n_grid[i],
       root
     )
-
-    distances_to_root <- get_distances_to_root(graph_connected)
+    dist_root <- get_distances_to_root(graph_connected)
     ginis[i, ] <- list(
       n_metagenres = nrow(temp$n_songs),
       min_n = min_n_grid[i],
-      weighted_gini = get_gini_coefficient(
-        temp$mapping,
-        distances_to_root
-      )
+      weighted_gini = get_gini_coefficient(temp$n_songs, dist_root)
     )
-
-    res[[solution_names[i]]] <- temp
+    res_list[[sol_names[i]]] <- temp
     if (i > 1) {
-      is_new_n_metagenres <- ginis$n_metagenres[i] != ginis$n_metagenres[i - 1]
-      if (!is_new_n_metagenres) {
-        res[[solution_names[i - 1]]] <- NULL
+      if (ginis$n_metagenres[i] == ginis$n_metagenres[i - 1]) {
+        res_list[[sol_names[i - 1]]] <- NULL
       }
     }
     if (is.nan(ginis$weighted_gini[i])) {
-      message('Stopping search: Gini computation was not possible anymore')
-      # Trim unused rows from pre-allocated dataframe
+      message('Stopping search: Gini computation not possible anymore')
       ginis <- ginis[1:i, ]
       break
     }
   }
-  res <- list(solutions = res, ginis = ginis)
-  res
+  list(solutions = res_list, ginis = ginis)
 }
 
 fold_genre_tree_bottom_to_top <- function(
-  initial_genres,
+  long,
   graph_connected,
   min_n,
   root
 ) {
   hierarchy <- get_distances_to_root(graph_connected) |>
-    dplyr::mutate(checked = F)
-  current_mapping <- initial_genres |> dplyr::mutate(genre = initial_genre)
+    dplyr::mutate(checked = FALSE)
+  current_mapping <- long |>
+    dplyr::distinct(tag_name) |>
+    dplyr::mutate(genre = tag_name)
+  sizes <- get_sizes_lookup(long)
+  n_songs <- data.frame(
+    genre = names(sizes),
+    n = as.numeric(sizes),
+    stringsAsFactors = FALSE
+  )
   current_graph <- graph_connected
-  n_songs <- dplyr::count(current_mapping, genre)
-  i <- 0
-  n_genres <- nrow(hierarchy)
   repeat {
-    current_genre <- get_current_genre(hierarchy, n_songs)
-    if (
-      dplyr::filter(hierarchy, tag_name == current_genre) |>
-        dplyr::pull(hierarchy_level) ==
-        0
-    ) {
+    current <- get_current_genre(hierarchy, n_songs)
+    if (is_root_level(current, hierarchy)) {
       break
     }
-    n_current_genre <- get_current_genre_n(current_genre, n_songs)
-    if (n_current_genre >= min_n) {
-      is_remaining_parent_larger_min_n <- is_parent_and_remaining_larger_min_n(
-        current_genre,
-        current_graph,
-        n_songs,
-        min_n
-      )
-      is_parent_root <- is_parent_of_current_genre_root(
-        current_genre,
-        current_graph,
-        root
-      )
-      if (is_remaining_parent_larger_min_n || is_parent_root) {
-        current_graph <- fold_new_metagenre_from_graph(
-          current_genre,
-          current_graph
-        )
-        hierarchy <- set_checked_flag_current_genre(
-          current_genre,
-          hierarchy
-        )
+    current_n <- get_current_genre_n(current, n_songs)
+    if (current_n >= min_n) {
+      if (
+        is_parent_and_remaining_larger_min_n(
+          current,
+          current_graph,
+          n_songs,
+          min_n
+        ) ||
+          is_parent_of_current_genre_root(current, current_graph, root)
+      ) {
+        current_graph <- fold_new_metagenre_from_graph(current, current_graph)
+        hierarchy <- set_checked_flag_current_genre(current, hierarchy)
       } else {
         temp <- integrate_genre_and_siblings_and_children(
-          current_genre,
+          current,
           current_mapping,
           current_graph,
           graph_connected,
-          hierarchy
+          hierarchy,
+          sizes
         )
         current_mapping <- temp$current_mapping
         n_songs <- temp$n_songs
@@ -239,21 +191,22 @@ fold_genre_tree_bottom_to_top <- function(
       }
     } else {
       temp <- integrate_genre_and_siblings_and_children(
-        current_genre,
+        current,
         current_mapping,
         current_graph,
         graph_connected,
-        hierarchy
+        hierarchy,
+        sizes
       )
       current_mapping <- temp$current_mapping
       n_songs <- temp$n_songs
       hierarchy <- temp$hierarchy
     }
-    i <- i + 1
   }
   metagenre_graph <- get_metagenre_graph(current_mapping, graph_connected, root)
+  mapping_out <- current_mapping |> dplyr::rename(metagenre = genre)
   list(
-    mapping = current_mapping |> dplyr::rename(metagenre = genre),
+    mapping = mapping_out,
     segmented_graph = current_graph,
     metagenre_graph = metagenre_graph,
     min_n = min_n,
@@ -261,46 +214,11 @@ fold_genre_tree_bottom_to_top <- function(
   )
 }
 
-get_metagenre_graph <- function(mapping, graph, root) {
-  metagenres <- unique(mapping$genre)
-  metagenres <- union(metagenres, root)
-  igraph::induced_subgraph(graph, igraph::V(graph)[name %in% metagenres])
-}
-
-
-is_parent_and_remaining_larger_min_n <- function(
-  genre,
-  current_graph,
-  n_songs,
-  min_n
-) {
-  supergenre <- names(igraph::neighbors(current_graph, genre, mode = "out"))
-  if (length(supergenre) == 0) {
-    return()
-  }
-  other_subgenres <- names(igraph::neighbors(
-    current_graph,
-    supergenre,
-    mode = 'in'
-  ))
-  other_subgenres <- other_subgenres[other_subgenres != genre]
-  remaining <- c(supergenre, other_subgenres)
-  dplyr::filter(n_songs, genre %in% remaining) |>
-    dplyr::pull(n) |>
-    sum() >=
-    min_n
-}
-
-is_parent_of_current_genre_root <- function(
-  genre,
-  current_graph,
-  root
-) {
-  parent <- names(igraph::neighbors(current_graph, genre, mode = "out"))
-  if (length(parent) == 0) {
-    return(FALSE)
-  }
-  parent == root
+is_root_level <- function(current_genre, hierarchy) {
+  hierarchy |>
+    dplyr::filter(tag_name == current_genre) |>
+    dplyr::pull(hierarchy_level) ==
+    0
 }
 
 get_current_genre <- function(hierarchy, n_songs) {
@@ -313,13 +231,40 @@ get_current_genre <- function(hierarchy, n_songs) {
 }
 
 get_current_genre_n <- function(current_genre, n_songs) {
-  current_n <- n_songs |>
+  cur <- n_songs |>
     dplyr::filter(genre == current_genre) |>
     dplyr::pull(n)
-  if (length(current_n) == 0) {
-    current_n <- 0
+  if (length(cur) == 0) {
+    cur <- 0
   }
-  current_n
+  cur
+}
+
+is_parent_and_remaining_larger_min_n <- function(
+  genre,
+  current_graph,
+  n_songs,
+  min_n
+) {
+  supergenre <- names(igraph::neighbors(current_graph, genre, mode = "out"))
+  if (length(supergenre) == 0) {
+    return(NULL)
+  }
+  siblings <- names(igraph::neighbors(current_graph, supergenre, mode = 'in'))
+  siblings <- siblings[siblings != genre]
+  remaining <- c(supergenre, siblings)
+  dplyr::filter(n_songs, genre %in% remaining) |>
+    dplyr::pull(n) |>
+    sum() >=
+    min_n
+}
+
+is_parent_of_current_genre_root <- function(genre, current_graph, root) {
+  parent <- names(igraph::neighbors(current_graph, genre, mode = "out"))
+  if (length(parent) == 0) {
+    return(FALSE)
+  }
+  parent == root
 }
 
 integrate_genre_and_siblings_and_children <- function(
@@ -327,23 +272,11 @@ integrate_genre_and_siblings_and_children <- function(
   current_mapping,
   current_graph,
   graph_connected,
-  hierarchy
+  hierarchy,
+  sizes
 ) {
-  parent_of_current_genre <- igraph::neighbors(
-    current_graph,
-    current_genre,
-    mode = "out"
-  ) |>
-    names()
-
-  # Get all children and grandchildren of parent that are in metatree
-  # (children point to parents, so use "in" mode)
-  children_of_parent_including_current <- igraph::neighbors(
-    current_graph,
-    parent_of_current_genre,
-    mode = "in"
-  ) |>
-    names()
+  parent <- names(igraph::neighbors(current_graph, current_genre, mode = "out"))
+  children <- names(igraph::neighbors(current_graph, parent, mode = "in"))
   current_metagenres <- union(
     unique(current_mapping$genre),
     hierarchy$tag_name[hierarchy$checked == FALSE]
@@ -352,31 +285,24 @@ integrate_genre_and_siblings_and_children <- function(
     graph_connected,
     current_metagenres
   )
-  grandchildren <- lapply(
-    children_of_parent_including_current,
-    function(child) {
-      igraph::neighbors(current_metatree, child, mode = "in") |> names()
-    }
-  ) |>
+  grandchildren <- lapply(children, function(ch) {
+    igraph::neighbors(current_metatree, ch, mode = "in") |> names()
+  }) |>
     unlist()
-  nodes_to_fold <- c(children_of_parent_including_current, grandchildren)
+  nodes_to_fold <- c(children, grandchildren)
   current_mapping <- current_mapping |>
-    dplyr::mutate(
-      genre = ifelse(
-        genre %in% nodes_to_fold,
-        parent_of_current_genre,
-        genre
-      )
-    )
-  n_songs <- dplyr::count(current_mapping, genre)
+    dplyr::mutate(genre = ifelse(genre %in% nodes_to_fold, parent, genre))
+  sizes_df <- data.frame(
+    tag_name = names(sizes),
+    size = as.numeric(sizes),
+    stringsAsFactors = FALSE
+  )
+  n_songs <- current_mapping |>
+    dplyr::left_join(sizes_df, by = dplyr::join_by(tag_name == tag_name)) |>
+    dplyr::group_by(genre) |>
+    dplyr::summarise(n = sum(size, na.rm = TRUE), .groups = 'drop')
   hierarchy <- hierarchy |>
-    dplyr::mutate(
-      checked = ifelse(
-        tag_name %in% nodes_to_fold,
-        T,
-        checked
-      )
-    )
+    dplyr::mutate(checked = ifelse(tag_name %in% nodes_to_fold, TRUE, checked))
   list(
     current_mapping = current_mapping,
     n_songs = n_songs,
@@ -384,50 +310,44 @@ integrate_genre_and_siblings_and_children <- function(
   )
 }
 
-
 fold_new_metagenre_from_graph <- function(current_genre, current_graph) {
-  # Find parent vertices of the current genre in the current_graph
-  parent <- names(igraph::neighbors(
-    current_graph,
-    current_genre,
-    mode = "out"
-  ))
+  parent <- names(igraph::neighbors(current_graph, current_genre, mode = "out"))
   if (length(parent) == 0) {
     return(current_graph)
   }
   if (length(parent) > 1) {
-    stop("Genre has more than one parent in the current graph.")
+    stop("Genre has more than one parent.")
   }
-  edge_to_delete <- igraph::get_edge_ids(
+  edge_id <- igraph::get_edge_ids(
     current_graph,
     c(current_genre, parent),
-    directed = TRUE,
+    directed = TRUE
   )
-  current_graph <- igraph::delete_edges(
-    current_graph,
-    igraph::E(current_graph)[edge_to_delete]
-  )
-  current_graph
+  igraph::delete_edges(current_graph, igraph::E(current_graph)[edge_id])
 }
 
 set_checked_flag_current_genre <- function(current_genre, hierarchy) {
   hierarchy |>
-    dplyr::mutate(checked = ifelse(tag_name == current_genre, T, checked))
+    dplyr::mutate(checked = ifelse(tag_name == current_genre, TRUE, checked))
 }
 
-get_gini_coefficient <- function(metagenres, distances_to_root) {
-  relfreqs <- metagenres |>
-    dplyr::count(metagenre) |>
-    dplyr::mutate(relfreq = n / nrow(metagenres)) |>
+get_metagenre_graph <- function(mapping, graph, root) {
+  metagenres <- unique(mapping$genre)
+  metagenres <- union(metagenres, root)
+  igraph::induced_subgraph(graph, igraph::V(graph)[name %in% metagenres])
+}
+
+get_gini_coefficient <- function(n_songs, distances_to_root) {
+  n_songs_hierarchy <- n_songs |>
     dplyr::left_join(
       distances_to_root,
-      by = dplyr::join_by('metagenre' == 'tag_name')
-    ) |>
-    dplyr::filter(!is.na(hierarchy_level))
-  ginis <- relfreqs |>
+      by = dplyr::join_by('genre' == 'tag_name')
+    )
+  ginis <- n_songs_hierarchy |>
     dplyr::group_by(hierarchy_level) |>
+    dplyr::mutate(relfreq = n / sum(n)) |>
     dplyr::summarize(gini = DescTools::Gini(relfreq))
-  counts <- relfreqs |>
+  counts <- n_songs_hierarchy |>
     dplyr::count(hierarchy_level) |>
     dplyr::filter(n > 1) # Gini is only defined for more than 1 entries
   weighted_gini <- ginis |>
@@ -440,23 +360,21 @@ get_gini_coefficient <- function(metagenres, distances_to_root) {
   weighted_gini
 }
 
+
 get_local_minima_candidates <- function(ginis) {
-  candidate_pool <- ginis |>
+  pool <- ginis |>
     dplyr::arrange(n_metagenres, -min_n) |>
     dplyr::distinct(weighted_gini, n_metagenres, .keep_all = TRUE)
-  candidate_pool <-
-    dplyr::bind_rows(
-      data.frame(weighted_gini = 1, n_metagenres = 1),
-      candidate_pool
-    ) |>
+  pool <- dplyr::bind_rows(
+    data.frame(weighted_gini = 1, n_metagenres = 1),
+    pool
+  ) |>
     dplyr::bind_rows(data.frame(weighted_gini = 0, n_metagenres = Inf))
-  from_left <- which(diff(candidate_pool$weighted_gini) < 0) + 1
-  from_right <- nrow(candidate_pool) -
-    which(diff(rev(candidate_pool$weighted_gini)) < 0)
+  from_left <- which(diff(pool$weighted_gini) < 0) + 1
+  from_right <- nrow(pool) - which(diff(rev(pool$weighted_gini)) < 0)
   candidates <- intersect(from_left, from_right)
-  candidate_pool[candidates, ]
+  pool[candidates, ]
 }
-
 
 get_suggested_solution <- function(tuning, solution_range) {
   suggestions <- tuning$candidates |>
@@ -466,18 +384,15 @@ get_suggested_solution <- function(tuning, solution_range) {
     ) |>
     dplyr::arrange(-n_metagenres)
   if (nrow(suggestions) == 0) {
-    # if nothing in range take local min with highest # of metagenres from below
     suggestions <- tuning$candidates |>
       dplyr::filter(n_metagenres <= solution_range[2]) |>
       dplyr::arrange(-n_metagenres)
   }
   if (nrow(suggestions) == 0) {
-    # if nothing below take  local main take local min with lowest global # of metagenres
     suggestions <- tuning$candidates |>
       dplyr::arrange(n_metagenres)
   }
   if (nrow(suggestions) == 0) {
-    # if no local min at all take global min within solution range
     suggestions <- tuning$ginis |>
       dplyr::filter(
         n_metagenres >= solution_range[1] &
@@ -486,39 +401,30 @@ get_suggested_solution <- function(tuning, solution_range) {
       dplyr::arrange(weighted_gini)
   }
   if (nrow(suggestions) == 0) {
-    # if no solution in solution range take global min
     suggestions <- tuning$ginis |>
       dplyr::arrange(weighted_gini)
   }
-  suggestion_n_metagenres <- suggestions[1, ]$n_metagenres
-  get_n_metagenre_solution_from_tuning_results(tuning, suggestion_n_metagenres)
+  n_meta <- suggestions[1, ]$n_metagenres
+  get_n_metagenre_solution_from_tuning_results(tuning, n_meta)
 }
 
 get_n_metagenre_solution_from_tuning_results <- function(tuning, n_genres) {
   min_n_solution <- tuning$ginis |>
     dplyr::filter(n_metagenres == n_genres) |>
     dplyr::arrange(-min_n) |>
-    dplyr::first() |>
+    dplyr::slice_head(n = 1) |>
     dplyr::pull(min_n) |>
     toString()
   tuning$solutions[[min_n_solution]]
 }
 
-get_ideal_tree_from_tuning <- function(ideal_tree_tuning) {
-  ideal_tree_mapping <- lapply(
-    ideal_tree_tuning,
-    function(metagenre) {
-      metagenre$suggested_solution$mapping
-    }
-  ) |>
+get_ideal_tree_from_tuning <- function(ideal_tree_tuning, graph) {
+  mapping <- lapply(ideal_tree_tuning, function(m) {
+    m$suggested_solution$mapping
+  }) |>
     do.call(bind_rows, .)
-  ideal_tree_submetagenres <- unique(ideal_tree_mapping$metagenre)
-  delete_ids <- igraph::V(graph_connected)[
-    !names(V(graph_connected)) %in% ideal_tree_submetagenres
-  ]
-  ideal_tree_graph <- igraph::delete_vertices(graph_connected, delete_ids)
-  res <- list()
-  res$mapping <- ideal_tree_mapping
-  res$graph <- ideal_tree_graph
-  res
+  submetagenres <- unique(mapping$metagenre)
+  delete_ids <- igraph::V(graph)[!names(V(graph)) %in% submetagenres]
+  ideal_graph <- igraph::delete_vertices(graph, delete_ids)
+  list(mapping = mapping, graph = ideal_graph)
 }

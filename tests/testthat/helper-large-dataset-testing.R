@@ -7,11 +7,24 @@
 #' @param preserve_rare_genres If TRUE, ensures rare genres are represented
 #' @return Stratified sample that preserves genre distribution characteristics
 create_stratified_sample <- function(
-  initial_genres,
+  long,
   sample_size = 1000,
   preserve_rare_genres = TRUE
 ) {
   set.seed(42) # For reproducibility
+
+  # Convert long (track.s.id, tag_name, tag_count) to per-track initial_genres
+  initial_genres <- long |>
+    dplyr::group_by(track.s.id, tag_name) |>
+    dplyr::summarise(
+      total_tag_count = sum(tag_count, na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    dplyr::group_by(track.s.id) |>
+    dplyr::slice_max(total_tag_count, n = 1, with_ties = FALSE) |>
+    dplyr::ungroup() |>
+    dplyr::rename(id = track.s.id, initial_genre = tag_name)
+
   # Calculate genre frequencies
   genre_counts <- table(initial_genres$initial_genre)
 
@@ -75,7 +88,7 @@ create_stratified_sample <- function(
 #' @param sample_sizes Vector of sample sizes to test
 #' @return List of results for each sample size
 test_algorithm_scaling <- function(
-  initial_genres,
+  long,
   graph,
   min_n,
   root_genre,
@@ -86,9 +99,9 @@ test_algorithm_scaling <- function(
   for (sample_size in sample_sizes) {
     cat("Testing with sample size:", sample_size, "\n")
 
-    sample_data <- create_stratified_sample(initial_genres, sample_size)
+    sample_data <- create_stratified_sample(long, sample_size)
 
-    # Run algorithm
+    # Run algorithm (fold_genre_tree_bottom_to_top expects an initial_genres-shaped DF)
     result <- fold_genre_tree_bottom_to_top(
       sample_data,
       graph,
@@ -208,7 +221,14 @@ create_problematic_test_case <- function(failure_pattern = "parent_violation") {
       root = rep("root", 500)
     )
 
-    return(list(initial_genres = initial_genres, graph = graph))
+    # Convert to long format (one tag per track, tag_count = 1)
+    long <- data.frame(
+      track.s.id = initial_genres$id,
+      tag_name = initial_genres$initial_genre,
+      tag_count = 1
+    )
+
+    return(list(long = long, graph = graph))
   }
 
   # Add other failure patterns as needed
