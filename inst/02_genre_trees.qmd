@@ -37,7 +37,7 @@ devtools::load_all()
 ```	
 
 # Short Explanation
-This report presents interactive genre trees for the MusicBrainz and Discogs folksonomies, as well as the digital music streaming platform Spotify. Each tree visualizes the **hierarchical structure of music genres** based on a dataset of popular tracks in Germany over the last 50 years (PopTraG). The trees allow users to explore sub-genres by clicking on nodes, with node size representing the number of tracks associated with each genre. 
+This report presents interactive genre trees for the MusicBrainz and the digital music streaming platform Spotify. Each tree visualizes the **hierarchical structure of music genres** based on a dataset of popular tracks in Germany over the last 50 years (PopTraG). The trees allow users to explore sub-genres by clicking on nodes, with node size representing the number of tracks associated with each genre. 
 
 ## The intital genre network
 In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the PopTraG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments (for Spotify we used multiple artists per track to generate votes), which are used to **weight the edges genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear. The more users voted for a genre, i.e. the more unambigously a track can be assigned to a genre, the stronger the connection becomes (see continued example).
@@ -68,8 +68,8 @@ metal --> rock
 metal -.-x pop
 ```
 
-## Genre mapping
-For performing classification tasks later on, we need to transform our multilabel genre assignments into single-label assignements. Therefore, we choose the initial genre from each track's user assigned tags. We identify the most appropriate initial genre by following the path from the root of the tree to the leaf genres, always choosing the path with the highest number of votes down all sub-branches in the tracks genre list. When we reach a genre that has no heirs in the track's genre list, we assign this genre as the initial genre for this track.
+<!-- ## Genre mapping
+For performing classification tasks later on, we need to transform our multilabel genre assignments into single-label assignements. Therefore, we choose the initial genre from each track's user assigned tags. We identify the most appropriate initial genre by following the path from the root of the tree to the leaf genres, always choosing the path with the highest number of votes down all sub-branches in the tracks genre list. When we reach a genre that has no heirs in the track's genre list, we assign this genre as the initial genre for this track. -->
 
 <!-- Was ist mit einem Fall, wo zwar ein Track in einem Tiefen Genre ist, aber nicht der gesamte Path? Das könnte zum Beispiel Classical erklären in den Leafs? Die bleiben vielleicht alle bei Classic Rock stecken und kommen gar nicht zu classical -->
 
