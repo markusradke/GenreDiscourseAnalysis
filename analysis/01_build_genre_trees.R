@@ -13,10 +13,36 @@ build_genre_tree(s, "Spotify", vote_weighted = TRUE)
 
 generate_report("02_genre_trees")
 
+# Analyze edges with low artist counts ----
+# How many artist coocurencres do we need to trust an edge?
+show_edges_with_low_artist_count <- function(graph, data, threshold = 50) {
+  edges <- igraph::as_data_frame(graph, what = "edges")
+  edge_counts <- edges |>
+    dplyr::rowwise() |>
+    dplyr::mutate(
+      count = nrow(
+        data |>
+          dplyr::filter(
+            tag_name %in% c(from, to)
+          ) |>
+          dplyr::group_by(track.s.firstartist.id) |>
+          dplyr::filter(dplyr::n() == 2)
+      )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::filter(count < threshold)
+  edge_counts
+}
 
-plot_network_graph(
+# takes a small while to run
+show_edges_with_low_artist_count(
   readRDS("models/trees/Spotify_graph.rds"),
-  get_sizes_lookup(s),
-  get_fills_lookup(s),
-  height = 1000
+  s,
+  threshold = 50
+)
+
+show_edges_with_low_artist_count(
+  readRDS("models/trees/MusicBrainz_graph.rds"),
+  mb,
+  threshold = 50
 )
