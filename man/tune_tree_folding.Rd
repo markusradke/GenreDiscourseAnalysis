@@ -11,7 +11,8 @@ tune_tree_folding(
   min_n_grid_min = 100,
   min_n_grid_max = integer(),
   min_n_grid_step = 20,
-  root = "POPULAR MUSIC"
+  root = "POPULAR MUSIC",
+  n_workers = NULL
 )
 }
 \arguments{
@@ -28,6 +29,9 @@ tune_tree_folding(
 \item{min_n_grid_step}{integer step for grid.}
 
 \item{root}{character root genre name.}
+
+\item{n_workers}{integer number of parallel workers. If NULL (default),
+uses (number of cores - 1).}
 }
 \value{
 list with solutions, ginis, suggested_solution, candidates, plot.
@@ -38,4 +42,8 @@ producing solutions for a grid of minimum-genre sizes. For each
 solution it computes a weighted Gini across hierarchy levels and
 returns candidate local minima and a suggested solution in the
 requested range.
+}
+\details{
+The function uses parallel processing to speed up computation across
+the grid of min_n values. Each min_n value is processed independently.
 }

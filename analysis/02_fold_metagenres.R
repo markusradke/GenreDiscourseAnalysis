@@ -2,9 +2,9 @@ rm(list = ls())
 devtools::load_all()
 
 min_n <- 1000
-step <- 100
-max_n <- 1300
-optimal_range <- c(40, 50)
+step <- 20
+max_n <- 5000
+optimal_range <- c(20, 30)
 
 tune_mb <- tune_tree_folding(
   read_feather_with_lists("data/filtered_mb_long.feather"),
@@ -26,4 +26,4 @@ tune_s <- tune_tree_folding(
 )
 save_tuning(tune_s, "s")
 
-generate_report("03_ metagenres")
+generate_report("03_metagenres")

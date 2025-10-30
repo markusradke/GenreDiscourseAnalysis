@@ -366,7 +366,8 @@ test_that("metagenres have valid parent structure", {
     c(10, 50),
     min_n_grid_min = 40,
     min_n_grid_step = 10,
-    root = "root"
+    root = "root",
+    n_workers = 1
   )
   expect_true("ginis" %in% names(tuning))
   expect_true("solutions" %in% names(tuning))
@@ -409,7 +410,8 @@ test_that("algorithm handles edge cases that might occur in large datasets", {
     c(10, 100),
     min_n_grid_min = 40,
     min_n_grid_step = 20,
-    root = "root"
+    root = "root",
+    n_workers = 1
   )
   expect_true("ginis" %in% names(tuning))
   expect_true("solutions" %in% names(tuning))
@@ -422,7 +424,8 @@ test_that("algorithm handles edge cases that might occur in large datasets", {
     min_n_grid_min = 5,
     min_n_grid_max = 900,
     min_n_grid_step = 100,
-    root = "root"
+    root = "root",
+    n_workers = 1
   )
   expect_true("ginis" %in% names(tuning_strict))
 })
@@ -445,7 +448,8 @@ test_that("algorithm consistency across sample sizes", {
     c(5, 50),
     min_n_grid_min = 30,
     min_n_grid_step = 10,
-    root = "root"
+    root = "root",
+    n_workers = 1
   )
   expect_true("ginis" %in% names(tuning))
   expect_true("solutions" %in% names(tuning))
@@ -469,7 +473,8 @@ test_that("algorithm handles known problematic patterns", {
       c(min_n, min_n + 10),
       min_n_grid_min = min_n,
       min_n_grid_step = 10,
-      root = "root"
+      root = "root",
+      n_workers = 1
     )
     expect_true("ginis" %in% names(tuning_min_n))
   }

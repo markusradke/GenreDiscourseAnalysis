@@ -6,6 +6,9 @@
 #' returns candidate local minima and a suggested solution in the
 #' requested range.
 #'
+#' The function uses parallel processing to speed up computation across
+#' the grid of min_n values. Each min_n value is processed independently.
+#'
 #' @param long data.frame with columns track.s.id, tag_name, tag_count.
 #' @param graph igraph object representing full genre hierarchy.
 #' @param optimal_solution_range_n_metagenres integer vector length 2.
@@ -13,6 +16,8 @@
 #' @param min_n_grid_max integer upper bound for grid or integer().
 #' @param min_n_grid_step integer step for grid.
 #' @param root character root genre name.
+#' @param n_workers integer number of parallel workers. If NULL (default),
+#'   uses (number of cores - 1).
 #' @return list with solutions, ginis, suggested_solution, candidates, plot.
 tune_tree_folding <- function(
   long,
@@ -21,8 +26,20 @@ tune_tree_folding <- function(
   min_n_grid_min = 100,
   min_n_grid_max = integer(),
   min_n_grid_step = 20,
-  root = 'POPULAR MUSIC'
+  root = 'POPULAR MUSIC',
+  n_workers = NULL
 ) {
+  # Check for required packages
+  if (
+    !requireNamespace("future", quietly = TRUE) ||
+      !requireNamespace("furrr", quietly = TRUE)
+  ) {
+    stop(
+      "Packages 'future' and 'furrr' required for parallel processing.\n",
+      "Install with: install.packages(c('future', 'furrr'))"
+    )
+  }
+
   if (
     !all(
       c('track.s.id', 'tag_name', 'tag_count') %in%
@@ -31,6 +48,7 @@ tune_tree_folding <- function(
   ) {
     stop('tune_tree_folding: long must have track.s.id, tag_name, tag_count')
   }
+
   graph_root <- get_subgraph(graph, root)
   search_grid <- get_search_grid(
     min_n_grid_min,
@@ -40,32 +58,151 @@ tune_tree_folding <- function(
     root
   )
 
-  # Pre-compute read-only values that don't change across iterations
+  # Pre-compute read-only values that don't change
   sizes_cache <- get_sizes_lookup(long, root)
   hierarchy_cache <- get_distances_to_root(graph_root)
 
-  tuning <- tune_by_folding_genre_tree_bottom_to_top(
-    long,
-    graph_root,
-    search_grid,
-    root,
-    sizes_cache = sizes_cache,
-    hierarchy_cache = hierarchy_cache
+  # Determine number of workers
+  # For small grids, parallel overhead isn't worth it
+  if (is.null(n_workers)) {
+    if (length(search_grid) <= 3) {
+      n_workers <- 1 # Sequential for small grids
+    } else {
+      n_workers <- min(length(search_grid), max(1, parallel::detectCores() - 1))
+    }
+  }
+
+  # Set up parallel backend only if using multiple workers
+  if (n_workers > 1) {
+    old_plan <- future::plan()
+    on.exit(future::plan(old_plan), add = TRUE)
+    future::plan(future::multisession, workers = n_workers)
+  }
+
+  if (n_workers > 1) {
+    message(sprintf(
+      'Running parallel tuning with %d workers for %d min_n values...',
+      n_workers,
+      length(search_grid)
+    ))
+  }
+
+  # Run folding in parallel for each min_n
+  # Load package in each worker so internal functions are available
+  if (n_workers > 1) {
+    results <- suppressWarnings({
+      furrr::future_map(
+        search_grid,
+        function(min_n_val) {
+          # Load package quietly in worker (suppresses all output and warnings)
+          suppressMessages(suppressWarnings(
+            try(devtools::load_all(quiet = TRUE), silent = TRUE)
+          ))
+
+          list(
+            min_n = min_n_val,
+            solution = fold_genre_tree_bottom_to_top(
+              long = long,
+              graph_connected = graph_root,
+              min_n = min_n_val,
+              root = root,
+              sizes_cache = sizes_cache,
+              hierarchy_cache = hierarchy_cache
+            )
+          )
+        },
+        .options = furrr::furrr_options(
+          seed = TRUE,
+          globals = TRUE,
+          packages = c("devtools", "dplyr", "igraph", "DescTools")
+        ),
+        .progress = TRUE
+      )
+    })
+  } else {
+    # Sequential execution for small grids (no parallel overhead)
+    results <- lapply(search_grid, function(min_n_val) {
+      list(
+        min_n = min_n_val,
+        solution = fold_genre_tree_bottom_to_top(
+          long = long,
+          graph_connected = graph_root,
+          min_n = min_n_val,
+          root = root,
+          sizes_cache = sizes_cache,
+          hierarchy_cache = hierarchy_cache
+        )
+      )
+    })
+  }
+
+  # Process results into expected format
+  res_list <- list()
+  ginis <- data.frame(
+    n_metagenres = integer(length(results)),
+    min_n = integer(length(results)),
+    weighted_gini = numeric(length(results))
   )
-  tuning$root <- root
+
+  for (i in seq_along(results)) {
+    min_n_val <- results[[i]]$min_n
+    sol <- results[[i]]$solution
+    sol_name <- as.character(min_n_val)
+
+    ginis[i, ] <- list(
+      n_metagenres = nrow(sol$n_songs),
+      min_n = min_n_val,
+      weighted_gini = get_gini_coefficient(sol$n_songs, hierarchy_cache)
+    )
+    res_list[[sol_name]] <- sol
+  }
+
+  # Remove duplicate solutions (same n_metagenres)
+  if (length(results) > 1) {
+    for (i in 2:length(results)) {
+      if (ginis$n_metagenres[i] == ginis$n_metagenres[i - 1]) {
+        sol_name_prev <- as.character(ginis$min_n[i - 1])
+        res_list[[sol_name_prev]] <- NULL
+      }
+    }
+  }
+
+  # Check for early termination (NaN Gini)
+  nan_idx <- which(is.nan(ginis$weighted_gini))
+  if (length(nan_idx) > 0) {
+    first_nan <- min(nan_idx)
+    message('Stopping search: Gini computation not possible anymore')
+    ginis <- ginis[1:first_nan, ]
+    # Note: We don't filter res_list here because duplicate removal may have
+    # already removed earlier solutions, and we want to keep what we have
+  }
+
+  tuning <- list(
+    solutions = res_list,
+    ginis = ginis,
+    root = root
+  )
+
   tuning <- handle_non_gini_solutions(tuning)
   tuning$candidates <- get_local_minima_candidates(tuning$ginis)
   tuning$suggested_solution <- if (nrow(tuning$ginis) > 0) {
     get_suggested_solution(tuning, optimal_solution_range_n_metagenres)
   } else {
-    tuning$solutions[[1]]
+    # When ginis is empty, return first solution if it exists
+    if (length(tuning$solutions) > 0) {
+      tuning$solutions[[1]]
+    } else {
+      NULL
+    }
   }
+
   n_meta <- nrow(tuning$suggested_solution$n_songs)
   tuning$plot <- plot_tuning_results(
     tuning$ginis,
     xlimits = c(0, min(max(tuning$ginis$n_metagenres), 50)),
     best_candidate = n_meta
   )
+
   tuning
 }
 
