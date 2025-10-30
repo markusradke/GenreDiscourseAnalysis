@@ -16,6 +16,7 @@ Imports:
     arrow,
     DescTools,
     dplyr,
+    future,
     ggplot2,
     ggrepel,
     ggtext,
