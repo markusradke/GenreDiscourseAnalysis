@@ -39,11 +39,18 @@ tune_tree_folding <- function(
     long,
     root
   )
+
+  # Pre-compute read-only values that don't change across iterations
+  sizes_cache <- get_sizes_lookup(long, root)
+  hierarchy_cache <- get_distances_to_root(graph_root)
+
   tuning <- tune_by_folding_genre_tree_bottom_to_top(
     long,
     graph_root,
     search_grid,
-    root
+    root,
+    sizes_cache = sizes_cache,
+    hierarchy_cache = hierarchy_cache
   )
   tuning$root <- root
   tuning <- handle_non_gini_solutions(tuning)
@@ -103,8 +110,18 @@ tune_by_folding_genre_tree_bottom_to_top <- function(
   long,
   graph_connected,
   min_n_grid,
-  root
+  root,
+  sizes_cache = NULL,
+  hierarchy_cache = NULL
 ) {
+  # Use cached values or compute if not provided
+  if (is.null(sizes_cache)) {
+    sizes_cache <- get_sizes_lookup(long, root)
+  }
+  if (is.null(hierarchy_cache)) {
+    hierarchy_cache <- get_distances_to_root(graph_connected)
+  }
+
   res_list <- list()
   ginis <- data.frame(
     n_metagenres = integer(length(min_n_grid)),
@@ -118,13 +135,15 @@ tune_by_folding_genre_tree_bottom_to_top <- function(
       long,
       graph_connected,
       min_n_grid[i],
-      root
+      root,
+      sizes_cache = sizes_cache,
+      hierarchy_cache = hierarchy_cache
     )
-    dist_root <- get_distances_to_root(graph_connected)
+    # Use cached hierarchy for Gini computation
     ginis[i, ] <- list(
       n_metagenres = nrow(temp$n_songs),
       min_n = min_n_grid[i],
-      weighted_gini = get_gini_coefficient(temp$n_songs, dist_root)
+      weighted_gini = get_gini_coefficient(temp$n_songs, hierarchy_cache)
     )
     res_list[[sol_names[i]]] <- temp
     if (i > 1) {
@@ -145,14 +164,24 @@ fold_genre_tree_bottom_to_top <- function(
   long,
   graph_connected,
   min_n,
-  root
+  root,
+  sizes_cache = NULL,
+  hierarchy_cache = NULL
 ) {
-  hierarchy <- get_distances_to_root(graph_connected) |>
+  # Use cached values or compute if not provided
+  if (is.null(sizes_cache)) {
+    sizes_cache <- get_sizes_lookup(long, root)
+  }
+  if (is.null(hierarchy_cache)) {
+    hierarchy_cache <- get_distances_to_root(graph_connected)
+  }
+
+  hierarchy <- hierarchy_cache |>
     dplyr::mutate(checked = FALSE)
   current_mapping <- long |>
     dplyr::distinct(tag_name) |>
     dplyr::mutate(genre = tag_name)
-  sizes <- get_sizes_lookup(long, root)
+  sizes <- sizes_cache
   n_songs <- data.frame(
     genre = names(sizes),
     n = as.numeric(sizes),
