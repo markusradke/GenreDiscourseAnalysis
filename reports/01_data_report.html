@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-29">
+<meta name="dcterms.date" content="2025-10-31">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 29, 2025</p>
+      <p class="date">October 31, 2025</p>
     </div>
   </div>
   
@@ -186,14 +186,31 @@ Note
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>artists_per_tag_mb <span class="ot">&lt;-</span> mb_long <span class="sc">|&gt;</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">distinct</span>(tag_name, n_artists) <span class="sc">|&gt;</span> </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_artists)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_artists)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>tag_sources <span class="ot">&lt;-</span> mb_long <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">distinct</span>(track.s.id, tag_source) <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">count</span>(tag_source)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>tag_source_lookup <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tag_sources<span class="sc">$</span>n, tag_sources<span class="sc">$</span>tag_source)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the <a href="https://musicbrainz.org/genres">Musicbrainz genre whitelist</a> on June 16, 2025. Additionally, we excluded tags that did not occur with at least 50 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 46,149 tracks from the data set (18%). Non-music genre tags were: “non-music”, “interview”, “comedy”, “nature sounds”, “children’s music”, “spoken word”, “standup comedy”.</p>
 <p>This amounts to <strong>N<sub>MusicBrainz</sub> = 208,185 tracks</strong> with MusicBrainz music genre tags.</p>
-<p>There are <strong>223 different genre tags</strong> in the MusicBrainz genre data set. Users assigned between 1 and 21 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 135 times (median: 5, IQR: 7).</p>
-<p>Track-based statistics on tag assignement: * min 114 tracks per tag * max 75,678 tracks per tag * median 1134 tracks per tag * IQR 2001 tracks per tag</p>
-<p>Artist-based statistics on tag assignement: * min 50 artists per tag * max 4,381 artists per tag * median 129 artists per tag * IQR 200 artists per tag</p>
+<p>There are <strong>223 different genre tags</strong> in the MusicBrainz genre data set.</p>
+<p>If we could not find tags assinged directly to the individual track, we used the tags assinged to the corresponding release. If there were no release tags, we used the artist tags. For 106,116 tracks (51%) tracks the tagging originated from track taggings, for 11,103 tracks (5%) from release taggings, and for 90,966 tracks (44%) from artist taggings.</p>
+<p>Users assigned between 1 and 21 different tags to each track (median: 3, IQR: 4) and voted for each track between 1 and 135 times (median: 5, IQR: 7).</p>
+<p>Track-based statistics on tag assignement:</p>
+<ul>
+<li>min 114 tracks per tag</li>
+<li>max 75,678 tracks per tag</li>
+<li>median 1134 tracks per tag</li>
+<li>IQR 2001 tracks per tag</li>
+</ul>
+<p>Artist-based statistics on tag assignement:</p>
+<ul>
+<li>min 50 artists per tag</li>
+<li>max 4,381 artists per tag</li>
+<li>median 129 artists per tag</li>
+<li>IQR 200 artists per tag</li>
+</ul>
 </section>
 <section id="spotify-network-data" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="spotify-network-data"><span class="header-section-number">2.2</span> Spotify network data</h2>
@@ -214,19 +231,30 @@ Note
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>n_multiple_artists <span class="ot">&lt;-</span> poptrag <span class="sc">|&gt;</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(track.s.id <span class="sc">%in%</span> s_long<span class="sc">$</span>track.s.id) <span class="sc">|&gt;</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(n_artists <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(n_trackartists <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>() </span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>artists_per_tag_s <span class="ot">&lt;-</span> s_long <span class="sc">|&gt;</span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">distinct</span>(tag_name, n_artists) <span class="sc">|&gt;</span> </span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">pull</span>(n_artists)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags. Additionally, we excluded tags that did not occur with at least 50 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 46,906 tracks from the data set (18%).Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”.</p>
-<p>This amounts to <strong>N<sub>Spotify</sub> = 207,428 tracks</strong> with Spotify music genre tags.</p>
-<p>There are <strong>374 different genre tags</strong> in the Spotify genre data set. Users assigned between 1 and 18 different tags to each track (median: 2, IQR: 3).</p>
-<p>Track-based statistics on tag assignement:<br>
-* min 82 tracks per tag * max 22,573 tracks per tag * median 646 tracks per tag * IQR 1504.5 tracks per tag</p>
-<p>Artist-based statistics on tag assignement: * min 50 artists per tag * max 747 artists per tag * median 87 artists per tag * IQR 78 artists per tag</p>
+<p>We filtered out all songs without a Spotify genre tag (Spotify artist genre tags) or with only non-music genre tags. Additionally, we excluded tags that did not occur with at least 50 artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed 48,033 tracks from the data set (19%).Non-music genre tags were: “432hz”, “528hz”, “asmr”, “binaural”, “children’s folk”, “children’s music”, “clean comedy”, “comic”, “escape room”, “field recording ambient”, “football”, “kabarett”, “lo-fi sleep”, “lo-fi study”, “mediation”, “sleep”, “talent show”, “talentschau”, “kindermusik”, “rain”, “white noise”.</p>
+<p>This amounts to <strong>N<sub>Spotify</sub> = 206,301 tracks</strong> with Spotify music genre tags.</p>
+<p>There are <strong>371 different genre tags</strong> in the Spotify genre data set. Users assigned between 1 and 18 different tags to each track (median: 2, IQR: 3).</p>
+<p>Track-based statistics on tag assignement:</p>
+<ul>
+<li>min 82 tracks per tag</li>
+<li>max 22,573 tracks per tag</li>
+<li>median 646 tracks per tag</li>
+<li>IQR 1501 tracks per tag</li>
+</ul>
+<p>Artist-based statistics on tag assignement:</p>
+<ul>
+<li>min 50 artists per tag</li>
+<li>max 747 artists per tag</li>
+<li>median 87 artists per tag</li>
+<li>IQR 78 artists per tag</li>
+</ul>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -250,7 +278,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 29,300 tracks (14%) featured multiple artists.</p>
+<p>In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track’s tags by combining all track artists’ tags and counting the number of tag appearences per track. 29,282 tracks (14%) featured multiple artists.</p>
 </div>
 </div>
 </section>

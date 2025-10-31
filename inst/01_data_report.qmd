@@ -76,25 +76,36 @@ one_track_tags_mb <- dplyr::filter(dplyr::count(mb_long, tag_name), n == 1) |>
 artists_per_tag_mb <- mb_long |>
   dplyr::distinct(tag_name, n_artists) |> 
   dplyr::pull(n_artists)
+
+tag_sources <- mb_long |> dplyr::distinct(track.s.id, tag_source) |> dplyr::count(tag_source)
+tag_source_lookup <- setNames(tag_sources$n, tag_sources$tag_source)
 ```
 
 We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025. Additionally, we excluded tags that did not occur with at least `r settings$n_artists_threshold` artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed `r format(n_diff_mb, big.mark = ",")` tracks from the data set (`r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ", ")`.
 
 This amounts to **N~MusicBrainz~ = `r format(n_mb, big.mark = ",")` tracks** with MusicBrainz music genre tags.
 
-There are **`r format(n_unique_mb_tags, big.mark = ",")` different genre tags** in the MusicBrainz genre data set. Users assigned between `r min(tags_per_track_mb)` and `r max(tags_per_track_mb)` different tags to each track (median: `r median(tags_per_track_mb)`, IQR: `r IQR(tags_per_track_mb)`) and voted for each track between `r min(votes_per_track_mb)` and `r max(votes_per_track_mb)` times (median: `r median(votes_per_track_mb)`, IQR: `r IQR(votes_per_track_mb)`).
+There are **`r format(n_unique_mb_tags, big.mark = ",")` different genre tags** in the MusicBrainz genre data set.
+
+
+If we could not find tags assinged directly to the individual track, we used the tags assinged to the corresponding release. If there were no release tags, we used the artist tags. For `r format(tag_source_lookup["track"], big.mark = ",")` tracks (`r round(tag_source_lookup["track"] / n_mb *100)`%) tracks the tagging originated from track taggings, for `r format(tag_source_lookup["album"], big.mark = ",")` tracks (`r round(tag_source_lookup["album"] / n_mb * 100)`%) from release taggings, and for `r format(tag_source_lookup["artist"], big.mark = ",")` tracks (`r round(tag_source_lookup["artist"] / n_mb * 100)`%) from artist taggings.
+
+Users assigned between `r min(tags_per_track_mb)` and `r max(tags_per_track_mb)` different tags to each track (median: `r median(tags_per_track_mb)`, IQR: `r IQR(tags_per_track_mb)`) and voted for each track between `r min(votes_per_track_mb)` and `r max(votes_per_track_mb)` times (median: `r median(votes_per_track_mb)`, IQR: `r IQR(votes_per_track_mb)`).
 
 Track-based statistics on tag assignement: 
+
 * min `r min(tracks_per_tag_mb)` tracks per tag
 * max `r format(max(tracks_per_tag_mb), big.mark = ",")` tracks per tag
 * median `r median(tracks_per_tag_mb)` tracks per tag
 * IQR `r IQR(tracks_per_tag_mb)` tracks per tag
 
 Artist-based statistics on tag assignement:
+
 * min `r min(artists_per_tag_mb)` artists per tag
 * max `r format(max(artists_per_tag_mb), big.mark = ",")` artists per tag
 * median `r median(artists_per_tag_mb)` artists per tag
 * IQR `r IQR(artists_per_tag_mb)` artists per tag
+
 
 ## Spotify network data
 
@@ -113,7 +124,7 @@ one_track_tags_s <- dplyr::filter(dplyr::count(s_long, tag_name), n == 1) |>
 
 n_multiple_artists <- poptrag |>
   dplyr::filter(track.s.id %in% s_long$track.s.id) |>
-  dplyr::filter(n_artists > 1) |>
+  dplyr::filter(n_trackartists > 1) |>
   nrow() 
 artists_per_tag_s <- s_long |>
   dplyr::distinct(tag_name, n_artists) |> 
@@ -127,12 +138,14 @@ This amounts to **N~Spotify~ = `r format(n_s, big.mark = ",")` tracks** with Spo
 There are **`r format(n_unique_s_tags, big.mark = ",")` different genre tags** in the Spotify genre data set. Users assigned between `r min(tags_per_track_s)` and `r max(tags_per_track_s)` different tags to each track (median: `r median(tags_per_track_s)`, IQR: `r IQR(tags_per_track_s)`).
 
 Track-based statistics on tag assignement:  
+
 * min `r min(tracks_per_tag_s)` tracks per tag
 * max `r format(max(tracks_per_tag_s), big.mark = ",")` tracks per tag
 * median `r median(tracks_per_tag_s)` tracks per tag
 * IQR `r IQR(tracks_per_tag_s)` tracks per tag
 
 Artist-based statistics on tag assignement:
+
 * min `r min(artists_per_tag_s)` artists per tag
 * max `r format(max(artists_per_tag_s), big.mark = ",")` artists per tag
 * median `r median(artists_per_tag_s)` artists per tag

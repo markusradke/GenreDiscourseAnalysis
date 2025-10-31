@@ -39,7 +39,9 @@ poptrag_selected <- poptrag |>
     trackartists.s.id = sapply(.data$track.s.artists, function(x) {
       paste(x$id, collapse = ";")
     }),
-    n_artists = sapply(.data$track.s.artists, function(x) as.integer(nrow(x)))
+    n_trackartists = sapply(.data$track.s.artists, function(x) {
+      as.integer(nrow(x))
+    })
   )
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")

@@ -41,20 +41,28 @@ combine_tag_columns <- function(input, cols, builder, outcol, msg = "") {
   message(msg)
   n <- nrow(input)
   out_list <- vector("list", length = ifelse(is.null(n), 0, n))
+  source_list <- vector("character", length = ifelse(is.null(n), 0, n))
 
   if (is.null(n) || n == 0) {
     input[[outcol]] <- out_list
+    input[[paste0(outcol, ".source")]] <- source_list
     return(input)
   }
 
   pb <- utils::txtProgressBar(min = 0, max = n, style = 3)
   on.exit(close(pb), add = TRUE)
-  out_list <- lapply(seq_len(n), function(i) {
+
+  results <- lapply(seq_len(n), function(i) {
     utils::setTxtProgressBar(pb, i)
     args <- lapply(cols, function(col) input[[col]][[i]])
     do.call(builder, args)
   })
+
+  out_list <- lapply(results, function(x) x$tags)
+  source_list <- sapply(results, function(x) x$source)
+
   input[[outcol]] <- out_list
+  input[[paste0(outcol, ".source")]] <- source_list
   input
 }
 
@@ -124,12 +132,12 @@ lookup_genres_for_ids <- function(ids, genre_map) {
   })
 }
 
-combine_genre_counts <- function(genre_lists, n_artists) {
+combine_genre_counts <- function(genre_lists, n_trackartists) {
   combined <- unlist(genre_lists, use.names = FALSE)
   if (length(combined) == 0) {
     return(make_empty_tag_df())
   }
-  if (n_artists == 1L) {
+  if (n_trackartists == 1L) {
     data.frame(
       tag_name = combined,
       tag_count = rep.int(1L, length(combined)),
@@ -158,12 +166,12 @@ choose_mb_tag_set <- function(
   }
 
   if (n_track_tags != 0) {
-    return(track_tags)
+    return(list(tags = track_tags, source = "track"))
   }
   if (n_album_tags != 0) {
-    return(album_tags)
+    return(list(tags = album_tags, source = "album"))
   }
-  artist_tags
+  list(tags = artist_tags, source = "artist")
 }
 
 filter_non_empty_tags <- function(input, genrecol) {
@@ -184,6 +192,10 @@ get_long_genre_tags <- function(
   caluclate_tag_count = character()
 ) {
   unpacked_tags <- unpack_genre_tags(input[[genrecol]])
+
+  source_col <- paste0(genrecol, ".source")
+  has_source <- source_col %in% colnames(input)
+
   join_mapping <- data.frame(
     join_id = seq_len(nrow(input)),
     track.s.id = input$track.s.id,
@@ -192,24 +204,39 @@ get_long_genre_tags <- function(
     track.s.title = input$track.s.title,
     track.s.firstartist.id = input$track.s.firstartist.id,
     track.s.firstartist.name = input$track.s.firstartist.name,
+    n_trackartists = input$n_trackartists,
     stringsAsFactors = FALSE
   )
+
+  if (has_source) {
+    join_mapping$tag_source <- input[[source_col]]
+  }
+
   message("Merging genre tags with track info ...")
   result <- dplyr::inner_join(
     join_mapping,
     unpacked_tags,
     by = "join_id"
-  ) |>
-    dplyr::select(
-      "track.s.id",
-      "album.dc.id",
-      "trackartists.s.id",
-      "track.s.title",
-      "track.s.firstartist.id",
-      "track.s.firstartist.name",
-      "tag_name",
-      "tag_count"
-    )
+  )
+
+  select_cols <- c(
+    "track.s.id",
+    "album.dc.id",
+    "trackartists.s.id",
+    "track.s.title",
+    "track.s.firstartist.id",
+    "track.s.firstartist.name",
+    "n_trackartists",
+    "tag_name",
+    "tag_count"
+  )
+
+  if (has_source) {
+    select_cols <- c(select_cols, "tag_source")
+  }
+
+  result <- result |> dplyr::select(dplyr::all_of(select_cols))
+
   if (length(caluclate_tag_count) > 0) {
     message("Calculating tag counts ...")
     if (
@@ -218,7 +245,7 @@ get_long_genre_tags <- function(
     ) {
       stop("If caluclate_tag_count is used, it must be 'artist' or 'total'.")
     } else {
-      result <- calculate_tag_counts(result, caluclate_tag_count)
+      result <- calculate_tag_counts(result, caluclate_tag_count, has_source)
     }
   }
   message("Done.")
@@ -242,8 +269,18 @@ unpack_genre_tags <- function(tags) {
   do.call(rbind, tagged_frames)
 }
 
-calculate_tag_counts <- function(tags, method) {
+calculate_tag_counts <- function(tags, method, preserve_source = FALSE) {
+  source_col <- if (preserve_source && "tag_source" %in% colnames(tags)) {
+    tags$tag_source
+  } else {
+    NULL
+  }
+
   tags <- tags |> dplyr::select(-"tag_count")
+  if (!is.null(source_col)) {
+    tags <- tags |> dplyr::select(-"tag_source")
+  }
+
   if (method == "artist") {
     counts <- tags |>
       dplyr::group_by(.data$tag_name, .data$track.s.firstartist.name) |>
@@ -268,17 +305,25 @@ calculate_tag_counts <- function(tags, method) {
   } else {
     stop("Unknown method for calculating tag counts.")
   }
-  result |>
-    dplyr::select(
-      "track.s.id",
-      "album.dc.id",
-      "trackartists.s.id",
-      "track.s.title",
-      "track.s.firstartist.id",
-      "track.s.firstartist.name",
-      "tag_name",
-      "tag_count"
-    )
+
+  select_cols <- c(
+    "track.s.id",
+    "album.dc.id",
+    "trackartists.s.id",
+    "track.s.title",
+    "track.s.firstartist.id",
+    "track.s.firstartist.name",
+    "n_trackartists",
+    "tag_name",
+    "tag_count"
+  )
+
+  if (!is.null(source_col)) {
+    result$tag_source <- source_col
+    select_cols <- c(select_cols, "tag_source")
+  }
+
+  result |> dplyr::select(dplyr::all_of(select_cols))
 }
 
 
