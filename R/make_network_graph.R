@@ -132,7 +132,7 @@ get_sizes_lookup <- function(long, root = "POPULAR MUSIC") {
   sizes_lookup
 }
 
-get_fills_lookup <- function(long, root) {
+get_fills_lookup <- function(long, root = "POPULAR MUSIC") {
   fill_lookup <- long |>
     dplyr::distinct(tag_name) |>
     dplyr::mutate(fill = "#808080ff")
