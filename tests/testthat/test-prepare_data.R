@@ -4,9 +4,17 @@ test_that("choose_mb_tag_set prefers track over album over artist", {
   artist <- data.frame(tag_name = c("c"), tag_count = 3)
 
   empty <- data.frame()
-  expect_equal(choose_mb_tag_set(track, album, artist), track)
-  expect_equal(choose_mb_tag_set(empty, album, artist), album)
-  expect_equal(choose_mb_tag_set(empty, empty, artist), artist)
+  result1 <- choose_mb_tag_set(track, album, artist)
+  expect_equal(result1$tags, track)
+  expect_equal(result1$source, "track")
+
+  result2 <- choose_mb_tag_set(empty, album, artist)
+  expect_equal(result2$tags, album)
+  expect_equal(result2$source, "album")
+
+  result3 <- choose_mb_tag_set(empty, empty, artist)
+  expect_equal(result3$tags, artist)
+  expect_equal(result3$source, "artist")
 })
 
 test_that("filter_non_empty_tags filters by provided genre column", {
@@ -39,6 +47,7 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
     trackartists.s.id = c("sa1", "sa2"),
     track.s.firstartist.id = c("a1", "a2"),
     track.s.firstartist.name = c("a1", "a2"),
+    n_trackartists = c(1, 2),
     stringsAsFactors = FALSE
   )
   input$genres <- tags
@@ -49,6 +58,7 @@ test_that("unpack_genre_tags and get_long_genre_tags work together", {
       "album.dc.id",
       "track.s.firstartist.id",
       "trackartists.s.id",
+      "n_trackartists",
       "tag_name",
       "tag_count"
     ) %in%
@@ -77,6 +87,8 @@ test_that("combine_mb_genres composes the correct pipeline", {
   expect_true(all(sapply(out$mb.genres, function(x) {
     is.data.frame(x) && nrow(x) > 0 && ncol(x) == 2
   })))
+  expect_true("mb.genres.source" %in% colnames(out))
+  expect_equal(out$mb.genres.source, c("track", "album"))
 })
 
 test_that("combine_s_genres composes the correct pipeline", {
@@ -118,25 +130,26 @@ test_that("calculate_tag_counts computes artist and total counts", {
     track.s.firstartist.name = c("A", "B", "B", "B"),
     album.dc.id = c("ALB1", "ALB2", "ALB2", "ALB2"),
     trackartists.s.id = c("A", "B", "B", "B"),
+    n_trackartists = c(1, 1, 2, 2),
     tag_name = c("x", "x", "y", "x"),
     tag_count = c(NA, NA, NA, NA),
     stringsAsFactors = FALSE
   )
-  res <- calculate_tag_counts(tags, "artist")
+  res <- calculate_tag_counts(tags, "artist", preserve_source = FALSE)
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
   expect_setequal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(1L, 2L, 1L, 2L))
 
-  res <- calculate_tag_counts(tags, "total")
+  res <- calculate_tag_counts(tags, "total", preserve_source = FALSE)
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
   expect_setequal(colnames(res), colnames(tags))
   expect_equal(res$tag_name, c("x", "x", "y", "x"))
   expect_equal(res$tag_count, c(3L, 3L, 1L, 3L))
 
-  res <- calculate_tag_counts(tags, "ones")
+  res <- calculate_tag_counts(tags, "ones", preserve_source = FALSE)
   expect_true("tag_count" %in% colnames(res))
   expect_equal(nrow(res), 4)
   expect_setequal(colnames(res), colnames(tags))
