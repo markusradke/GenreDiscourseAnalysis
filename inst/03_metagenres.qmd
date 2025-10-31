@@ -78,17 +78,74 @@ flowchart TD
     P --> Q["End: Return optimized genre groupings"]
 ```	
 
-# Tuning results and suggested solutions
+# Tuning results
 ```{r read_results}
 mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
+mb_tuning <- readRDS("../models/metagenres/tune_mb_metagenres.rds")
 mb_tuning_metadata <- readRDS("../models/metagenres/tune_mb_metadata.rds")
 mb_gini_plot <- readRDS("../models/metagenres/tune_mb_gini_plot.rds")
 mb_suggested_solution <- readRDS("../models/metagenres/metagenres_mb_suggested_solution.rds")
 
 s <- read_feather_with_lists("../data/filtered_s_long.feather")
+s_tuning <- readRDS("../models/metagenres/tune_s_metagenres.rds")
 s_tuning_metadata <- readRDS("../models/metagenres/tune_s_metadata.rds")
 s_gini_plot <- readRDS("../models/metagenres/tune_s_gini_plot.rds")
 s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_solution.rds")
+```
+
+```{r prepare_solution_options}
+# Helper function to get all unique solutions in range 1-50 metagenres
+get_solutions_in_range <- function(tuning, suggested_solution, min_genres = 1, max_genres = 50) {
+  # Get number of metagenres in suggested solution
+  suggested_n_metagenres <- nrow(suggested_solution$n_songs)
+  
+  # Get solutions with unique n_metagenres in the specified range
+  # Use the last occurrence of each n_metagenres (highest min_n)
+  solutions_df <- tuning$ginis %>%
+    dplyr::filter(n_metagenres >= min_genres, n_metagenres <= max_genres) %>%
+    dplyr::arrange(n_metagenres, dplyr::desc(min_n)) %>%
+    dplyr::distinct(n_metagenres, .keep_all = TRUE) %>%
+    dplyr::arrange(dplyr::desc(n_metagenres)) %>%
+    dplyr::mutate(
+      solution_id = as.character(min_n),
+      label = sprintf("%d metagenres (min_n: %s, Gini: %.3f)", 
+                     n_metagenres, 
+                     format(min_n, big.mark = ","), 
+                     weighted_gini),
+      is_suggested = n_metagenres == suggested_n_metagenres
+    )
+  
+  # Map to actual solutions and filter out incomplete ones
+  solutions_list <- list()
+  valid_indices <- c()
+  
+  for (i in seq_len(nrow(solutions_df))) {
+    id <- solutions_df$solution_id[i]
+    solution <- tuning$solutions[[id]]
+    
+    # Check if solution is complete (has required components)
+    if (!is.null(solution) && 
+        !is.null(solution$mapping) && 
+        !is.null(solution$metagenre_graph) &&
+        nrow(solution$mapping) > 0) {
+      n_meta <- as.character(solutions_df$n_metagenres[i])
+      solutions_list[[n_meta]] <- solution
+      valid_indices <- c(valid_indices, i)
+    }
+  }
+  
+  # Filter metadata to only valid solutions
+  solutions_df <- solutions_df[valid_indices, ]
+  
+  list(
+    solutions = solutions_list,
+    metadata = solutions_df,
+    suggested_n_metagenres = suggested_n_metagenres
+  )
+}
+
+mb_all_solutions <- get_solutions_in_range(mb_tuning, mb_suggested_solution)
+s_all_solutions <- get_solutions_in_range(s_tuning, s_suggested_solution)
 ```
 
 ## MusicBrainz Metagenres
@@ -96,22 +153,79 @@ s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_sol
 ```{r gini_plot_musicbrainz}
 mb_gini_plot
 ```
-Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n tracks per genre of `r format(mb_tuning_metadata$min_min_n, big.mark = ",")` to `r format(mb_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r mb_tuning_metadata$min_n_metagenre` to `r mb_tuning_metadata$max_n_metagenre`.
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n tracks per genre of `r format(mb_tuning_metadata$min_min_n, big.mark = ",")` to `r format(mb_tuning_metadata$max_min_n, big.mark = ",")` with stepsize `r mb_tuning_metadata$size`. Resulting number of metagenres ranged from `r mb_tuning_metadata$min_n_metagenre` to `r mb_tuning_metadata$max_n_metagenre`.
 :::
+
+```{r mb_solution_selector, results='asis', echo=FALSE}
+# Build selector HTML
+selector_html <- '<div style="margin: 20px 0;">
+  <label for="mb-solution-select" style="font-weight: bold; margin-right: 10px;">Select solution:</label>
+  <select id="mb-solution-select" style="padding: 5px 10px; font-size: 14px;">'
+
+# Generate options
+for (i in seq_len(nrow(mb_all_solutions$metadata))) {
+  row <- mb_all_solutions$metadata[i, ]
+  selected <- if (row$is_suggested) ' selected' else ''
+  selector_html <- paste0(selector_html, sprintf('\n    <option value="%d"%s>%s</option>', 
+              row$n_metagenres, selected, row$label))
+}
+
+selector_html <- paste0(selector_html, '\n  </select>\n</div>\n')
+cat(selector_html)
+```
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-```{r network_plot_mb}
-mb_long_metagenres <- mb %>%
-  dplyr::left_join(mb_suggested_solution$mapping, by = "tag_name") %>%
-  dplyr::select(-tag_name) %>%
-  dplyr::rename(tag_name = metagenre)
+```{r network_plots_mb, echo=FALSE}
+# Create list to collect all plot divs
+all_plots <- list()
 
-plot_network_graph(graph = mb_suggested_solution$metagenre_graph, 
-                   get_sizes_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
-                   get_fills_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
-                   height = 1000)
-```	
+for (n_meta in names(mb_all_solutions$solutions)) {
+  solution <- mb_all_solutions$solutions[[n_meta]]
+  
+  mb_long_metagenres <- mb %>%
+    dplyr::left_join(solution$mapping, by = "tag_name") %>%
+    dplyr::select(-tag_name) %>%
+    dplyr::rename(tag_name = metagenre)
+  
+  plot_obj <- plot_network_graph(
+    graph = solution$metagenre_graph, 
+    get_sizes_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
+    get_fills_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
+    height = 1000
+  )
+  
+  # Wrap in div with display style
+  is_default <- as.numeric(n_meta) == mb_all_solutions$suggested_n_metagenres
+  display_style <- if (is_default) 'block' else 'none'
+  
+  # Create tagged div wrapper and add to list
+  all_plots[[n_meta]] <- htmltools::tags$div(
+    id = paste0("mb-plot-", n_meta),
+    class = "solution-plot",
+    style = paste0("display: ", display_style, ";"),
+    plot_obj
+  )
+}
+
+# Print all plots as a single tagList
+htmltools::tagList(all_plots)
+```
+
+```{js mb_plot_switcher}
+document.getElementById('mb-solution-select').addEventListener('change', function(e) {
+  const selectedValue = e.target.value;
+  const plots = document.querySelectorAll('[id^="mb-plot-"]');
+  
+  plots.forEach(plot => {
+    if (plot.id === 'mb-plot-' + selectedValue) {
+      plot.style.display = 'block';
+    } else {
+      plot.style.display = 'none';
+    }
+  });
+});
+```
 :::
 :::
 
@@ -120,20 +234,78 @@ plot_network_graph(graph = mb_suggested_solution$metagenre_graph,
 ```{r gini_plot_spotify}
 s_gini_plot
 ```
-Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Spotify genre tree. Calculated for a minimum n tracks per genre of `r format(s_tuning_metadata$min_min_n, big.mark = ",")` to `r format(s_tuning_metadata$max_min_n, big.mark = ",")`. Resulting number of metagenres ranged from `r s_tuning_metadata$min_n_metagenre` to `r s_tuning_metadata$max_n_metagenre`.
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Spotify genre tree. Calculated for a minimum n tracks per genre of `r format(s_tuning_metadata$min_min_n, big.mark = ",")` to `r format(s_tuning_metadata$max_min_n, big.mark = ",")` with stepsize `r mb_tuning_metadata$size`. Resulting number of metagenres ranged from `r s_tuning_metadata$min_n_metagenre` to `r s_tuning_metadata$max_n_metagenre`.
 :::
+
+```{r s_solution_selector, results='asis', echo=FALSE}
+# Build selector HTML
+selector_html <- '<div style="margin: 20px 0;">
+  <label for="s-solution-select" style="font-weight: bold; margin-right: 10px;">Select solution:</label>
+  <select id="s-solution-select" style="padding: 5px 10px; font-size: 14px;">'
+
+# Generate options
+for (i in seq_len(nrow(s_all_solutions$metadata))) {
+  row <- s_all_solutions$metadata[i, ]
+  selected <- if (row$is_suggested) ' selected' else ''
+  selector_html <- paste0(selector_html, sprintf('\n    <option value="%d"%s>%s</option>', 
+              row$n_metagenres, selected, row$label))
+}
+
+selector_html <- paste0(selector_html, '\n  </select>\n</div>\n')
+cat(selector_html)
+```
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-```{r network_plot_spotify}
-s_long_metagenres <- s %>%
-  dplyr::left_join(s_suggested_solution$mapping, by = "tag_name") %>%
-  dplyr::select(-tag_name) %>%
-  dplyr::rename(tag_name = metagenre)
-plot_network_graph(graph = s_suggested_solution$metagenre_graph, 
-                   get_sizes_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
-                   get_fills_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
-                   height = 1000)
-```	
+```{r network_plots_s, echo=FALSE}
+# Create list to collect all plot divs
+all_plots <- list()
+
+for (n_meta in names(s_all_solutions$solutions)) {
+  solution <- s_all_solutions$solutions[[n_meta]]
+  
+  s_long_metagenres <- s %>%
+    dplyr::left_join(solution$mapping, by = "tag_name") %>%
+    dplyr::select(-tag_name) %>%
+    dplyr::rename(tag_name = metagenre)
+  
+  plot_obj <- plot_network_graph(
+    graph = solution$metagenre_graph, 
+    get_sizes_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
+    get_fills_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
+    height = 1000
+  )
+  
+  # Wrap in div with display style
+  is_default <- as.numeric(n_meta) == s_all_solutions$suggested_n_metagenres
+  display_style <- if (is_default) 'block' else 'none'
+  
+  # Create tagged div wrapper and add to list
+  all_plots[[n_meta]] <- htmltools::tags$div(
+    id = paste0("s-plot-", n_meta),
+    class = "solution-plot",
+    style = paste0("display: ", display_style, ";"),
+    plot_obj
+  )
+}
+
+# Print all plots as a single tagList
+htmltools::tagList(all_plots)
+```
+
+```{js s_plot_switcher}
+document.getElementById('s-solution-select').addEventListener('change', function(e) {
+  const selectedValue = e.target.value;
+  const plots = document.querySelectorAll('[id^="s-plot-"]');
+  
+  plots.forEach(plot => {
+    if (plot.id === 's-plot-' + selectedValue) {
+      plot.style.display = 'block';
+    } else {
+      plot.style.display = 'none';
+    }
+  });
+});
+```
 :::
 :::
