@@ -20,6 +20,9 @@
 #' - Bold, underlined blue labels indicate expandable nodes
 #' - +/- symbols show expand/collapse state
 #' - Automatic visual feedback with hover effects
+#' - Edge weights visualized: strong connections are thick and black,
+#'   weak connections are thin and light gray
+#' - Hover over edges to see exact weight values
 #' - Built-in legend with instructions
 #' - Compatible with D3 version 6
 #'
@@ -56,8 +59,12 @@ plot_network_graph <- function(
     fill_lookup
   )
 
+  # Get edge weights for visual styling
+  weights_lookup <- get_weights_lookup(graph)
+
   data_d3 <- list(
     tree = sorted_hierarchy,
+    weights = weights_lookup,
     margin_left = margin_left,
     margin_right = margin_right,
     margin_top = margin_top,
@@ -91,6 +98,25 @@ get_sorted_hierarchy <- function(
   edges <- igraph::as_data_frame(subgraph, what = "edges")
   hierarchy <- create_hierarchy(root$name, edges, sizes_lookup, fill_lookup)
   hierarchy
+}
+
+get_weights_lookup <- function(graph) {
+  edges_df <- igraph::as_data_frame(graph, what = "edges")
+
+  if (!"weight" %in% colnames(edges_df)) {
+    return(NULL)
+  }
+
+  # Return as a data frame instead of named vector for better JS compatibility
+  # In your graph: edges go from child to parent (from->to)
+  # So keys should be from->to (child->parent)
+  weights_df <- data.frame(
+    key = paste(edges_df$from, edges_df$to, sep = "->"),
+    weight = edges_df$weight,
+    stringsAsFactors = FALSE
+  )
+
+  weights_df
 }
 
 create_hierarchy <- function(node_id, edges, sizes_lookup, fill_lookup) {

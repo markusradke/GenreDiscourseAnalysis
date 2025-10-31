@@ -85,6 +85,7 @@ s_non_music_tags <- c(
   "escape room",
   "field recording ambient",
   "football",
+  "kabarett",
   "lo-fi sleep",
   "lo-fi study",
   "mediation",

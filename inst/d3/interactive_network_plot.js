@@ -464,6 +464,48 @@ function update() {
         .domain([0, d3.max(allEffectiveSizes) || 1])
         .range([4, 15]);
 
+    // Convert weights data frame to lookup object
+    const weightsLookup = {};
+    if (data.weights && Array.isArray(data.weights.key)) {
+        // R data frame comes as arrays of columns
+        for (let i = 0; i < data.weights.key.length; i++) {
+            weightsLookup[data.weights.key[i]] = data.weights.weight[i];
+        }
+    }
+
+    // Function to get edge weight from lookup
+    function getEdgeWeight(link) {
+        if (Object.keys(weightsLookup).length === 0) {
+            return null;
+        }
+        // In your graph: edges go child->parent
+        // In D3 tree: link.target = child, link.source = parent
+        // So: target->source = child->parent
+        const key = link.target.data.name + "->" + link.source.data.name;
+        return weightsLookup[key] || null;
+    }
+    
+    // Create scales for edge styling based on weights
+    const allWeights = root.links()
+        .map(link => getEdgeWeight(link))
+        .filter(w => w !== null);
+    
+    let strokeWidthScale, strokeColorScale;
+    if (allWeights.length > 0) {
+        const minWeight = d3.min(allWeights);
+        const maxWeight = d3.max(allWeights);
+        
+        // Stroke width: thin (0.5) for small weights, thick (4) for large weights
+        strokeWidthScale = d3.scaleLinear()
+            .domain([minWeight, maxWeight])
+            .range([0.5, 4]);
+        
+        // Stroke color: light gray for small weights, black for large weights
+        strokeColorScale = d3.scaleLinear()
+            .domain([minWeight, maxWeight])
+            .range(["#e0e0e0", "#000000"]);
+    }
+
     // Create links
     const links = container.selectAll(".link")
         .data(root.links())
@@ -474,8 +516,24 @@ function update() {
             .x(d => d.y)
             .y(d => d.x))
         .style("fill", "none")
-        .style("stroke", "#ccc")
-        .style("stroke-width", 2);
+        .style("stroke", d => {
+            const weight = getEdgeWeight(d);
+            return (weight !== null && strokeColorScale) ? strokeColorScale(weight) : "#ccc";
+        })
+        .style("stroke-width", d => {
+            const weight = getEdgeWeight(d);
+            return (weight !== null && strokeWidthScale) ? strokeWidthScale(weight) : 2;
+        });
+
+    // Add tooltips to links
+    links.append("title")
+        .text(d => {
+            const weight = getEdgeWeight(d);
+            if (weight !== null) {
+                return `${d.target.data.name} → ${d.source.data.name}\nWeight: ${weight.toFixed(4)}`;
+            }
+            return `${d.target.data.name} → ${d.source.data.name}`;
+        });
 
     // Create node groups
     const nodes = container.selectAll(".node")
