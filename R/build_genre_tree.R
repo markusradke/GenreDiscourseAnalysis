@@ -12,14 +12,25 @@ build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
   tree_structure <- select_strongest_parent(bidirectional_removed)
   igraph_tree <- create_igraph_from_matrix(tree_structure)
   final_tree <- add_popmusic_as_metagerne(igraph_tree)
+  genealogy_graph <- get_genealogy_graph(
+    bidirectional_removed,
+    final_tree
+  )
 
   save_results(
     initial_network,
-    bidirectional_removed,
+    genealogy_graph,
     final_tree,
     platform_name
   )
   final_tree
+}
+
+get_genealogy_graph <- function(bidirectional_removed, final_tree) {
+  genealogy_graph <- create_igraph_from_matrix(bidirectional_removed)
+  genealogy_graph <- add_popmusic_as_metagerne(genealogy_graph)
+  genealogy_graph <- remove_cycles_preserve_tree(genealogy_graph, final_tree)
+  genealogy_graph
 }
 
 create_igraph_from_matrix <- function(adjacency_matrix) {
@@ -53,9 +64,10 @@ add_popmusic_as_metagerne <- function(graph) {
   graph
 }
 
+
 save_results <- function(
   initial_graph,
-  bidirectional_removed,
+  genealogy_graph,
   final_tree,
   platform_name
 ) {
@@ -63,10 +75,6 @@ save_results <- function(
     initial_graph,
     sprintf("%s_initial_genre_network", platform_name)
   )
-  genealogy_graph <- create_igraph_from_matrix(bidirectional_removed)
-  # Add POPULAR MUSIC to genealogy graph and create proper ADG
-  genealogy_graph <- add_popmusic_as_metagerne(genealogy_graph)
-  genealogy_graph <- remove_cycles_preserve_tree(genealogy_graph, final_tree)
 
   export_graph_for_gephi_import(
     genealogy_graph,
@@ -362,67 +370,35 @@ create_empty_matrix_with_names <- function(template_matrix) {
   )
 }
 
-#' Remove cycles from a graph while preserving all tree edges
-#'
-#' Iteratively removes the weakest edge in each cycle until the graph is acyclic.
-#' Guarantees that all edges from the tree parameter are preserved.
-#'
-#' @param graph An igraph object that may contain cycles
-#' @param tree An igraph object representing the tree (subgraph to preserve)
-#'
-#' @return An acyclic directed graph (ADG) containing all tree edges
-#'
-#' @keywords internal
+
 remove_cycles_preserve_tree <- function(graph, tree) {
-  # Get tree edges to protect them
   tree_edges_df <- igraph::as_data_frame(tree, what = "edges")
   tree_edge_keys <- paste(tree_edges_df$from, tree_edges_df$to, sep = "->")
 
-  # Work with a copy
   g <- graph
 
-  # Iteratively remove cycles
   max_iterations <- igraph::ecount(g) # Safety limit
   iteration <- 0
-
   while (!igraph::is_dag(g) && iteration < max_iterations) {
     iteration <- iteration + 1
-
-    # Find a cycle using topological sort attempt
-    # When there's a cycle, topo_sort will fail, but we can detect cycles
-    # by checking if any strongly connected component has size > 1
-
-    # Simple approach: try to find back edges
-    # A back edge creates a cycle in DFS
     edges_df <- igraph::as_data_frame(g, what = "edges")
-
     if (nrow(edges_df) == 0) {
       break
     }
-
-    # Try topological sort - if it fails, there's a cycle
     tryCatch(
       {
         igraph::topo_sort(g)
         break # Success - no cycles
       },
       error = function(e) {
-        # There's a cycle, find and remove weakest non-tree edge
-
-        # Find edges that are not in the tree
         edge_keys <- paste(edges_df$from, edges_df$to, sep = "->")
         is_tree_edge <- edge_keys %in% tree_edge_keys
-
-        # Get weights (use 0 if no weight attribute)
         weights <- if ("weight" %in% colnames(edges_df)) {
           edges_df$weight
         } else {
           rep(1, nrow(edges_df))
         }
-
-        # Find non-tree edges
         non_tree_indices <- which(!is_tree_edge)
-
         if (length(non_tree_indices) == 0) {
           # This shouldn't happen - tree should be acyclic
           warning(
@@ -431,12 +407,8 @@ remove_cycles_preserve_tree <- function(graph, tree) {
           )
           break
         }
-
-        # Among non-tree edges, find the weakest
         non_tree_weights <- weights[non_tree_indices]
         weakest_idx <- non_tree_indices[which.min(non_tree_weights)]
-
-        # Remove this edge
         edge_to_remove <- igraph::E(g)[weakest_idx]
         g <<- igraph::delete_edges(g, edge_to_remove)
       }
