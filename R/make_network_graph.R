@@ -73,7 +73,7 @@ plot_interactive_tree_graph <- function(
     max_font_size = max_font_size
   )
 
-  script_file <- "d3/interactive_network_plot.js"
+  script_file <- "d3/interactive_tree_plot.js"
 
   r2d3::r2d3(
     data = data_d3,
