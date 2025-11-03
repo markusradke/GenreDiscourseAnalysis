@@ -313,3 +313,9 @@ document.getElementById('s-solution-select').addEventListener('change', function
 ```
 :::
 :::
+
+# Metagenre assignment 
+Once an optimal metagenre configuration has been selected based on the tuning results, we can assign metagenres to our songs. For the assignment, all tags that were assigned to a track by platform users were mapped to their corresponding metagenres using the selected solution's mapping table. If a track had multiple tags that mapped to different metagenres, we employed a majority voting approach to determine the final metagenre assignment. As a tie breaker, we selected the metagenre with fewest overall votes assigned to it in the dataset, promoting a more balanced distribution across metagenres.
+
+<!-- todo: show prevalences of genres for Musicbrainz and Spotify -->
+<!-- also todo: rank genres by median probability (and show iqrs) to have a look into the mapping mechanics -->
