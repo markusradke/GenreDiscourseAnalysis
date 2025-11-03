@@ -39,7 +39,7 @@ n_featured_playlists <- sum(poptrag$source.featuredplaylists, na.rm = TRUE)
 n_spotify_charts <- sum(poptrag$source.spotifycharts, na.rm = TRUE)
 ```
 
-We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ",")` tracks that were popular in Germany within the last 50 years (**PopTraG**).  The tracks were collected from the following sources:
+We ground our analysis on a dataset with `r format(n_poptrag, big.mark = ",")` tracks that were popular in Germany within the last 50 years (**POPTRAG**, **Pop**ular **Tra**cks in **G**ermany).  The tracks were collected from the following sources:
 
 -   **`r format(n_offcial_charts, big.mark = ",")`** tracks from the **weekly [MediaControl](https://www.offiziellecharts.de/) single- and album charts** from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).
 

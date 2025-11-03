@@ -1,4 +1,6 @@
 const minNodeSpacing = 30;
+let allNodeNames = []; // For search functionality
+let searchedNode = null; // Currently searched/highlighted node
 
 function render() {
     setLayoutSizes();
@@ -9,6 +11,7 @@ function render() {
     createControlButtons();
     prepareState();
     update();
+    createSearchBar(); // Add search bar after state is prepared
     setTimeout(centerOnRoot, 100);
 }
 
@@ -89,11 +92,120 @@ function centerOnRoot() {
     svg.transition().duration(750).call(zoom.transform, t);
 }
 
+function createSearchBar() {
+    const searchContainer = svg.append("g")
+        .attr("transform", `translate(${actualWidth / 2 - 150}, 20)`);
+    
+    // Background rect
+    searchContainer.append("rect")
+        .attr("width", 300).attr("height", 30).attr("rx", 5)
+        .style("fill", "white").style("stroke", "#ccc")
+        .style("stroke-width", 1);
+    
+    // Create foreignObject for HTML input
+    const fo = searchContainer.append("foreignObject")
+        .attr("width", 300).attr("height", 30);
+    
+    const input = fo.append("xhtml:input")
+        .attr("type", "text")
+        .attr("placeholder", "Search genre...")
+        .attr("list", "tree-genre-datalist")
+        .style("width", "290px")
+        .style("height", "26px")
+        .style("margin", "2px 5px")
+        .style("border", "none")
+        .style("outline", "none")
+        .style("font-size", "12px")
+        .style("background", "transparent")
+        .on("keypress", function(event) {
+            if (event.key === "Enter") {
+                const value = this.value.trim();
+                if (value && allNodeNames.includes(value)) {
+                    focusOnNode(value);
+                    this.value = "";
+                }
+            }
+        });
+    
+    // Create datalist for autocomplete
+    const datalist = fo.append("xhtml:datalist")
+        .attr("id", "tree-genre-datalist");
+    
+    allNodeNames.sort().forEach(name => {
+        datalist.append("xhtml:option").attr("value", name);
+    });
+}
+
+function focusOnNode(nodeName) {
+    if (!hierarchyRoot) return;
+    
+    searchedNode = nodeName;
+    
+    // Find and expand path to node
+    const targetNode = findNodeByName(hierarchyRoot, nodeName);
+    if (!targetNode) return;
+    
+    // Expand all ancestors
+    expandPathToNode(hierarchyRoot, nodeName);
+    
+    // Update visualization
+    update();
+    
+    // Center on the node with default zoom
+    setTimeout(() => {
+        const nx = targetNode.x || 0;
+        const ny = targetNode.y || 0;
+        const cx = actualWidth / 2;
+        const cy = actualHeight / 2;
+        const t = d3.zoomIdentity.translate(cx - ny, cy - nx).scale(1);
+        svg.transition().duration(750).call(zoom.transform, t);
+    }, 100);
+}
+
+function expandPathToNode(root, targetName) {
+    function expand(node) {
+        if (node.data.name === targetName) return true;
+        
+        let foundInChild = false;
+        if (node._children) {
+            for (let child of node._children) {
+                if (expand(child)) {
+                    foundInChild = true;
+                }
+            }
+        }
+        if (node.children) {
+            for (let child of node.children) {
+                if (expand(child)) {
+                    foundInChild = true;
+                }
+            }
+        }
+        
+        if (foundInChild && node._children) {
+            node.children = node._children;
+            node._children = null;
+        }
+        
+        return foundInChild;
+    }
+    
+    expand(root);
+}
+
 function prepareState() {
     currentData = JSON.parse(JSON.stringify(data.tree));
     hierarchyRoot = null;
     isFirstRender = true;
     currentHeight = actualHeight;
+    
+    // Collect all node names for search
+    allNodeNames = [];
+    function collectNames(node) {
+        allNodeNames.push(node.name);
+        if (node.children) node.children.forEach(collectNames);
+    }
+    collectNames(currentData);
 }
 
 function collapseHierarchyToFirstLevel(node, depth = 0) {
@@ -267,9 +379,19 @@ function renderNodes(root, sizeScale) {
 
     nodes.append("circle")
         .attr("r", d => sizeScale(getEffectiveSize(d, d.data.name)))
-        .style("fill", d => d.data.fill || "#69b3a2")
-        .style("stroke", d => (d.data && hasExpandableChildren(d.data.name)) ? "#000" : "none")
-        .style("stroke-width", d => (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1)
+        .style("fill", d => {
+            // Highlight searched node in green
+            if (searchedNode && d.data.name === searchedNode) return "#28a745";
+            return d.data.fill || "#69b3a2";
+        })
+        .style("stroke", d => {
+            if (searchedNode && d.data.name === searchedNode) return "#1e7e34";
+            return (d.data && hasExpandableChildren(d.data.name)) ? "#000" : "none";
+        })
+        .style("stroke-width", d => {
+            if (searchedNode && d.data.name === searchedNode) return 3;
+            return (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1;
+        })
         .on("click", function(event, d) {
             event.stopPropagation();
             const p = findNodeByName(hierarchyRoot, d.data.name);
@@ -279,7 +401,11 @@ function renderNodes(root, sizeScale) {
             if (d.data && hasExpandableChildren(d.data.name)) d3.select(this).style("stroke-width", 4);
         })
         .on("mouseout", function(event, d) {
-            d3.select(this).style("stroke-width", (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1);
+            if (searchedNode && d.data.name === searchedNode) {
+                d3.select(this).style("stroke-width", 3);
+            } else {
+                d3.select(this).style("stroke-width", (d.data && hasExpandableChildren(d.data.name)) ? 2 : 1);
+            }
         });
 
     nodes.filter(d => d.data && hasExpandableChildren(d.data.name))

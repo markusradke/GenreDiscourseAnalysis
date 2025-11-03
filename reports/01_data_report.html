@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-10-31">
+<meta name="dcterms.date" content="2025-11-03">
 
 <title>Data Report - Genre Discourse Analysis</title>
 <style>
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 31, 2025</p>
+      <p class="date">November 3, 2025</p>
     </div>
   </div>
   
@@ -140,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n_spotify_charts <span class="ot">&lt;-</span> <span class="fu">sum</span>(poptrag<span class="sc">$</span>source.spotifycharts, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We ground our analysis on a dataset with 254,334 tracks that were popular in Germany within the last 50 years (<strong>PopTraG</strong>). The tracks were collected from the following sources:</p>
+<p>We ground our analysis on a dataset with 254,334 tracks that were popular in Germany within the last 50 years (<strong>POPTRAG</strong>, <strong>Po</strong>pular <strong>Tra</strong>cks in <strong>G</strong>ermany). The tracks were collected from the following sources:</p>
 <ul>
 <li><p><strong>215,702</strong> tracks from the <strong>weekly <a href="https://www.offiziellecharts.de/">MediaControl</a> single- and album charts</strong> from 18.11.1977 to 21.11.2024 (scraped and connected to corresponding Spotify ids with a linking success rate of 75% for both distinct tracks in singles charts and distinct albums in album charts).</p></li>
 <li><p><strong>26,949</strong> tracks from <strong>Spotify recommendations</strong> for 126 genre seeds for the German market (retrieved on 29.11.2024, 5 iterations with 50 recommendations per seed, median of 325 recommendations per seed, IQR: 25, max: 343 for “disney”, min: 49 for “new release”).</p></li>
