@@ -25,13 +25,13 @@ devtools::load_all()
 ```	
 
 # Algorithm for folding the genre tree to get metagenres
-<!-- TODO: Add a little explanation on the algorithm (see Bayreuth slides) -->
-Root of the tree is "other" genre. This is why it does not need to fulfill the minimum song count requirement. 
 
-We need to ensure that when merging genres, we merge all siblings and all grandchildren of the parent genre to avoid dangling nodes in the tree. Due to how the trees are created, merging grand children that already fulfilled the min n requirement will not occur often (genres that are closer to the root are expected to appear more frequent in initial genres than genres further away from the root).
+For answering research questions that involve genre comparision, often times the available genre labels are too specific and sparse to allow for meaningful analysis. To counter this, we can group genres into broader "metagenres" by folding our genre hierarchy tree. From a pragmatic perspective, we want to ensure that: 
+1. Each metagenre has a minimum number of songs associated with it to allow for statistical analysis. The only exception to this is the root of the tree, "POPULAR MUSIC", which serves as a catch-all for songs that do not fit into any other metagenre.
+2. Also, for machine learning applications, having a balanced distribution of songs across metagenres is beneficial. Therefore, we look for a tree of metagenres that maximizes the uniformity of song distribution across metagenres at each hierarchy level.
 
+To achieve this, we implement a greedy algorithm that iteratively merges the least populous genres that are furthest from the root with their parent genres until all genres meet the minimum song count requirement. We evaluate different minimum song counts using a grid search approach to find the optimal configuration that maximizes distribution uniformity within hierarchy levels, measured by the weighted within-level Gini coefficient. Please refer to the flowchart below for a detailed overview of the algorithm. 
 
-The algorithm works as follows:
 ```{mermaid folding_algorithm}
 %%{init: {
   'flowchart': {
@@ -77,6 +77,10 @@ flowchart TD
     N --> P
     P --> Q["End: Return optimized genre groupings"]
 ```	
+
+:::{.callout-note}
+We need to ensure that when merging a genre with its parent, we also merge all siblings and all grandchildren of the parent genre into the parent genre to avoid dangling nodes in the tree. Due to how the trees are created, merging grand children that already fulfilled the min n requirement will not occur often: Genres that are closer to the root are expected to generally appear more frequent in initial genres than genres further away from the root.
+:::
 
 # Tuning results
 ```{r read_results}
