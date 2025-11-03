@@ -10,7 +10,7 @@ test_that("get_search_grid works correctly", {
     tag_name = c(rep("rock", 6), "pop"),
     tag_count = rep(1, 7)
   )
-  result_auto <- get_search_grid(1, integer(), 4, long)
+  result_auto <- get_search_grid(1, integer(), 4, long, root = "root")
   expect_equal(result_auto, c(1, 5, 6))
 
   result_single <- get_search_grid(100, 100, 50, data.frame())
