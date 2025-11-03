@@ -36,11 +36,10 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 devtools::load_all()
 ```	
 
-# Short Explanation
-This report presents interactive genre trees for the MusicBrainz and the digital music streaming platform Spotify. Each tree visualizes the **hierarchical structure of music genres** based on a dataset of popular tracks in Germany over the last 50 years (PopTraG). The trees allow users to explore sub-genres by clicking on nodes, with node size representing the number of tracks associated with each genre. 
+This report presents interactive genre networks for the open music database MusicBrainz and the digital music streaming platform Spotify. All visualizations are based on the POPTRAG dataset, which contains a large collection of tracks that were listened to in Germany within the last 50 years and their corresponding genre tag assignements on both plattforms.
 
-## The intital genre network
-In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the PopTraG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments (for Spotify we used multiple artists per track to generate votes), which are used to **weight the edges genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear. The more users voted for a genre, i.e. the more unambigously a track can be assigned to a genre, the stronger the connection becomes (see continued example).
+# The intital genre network
+In the initial genre network, **each node represents a genre tag** on the corresponding platform. The **edges of this initial network are based on the co-occurrence** of genre tags across all tracks in the POPTRAG dataset (i.e., the probability that a certain genre tag appears, given that another genre tag was assigned to a track; see example with "pop" and "hip hop" below). The more frequently two genres co-occur, the stronger the connection (edge) between them. Musicbrainz provides additional community votes for genre assignments (for Spotify we used multiple artists per track to generate votes), which are used to **weight the edges genre network**. Here, we multiplied the link strengh by the mean relative vote for a genre across all tracks where both genres appear. The more users voted for a genre, i.e. the more unambigously a track can be assigned to a genre, the stronger the connection becomes (see continued example).
 
 
 
@@ -50,8 +49,8 @@ rock -- P(metal|rock) * meanRelFreqVotes(metal|rock) --> metal
 metal -- P(rock|metal) * meanRelFreqVotes(rock|metal) --> rock
 ```
 
-## Network of descendant genres
-Next, we determine which genre is a descendant of the other. Genres with descendants should be distributed more evenly across multiple genres. Thus, in our initial genre network, we eliminate the weaker connection between the two genres. To account for the uncertainty in this decision, we subtract the weaker conditional probability from the conditional probability of the stronger connection (see the continued example).  
+# Network of subgenres
+Next, we determine which genre is a subgerne of the other. Genres with subgenres should be distributed more evenly across multiple genres. Thus, in our initial genre network, we eliminate the weaker connection between the two genres. To account for the uncertainty in this decision, we subtract the weaker conditional probability from the conditional probability of the stronger connection (see the continued example). The resulting directed network represents a **genre genealogy**, where edges point from subgenres to their parent genres.
 
 ```{mermaid}
 flowchart LR
@@ -59,7 +58,8 @@ rock -. P(metal|rock) .-x metal
 metal -- P(rock|metal) - P(rock|metal) --> rock
 ```
 
-## 'Radically democratic' genre trees
+
+# 'Radically democratic' genre trees
 Now, we transform the directed network of descendant genres into a hierarchical tree. We assume that the strongest link to a potential parent genre determines the most suitable parent genre. Thus, we eliminate all other outgoing links to potential parents (see the continued example).
 
 ```{mermaid}
@@ -68,11 +68,13 @@ metal --> rock
 metal -.-x pop
 ```
 
-# Genre Tree for MusicBrainz
+## Genre Tree for MusicBrainz
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Use search bar to find and highlight genres (green) • Click blue nodes to expand/collapse
+
+**Controls:** "Center Root" - return to root | "Expand All" - show all genres | "Fold All" - collapse tree
 ```{r musicbrainz-interactive-tree, echo=FALSE}
 mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
 plot_interactive_tree_graph(
@@ -87,12 +89,14 @@ plot_interactive_tree_graph(
 
 
 
-# Genre Tree for Spotify
+## Genre Tree for Spotify
 Please click on the nodes to explore sub-genres. The font size is fixed to ensure readability. Node size represents the number of songs in each genre.
 
 :::{.column-screen-inset-right}
 :::{.plot-container}
-**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click "Center Root" to reset view • Click blue nodes to expand/collapse
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Use search bar to find and highlight genres (green) • Click blue nodes to expand/collapse
+
+**Controls:** "Center Root" - return to root | "Expand All" - show all genres | "Fold All" - collapse tree
 ```{r spotify-interactive-tree, echo=FALSE}	
 s <- read_feather_with_lists("../data/filtered_s_long.feather")
 plot_interactive_tree_graph(
@@ -103,5 +107,53 @@ plot_interactive_tree_graph(
 )
 ```
 :::
+:::
 
+
+# Towards a Genre Genealogy 
+Radically democratic genre trees provide a clear and simple hierarchical representation of genre relationships. However, they also discard potentially valuable information about alternative parent-child relationships between genres. To retain this information, we additionally construct a more comprehensive **genre genealogy network** for qualitative exploration.
+
+For this, we transform the directed network of subgenres into an **Acyclic Directed Graph (ADG)**: We iteratively remove the weakest edges in any remaining cycles. Critically, this cycle-removal process **never removes edges that are part of the genre tree**, ensuring consistency between the genealogy network and the tree representation. The tree is therefore guaranteed to be a subgraph of the genealogy ADG, as it only contains each genre's single strongest parent relationship.
+
+
+## Genre Genealogy for MusicBrainz
+:::{.column-screen-inset-right}
+:::{.plot-container}
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click nodes to change focus • Use search bar to find genres • Adjust edge threshold slider to filter weak connections 
+
+**Green nodes** are part of the genre tree and will always be displayed (no matter which treshold).
+
+**Controls:** "Focus Root" - return to root | "Reset Position" - realign view | "Back" - previous node
+```{r musicbrainz-interactive-genealogy, echo=FALSE}
+mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
+plot_interactive_genealogy_graph(
+  readRDS("../models/trees/MusicBrainz_genealogy.rds"),
+  readRDS("../models/trees/MusicBrainz_graph.rds"),
+  get_sizes_lookup(mb),
+  get_fills_lookup(mb),
+  height = 1000
+)
+```
+:::
+:::
+
+## Genre Genealogy for Spotify
+:::{.column-screen-inset-right}
+:::{.plot-container}
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Click nodes to change focus • Use search bar to find genres • Adjust edge threshold slider to filter weak connections
+
+**Green nodes** are part of the genre tree and will always be displayed (no matter which treshold).
+
+**Controls:** "Focus Root" - return to root | "Reset Position" - realign view | "Back" - previous node
+```{r spotify-interactive-genealogy, echo=FALSE}	
+s <- read_feather_with_lists("../data/filtered_s_long.feather")
+plot_interactive_genealogy_graph(
+  readRDS("../models/trees/Spotify_genealogy.rds"),
+  readRDS("../models/trees/Spotify_graph.rds"),
+  get_sizes_lookup(s),
+  get_fills_lookup(s),
+  height = 1000
+)
+```
+:::
 :::

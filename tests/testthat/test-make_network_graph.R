@@ -1,3 +1,4 @@
+# Lookups ----
 test_that("get_sizes_lookup computes per-track proportions", {
   long <- data.frame(
     track.s.id = 1:5,
@@ -80,6 +81,9 @@ test_that("get_weights_lookup formats keys as 'from->to'", {
   expect_equal(map[["child2->child1"]], 3.0)
 })
 
+# Genealogy plot ----
+
+# Tree plot ----
 test_that("create_hierarchy returns a leaf node when no children", {
   edges <- data.frame(
     from = character(0),
@@ -164,4 +168,166 @@ test_that("integration: sizes and fills produce a hierarchy from edges", {
     c("rock", "pop", "jazz") %in%
       child_names
   ))
+})
+
+# Genealogy structure ----
+test_that("get_genealogy_structure returns correct focus node", {
+  edges <- data.frame(
+    from = c("rock", "metal", "pop"),
+    to = c("POPULAR MUSIC", "rock", "POPULAR MUSIC"),
+    weight = c(0.8, 0.6, 0.7),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1, pop = 1.5)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff",
+    pop = "#333333ff"
+  )
+
+  result <- get_genealogy_structure(g, "rock", sizes, fills)
+
+  expect_equal(result$focus$name, "rock")
+  expect_equal(result$focus$size, 2)
+  expect_equal(result$focus$fill, "#111111ff")
+})
+
+test_that("get_genealogy_structure identifies parents correctly", {
+  edges <- data.frame(
+    from = c("rock", "metal", "pop"),
+    to = c("POPULAR MUSIC", "rock", "POPULAR MUSIC"),
+    weight = c(0.8, 0.6, 0.7),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1, pop = 1.5)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff",
+    pop = "#333333ff"
+  )
+
+  result <- get_genealogy_structure(g, "rock", sizes, fills)
+
+  expect_equal(length(result$parents), 1)
+  expect_equal(result$parents[[1]]$name, "POPULAR MUSIC")
+  expect_equal(result$parents[[1]]$weight, 0.8)
+})
+
+test_that("get_genealogy_structure identifies children correctly", {
+  edges <- data.frame(
+    from = c("rock", "metal", "pop"),
+    to = c("POPULAR MUSIC", "rock", "POPULAR MUSIC"),
+    weight = c(0.8, 0.6, 0.7),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1, pop = 1.5)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff",
+    pop = "#333333ff"
+  )
+
+  result <- get_genealogy_structure(g, "rock", sizes, fills)
+
+  expect_equal(length(result$children), 1)
+  expect_equal(result$children[[1]]$name, "metal")
+  expect_equal(result$children[[1]]$weight, 0.6)
+})
+
+test_that("get_genealogy_structure handles node with no parents", {
+  edges <- data.frame(
+    from = c("rock", "metal"),
+    to = c("POPULAR MUSIC", "rock"),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff"
+  )
+
+  result <- get_genealogy_structure(g, "POPULAR MUSIC", sizes, fills)
+
+  expect_equal(length(result$parents), 0)
+  expect_equal(length(result$children), 1)
+})
+
+test_that("get_genealogy_structure handles node with no children", {
+  edges <- data.frame(
+    from = c("rock", "metal"),
+    to = c("POPULAR MUSIC", "rock"),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff"
+  )
+
+  result <- get_genealogy_structure(g, "metal", sizes, fills)
+
+  expect_equal(length(result$parents), 1)
+  expect_equal(length(result$children), 0)
+})
+
+test_that("get_genealogy_structure includes all_nodes dataframe", {
+  edges <- data.frame(
+    from = c("rock", "metal"),
+    to = c("POPULAR MUSIC", "rock"),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff"
+  )
+
+  result <- get_genealogy_structure(g, "rock", sizes, fills)
+
+  expect_true("all_nodes" %in% names(result))
+  expect_true(is.data.frame(result$all_nodes))
+  expect_equal(nrow(result$all_nodes), 3)
+  expect_true(all(c("name", "size", "fill") %in% colnames(result$all_nodes)))
+})
+
+test_that("get_genealogy_structure includes edges dataframe", {
+  edges <- data.frame(
+    from = c("rock", "metal"),
+    to = c("POPULAR MUSIC", "rock"),
+    weight = c(0.8, 0.6),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  sizes <- c("POPULAR MUSIC" = 0.001, rock = 2, metal = 1)
+  fills <- c(
+    "POPULAR MUSIC" = "#000000ff",
+    rock = "#111111ff",
+    metal = "#222222ff"
+  )
+
+  result <- get_genealogy_structure(g, "rock", sizes, fills)
+
+  expect_true("edges" %in% names(result))
+  expect_true(is.data.frame(result$edges))
+  expect_equal(nrow(result$edges), 2)
+  expect_true(all(c("from", "to", "weight") %in% colnames(result$edges)))
 })

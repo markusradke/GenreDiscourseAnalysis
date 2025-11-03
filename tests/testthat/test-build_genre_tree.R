@@ -214,3 +214,107 @@ test_that("performance critical functions handle edge cases", {
   expect_true(all(soft_zero == 0))
   expect_true(all(demo_zero == 0))
 })
+
+# Cycle removal ----
+test_that("remove_cycles_preserve_tree creates acyclic graph", {
+  # Create a graph with a cycle: A -> B -> C -> A
+  edges <- data.frame(
+    from = c("A", "B", "C"),
+    to = c("B", "C", "A"),
+    weight = c(0.8, 0.6, 0.4),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  # Tree is A -> B
+  tree_edges <- data.frame(
+    from = "A",
+    to = "B",
+    weight = 0.8,
+    stringsAsFactors = FALSE
+  )
+  tree <- igraph::graph_from_data_frame(tree_edges, directed = TRUE)
+
+  result <- remove_cycles_preserve_tree(g, tree)
+
+  expect_true(igraph::is_dag(result))
+})
+
+test_that("remove_cycles_preserve_tree preserves all tree edges", {
+  # Create a graph with cycles
+  edges <- data.frame(
+    from = c("A", "B", "C", "D", "B"),
+    to = c("B", "C", "A", "A", "D"),
+    weight = c(0.9, 0.7, 0.3, 0.8, 0.5),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  # Tree edges
+  tree_edges <- data.frame(
+    from = c("A", "D"),
+    to = c("B", "A"),
+    weight = c(0.9, 0.8),
+    stringsAsFactors = FALSE
+  )
+  tree <- igraph::graph_from_data_frame(tree_edges, directed = TRUE)
+
+  result <- remove_cycles_preserve_tree(g, tree)
+
+  # Check that tree edges are preserved
+  result_edges <- igraph::as_data_frame(result, what = "edges")
+  result_edge_keys <- paste(result_edges$from, result_edges$to, sep = "->")
+
+  expect_true("A->B" %in% result_edge_keys)
+  expect_true("D->A" %in% result_edge_keys)
+  expect_true(igraph::is_dag(result))
+})
+
+test_that("remove_cycles_preserve_tree removes weakest non-tree edges", {
+  # Create cycle with clear weight ordering
+  edges <- data.frame(
+    from = c("A", "B", "C"),
+    to = c("B", "C", "A"),
+    weight = c(0.9, 0.8, 0.1),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+
+  # Tree contains strongest edges
+  tree_edges <- data.frame(
+    from = c("A", "B"),
+    to = c("B", "C"),
+    weight = c(0.9, 0.8),
+    stringsAsFactors = FALSE
+  )
+  tree <- igraph::graph_from_data_frame(tree_edges, directed = TRUE)
+
+  result <- remove_cycles_preserve_tree(g, tree)
+
+  result_edges <- igraph::as_data_frame(result, what = "edges")
+  result_edge_keys <- paste(result_edges$from, result_edges$to, sep = "->")
+
+  # Weakest edge (C->A with weight 0.1) should be removed
+  expect_false("C->A" %in% result_edge_keys)
+  # Tree edges should remain
+  expect_true("A->B" %in% result_edge_keys)
+  expect_true("B->C" %in% result_edge_keys)
+})
+
+test_that("remove_cycles_preserve_tree handles already acyclic graph", {
+  # Create an acyclic graph
+  edges <- data.frame(
+    from = c("A", "B", "C"),
+    to = c("B", "C", "D"),
+    weight = c(0.9, 0.8, 0.7),
+    stringsAsFactors = FALSE
+  )
+  g <- igraph::graph_from_data_frame(edges, directed = TRUE)
+  tree <- g # Tree is same as graph
+
+  result <- remove_cycles_preserve_tree(g, tree)
+
+  # Should remain unchanged
+  expect_equal(igraph::ecount(result), igraph::ecount(g))
+  expect_true(igraph::is_dag(result))
+})
