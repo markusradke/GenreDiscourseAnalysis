@@ -192,7 +192,7 @@ for (n_meta in names(mb_all_solutions$solutions)) {
     dplyr::select(-tag_name) %>%
     dplyr::rename(tag_name = metagenre)
   
-  plot_obj <- plot_network_graph(
+  plot_obj <- plot_interactive_tree_graph(
     graph = solution$metagenre_graph, 
     get_sizes_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
     get_fills_lookup(mb_long_metagenres, root = "POPULAR MUSIC"),
@@ -273,7 +273,7 @@ for (n_meta in names(s_all_solutions$solutions)) {
     dplyr::select(-tag_name) %>%
     dplyr::rename(tag_name = metagenre)
   
-  plot_obj <- plot_network_graph(
+  plot_obj <- plot_interactive_tree_graph(
     graph = solution$metagenre_graph, 
     get_sizes_lookup(s_long_metagenres, root = "POPULAR MUSIC"),
     get_fills_lookup(s_long_metagenres, root = "POPULAR MUSIC"),

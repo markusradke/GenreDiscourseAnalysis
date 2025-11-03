@@ -1,4 +1,4 @@
-#' Plot Network Graph
+#' Plot Interactive Genre Tree Graph
 #'
 #' Creates either a static or interactive hierarchical network graph
 #' using D3.js through the r2d3 package.
@@ -31,14 +31,14 @@
 #' @examples
 #' \dontrun{
 #' # Static plot
-#' plot_network_graph(graph, mapping, interactive = FALSE)
+#' plot_interactive_tree_graph(graph, mapping, interactive = FALSE)
 #'
 #' # Interactive plot
-#' plot_network_graph(graph, mapping, interactive = TRUE)
+#' plot_interactive_tree_graph(graph, mapping, interactive = TRUE)
 #' }
 #'
 #' @export
-plot_network_graph <- function(
+plot_interactive_tree_graph <- function(
   graph,
   sizes_lookup,
   fill_lookup,
@@ -106,10 +106,6 @@ get_weights_lookup <- function(graph) {
   if (!"weight" %in% colnames(edges_df)) {
     return(NULL)
   }
-
-  # Return as a data frame instead of named vector for better JS compatibility
-  # In your graph: edges go from child to parent (from->to)
-  # So keys should be from->to (child->parent)
   weights_df <- data.frame(
     key = paste(edges_df$from, edges_df$to, sep = "->"),
     weight = edges_df$weight,
