@@ -6,3 +6,7 @@
 /tune_s_gini_plot.rds
 /tune_mb_metadata.rds
 /tune_s_metadata.rds
+/mb_metagenres_10_15.feather
+/s_metagenres_10_15.feather
+/s_metagenres_25_30.feather
+/mb_metagenres_25_30.feather
