@@ -16,6 +16,7 @@ Imports:
     arrow,
     DescTools,
     dplyr,
+    forcats,
     furrr,
     future,
     ggplot2,
