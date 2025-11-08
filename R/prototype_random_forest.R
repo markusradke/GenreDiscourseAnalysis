@@ -80,8 +80,6 @@ run_rf_pipeline <- function(settings, poptrag) {
     ))
   }
 
-  devtools::load_all()
-
   selected <- select_features_poptrag(poptrag)
   transformed <- transform_features(selected)
   casewise <- apply_casewise_filter(
@@ -96,10 +94,10 @@ run_rf_pipeline <- function(settings, poptrag) {
     stop("metagenre_detail must be 'low' or 'high'")
   )
   mb_met <- read_feather_with_lists(
-    paste0("../models/metagenres/mb_metagenres_", suffix, ".feather")
+    paste0("models/metagenres/mb_metagenres_", suffix, ".feather")
   )
   s_met <- read_feather_with_lists(
-    paste0("../models/metagenres/s_metagenres_", suffix, ".feather")
+    paste0("models/metagenres/s_metagenres_", suffix, ".feather")
   )
 
   mb_joined <- join_target(casewise, mb_met, settings$drop_POPULARMUSIC)
@@ -138,11 +136,6 @@ run_rf_pipeline <- function(settings, poptrag) {
     s_train_imputed <- artists_split$s_train
     s_test_imputed <- artists_split$s_test
   }
-
-  save_feather_with_lists(mb_train_imputed, "../data/mb_train_ready.feather")
-  save_feather_with_lists(mb_test_imputed, "../data/mb_test_ready.feather")
-  save_feather_with_lists(s_train_imputed, "../data/s_train_ready.feather")
-  save_feather_with_lists(s_test_imputed, "../data/s_test_readyfeather")
 
   # final feature selection supplied by user in settings
   if (
@@ -183,12 +176,11 @@ run_rf_pipeline <- function(settings, poptrag) {
 
     eval <- evaluate_and_plot(rf_model, test_df, top_n = settings$varimp_top_n)
 
-    vip_plot <- plot_varimp(rf_model, top_n = settings$varimp_top_n)
-
     results[[plat]] <- list(
       model = rf_model,
       evaluation = eval,
-      varimp_plot = vip_plot
+      train_df = train_df,
+      test_df = test_df
     )
   }
 
@@ -508,21 +500,43 @@ evaluate_and_plot <- function(model, test_df, top_n = 40) {
     actuals = factor(test_df$metagenre, levels = all_levels),
     preds = factor(pred_classes, levels = all_levels)
   )
+  metrics <- list(
+    accuracy = acc,
+    kappa = kappa,
+    f1macro = f1macro,
+    mcc = mcc_val
+  )
 
   cm_df <- as.data.frame(conf) |>
     dplyr::group_by(Actual) |>
     dplyr::mutate(relfreq = Freq / sum(Freq), labelcolor = relfreq > 0.5) |>
     dplyr::ungroup()
 
+  cm_plot <- plot_cm(cm_df, metrics)
+
+  varimp <- ranger::importance(model)
+  varimp_df <- data.frame(Variable = names(varimp), Importance = varimp) |>
+    dplyr::arrange(dplyr::desc(Importance))
+  varimp_plot <- plot_varimp(varimp_df, top_n = top_n)
+
+  list(
+    confusion = cm_df,
+    varimp = varimp_df,
+    cm_plot = cm_plot,
+    varimp_plot = varimp_plot,
+    metrics = metrics
+  )
+}
+
+plot_cm <- function(cm_df, metrics) {
   metrics_text <- sprintf(
     "Acc: %.3f  Kappa: %.3f  F1-macro: %.3f  MCC: %.3f",
-    acc,
-    kappa,
-    f1macro,
-    mcc_val
+    metrics$acc,
+    metrics$kappa,
+    metrics$f1macro,
+    metrics$mcc
   )
-
-  cm_plot <- ggplot2::ggplot(
+  ggplot2::ggplot(
     cm_df,
     ggplot2::aes(x = Predicted, y = Actual, fill = relfreq)
   ) +
@@ -545,22 +559,19 @@ evaluate_and_plot <- function(model, test_df, top_n = 40) {
       y = "Actual Metagenre"
     ) +
     ggplot2::theme_minimal() +
-    ggplot2::theme(legend.position = "right")
-
-  list(
-    confusion = conf,
-    plot = cm_plot,
-    accuracy = acc,
-    kappa = kappa,
-    f1_macro = f1macro,
-    mcc = mcc_val
-  )
+    ggplot2::theme(
+      legend.position = "right",
+      legend.text = ggplot2::element_text(color = "grey45"),
+      legend.title = ggplot2::element_text(color = "grey45"),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+      axis.text.y = ggplot2::element_text(size = 12),
+      plot.subtitle = ggplot2::element_text(face = "bold")
+    )
 }
 
 # Plot top variable importance.
-plot_varimp <- function(model, top_n = 40) {
-  varimp <- ranger::importance(model)
-  df <- data.frame(Variable = names(varimp), Importance = varimp) |>
+plot_varimp <- function(varimp_df, top_n = 40) {
+  df <- varimp_df |>
     dplyr::arrange(dplyr::desc(Importance)) |>
     head(top_n)
   p <- ggplot2::ggplot(
@@ -572,13 +583,22 @@ plot_varimp <- function(model, top_n = 40) {
   ) +
     ggplot2::geom_col(fill = "grey50") +
     ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(
+      expand = ggplot2::expansion(mult = c(0, 0.05))
+    ) +
     ggplot2::labs(
       title = "Top Variable Importance",
       x = "Variable",
       y = "Importance"
     ) +
     ggplot2::theme_minimal() +
-    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 10))
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(size = 12),
+      axis.text.x = ggplot2::element_text(color = "grey45"),
+      panel.grid.major.y = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_text(color = "grey45"),
+      axis.title.y = ggplot2::element_blank()
+    )
   p
 }
 
