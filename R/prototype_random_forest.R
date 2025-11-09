@@ -1,60 +1,22 @@
-#' Run the full random-forest prototype pipeline
+#' Prepare data for the random-forest training (including optional imputation)
 #'
-#' Execute the end-to-end pipeline: feature selection, type transformation,
-#' casewise filtering, metagenre join, stratified prototype sampling,
-#' artist-level train/test split, optional missForestPredict imputation,
-#' undersampling, ranger random-forest training, evaluation and variable
-#' importance plotting for two platforms ("mb" and "s").
+#' Runs the full data preparation pipeline up to and including optional
+#' missForest imputation. Always returns train and test sets for both
+#' MusicBrainz ("mb") and Spotify ("s").
 #'
-#' @param settings A named list of pipeline settings. Required names:
-#'   \describe{
-#'     \item{subsample_prop}{numeric; proportion for prototype sampling (0-1).}
-#'     \item{casewise_threshold}{numeric; row-missingness threshold (0-1).}
-#'     \item{seed}{integer; random seed.}
-#'     \item{artist_initial_split}{numeric; proportion for artist split (0-1).}
-#'     \item{apply_imputation}{logical; whether to train & apply imputer;
-#'  this take quite a while and might not always have a positive influence on results.}
-#'     \item{undersample_factor}{numeric; factor for undersampling majority classes.}
-#'     \item{n_cores}{integer; number of threads for imputer.}
-#'     \item{varimp_top_n}{integer; number of top vars for plotting.}
-#'     \item{drop_POPULARMUSIC}{logical; whether to remove "POPULAR MUSIC" class.}
-#'     \item{metagenre_detail}{character; one of "low" or "high" (controls which metagenre file).}
-#'     \item{run_rf_mb}{logical; run pipeline for "mb" platform.}
-#'     \item{run_rf_s}{logical; run pipeline for "s" platform.}
-#'     \item{features_after_impute}{character; feature names to keep after imputation (must include "metagenre").}
-#'   }
+#' @param settings A named list of pipeline settings (must contain
+#'   \code{subsample_prop}, \code{casewise_threshold}, \code{seed},
+#'   \code{artist_initial_split}, \code{apply_imputation}, \code{n_cores},
+#'   \code{drop_POPULARMUSIC}, \code{metagenre_detail}).
 #' @param poptrag A data.frame or tibble containing the full poptrag dataset used for feature selection.
-#'
-#' @return A list with element \code{imputer_model} (the trained imputer or NULL)
-#'   and elements \code{mb} and \code{s} (each either NULL or a list with
-#'   \code{model} (ranger object), \code{evaluation} (confusion, plots and metrics),
-#'   and \code{varimp_plot} (ggplot object)).
-#'
-#' @seealso select_features_poptrag, transform_features, train_imputer, train_rf, evaluate_and_plot
-#'
-#' @examples
-#' \dontrun{
-#' settings <- list(
-#'   subsample_prop = 0.12,
-#'   casewise_threshold = 0.4,
-#'   seed = 42,
-#'   artist_initial_split = 0.5,
-#'   apply_imputation = TRUE,
-#'   undersample_factor = 1,
-#'   n_cores = 4,
-#'   varimp_top_n = 30,
-#'   drop_POPULARMUSIC = TRUE,
-#'   metagenre_detail = "low",
-#'   run_rf_mb = TRUE,
-#'   run_rf_s = TRUE,
-#'   features_after_impute = c("metagenre", "track.s.danceability", "track.s.energy")
-#' )
-#' res <- run_rf_pipeline(settings, poptrag)
-#' }
-#'
+#' @return A list with elements:
+#'   \describe{
+#'     \item{imputer_model}{trained imputer or NULL}
+#'     \item{datasets}{list with elements \code{mb} and \code{s}, each a list with \code{train} and \code{test} data.frames}
+#'   }
 #' @export
-run_rf_pipeline <- function(settings, poptrag) {
-  # check if settings object has all necessary entries
+prepare_rf_data <- function(settings, poptrag) {
+  # replicate original checks (kept as in original)
   check_settings <- setdiff(
     names(settings),
     c(
@@ -63,14 +25,9 @@ run_rf_pipeline <- function(settings, poptrag) {
       "seed",
       "artist_initial_split",
       "apply_imputation",
-      "undersample_factor",
       "n_cores",
-      "varimp_top_n",
       "drop_POPULARMUSIC",
-      "metagenre_detail",
-      "run_rf_mb",
-      "run_rf_s",
-      "features_after_impute"
+      "metagenre_detail"
     )
   )
   if (!length(check_settings) == 0) {
@@ -103,9 +60,20 @@ run_rf_pipeline <- function(settings, poptrag) {
   mb_joined <- join_target(casewise, mb_met, settings$drop_POPULARMUSIC)
   s_joined <- join_target(casewise, s_met, settings$drop_POPULARMUSIC)
 
-  set.seed(settings$seed)
-  mb_sample <- draw_prototype_sample(mb_joined, prop = settings$subsample_prop)
-  s_sample <- draw_prototype_sample(s_joined, prop = settings$subsample_prop)
+  if (settings$subsample_prop <= 0 || settings$subsample_prop > 1) {
+    stop("settings$subsample_prop must be in (0, 1].")
+  }
+  if (settings$subsample_prop == 1) {
+    mb_sample <- mb_joined
+    s_sample <- s_joined
+  } else {
+    set.seed(settings$seed)
+    mb_sample <- draw_prototype_sample(
+      mb_joined,
+      prop = settings$subsample_prop
+    )
+    s_sample <- draw_prototype_sample(s_joined, prop = settings$subsample_prop)
+  }
 
   artists_split <- split_artists_and_train_test(
     mb_sample,
@@ -114,13 +82,13 @@ run_rf_pipeline <- function(settings, poptrag) {
     seed = settings$seed
   )
 
-  imputation_frame <- get_imputation_frame(
-    train_sets = list(artists_split$mb_train, artists_split$s_train),
-    test_sets = list(artists_split$mb_test, artists_split$s_test)
-  )
-
   imputer_model <- NULL
   if (settings$apply_imputation) {
+    imputation_frame <- get_imputation_frame(
+      train_sets = list(artists_split$mb_train, artists_split$s_train),
+      test_sets = list(artists_split$mb_test, artists_split$s_test)
+    )
+
     imputer_model <- train_imputer(
       imputation_frame,
       nthreads = settings$n_cores,
@@ -137,7 +105,27 @@ run_rf_pipeline <- function(settings, poptrag) {
     s_test_imputed <- artists_split$s_test
   }
 
-  # final feature selection supplied by user in settings
+  datasets <- list(
+    mb = list(train = mb_train_imputed, test = mb_test_imputed),
+    s = list(train = s_train_imputed, test = s_test_imputed)
+  )
+
+  list(imputer_model = imputer_model, datasets = datasets)
+}
+
+#' Train and evaluate random-forest models for MusicBrainz and Spotify
+#'
+#' Selects the post-imputation features, optionally undersamples, trains
+#' a ranger random-forest and evaluates/plots results for each platform.
+#'
+#' @param settings Named list of pipeline settings (must contain \code{features_after_impute},
+#'   \code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_mb}, \code{run_rf_s}).
+#' @param datasets A list as returned by prepare_rf_data() with elements \code{mb} and \code{s},
+#'   each containing \code{train} and \code{test} data.frames.
+#' @return A list with elements \code{mb} and \code{s} (each either NULL or a list
+#'   with \code{model}, \code{evaluation}, \code{train_df}, \code{test_df}).
+#' @export
+train_and_evaluate_rf <- function(settings, datasets) {
   if (
     is.null(settings$features_after_impute) ||
       !is.character(settings$features_after_impute)
@@ -149,12 +137,7 @@ run_rf_pipeline <- function(settings, poptrag) {
     feats <- c("metagenre", feats)
   }
 
-  datasets <- list(
-    mb = list(train = mb_train_imputed, test = mb_test_imputed),
-    s = list(train = s_train_imputed, test = s_test_imputed)
-  )
-
-  results <- list(imputer_model = imputer_model)
+  results <- list()
 
   for (plat in c("mb", "s")) {
     run_flag <- isTRUE(settings[[paste0("run_rf_", plat)]])
@@ -162,6 +145,7 @@ run_rf_pipeline <- function(settings, poptrag) {
       results[[plat]] <- NULL
       next
     }
+
     train_df <- select_post_impute_features(datasets[[plat]]$train, feats)
     test_df <- select_post_impute_features(datasets[[plat]]$test, feats)
 
@@ -403,6 +387,7 @@ get_imputation_frame <- function(train_sets, test_sets) {
 # Train missForest imputer.
 train_imputer <- function(impute_frame, nthreads = 19, seed = 42) {
   set.seed(seed)
+  message("---TRAINING MISSFOREST IMPUTER---")
   missForestPredict::missForest(
     as.data.frame(
       impute_frame |>
