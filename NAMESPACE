@@ -2,3 +2,5 @@
 
 export(plot_interactive_genealogy_graph)
 export(plot_interactive_tree_graph)
+export(prepare_rf_data)
+export(train_and_evaluate_rf)
