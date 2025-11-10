@@ -1,5 +1,5 @@
 outs:
-- md5: 7784d1fa585ee14581fb75cc19e9ba12
-  size: 9215503
+- md5: 9cfc087778c2e3b4348aa8f3f56e1ad4
+  size: 5951
   hash: md5
   path: metagenres_mb_suggested_solution.rds
