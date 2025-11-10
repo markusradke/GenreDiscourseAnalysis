@@ -14,6 +14,7 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     arrow,
+    caret,
     DescTools,
     doParallel,
     dplyr,
@@ -25,6 +26,7 @@ Imports:
     ggtext,
     igraph,
     missForestPredict,
+    mltools,
     quarto,
     r2d3,
     rgexf,
