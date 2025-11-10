@@ -19,7 +19,8 @@ format:
         css: 
           styles.css
 ---
-# Metagenre Examples
+
+# Metagenre assignment 
 ```{r load poptrag, message=FALSE, warning=FALSE}
 devtools::load_all()
 poptrag <- readRDS("../data/poptrag_selected.rds")
@@ -28,6 +29,112 @@ mb_25_30 <- read_feather_with_lists("../models/metagenres/mb_metagenres_25_30.fe
 s_10_15 <- read_feather_with_lists("../models/metagenres/s_metagenres_10_15.feather")
 s_25_30 <- read_feather_with_lists("../models/metagenres/s_metagenres_25_30.feather")
 ```
+
+Once an optimal metagenre configuration has been selected based on the tuning results, we can assign metagenres to our songs. For the assignment, all tags that were assigned to a track by platform users were mapped to their corresponding metagenres using the selected solution's mapping table. If a track had multiple tags that mapped to different metagenres, we employed a majority voting approach to determine the final metagenre assignment. As a tie breaker, we selected the metagenre with fewest overall votes assigned to it in the dataset, promoting a more balanced distribution across metagenres.
+For our proof of concept random forest classifier, we chose two solutions per platfrom in the range of 10-15 and 25-30 metagenres (local minimum of Gini). Please find below the distribution of metagenres in the assigned datasets as well as the median relative probabilities for the assigned metagenres based on the majority votes.
+
+```{r metagenenre descriptives preparement}	
+plot_metagenre_prevs <- function(mapping){
+  meta_prev <- mapping |> dplyr::count(metagenre, sort = TRUE) |> 
+    dplyr::mutate(relfreq = n / sum(n) * 100,
+                  metagenre = forcats::fct_inorder(metagenre) |> forcats::fct_rev()) 
+    
+  ggplot2::ggplot(meta_prev, 
+                  ggplot2::aes(x = relfreq, y = metagenre)) +
+    ggplot2::geom_bar(stat = "identity", fill = "grey45") +
+    ggplot2::geom_text(ggplot2::aes(label = sprintf("%s", format(n, big.mark = ","))), 
+                     hjust = -0.1, size = 4) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.1))) +
+    ggplot2::labs(y = "",
+                  x = "Relative Frequency (%)") +
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 12, face = "bold"), 
+                   axis.text.x = ggplot2::element_text(size = 12), 
+                   axis.title.x = ggplot2::element_text(size = 12, color = "grey45"), 
+                   panel.grid.major.y = ggplot2::element_blank(), 
+                   panel.grid.minor.y = ggplot2::element_blank())
+}
+
+plot_metagenre_assignement_certainty <- function(mapping){
+  prob_cols <- mapping |>
+    dplyr::select(dplyr::starts_with("p_"), "metagenre")
+  
+  max_p <- do.call(pmax, as.list(
+    prob_cols |> dplyr::select(-"metagenre")
+  ))
+  
+  meta_probs <- prob_cols |>
+    dplyr::mutate(max_p = max_p) |>
+    dplyr::group_by(metagenre) |>
+    dplyr::summarise(median_probability = median(max_p, na.rm = TRUE), 
+                     iqr_probability = IQR(max_p, na.rm = TRUE)) |>
+    dplyr::arrange(dplyr::desc(median_probability)) |> 
+    dplyr::mutate(metagenre = forcats::fct_inorder(metagenre) |> 
+                    forcats::fct_rev())
+  
+  ggplot2::ggplot(meta_probs, 
+                  ggplot2::aes(x = median_probability, y = metagenre)) +
+    ggplot2::geom_bar(stat = "identity", fill = "grey65") +
+    ggplot2::geom_errorbar(ggplot2::aes(
+      xmin = median_probability - iqr_probability / 2, 
+      xmax = median_probability + iqr_probability / 2), 
+      width = 0.2, color = "black") +
+    ggplot2::scale_x_continuous(
+      expand = ggplot2::expansion(mult = c(0, 0.05)), 
+      breaks = c(0.25, 0.5, 0.75, 1)) +
+    ggplot2::labs(y = "",
+                  x = "Median Relative Freq of Votes (%)") +
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(size = 12, face = "bold"), 
+      axis.text.x = ggplot2::element_text(size = 12), 
+      axis.title.x = ggplot2::element_text(size = 12, color = "grey45"), 
+      panel.grid.major.y = ggplot2::element_blank(), 
+      panel.grid.minor.y = ggplot2::element_blank())
+}
+```
+
+## MusicBrainz Metagenre Assignment
+### MusicBrainz `r mb_10_15$metagenre |> unique() |> length()` Metagenres
+```{r mb 1015 prev}
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(mb_10_15)
+```	
+```{r mb 1015 certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(mb_10_15)
+```
+### MusicBrainz `r mb_25_30$metagenre |> unique() |> length()` Metagenres
+```{r mb 2530 prev}	
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(mb_25_30)
+```
+```{r mb 2530 certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(mb_25_30)
+```
+## Spotify Metagenre Assignment
+### Spotify `r s_10_15$metagenre |> unique() |> length()` Metagenres
+```{r s 1015 prev}
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(s_10_15)
+```
+```{r s 1015 certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(s_10_15)
+```
+### Spotify `r s_25_30$metagenre |> unique() |> length()` Metagenres
+```{r s 2530 prev}
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(s_25_30)
+```
+```{r s 2530 certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(s_25_30)
+```
+
+
+# Metagenre Examples
 
 ```{r examples_functions}
 top_n <- 5
