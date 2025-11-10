@@ -2,4 +2,5 @@
 /01_data_report_files/
 /02_genre_trees_files/
 /03_metagenres_files/
-/04_rf_classifier_files/
+/04_metagenres_mapping/
+/05_rf_classifier_files/
