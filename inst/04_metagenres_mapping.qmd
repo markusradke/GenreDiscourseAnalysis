@@ -1,0 +1,197 @@
+---
+title: "Metagenre Mapping - Genre Discourse Analysis"
+author: "Markus Radke"
+date: "`r Sys.Date()`"
+format: 
+    html: 
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        toc: true
+        toc-location: left
+        toc-depth: 5
+        toc-expand: 5
+        number-sections: true
+        theme: cosmo
+        code-links:
+        - text: Github Repository
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+        css: 
+          styles.css
+---
+# Metagenre Examples
+```{r load poptrag, message=FALSE, warning=FALSE}
+devtools::load_all()
+poptrag <- readRDS("../data/poptrag_selected.rds")
+mb_10_15 <- read_feather_with_lists("../models/metagenres/mb_metagenres_10_15.feather")
+mb_25_30 <- read_feather_with_lists("../models/metagenres/mb_metagenres_25_30.feather")
+s_10_15 <- read_feather_with_lists("../models/metagenres/s_metagenres_10_15.feather")
+s_25_30 <- read_feather_with_lists("../models/metagenres/s_metagenres_25_30.feather")
+```
+
+```{r examples_functions}
+top_n <- 5
+
+build_examples <- function(pop, met, top_n) {
+  joined_raw <- pop |>
+    dplyr::inner_join(
+      met |> dplyr::select(track.s.id, p_max, n_max, metagenre),
+      by = "track.s.id"
+    ) |>
+    dplyr::select(
+      track.s.title,
+      artist.s.name,
+      album.s.title,
+      album.s.coverurl,
+      album.s.releaseyear,
+      track.s.previewurl,
+      metagenre,
+      p_max,
+      n_max
+    ) |>
+    dplyr::filter(!is.na(track.s.previewurl),
+                  !is.na(album.s.coverurl))
+
+  joined <- joined_raw |>
+    dplyr::mutate(
+      track.s.title = sanitize_triple_colon(track.s.title),
+      artist.s.name = sanitize_triple_colon(artist.s.name),
+      album.s.title = sanitize_triple_colon(album.s.title)
+    )
+
+  top <- joined |>
+    dplyr::group_by(metagenre) |>
+    dplyr::arrange(dplyr::desc(p_max), dplyr::desc(n_max),
+                   .by_group = TRUE) |>
+    dplyr::distinct(artist.s.name, .keep_all = TRUE) |>
+    dplyr::slice_head(n = top_n) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(selection = "Highest Certainty")
+
+  mid <- joined |>
+    dplyr::group_by(metagenre) |>
+    dplyr::arrange(dplyr::desc(p_max), dplyr::desc(n_max),
+                   .by_group = TRUE) |>
+    dplyr::distinct(artist.s.name, .keep_all = TRUE) |>
+    dplyr::slice((dplyr::n() %/% 2 - (top_n %/% 2)):
+                   (dplyr::n() %/% 2 + (top_n %/% 2))) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(selection = "Median Certainty")
+
+  low <- joined |>
+    dplyr::group_by(metagenre) |>
+    dplyr::arrange(p_max, n_max, .by_group = TRUE) |>
+    dplyr::distinct(artist.s.name, .keep_all = TRUE) |>
+    dplyr::slice_head(n = top_n) |>
+    dplyr::arrange(dplyr::desc(p_max), dplyr::desc(n_max),
+                   .by_group = TRUE) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(selection = "Lowest Certainty")
+
+  dplyr::bind_rows(top, mid, low)
+}
+
+make_cover_html <- function(url) {
+  paste0('<img src="', url, '" style="width:100px;">')
+}
+
+make_preview_html <- function(url) {
+  paste0('<audio controls style="width:200px;">',
+         '<source src="', url, '" type="audio/mpeg"></audio>')
+}
+
+sanitize_triple_colon <- function(x) {
+  if (is.null(x)) return(x)
+  gsub(":::", "&#58;&#58;&#58;", x, fixed = TRUE)
+}
+
+make_music_table_df <- function(examples, genre, top_n) {
+  examples |>
+    dplyr::filter(metagenre == genre) |>
+    dplyr::mutate(p_max = round(p_max * 100)) |>
+    dplyr::rename(
+      Titel = track.s.title,
+      Artist = artist.s.name,
+      Album = album.s.title,
+      Cover = album.s.coverurl,
+      Year = album.s.releaseyear,
+      Preview = track.s.previewurl,
+      "Probability [%]" = p_max,
+      Votes = n_max,
+      Selection = selection
+    ) |>
+    dplyr::mutate(
+      Titel = gsub("[<>$:\\\"]", "", Titel),
+      Artist = gsub("[<>$:\\\"]", "", Artist),
+      Album = gsub("[<>$:\\\"]", "", Album),
+      Titel = gsub("(?<=\\d)\\.(?=\\s)", "", Titel, perl = TRUE),
+      Album = gsub("(?<=\\d)\\.(?=\\s)", "", Album, perl = TRUE),
+      Cover = make_cover_html(Cover),
+      Preview = make_preview_html(Preview)
+    ) |>
+    dplyr::select(
+      Titel, Artist, Album, Cover, Year,
+      Preview, "Probability [%]", Votes, Selection
+    )
+}
+
+kable_html_for_table <- function(music_table, top_n) {
+  k <- knitr::kable(music_table, format = "html", escape = FALSE)
+  k <- kableExtra::kable_styling(k, bootstrap_options = "striped",
+                                full_width = TRUE, position = "center")
+  k <- k |>
+    kableExtra::column_spec(column = 1, width = "15%") |>
+    kableExtra::column_spec(column = 2, width = "12%") |>
+    kableExtra::column_spec(column = 3, width = "12%") |>
+    kableExtra::column_spec(column = 4, width = "8%")  |>
+    kableExtra::column_spec(column = 5, width = "5%")  |>
+    kableExtra::column_spec(column = 6, width = "15%") |>
+    kableExtra::column_spec(column = 7, width = "8%")  |>
+    kableExtra::column_spec(column = 8, width = "5%")  |>
+    kableExtra::column_spec(column = 9, width = "12%") |>
+    kableExtra::collapse_rows(columns = 9, valign = "middle") |>
+    kableExtra::row_spec(top_n,
+                         extra_css = "border-bottom: 3px solid #000 !important;") |>
+    kableExtra::row_spec(top_n * 2,
+                         extra_css = "border-bottom: 3px solid #000 !important;")
+  k
+}
+
+render_all_tables <- function(examples, top_n) {
+  genres <- unique(examples$metagenre)
+  for (g in seq_along(genres)) {
+    gen <- genres[g]
+    gen_title <- sanitize_triple_colon(gen)
+    cat(paste0('### ', gen_title, '\n\n'))
+    cat('::: {.column-screen-inset-right}\n\n')
+    tbl <- make_music_table_df(examples, gen, top_n)
+    k <- kable_html_for_table(tbl, top_n)
+    cat(k)
+    cat('\n\n:::\n\n')
+  }
+}
+```
+
+## MusicBrainz 10-15 Metagenres Examples
+```{r mb1015 examples, results='asis'}	
+examples <- build_examples(poptrag, mb_10_15, top_n)
+render_all_tables(examples, top_n)
+```
+
+## MusicBrainz 25-30 Metagenres Examples
+```{r mb2530 examples, results='asis'}
+examples <- build_examples(poptrag, mb_25_30, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify 10-15 Metagenres Examples
+```{r s1015 examples, results='asis'}
+examples <- build_examples(poptrag, s_10_15, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify 25-30 Metagenres Examples
+```{r s2530 examples, results='asis'}
+examples <- build_examples(poptrag, s_25_30, top_n)
+render_all_tables(examples, top_n)
+```

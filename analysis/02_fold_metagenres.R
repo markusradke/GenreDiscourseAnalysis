@@ -81,3 +81,4 @@ save_feather_with_lists(
 )
 
 generate_report("03_metagenres")
+generate_report("04_metagenre_examples")

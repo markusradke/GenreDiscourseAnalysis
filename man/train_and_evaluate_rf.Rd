@@ -8,7 +8,7 @@ train_and_evaluate_rf(settings, datasets)
 }
 \arguments{
 \item{settings}{Named list of pipeline settings (must contain \code{features_after_impute},
-undersample_factor, varimp_top_n, seed, run_rf_mb, run_rf_s).}
+\code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_mb}, \code{run_rf_s}).}
 
 \item{datasets}{A list as returned by prepare_rf_data() with elements \code{mb} and \code{s},
 each containing \code{train} and \code{test} data.frames.}

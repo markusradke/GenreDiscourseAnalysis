@@ -153,4 +153,4 @@ saveRDS(res_high$mb$evaluation, "models/classifier/rf_mb_highres_eval.rds")
 saveRDS(res_high$s$evaluation, "models/classifier/rf_s_highres_eval.rds")
 
 # Generate resport ----
-generate_report("04_rf_classifier")
+generate_report("05_rf_classifier")

@@ -105,11 +105,11 @@ get_solutions_in_range <- function(tuning, suggested_solution, min_genres = 1, m
   
   # Get solutions with unique n_metagenres in the specified range
   # Use the last occurrence of each n_metagenres (highest min_n)
-  solutions_df <- tuning$ginis %>%
-    dplyr::filter(n_metagenres >= min_genres, n_metagenres <= max_genres) %>%
-    dplyr::arrange(n_metagenres, dplyr::desc(min_n)) %>%
-    dplyr::distinct(n_metagenres, .keep_all = TRUE) %>%
-    dplyr::arrange(dplyr::desc(n_metagenres)) %>%
+  solutions_df <- tuning$ginis |>
+    dplyr::filter(n_metagenres >= min_genres, n_metagenres <= max_genres) |>
+    dplyr::arrange(n_metagenres, dplyr::desc(min_n)) |>
+    dplyr::distinct(n_metagenres, .keep_all = TRUE) |>
+    dplyr::arrange(dplyr::desc(n_metagenres)) |>
     dplyr::mutate(
       solution_id = as.character(min_n),
       label = sprintf("%d metagenres (min_n: %s, Gini: %.3f)", 
@@ -187,9 +187,9 @@ all_plots <- list()
 for (n_meta in names(mb_all_solutions$solutions)) {
   solution <- mb_all_solutions$solutions[[n_meta]]
   
-  mb_long_metagenres <- mb %>%
-    dplyr::left_join(solution$mapping, by = "tag_name") %>%
-    dplyr::select(-tag_name) %>%
+  mb_long_metagenres <- mb |>
+    dplyr::left_join(solution$mapping, by = "tag_name") |>
+    dplyr::select(-tag_name) |>
     dplyr::rename(tag_name = metagenre)
   
   plot_obj <- plot_interactive_tree_graph(
@@ -268,9 +268,9 @@ all_plots <- list()
 for (n_meta in names(s_all_solutions$solutions)) {
   solution <- s_all_solutions$solutions[[n_meta]]
   
-  s_long_metagenres <- s %>%
-    dplyr::left_join(solution$mapping, by = "tag_name") %>%
-    dplyr::select(-tag_name) %>%
+  s_long_metagenres <- s |>
+    dplyr::left_join(solution$mapping, by = "tag_name") |>
+    dplyr::select(-tag_name) |>
     dplyr::rename(tag_name = metagenre)
   
   plot_obj <- plot_interactive_tree_graph(
@@ -341,12 +341,12 @@ plot_metagenre_prevs <- function(mapping){
 }
 
 plot_metagenre_assignement_certainty <- function(mapping){
-  meta_probs <- mapping %>%
-    dplyr::select(dplyr::starts_with("p_"), "metagenre") %>%
-    dplyr::mutate(max_p = do.call(pmax, dplyr::select(., -"metagenre"))) %>%
-    dplyr::group_by(metagenre) %>%
+  meta_probs <- mapping |>
+    dplyr::select(dplyr::starts_with("p_"), "metagenre") |>
+    dplyr::mutate(max_p = do.call(pmax, dplyr::select(.data, -"metagenre"))) |>
+    dplyr::group_by(metagenre) |>
     dplyr::summarise(median_probability = median(max_p, na.rm = TRUE), 
-                     iqr_probability = IQR(max_p, na.rm = TRUE)) %>%
+                     iqr_probability = IQR(max_p, na.rm = TRUE)) |>
     dplyr::arrange(dplyr::desc(median_probability)) |> 
     dplyr::mutate(metagenre = forcats::fct_inorder(metagenre) |> forcats::fct_rev())
   
