@@ -127,7 +127,8 @@ prepare_rf_data <- function(settings, poptrag) {
 #' a ranger random-forest and evaluates/plots results for each set of metagenres.
 #'
 #' @param settings Named list of pipeline settings (must contain \code{features_after_impute},
-#'   \code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_mb}, \code{run_rf_s}).
+#'   \code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_low}, \code{run_rf_high},
+#'  \code{ntrees}, \code{mtry}, \code{min.node.size}, \code{max depth}).
 #' @param datasets A list as returned by prepare_rf_data() with elements \code{low} and \code{high},
 #'   each containing \code{train} and \code{test} data.frames.
 #' @return A list with elements \code{low} and \code{high} (each either NULL or a list
@@ -164,7 +165,16 @@ train_and_evaluate_rf <- function(settings, datasets) {
     )
 
     message(sprintf("---TRAINING MODEL FOR %s---", toupper(detail)))
-    rf_model <- train_rf(train_df, ntrees = 1000, seed = settings$seed)
+    rf_model <- train_rf(
+      train_df,
+      ntrees = settings$ntrees,
+      mtry = settings$mtry,
+      min.node.size = settings$min.node.size,
+      max.depth = settings$max.depth,
+      seed = settings$seed
+    )
+
+    model_settings <- get_model_settings(rf_model)
 
     eval <- evaluate_train_and_test(
       rf_model,
@@ -175,6 +185,7 @@ train_and_evaluate_rf <- function(settings, datasets) {
 
     results[[detail]] <- list(
       model = rf_model,
+      model_settings = model_settings,
       evaluation = eval,
       train_df = train_df,
       test_df = test_df
@@ -440,17 +451,38 @@ select_post_impute_features <- function(df, features) {
   df |> dplyr::select(dplyr::all_of(features))
 }
 
-train_rf <- function(train_df, ntrees = 1000, seed = 42) {
+train_rf <- function(
+  train_df,
+  ntrees,
+  mtry,
+  min.node.size,
+  max.depth,
+  seed = 42
+) {
   ranger::ranger(
     formula = metagenre ~ .,
     data = train_df,
     num.trees = ntrees,
-    mtry = floor(sqrt(ncol(train_df) - 1)),
-    min.node.size = 1,
+    mtry = mtry,
+    max.depth = max.depth,
+    min.node.size = min.node.size,
     importance = "impurity",
     probability = TRUE,
     classification = TRUE,
     seed = seed
+  )
+}
+
+get_model_settings <- function(model) {
+  list(
+    ntrees = model$num.trees,
+    mtry = model$mtry,
+    max.depth = model$max.depth,
+    min.node.size = model$min.node.size,
+    nindependent = model$num.independent.variables,
+    vip.mode = model$importance.mode,
+    splitrule = model$splitrule,
+    treetype = model$treetype
   )
 }
 

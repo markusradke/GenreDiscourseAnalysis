@@ -110,10 +110,15 @@ model_features <- c(
   "label.med.track.popularity"
 )
 
+sqrt(length(model_features))
 settings <- list(
   seed = 42,
   undersample_factor = 2,
   n_cores = 19,
+  ntrees = 1000,
+  mtry = 5,
+  min.node.size = 50,
+  max.depth = 20,
   varimp_top_n = 40,
   run_rf_low = TRUE,
   run_rf_high = TRUE,
@@ -125,11 +130,15 @@ res_rf <- train_and_evaluate_rf(
   rf_data
 )
 
-res_rf$low
-res_rf$high
-
 saveRDS(res_rf$low$evaluation, "models/classifier/rf_mb_lowres_eval.rds")
+saveRDS(
+  res_rf$low$model_settings,
+  "models/classifier/rf_mb_lowres_settings.rds"
+)
 saveRDS(res_rf$high$evaluation, "models/classifier/rf_mb_highres_eval.rds")
-
+saveRDS(
+  res_rf$high$model_settings,
+  "models/classifier/rf_mb_highres_settings.rds"
+)
 # Generate resport ----
 generate_report("05_rf_classifier")

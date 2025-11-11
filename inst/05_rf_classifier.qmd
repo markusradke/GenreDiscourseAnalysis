@@ -30,7 +30,9 @@ mb_train_high <- read_feather_with_lists("../models/classifier/rf_mb_highres_tra
 mb_test_high <- read_feather_with_lists("../models/classifier/rf_mb_highres_test.feather")
 
 eval_mb_low <- readRDS("../models/classifier/rf_mb_lowres_eval.rds")
+settings_mb_low <- readRDS("../models/classifier/rf_mb_lowres_settings.rds")
 eval_mb_high <- readRDS("../models/classifier/rf_mb_highres_eval.rds")
+settings_mb_high <- readRDS("../models/classifier/rf_mb_highres_settings.rds")
 ```
 
 # Prototyping Random Forest Classifier for Community Metagenre Classification
@@ -113,6 +115,22 @@ knitr::asis_output(paste0("- ", cols, collapse = "\n"))
 ```{r selected_features mb low}
 cols_mb_low <- eval_mb_low$varimp$Variable
 knitr::asis_output(paste0("- ", cols_mb_low, collapse = "\n"))
+```
+
+
+# Model settings
+```{r settings_mb_low}
+knitr::kable(
+  settings_mb_low |> as.data.frame(),
+  caption = "Random Forest classifier settings for **low detailed** MusicBrainz metagenres (10-15)."
+)
+```
+
+```{r settings_mb_high}
+knitr::kable(
+  settings_mb_high |> as.data.frame(),
+  caption = "Random Forest classifier settings for **high detailed** MusicBrainz metagenres (25-30)."
+)
 ```
 
 # Results 

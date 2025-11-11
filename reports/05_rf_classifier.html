@@ -97,10 +97,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#list-of-selected-features-after-preprocessing-and-imputation" id="toc-list-of-selected-features-after-preprocessing-and-imputation" class="nav-link" data-scroll-target="#list-of-selected-features-after-preprocessing-and-imputation"><span class="header-section-number">1.3.2</span> List of selected features after preprocessing and imputation</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">2</span> Results</a>
+  <li><a href="#model-settings" id="toc-model-settings" class="nav-link" data-scroll-target="#model-settings"><span class="header-section-number">2</span> Model settings</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">3</span> Results</a>
   <ul>
-  <li><a href="#low-detailed" id="toc-low-detailed" class="nav-link" data-scroll-target="#low-detailed"><span class="header-section-number">2.1</span> Low detailed</a></li>
-  <li><a href="#high-detailed" id="toc-high-detailed" class="nav-link" data-scroll-target="#high-detailed"><span class="header-section-number">2.2</span> High detailed</a></li>
+  <li><a href="#low-detailed" id="toc-low-detailed" class="nav-link" data-scroll-target="#low-detailed"><span class="header-section-number">3.1</span> Low detailed</a></li>
+  <li><a href="#high-detailed" id="toc-high-detailed" class="nav-link" data-scroll-target="#high-detailed"><span class="header-section-number">3.2</span> High detailed</a></li>
   </ul></li>
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis"><i class="bi bi-link-45deg"></i>Github Repository</a></li></ul></div></nav>
@@ -361,22 +362,192 @@ graph TD
 </details>
 <div class="cell-output-display">
 <ul>
+<li>track.s.acousticness</li>
+<li>track.s.speechiness</li>
+<li>track.s.danceability</li>
+<li>artist.mb.birthyear</li>
+<li>label.med.track.popularity</li>
+<li>track.language</li>
+<li>track.s.energy</li>
+<li>track.s.instrumentalness</li>
+<li>label.med.artist.popularity</li>
+<li>track.s.explicitlyrics</li>
+<li>label.med.album.popularity</li>
 <li>artist.s.followers</li>
+<li>artist.s.popularity</li>
+<li>track.s.valence</li>
+<li>track.s.loudness</li>
+<li>track.is.dach</li>
+<li>track.s.duration</li>
+<li>album.s.releaseyear</li>
+<li>album.s.totaltracks</li>
+<li>track.dz.firstartist.nalbums</li>
+<li>artist.mb.area</li>
+<li>track.dz.album.explicitlyrics</li>
+<li>album.s.popularity</li>
+<li>track.dz.loudness</li>
+<li>track.s.tempo</li>
+<li>track.s.popularity</li>
+<li>track.dz.firstartist.followers</li>
+<li>track.s.liveness</li>
+<li>track.dz.album.followers</li>
+<li>track.dz.album.duration</li>
+<li>track.ab.rhythm.onsetrate</li>
+<li>track.dz.rank</li>
+<li>track.ab.p.bright</li>
+<li>lyrics.distinct_words_ratio</li>
+<li>track.ab.tonal.chordchangerate</li>
+<li>lyrics.sentiment</li>
+<li>track.ab.p.sad</li>
+<li>track.ab.rhythm.danceability</li>
+<li>track.ab.p.acoustic</li>
+<li>track.ab.low.dynamiccomplexity</li>
 <li>track.ab.p.female</li>
+<li>lyrics.nrc_negative</li>
+<li>track.ab.p.aggressive</li>
+<li>lyrics.repeated_lines_ratio</li>
+<li>track.ab.p.tonal</li>
+<li>track.ab.p.electronic</li>
+<li>lyrics.nrc_anger</li>
+<li>track.ab.tonal.keystrength</li>
+<li>track.ab.p.voice</li>
+<li>track.ab.p.danceable</li>
+<li>track.ab.p.relaxed</li>
+<li>track.ab.tonal.chordsnumberrate</li>
+<li>track.ab.p.happy</li>
+<li>track.ab.low.loudness</li>
+<li>track.ab.rhythm.tempo</li>
+<li>lyrics.nrc_fear</li>
+<li>track.s.key</li>
+<li>track.ab.p.party</li>
+<li>lyrics.nrc_disgust</li>
+<li>track.dz.tempo</li>
+<li>artist.mb.gender</li>
+<li>lyrics.nrc_positive</li>
+<li>artist.mb.dead</li>
+<li>track.s.mode</li>
+<li>lyrics.nrc_sadness</li>
+<li>lyrics.nrc_trust</li>
+<li>lyrics.nrc_anticipation</li>
+<li>track.s.timesignature</li>
+<li>lyrics.nrc_joy</li>
+<li>lyrics.nrc_surprise</li>
+<li>track.is.instrumental</li>
+<li>track.ab.tonal.key</li>
+<li>track.ab.tonal.mode</li>
 </ul>
 </div>
 </div>
 </section>
 </section>
 </section>
-<section id="results" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Results</h1>
-<section id="low-detailed" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="low-detailed"><span class="header-section-number">2.1</span> Low detailed</h2>
+<section id="model-settings" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Model settings</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_train, eval_mb_low<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  settings_mb_low <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>(),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Random Forest classifier settings for **low detailed** MusicBrainz metagenres (10-15)."</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Random Forest classifier settings for <strong>low detailed</strong> MusicBrainz metagenres (10-15).</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">ntrees</th>
+<th style="text-align: right;">mtry</th>
+<th style="text-align: right;">max.depth</th>
+<th style="text-align: right;">min.node.size</th>
+<th style="text-align: right;">nindependent</th>
+<th style="text-align: left;">vip.mode</th>
+<th style="text-align: left;">splitrule</th>
+<th style="text-align: left;">treetype</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: left;">impurity</td>
+<td style="text-align: left;">gini</td>
+<td style="text-align: left;">Probability estimation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  settings_mb_high <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>(),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Random Forest classifier settings for **high detailed** MusicBrainz metagenres (25-30)."</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Random Forest classifier settings for <strong>high detailed</strong> MusicBrainz metagenres (25-30).</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">ntrees</th>
+<th style="text-align: right;">mtry</th>
+<th style="text-align: right;">max.depth</th>
+<th style="text-align: right;">min.node.size</th>
+<th style="text-align: right;">nindependent</th>
+<th style="text-align: left;">vip.mode</th>
+<th style="text-align: left;">splitrule</th>
+<th style="text-align: left;">treetype</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: left;">impurity</td>
+<td style="text-align: left;">gini</td>
+<td style="text-align: left;">Probability estimation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="results" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Results</h1>
+<section id="low-detailed" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="low-detailed"><span class="header-section-number">3.1</span> Low detailed</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_train, eval_mb_low<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -390,7 +561,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_test, eval_mb_low<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_test, eval_mb_low<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -404,7 +575,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_low<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_low<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -416,12 +587,12 @@ graph TD
 </div>
 </div>
 </section>
-<section id="high-detailed" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="high-detailed"><span class="header-section-number">2.2</span> High detailed</h2>
+<section id="high-detailed" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="high-detailed"><span class="header-section-number">3.2</span> High detailed</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_train, eval_mb_high<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_train, eval_mb_high<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -435,7 +606,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_test, eval_mb_high<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_test, eval_mb_high<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -449,7 +620,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_high<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_high<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
