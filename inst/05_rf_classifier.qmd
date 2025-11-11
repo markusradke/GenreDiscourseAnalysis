@@ -71,7 +71,7 @@ graph TD
   I --> J["select predictors for modeling"]
   J --> K["undersample majority classes in training set to handle class imbalance (e.g., target class size = 10 * size of smallest class)"]
   K --> L["train initial random forest classifier on training sets (1k trees, mtry = sqrt(number of predictors), min.node.size = 1)"]
-  L --> M["evaluate model performance on test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
+  L --> M["evaluate model performance on train and test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
 ```
 
 ## Data sets
@@ -117,10 +117,16 @@ knitr::asis_output(paste0("- ", cols_mb_low, collapse = "\n"))
 
 # Results 
 ## Low detailed
-```{r low_results_mb}
-#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on **test set.**"
-plot_cm(eval_mb_low$confusion, eval_mb_low$metrics)
+```{r low_results_mb train}
+#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on **train set.**"
+plot_cm(eval_mb_low$confusion_train, eval_mb_low$metrics_train)
 ```
+```{r low_results_mb test}
+#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on **test set.**"
+plot_cm(eval_mb_low$confusion_test, eval_mb_low$metrics_test)
+```
+
+
 
 ```{r low_results_mb varimp}
 #| fig.cap: "**Most important variables** for Random Forest classifier predicting low detailed MusicBrainz metagenres."
@@ -129,9 +135,13 @@ plot_varimp(eval_mb_low$varimp)
 
 
 ## High detailed
-```{r high_results_mb cm, fig.height=10, fig.width=12}
+```{r high_results_mb cm train, fig.height=10, fig.width=12}
+#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting high detailed MusicBrainz metagenres. Evaluated on **train set.**"
+plot_cm(eval_mb_high$confusion_train, eval_mb_high$metrics_train)
+```
+```{r high_results_mb cm test, fig.height=10, fig.width=12}
 #| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting high detailed MusicBrainz metagenres. Evaluated on **test set.**"
-plot_cm(eval_mb_high$confusion, eval_mb_high$metrics)
+plot_cm(eval_mb_high$confusion_test, eval_mb_high$metrics_test)
 ```
 
 ```{r high_results_mb varimp}

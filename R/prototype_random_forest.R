@@ -166,7 +166,12 @@ train_and_evaluate_rf <- function(settings, datasets) {
     message(sprintf("---TRAINING MODEL FOR %s---", toupper(detail)))
     rf_model <- train_rf(train_df, ntrees = 1000, seed = settings$seed)
 
-    eval <- evaluate_and_plot(rf_model, test_df, top_n = settings$varimp_top_n)
+    eval <- evaluate_train_and_test(
+      rf_model,
+      train_df,
+      test_df,
+      top_n = settings$varimp_top_n
+    )
 
     results[[detail]] <- list(
       model = rf_model,
@@ -449,14 +454,31 @@ train_rf <- function(train_df, ntrees = 1000, seed = 42) {
   )
 }
 
-evaluate_and_plot <- function(model, test_df, top_n = 40) {
-  preds <- predict(model, data = test_df)
+evaluate_train_and_test <- function(model, train_df, test_df, top_n = 40) {
+  train_eval <- get_cm_and_metrics(model, train_df)
+  test_eval <- get_cm_and_metrics(model, test_df)
+
+  varimp <- ranger::importance(model)
+  varimp_df <- data.frame(Variable = names(varimp), Importance = varimp) |>
+    dplyr::arrange(dplyr::desc(Importance))
+
+  list(
+    confusion_train = train_eval$cm,
+    metrics_train = train_eval$metrics,
+    confusion_test = test_eval$cm,
+    metrics_test = test_eval$metrics,
+    varimp = varimp_df
+  )
+}
+
+get_cm_and_metrics <- function(model, df) {
+  preds <- predict(model, data = df)
   pred_classes <- colnames(preds$predictions)[max.col(preds$predictions)]
-  all_levels <- union(levels(test_df$metagenre), levels(model$predictions))
-  all_levels <- union(levels(test_df$metagenre), levels(model$forest$levels))
+  all_levels <- union(levels(df$metagenre), levels(model$predictions))
+  all_levels <- union(levels(df$metagenre), levels(model$forest$levels))
   pred_classes <- colnames(preds$predictions)[max.col(preds$predictions)]
   conf <- table(
-    Actual = factor(test_df$metagenre, levels = all_levels),
+    Actual = factor(df$metagenre, levels = all_levels),
     Predicted = factor(pred_classes, levels = all_levels)
   )
 
@@ -476,7 +498,7 @@ evaluate_and_plot <- function(model, test_df, top_n = 40) {
   )
   f1macro <- mean(f1s)
   mcc_val <- mltools::mcc(
-    actuals = factor(test_df$metagenre, levels = all_levels),
+    actuals = factor(df$metagenre, levels = all_levels),
     preds = factor(pred_classes, levels = all_levels)
   )
   metrics <- list(
@@ -491,20 +513,7 @@ evaluate_and_plot <- function(model, test_df, top_n = 40) {
     dplyr::mutate(relfreq = Freq / sum(Freq), labelcolor = relfreq > 0.5) |>
     dplyr::ungroup()
 
-  cm_plot <- plot_cm(cm_df, metrics)
-
-  varimp <- ranger::importance(model)
-  varimp_df <- data.frame(Variable = names(varimp), Importance = varimp) |>
-    dplyr::arrange(dplyr::desc(Importance))
-  varimp_plot <- plot_varimp(varimp_df, top_n = top_n)
-
-  list(
-    confusion = cm_df,
-    varimp = varimp_df,
-    cm_plot = cm_plot,
-    varimp_plot = varimp_plot,
-    metrics = metrics
-  )
+  list(cm = cm_df, metrics = metrics)
 }
 
 plot_cm <- function(cm_df, metrics) {

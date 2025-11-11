@@ -181,7 +181,7 @@ graph TD
   I --&gt; J["select predictors for modeling"]
   J --&gt; K["undersample majority classes in training set to handle class imbalance (e.g., target class size = 10 * size of smallest class)"]
   K --&gt; L["train initial random forest classifier on training sets (1k trees, mtry = sqrt(number of predictors), min.node.size = 1)"]
-  L --&gt; M["evaluate model performance on test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
+  L --&gt; M["evaluate model performance on train and test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -376,12 +376,26 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion, eval_mb_low<span class="sc">$</span>metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_train, eval_mb_low<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="05_rf_classifier_files/figure-html/low_results_mb-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="05_rf_classifier_files/figure-html/low_results_mb%20train-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on <strong>train set.</strong></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_low<span class="sc">$</span>confusion_test, eval_mb_low<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_rf_classifier_files/figure-html/low_results_mb%20test-1.png" class="img-fluid figure-img" width="672"></p>
 <figcaption>Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on <strong>test set.</strong></figcaption>
 </figure>
 </div>
@@ -390,7 +404,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_low<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_low<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -407,12 +421,26 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion, eval_mb_high<span class="sc">$</span>metrics)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_train, eval_mb_high<span class="sc">$</span>metrics_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="05_rf_classifier_files/figure-html/high_results_mb%20cm-1.png" class="img-fluid figure-img" width="1152"></p>
+<p><img src="05_rf_classifier_files/figure-html/high_results_mb%20cm%20train-1.png" class="img-fluid figure-img" width="1152"></p>
+<figcaption>Confusion matrix and evaluation metrics for Random Forest classifier predicting high detailed MusicBrainz metagenres. Evaluated on <strong>train set.</strong></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(eval_mb_high<span class="sc">$</span>confusion_test, eval_mb_high<span class="sc">$</span>metrics_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_rf_classifier_files/figure-html/high_results_mb%20cm%20test-1.png" class="img-fluid figure-img" width="1152"></p>
 <figcaption>Confusion matrix and evaluation metrics for Random Forest classifier predicting high detailed MusicBrainz metagenres. Evaluated on <strong>test set.</strong></figcaption>
 </figure>
 </div>
@@ -421,7 +449,7 @@ graph TD
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_high<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp</span>(eval_mb_high<span class="sc">$</span>varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
