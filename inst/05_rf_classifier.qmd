@@ -70,10 +70,11 @@ graph TD
   F --> G["split into training and test set (80/20) on artist level to avoid data leakage"]
   G --> H["train random forest imputer model for missing values on train sets (optional)"]
   H --> I["impute missing values in training and test sets with corresponding imputation model (otional)"]
-  I --> J["select predictors for modeling"]
-  J --> K["undersample majority classes in training set to handle class imbalance (e.g., target class size = 10 * size of smallest class)"]
-  K --> L["train initial random forest classifier on training sets (1k trees, mtry = sqrt(number of predictors), min.node.size = 1)"]
-  L --> M["evaluate model performance on train and test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
+  I --> J["prepare cross validation split on artist level within training set (e.g., 5-fold, 2 repeats, optional)"]
+  J --> K["select predictors for modeling"]
+  K --> L["undersample majority classes in training set to handle class imbalance (e.g., target class size = 10 * size of smallest class)"]
+  L --> M["train initial random forest classifier on training sets (1k trees, mtry = sqrt(number of predictors), min.node.size = 1)"]
+  M --> N["evaluate model performance on train and test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
 ```
 
 ## Data sets
