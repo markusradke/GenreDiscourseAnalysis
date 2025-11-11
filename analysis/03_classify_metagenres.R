@@ -5,14 +5,21 @@ poptrag <- readRDS("data-raw/poptrag.rds")
 # Prepare data sets for modeling ----
 settings <- list(
   seed = 42,
-  subsample_prop = 0.2,
+  subsample_prop = 1,
   casewise_threshold = 0.4,
   artist_initial_split = 0.8,
   apply_imputation = FALSE,
   n_cores = 19,
-  drop_POPULARMUSIC = TRUE
+  drop_POPULARMUSIC = TRUE,
+  cv_folds = 5,
+  cv_repeats = 2,
+  max_tracks_per_artist_cv = 10000
 )
 rf_data <- prepare_rf_data(settings, poptrag)
+dist_low <- compare_metagenre_distributions(rf_data, detail_level = "low")
+dist_low$plot
+dist_high <- compare_metagenre_distributions(rf_data, detail_level = "high")
+dist_high$plot
 
 save_feather_with_lists(
   rf_data$low$train,

@@ -3,16 +3,17 @@
 #' Runs the full data preparation pipeline up to and including optional
 #' missForest imputation. Always returns train and test sets for both
 #' low and high detail MusicBrainz metagenre sets ("low", "high").
+#' Additionally creates cross-validation folds based on artist splits.
 #'
 #' @param settings A named list of pipeline settings (must contain
 #'   \code{subsample_prop}, \code{casewise_threshold}, \code{seed},
 #'   \code{artist_initial_split}, \code{apply_imputation}, \code{n_cores},
-#'   \code{drop_POPULARMUSIC}.
+#'   \code{drop_POPULARMUSIC}, \code{cv_folds}, \code{cv_repeats}, \code{max_tracks_per_artist_cv}).
 #' @param poptrag A data.frame or tibble containing the full poptrag dataset used for feature selection.
 #' @return A list with elements:
 #'   \describe{
 #'     \item{imputer_model}{trained imputer or NULL}
-#'     \item{datasets}{list with elements \code{low} and \code{high}, each a list with \code{train} and \code{test} data.frames}
+#'     \item{datasets}{list with elements \code{low} and \code{high}, each a list with \code{train}, \code{test} data.frames, and \code{cv_splits}}
 #'   }
 #' @export
 prepare_rf_data <- function(settings, poptrag) {
@@ -25,7 +26,10 @@ prepare_rf_data <- function(settings, poptrag) {
       "artist_initial_split",
       "apply_imputation",
       "n_cores",
-      "drop_POPULARMUSIC"
+      "drop_POPULARMUSIC",
+      "cv_folds",
+      "cv_repeats",
+      "max_tracks_per_artist_cv"
     )
   )
   if (!length(check_settings) == 0) {
@@ -105,94 +109,49 @@ prepare_rf_data <- function(settings, poptrag) {
     high_test_imputed <- artisthigh_split$high_test
   }
 
+  # Create CV folds with artist-based splitting
+  message("---CREATING CV FOLDS---")
+  low_cv_splits <- NULL
+  high_cv_splits <- NULL
+
+  if (!is.null(settings$cv_folds) && settings$cv_folds > 1) {
+    low_cv_splits <- create_artist_cv_splits(
+      low_train_imputed,
+      n_folds = settings$cv_folds,
+      repeats = settings$cv_repeats,
+      max_tracks_per_artist = settings$max_tracks_per_artist_cv,
+      seed = settings$seed
+    )
+
+    high_cv_splits <- create_artist_cv_splits(
+      high_train_imputed,
+      n_folds = settings$cv_folds,
+      repeats = settings$cv_repeats,
+      max_tracks_per_artist = settings$max_tracks_per_artist_cv,
+      seed = settings$seed
+    )
+
+    # Sanity checks for factor levels
+    check_factor_levels_in_folds(low_cv_splits, "low")
+    check_factor_levels_in_folds(high_cv_splits, "high")
+  }
+
   datasets <- list(
     low = list(
       train = low_train_imputed,
       test = low_test_imputed,
-      imputer = low_imputer
+      imputer = low_imputer,
+      cv_splits = low_cv_splits
     ),
     high = list(
       train = high_train_imputed,
       test = high_test_imputed,
-      imputer = high_imputer
+      imputer = high_imputer,
+      cv_splits = high_cv_splits
     )
   )
 
   datasets
-}
-
-#' Train and evaluate random-forest models for MusicBrainz with low and high metagenre detail
-#'
-#' Selects the post-imputation features, optionally undersamples, trains
-#' a ranger random-forest and evaluates/plots results for each set of metagenres.
-#'
-#' @param settings Named list of pipeline settings (must contain \code{features_after_impute},
-#'   \code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_low}, \code{run_rf_high},
-#'  \code{ntrees}, \code{mtry}, \code{min.node.size}, \code{max depth}).
-#' @param datasets A list as returned by prepare_rf_data() with elements \code{low} and \code{high},
-#'   each containing \code{train} and \code{test} data.frames.
-#' @return A list with elements \code{low} and \code{high} (each either NULL or a list
-#'   with \code{model}, \code{evaluation}, \code{train_df}, \code{test_df}).
-#' @export
-train_and_evaluate_rf <- function(settings, datasets) {
-  if (
-    is.null(settings$features_after_impute) ||
-      !is.character(settings$features_after_impute)
-  ) {
-    stop("Please provide settings$features_after_impute as character vector.")
-  }
-  feats <- settings$features_after_impute
-  if (!"metagenre" %in% feats) {
-    feats <- c("metagenre", feats)
-  }
-
-  results <- list()
-
-  for (detail in c("low", "high")) {
-    run_flag <- isTRUE(settings[[paste0("run_rf_", detail)]])
-    if (!run_flag) {
-      results[[detail]] <- NULL
-      next
-    }
-
-    train_df <- select_post_impute_features(datasets[[detail]]$train, feats)
-    test_df <- select_post_impute_features(datasets[[detail]]$test, feats)
-
-    set.seed(settings$seed)
-    train_df <- undersample_train(
-      train_df,
-      factor = settings$undersample_factor
-    )
-
-    message(sprintf("---TRAINING MODEL FOR %s---", toupper(detail)))
-    rf_model <- train_rf(
-      train_df,
-      ntrees = settings$ntrees,
-      mtry = settings$mtry,
-      min.node.size = settings$min.node.size,
-      max.depth = settings$max.depth,
-      seed = settings$seed
-    )
-
-    model_settings <- get_model_settings(rf_model)
-
-    eval <- evaluate_train_and_test(
-      rf_model,
-      train_df,
-      test_df,
-      top_n = settings$varimp_top_n
-    )
-
-    results[[detail]] <- list(
-      model = rf_model,
-      model_settings = model_settings,
-      evaluation = eval,
-      train_df = train_df,
-      test_df = test_df
-    )
-  }
-
-  results
 }
 
 select_features_poptrag <- function(poptrag) {
@@ -424,205 +383,125 @@ apply_imputer <- function(df, imputer_model) {
     dplyr::bind_cols(as.data.frame(imputed_data))
 }
 
-undersample_train <- function(train_df, factor = 1) {
-  counts <- table(train_df$metagenre)
-  min_size <- min(counts)
-  max_size <- max(counts)
-  max_factor <- max_size / min_size
-  if (factor > max_factor) {
-    warning("Reducing factor to maximum possible.")
-    factor <- max_factor
-  }
-  target <- floor(min_size * factor)
-  parts <- split(train_df, train_df$metagenre)
-  sampled <- lapply(parts, function(x) {
-    if (nrow(x) > target) {
-      x[sample(nrow(x), target), , drop = FALSE]
-    } else {
-      x
-    }
-  })
-  out <- dplyr::bind_rows(sampled)
-  out$metagenre <- factor(out$metagenre, levels = levels(train_df$metagenre))
-  out
-}
 
-select_post_impute_features <- function(df, features) {
-  df |> dplyr::select(dplyr::all_of(features))
-}
-
-train_rf <- function(
-  train_df,
-  ntrees,
-  mtry,
-  min.node.size,
-  max.depth,
+#' Create artist-based cross-validation splits
+#'
+#' Creates CV folds ensuring no artist appears in multiple folds.
+#' Artists with many tracks are undersampled to facilitate splitting.
+#'
+#' @param train_data Training data with artist.s.id and metagenre columns
+#' @param n_folds Number of CV folds
+#' @param repeats Number of repeated CV runs
+#' @param max_tracks_per_artist Maximum tracks per artist before undersampling
+#' @param seed Random seed
+#' @return rsample vfold_cv object
+create_artist_cv_splits <- function(
+  train_data,
+  n_folds = 5,
+  repeats = 1,
+  max_tracks_per_artist = 50,
   seed = 42
 ) {
-  ranger::ranger(
-    formula = metagenre ~ .,
-    data = train_df,
-    num.trees = ntrees,
-    mtry = mtry,
-    max.depth = max.depth,
-    min.node.size = min.node.size,
-    importance = "impurity",
-    probability = TRUE,
-    classification = TRUE,
-    seed = seed
-  )
-}
+  # Undersample artists with too many tracks
+  set.seed(seed)
+  artist_groups <- split(train_data, train_data$artist.s.id)
+  artist_undersampled <- lapply(artist_groups, function(artist_tracks) {
+    if (nrow(artist_tracks) > max_tracks_per_artist) {
+      artist_tracks[
+        sample(nrow(artist_tracks), max_tracks_per_artist),
+        ,
+        drop = FALSE
+      ]
+    } else {
+      artist_tracks
+    }
+  })
+  train_undersampled <- dplyr::bind_rows(artist_undersampled)
 
-get_model_settings <- function(model) {
-  list(
-    ntrees = model$num.trees,
-    mtry = model$mtry,
-    max.depth = model$max.depth,
-    min.node.size = model$min.node.size,
-    nindependent = model$num.independent.variables,
-    vip.mode = model$importance.mode,
-    splitrule = model$splitrule,
-    treetype = model$treetype
-  )
-}
+  # Get unique artists with their metagenres (use first occurrence)
+  artist_data <- train_undersampled |>
+    dplyr::distinct(artist.s.id, .keep_all = TRUE) |>
+    dplyr::select(artist.s.id, metagenre)
 
-evaluate_train_and_test <- function(model, train_df, test_df, top_n = 40) {
-  train_eval <- get_cm_and_metrics(model, train_df)
-  test_eval <- get_cm_and_metrics(model, test_df)
-
-  varimp <- ranger::importance(model)
-  varimp_df <- data.frame(Variable = names(varimp), Importance = varimp) |>
-    dplyr::arrange(dplyr::desc(Importance))
-
-  list(
-    confusion_train = train_eval$cm,
-    metrics_train = train_eval$metrics,
-    confusion_test = test_eval$cm,
-    metrics_test = test_eval$metrics,
-    varimp = varimp_df
-  )
-}
-
-get_cm_and_metrics <- function(model, df) {
-  preds <- predict(model, data = df)
-  pred_classes <- colnames(preds$predictions)[max.col(preds$predictions)]
-  all_levels <- union(levels(df$metagenre), levels(model$predictions))
-  all_levels <- union(levels(df$metagenre), levels(model$forest$levels))
-  pred_classes <- colnames(preds$predictions)[max.col(preds$predictions)]
-  conf <- table(
-    Actual = factor(df$metagenre, levels = all_levels),
-    Predicted = factor(pred_classes, levels = all_levels)
+  # Create artist-level folds
+  set.seed(seed)
+  artist_folds <- rsample::vfold_cv(
+    artist_data,
+    v = n_folds,
+    repeats = repeats,
+    strata = metagenre
   )
 
-  acc <- sum(diag(conf)) / sum(conf)
-  kappa <- caret::confusionMatrix(conf)$overall["Kappa"]
-  f1s <- vapply(
-    all_levels,
-    function(l) {
-      tp <- conf[l, l]
-      fp <- sum(conf[, l]) - tp
-      fn <- sum(conf[l, ]) - tp
-      prec <- ifelse(tp + fp == 0, 0, tp / (tp + fp))
-      rec <- ifelse(tp + fn == 0, 0, tp / (tp + fn))
-      if (prec + rec == 0) 0 else 2 * prec * rec / (prec + rec)
-    },
-    numeric(1)
-  )
-  f1macro <- mean(f1s)
-  mcc_val <- mltools::mcc(
-    actuals = factor(df$metagenre, levels = all_levels),
-    preds = factor(pred_classes, levels = all_levels)
-  )
-  metrics <- list(
-    accuracy = acc,
-    kappa = kappa,
-    f1macro = f1macro,
-    mcc = mcc_val
-  )
+  # Convert artist-level folds to track-level folds
+  cv_splits <- lapply(seq_len(nrow(artist_folds)), function(fold_idx) {
+    analysis_artists <- rsample::analysis(artist_folds$splits[[
+      fold_idx
+    ]])$artist.s.id
+    assessment_artists <- rsample::assessment(artist_folds$splits[[
+      fold_idx
+    ]])$artist.s.id
 
-  cm_df <- as.data.frame(conf) |>
-    dplyr::group_by(Actual) |>
-    dplyr::mutate(relfreq = Freq / sum(Freq), labelcolor = relfreq > 0.5) |>
-    dplyr::ungroup()
+    # Get corresponding tracks
+    analysis_data <- train_undersampled |>
+      dplyr::filter(artist.s.id %in% analysis_artists)
+    assessment_data <- train_undersampled |>
+      dplyr::filter(artist.s.id %in% assessment_artists)
 
-  list(cm = cm_df, metrics = metrics)
-}
-
-plot_cm <- function(cm_df, metrics) {
-  metrics_text <- sprintf(
-    "Acc: %.3f  Kappa: %.3f  F1-macro: %.3f  MCC: %.3f",
-    metrics$acc,
-    metrics$kappa,
-    metrics$f1macro,
-    metrics$mcc
-  )
-  ggplot2::ggplot(
-    cm_df,
-    ggplot2::aes(x = Predicted, y = forcats::fct_rev(Actual), fill = relfreq)
-  ) +
-    ggplot2::geom_tile() +
-    ggplot2::geom_text(
-      ggplot2::aes(label = Freq, color = labelcolor),
-      show.legend = FALSE
-    ) +
-    ggplot2::scale_fill_gradient(
-      low = "white",
-      high = "#c40d20",
-      labels = scales::percent_format(accuracy = 1),
-      name = "Rel. freq\n(pred | actual)"
-    ) +
-    ggplot2::scale_color_manual(values = c("black", "white")) +
-    ggplot2::scale_x_discrete(position = "top") +
-    ggplot2::labs(
-      subtitle = metrics_text,
-      x = "PREDICTED",
-      y = "ACTUAL"
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      legend.position = "right",
-      legend.text = ggplot2::element_text(color = "grey45"),
-      legend.title = ggplot2::element_text(color = "grey45"),
-      axis.text.x = ggplot2::element_text(
-        angle = 45,
-        hjust = 0,
-        vjust = 0,
-        size = 12
-      ),
-      axis.text.y = ggplot2::element_text(size = 12),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14),
-      plot.subtitle = ggplot2::element_text(face = "bold")
+    # Create a manual rsplit object
+    list(
+      analysis = analysis_data,
+      assessment = assessment_data,
+      fold = artist_folds$id[[fold_idx]],
+      id2 = artist_folds$id2[[fold_idx]]
     )
+  })
+
+  cv_splits
 }
 
-plot_varimp <- function(varimp_df, top_n = 40) {
-  df <- varimp_df |>
-    dplyr::arrange(dplyr::desc(Importance)) |>
-    head(top_n)
-  p <- ggplot2::ggplot(
-    df,
-    ggplot2::aes(
-      x = reorder(Variable, Importance),
-      y = Importance
-    )
-  ) +
-    ggplot2::geom_col(fill = "grey50") +
-    ggplot2::coord_flip() +
-    ggplot2::scale_y_continuous(
-      expand = ggplot2::expansion(mult = c(0, 0.05))
-    ) +
-    ggplot2::labs(
-      x = "Variable",
-      y = "Importance"
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      axis.text.y = ggplot2::element_text(size = 12),
-      axis.text.x = ggplot2::element_text(color = "grey45"),
-      panel.grid.major.y = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_text(color = "grey45"),
-      axis.title.y = ggplot2::element_blank()
-    )
-  p
+#' Check factor levels in CV folds
+#'
+#' Prints warnings if any factor level has fewer than 30 observations
+#' in any fold.
+#'
+#' @param cv_splits List of CV splits
+#' @param dataset_name Name of dataset for messages
+check_factor_levels_in_folds <- function(cv_splits, dataset_name) {
+  if (is.null(cv_splits)) {
+    return(invisible(NULL))
+  }
+
+  message(sprintf("Checking factor levels for %s dataset...", dataset_name))
+
+  for (fold_idx in seq_along(cv_splits)) {
+    fold_data <- cv_splits[[fold_idx]]$analysis
+
+    # Get all factor columns (excluding metagenre which is the target)
+    factor_cols <- names(fold_data)[
+      vapply(fold_data, is.factor, logical(1))
+    ]
+    factor_cols <- setdiff(factor_cols, "metagenre")
+
+    for (col in factor_cols) {
+      level_counts <- table(fold_data[[col]])
+      min_count <- min(level_counts)
+
+      if (min_count < 30) {
+        min_level <- names(level_counts)[which.min(level_counts)]
+        warning(
+          sprintf(
+            "Fold %d (%s): Feature '%s', level '%s' has only %d observations",
+            fold_idx,
+            dataset_name,
+            col,
+            min_level,
+            min_count
+          ),
+          call. = FALSE
+        )
+      }
+    }
+  }
+
+  invisible(NULL)
 }
