@@ -2,21 +2,20 @@
 #'
 #' Runs the full data preparation pipeline up to and including optional
 #' missForest imputation. Always returns train and test sets for both
-#' MusicBrainz ("mb") and Spotify ("s").
+#' low and high detail MusicBrainz metagenre sets ("low", "high").
 #'
 #' @param settings A named list of pipeline settings (must contain
 #'   \code{subsample_prop}, \code{casewise_threshold}, \code{seed},
 #'   \code{artist_initial_split}, \code{apply_imputation}, \code{n_cores},
-#'   \code{drop_POPULARMUSIC}, \code{metagenre_detail}).
+#'   \code{drop_POPULARMUSIC}.
 #' @param poptrag A data.frame or tibble containing the full poptrag dataset used for feature selection.
 #' @return A list with elements:
 #'   \describe{
 #'     \item{imputer_model}{trained imputer or NULL}
-#'     \item{datasets}{list with elements \code{mb} and \code{s}, each a list with \code{train} and \code{test} data.frames}
+#'     \item{datasets}{list with elements \code{low} and \code{high}, each a list with \code{train} and \code{test} data.frames}
 #'   }
 #' @export
 prepare_rf_data <- function(settings, poptrag) {
-  # replicate original checks (kept as in original)
   check_settings <- setdiff(
     names(settings),
     c(
@@ -26,8 +25,7 @@ prepare_rf_data <- function(settings, poptrag) {
       "artist_initial_split",
       "apply_imputation",
       "n_cores",
-      "drop_POPULARMUSIC",
-      "metagenre_detail"
+      "drop_POPULARMUSIC"
     )
   )
   if (!length(check_settings) == 0) {
@@ -44,85 +42,95 @@ prepare_rf_data <- function(settings, poptrag) {
     threshold = settings$casewise_threshold
   )
 
-  suffix <- switch(
-    as.character(settings$metagenre_detail),
-    "low" = "10_15",
-    "high" = "25_30",
-    stop("metagenre_detail must be 'low' or 'high'")
+  low_met <- read_feather_with_lists(
+    paste0("models/metagenres/mb_metagenres_10_15.feather")
   )
-  mb_met <- read_feather_with_lists(
-    paste0("models/metagenres/mb_metagenres_", suffix, ".feather")
-  )
-  s_met <- read_feather_with_lists(
-    paste0("models/metagenres/s_metagenres_", suffix, ".feather")
+  high_met <- read_feather_with_lists(
+    paste0("models/metagenres/mb_metagenres_25_30.feather")
   )
 
-  mb_joined <- join_target(casewise, mb_met, settings$drop_POPULARMUSIC)
-  s_joined <- join_target(casewise, s_met, settings$drop_POPULARMUSIC)
+  low_joined <- join_target(casewise, low_met, settings$drop_POPULARMUSIC)
+  high_joined <- join_target(casewise, high_met, settings$drop_POPULARMUSIC)
 
   if (settings$subsample_prop <= 0 || settings$subsample_prop > 1) {
     stop("settings$subsample_prop must be in (0, 1].")
   }
   if (settings$subsample_prop == 1) {
-    mb_sample <- mb_joined
-    s_sample <- s_joined
+    low_sample <- low_joined
+    high_sample <- high_joined
   } else {
     set.seed(settings$seed)
-    mb_sample <- draw_prototype_sample(
-      mb_joined,
+    low_sample <- draw_prototype_sample(
+      low_joined,
       prop = settings$subsample_prop
     )
-    s_sample <- draw_prototype_sample(s_joined, prop = settings$subsample_prop)
+    high_sample <- draw_prototype_sample(
+      high_joined,
+      prop = settings$subsample_prop
+    )
   }
 
-  artists_split <- split_artists_and_train_test(
-    mb_sample,
-    s_sample,
+  artisthigh_split <- split_artists_and_train_test(
+    low_sample,
+    high_sample,
     prop = settings$artist_initial_split,
     seed = settings$seed
   )
 
-  imputer_model <- NULL
+  low_imputer <- NULL
+  high_imputer <- NULL
   if (settings$apply_imputation) {
-    imputation_frame <- get_imputation_frame(
-      train_sets = list(artists_split$mb_train, artists_split$s_train),
-      test_sets = list(artists_split$mb_test, artists_split$s_test)
-    )
-
-    imputer_model <- train_imputer(
-      imputation_frame,
+    low_imputer <- train_imputer(
+      artisthigh_split$low_train,
       nthreads = settings$n_cores,
       seed = settings$seed
     )
-    mb_train_imputed <- apply_imputer(artists_split$mb_train, imputer_model)
-    mb_test_imputed <- apply_imputer(artists_split$mb_test, imputer_model)
-    s_train_imputed <- apply_imputer(artists_split$s_train, imputer_model)
-    s_test_imputed <- apply_imputer(artists_split$s_test, imputer_model)
+    low_train_imputed <- low_imputer$ximp
+    low_test_imputed <- apply_imputer(artisthigh_split$low_test, low_imputer)
+
+    high_imputer <- train_imputer(
+      artisthigh_split$high_train,
+      nthreads = settings$n_cores,
+      seed = settings$seed
+    )
+    high_train_imputed <- high_imputer$ximp
+    high_test_imputed <- apply_imputer(
+      artisthigh_split$high_test,
+      high_imputer
+    )
   } else {
-    mb_train_imputed <- artists_split$mb_train
-    mb_test_imputed <- artists_split$mb_test
-    s_train_imputed <- artists_split$s_train
-    s_test_imputed <- artists_split$s_test
+    low_train_imputed <- artisthigh_split$low_train
+    low_test_imputed <- artisthigh_split$low_test
+    high_train_imputed <- artisthigh_split$high_train
+    high_test_imputed <- artisthigh_split$high_test
   }
 
   datasets <- list(
-    mb = list(train = mb_train_imputed, test = mb_test_imputed),
-    s = list(train = s_train_imputed, test = s_test_imputed)
+    low = list(
+      train = low_train_imputed,
+      test = low_test_imputed,
+      imputer = low_imputer
+    ),
+    high = list(
+      train = high_train_imputed,
+      test = high_test_imputed,
+      imputer = high_imputer
+    )
   )
 
-  list(imputer_model = imputer_model, datasets = datasets)
+  datasets
 }
 
-#' Train and evaluate random-forest models for MusicBrainz and Spotify
+#' Train and evaluate random-forest models for MusicBrainz with low and high metagenre detail
 #'
 #' Selects the post-imputation features, optionally undersamples, trains
-#' a ranger random-forest and evaluates/plots results for each platform.
+#' a ranger random-forest and evaluates/plots results for each set of metagenres.
 #'
 #' @param settings Named list of pipeline settings (must contain \code{features_after_impute},
 #'   \code{undersample_factor}, \code{varimp_top_n}, \code{seed}, \code{run_rf_mb}, \code{run_rf_s}).
-#' @param datasets A list as returned by prepare_rf_data() with elements \code{mb} and \code{s},
+#' @param datasets A list as returned by prepare_rf_data() with elements \code{low} and \code{high},
 #'   each containing \code{train} and \code{test} data.frames.
-#' @return A list with elements \code{mb} and \code{s} (each either NULL or a list
+#' @return A list with elements \code{low} and \code{high} (each either NULL or a list
 #'   with \code{model}, \code{evaluation}, \code{train_df}, \code{test_df}).
 #' @export
 train_and_evaluate_rf <- function(settings, datasets) {
@@ -139,15 +147,15 @@ train_and_evaluate_rf <- function(settings, datasets) {
 
   results <- list()
 
-  for (plat in c("mb", "s")) {
-    run_flag <- isTRUE(settings[[paste0("run_rf_", plat)]])
+  for (detail in c("low", "high")) {
+    run_flag <- isTRUE(settings[[paste0("run_rf_", detail)]])
     if (!run_flag) {
-      results[[plat]] <- NULL
+      results[[detail]] <- NULL
       next
     }
 
-    train_df <- select_post_impute_features(datasets[[plat]]$train, feats)
-    test_df <- select_post_impute_features(datasets[[plat]]$test, feats)
+    train_df <- select_post_impute_features(datasets[[detail]]$train, feats)
+    test_df <- select_post_impute_features(datasets[[detail]]$test, feats)
 
     set.seed(settings$seed)
     train_df <- undersample_train(
@@ -155,12 +163,12 @@ train_and_evaluate_rf <- function(settings, datasets) {
       factor = settings$undersample_factor
     )
 
-    message(sprintf("---TRAINING MODEL FOR %s---", toupper(plat)))
+    message(sprintf("---TRAINING MODEL FOR %s---", toupper(detail)))
     rf_model <- train_rf(train_df, ntrees = 1000, seed = settings$seed)
 
     eval <- evaluate_and_plot(rf_model, test_df, top_n = settings$varimp_top_n)
 
-    results[[plat]] <- list(
+    results[[detail]] <- list(
       model = rf_model,
       evaluation = eval,
       train_df = train_df,
@@ -171,7 +179,6 @@ train_and_evaluate_rf <- function(settings, datasets) {
   results
 }
 
-# Select the variables from poptrag used in the model.
 select_features_poptrag <- function(poptrag) {
   poptrag |>
     dplyr::select(
@@ -246,7 +253,6 @@ select_features_poptrag <- function(poptrag) {
     )
 }
 
-# Transform types and handle lyrics for instrumentals.
 transform_features <- function(df) {
   df |>
     dplyr::mutate(
@@ -289,7 +295,6 @@ transform_features <- function(df) {
     )
 }
 
-# Remove rows with excessive missingness.
 apply_casewise_filter <- function(df, threshold = 0.4) {
   df$n_NA <- rowSums(is.na(df))
   keep <- df |>
@@ -297,7 +302,6 @@ apply_casewise_filter <- function(df, threshold = 0.4) {
   keep
 }
 
-# Join metagenre target and coerce to factor.
 join_target <- function(casewise, metagenres, drop_POPULARMUSIC) {
   joined <- casewise |>
     dplyr::inner_join(
@@ -316,7 +320,6 @@ join_target <- function(casewise, metagenres, drop_POPULARMUSIC) {
   joined
 }
 
-# Draw a stratified small prototype sample.
 draw_prototype_sample <- function(df, prop = 0.12) {
   rsample::initial_split(df, prop = prop, strata = metagenre) |>
     rsample::training()
@@ -324,67 +327,58 @@ draw_prototype_sample <- function(df, prop = 0.12) {
 
 # Produce train/test splits based on first artist genre.
 split_artists_and_train_test <- function(
-  mb_sample,
-  s_sample,
+  low_sample,
+  high_sample,
   prop = 0.5,
   seed = 42
 ) {
-  mb_dist <- mb_sample |>
+  low_dist <- low_sample |>
     dplyr::distinct(artist.s.id, .keep_all = TRUE)
-  s_dist <- s_sample |>
+  high_dist <- high_sample |>
     dplyr::distinct(artist.s.id, .keep_all = TRUE)
 
   set.seed(seed)
-  mb_split <- rsample::initial_split(mb_dist, prop = prop, strata = metagenre)
-  s_split <- rsample::initial_split(s_dist, prop = prop, strata = metagenre)
+  low_split <- rsample::initial_split(low_dist, prop = prop, strata = metagenre)
+  high_split <- rsample::initial_split(
+    high_dist,
+    prop = prop,
+    strata = metagenre
+  )
 
-  mb_train_art <- rsample::training(mb_split)
-  mb_test_art <- rsample::testing(mb_split)
-  s_train_art <- rsample::training(s_split)
-  s_test_art <- rsample::testing(s_split)
+  low_train_art <- rsample::training(low_split)
+  low_test_art <- rsample::testing(low_split)
+  high_train_art <- rsample::training(high_split)
+  high_test_art <- rsample::testing(high_split)
 
-  mb_train <- mb_sample |>
+  low_train <- low_sample |>
     dplyr::inner_join(
-      mb_train_art |> dplyr::select(artist.s.id),
+      low_train_art |> dplyr::select(artist.s.id),
       by = "artist.s.id"
     )
-  mb_test <- mb_sample |>
+  low_test <- low_sample |>
     dplyr::inner_join(
-      mb_test_art |> dplyr::select(artist.s.id),
+      low_test_art |> dplyr::select(artist.s.id),
       by = "artist.s.id"
     )
-  s_train <- s_sample |>
+  high_train <- high_sample |>
     dplyr::inner_join(
-      s_train_art |> dplyr::select(artist.s.id),
+      high_train_art |> dplyr::select(artist.s.id),
       by = "artist.s.id"
     )
-  s_test <- s_sample |>
+  high_test <- high_sample |>
     dplyr::inner_join(
-      s_test_art |> dplyr::select(artist.s.id),
+      high_test_art |> dplyr::select(artist.s.id),
       by = "artist.s.id"
     )
 
   list(
-    mb_train = mb_train,
-    mb_test = mb_test,
-    s_train = s_train,
-    s_test = s_test
+    low_train = low_train,
+    low_test = low_test,
+    high_train = high_train,
+    high_test = high_test
   )
 }
 
-# Build training frame for imputer: train ids minus test ids.
-get_imputation_frame <- function(train_sets, test_sets) {
-  train_ids <- unique(unlist(lapply(train_sets, function(df) df$track.s.id)))
-  test_ids <- unique(unlist(lapply(test_sets, function(df) df$track.s.id)))
-  impute_ids <- setdiff(train_ids, test_ids)
-  frame <- do.call(rbind, train_sets) |>
-    dplyr::filter(.data$track.s.id %in% impute_ids) |>
-    dplyr::distinct(track.s.id, .keep_all = TRUE)
-  message("Observations for imputer: ", format(nrow(frame), big.mark = ","))
-  frame
-}
-
-# Train missForest imputer.
 train_imputer <- function(impute_frame, nthreads = 19, seed = 42) {
   set.seed(seed)
   message("---TRAINING MISSFOREST IMPUTER---")
@@ -401,7 +395,6 @@ train_imputer <- function(impute_frame, nthreads = 19, seed = 42) {
   )
 }
 
-# Apply imputer model to a df and return imputed df.
 apply_imputer <- function(df, imputer_model) {
   imputed_data <- missForestPredict::missForestPredict(
     imputer_model,
@@ -415,7 +408,6 @@ apply_imputer <- function(df, imputer_model) {
     dplyr::bind_cols(as.data.frame(imputed_data))
 }
 
-# Undersample train set to control class imbalance.
 undersample_train <- function(train_df, factor = 1) {
   counts <- table(train_df$metagenre)
   min_size <- min(counts)
@@ -439,7 +431,10 @@ undersample_train <- function(train_df, factor = 1) {
   out
 }
 
-# Train a random forest with ranger.
+select_post_impute_features <- function(df, features) {
+  df |> dplyr::select(dplyr::all_of(features))
+}
+
 train_rf <- function(train_df, ntrees = 1000, seed = 42) {
   ranger::ranger(
     formula = metagenre ~ .,
@@ -454,7 +449,6 @@ train_rf <- function(train_df, ntrees = 1000, seed = 42) {
   )
 }
 
-# Evaluate RF and plot confusion matrix with metrics annotated.
 evaluate_and_plot <- function(model, test_df, top_n = 40) {
   preds <- predict(model, data = test_df)
   pred_classes <- colnames(preds$predictions)[max.col(preds$predictions)]
@@ -523,7 +517,7 @@ plot_cm <- function(cm_df, metrics) {
   )
   ggplot2::ggplot(
     cm_df,
-    ggplot2::aes(x = Predicted, y = Actual, fill = relfreq)
+    ggplot2::aes(x = Predicted, y = forcats::fct_rev(Actual), fill = relfreq)
   ) +
     ggplot2::geom_tile() +
     ggplot2::geom_text(
@@ -537,24 +531,30 @@ plot_cm <- function(cm_df, metrics) {
       name = "Rel. freq\n(pred | actual)"
     ) +
     ggplot2::scale_color_manual(values = c("black", "white")) +
+    ggplot2::scale_x_discrete(position = "top") +
     ggplot2::labs(
-      title = "Random Forest Confusion Matrix",
       subtitle = metrics_text,
-      x = "Predicted Metagenre",
-      y = "Actual Metagenre"
+      x = "PREDICTED",
+      y = "ACTUAL"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
       legend.position = "right",
       legend.text = ggplot2::element_text(color = "grey45"),
       legend.title = ggplot2::element_text(color = "grey45"),
-      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 12),
+      axis.text.x = ggplot2::element_text(
+        angle = 45,
+        hjust = 0,
+        vjust = 0,
+        size = 12
+      ),
       axis.text.y = ggplot2::element_text(size = 12),
+      axis.title.x = ggplot2::element_text(color = "grey45", size = 14),
+      axis.title.y = ggplot2::element_text(color = "grey45", size = 14),
       plot.subtitle = ggplot2::element_text(face = "bold")
     )
 }
 
-# Plot top variable importance.
 plot_varimp <- function(varimp_df, top_n = 40) {
   df <- varimp_df |>
     dplyr::arrange(dplyr::desc(Importance)) |>
@@ -572,7 +572,6 @@ plot_varimp <- function(varimp_df, top_n = 40) {
       expand = ggplot2::expansion(mult = c(0, 0.05))
     ) +
     ggplot2::labs(
-      title = "Top Variable Importance",
       x = "Variable",
       y = "Importance"
     ) +
@@ -585,8 +584,4 @@ plot_varimp <- function(varimp_df, top_n = 40) {
       axis.title.y = ggplot2::element_blank()
     )
   p
-}
-
-select_post_impute_features <- function(df, features) {
-  df |> dplyr::select(dplyr::all_of(features))
 }

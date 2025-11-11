@@ -26,22 +26,16 @@ devtools::load_all()
 
 mb_train_low <- read_feather_with_lists("../models/classifier/rf_mb_lowres_train.feather")
 mb_test_low <- read_feather_with_lists("../models/classifier/rf_mb_lowres_test.feather")
-s_train_low <- read_feather_with_lists("../models/classifier/rf_s_lowres_train.feather")
-s_test_low <- read_feather_with_lists("../models/classifier/rf_s_lowres_test.feather")
 mb_train_high <- read_feather_with_lists("../models/classifier/rf_mb_highres_train.feather")
 mb_test_high <- read_feather_with_lists("../models/classifier/rf_mb_highres_test.feather")
-s_train_high <- read_feather_with_lists("../models/classifier/rf_s_highres_train.feather")
-s_test_high <- read_feather_with_lists("../models/classifier/rf_s_highres_test.feather")
 
 eval_mb_low <- readRDS("../models/classifier/rf_mb_lowres_eval.rds")
-eval_s_low <- readRDS("../models/classifier/rf_s_lowres_eval.rds")
 eval_mb_high <- readRDS("../models/classifier/rf_mb_highres_eval.rds")
-eval_s_high <- readRDS("../models/classifier/rf_s_highres_eval.rds")
 ```
 
-# Prototyping Random Forest Classifier for Metagenre Classification
+# Prototyping Random Forest Classifier for Community Metagenre Classification
 
-This report presents the evaluation results of Random Forest classifiers trained to predict metagenres based on the MusicBrainz and Spotify genre tags (see preceeding analyses). The classifiers were trained for both low detailed and high detailed metagenre classifications.
+This report presents the evaluation results of Random Forest classifiers trained to predict the MusicBrainz folksonomy metagenres. Classifiers were trained for both low detailed and high detailed metagenre taxonomies.
 
 ## Workflow
 
@@ -70,12 +64,12 @@ graph TD
   B --> C["transform characters to factors, apply heuristics to lyrics features"]
   C --> D["casewise deletion of excessive missing values (greater 40%)"]
   D --> E["join with metagenre target labels on specified detail level"]
-  E --> F["subsample for prototypying (e.g., 20% of data)"]
+  E --> F["subsample for prototypying (e.g., 20% of data, optional)"]
   F --> G["split into training and test set (80/20) on artist level to avoid data leakage"]
-  G --> H["train random forest imputer model for missing values on all tracks that are in any traing set but not in test sets"]
-  H --> I["impute missing values in all training and test sets"]
+  G --> H["train random forest imputer model for missing values on train sets (optional)"]
+  H --> I["impute missing values in training and test sets with corresponding imputation model (otional)"]
   I --> J["select predictors for modeling"]
-  J --> K["undersample majority classes in training set to handle class imbalance (target class size = 10 * size of smallest class)"]
+  J --> K["undersample majority classes in training set to handle class imbalance (e.g., target class size = 10 * size of smallest class)"]
   K --> L["train initial random forest classifier on training sets (1k trees, mtry = sqrt(number of predictors), min.node.size = 1)"]
   L --> M["evaluate model performance on test sets (confusion matrix, accuracy, kappa, macro-F1, variable importance)"]
 ```
@@ -83,10 +77,9 @@ graph TD
 ## Data sets
 
 ```{r dataset_summary}	
-summarize_ds <- function(resolution, platform, split, df) {
+summarize_ds <- function(resolution, split, df) {
   data.frame(
     Metagenre_Resolution = resolution,
-    Platform = platform,
     Split = split,
     N_Tracks = format(nrow(df), big.mark = ","),
     N_Artists = format(nrow(dplyr::distinct(df, .data$artist.s.id)), big.mark = ",")
@@ -94,19 +87,15 @@ summarize_ds <- function(resolution, platform, split, df) {
 }
 
 datasets <- dplyr::bind_rows(
-  summarize_ds("low (10-15)",  "MusicBrainz", "Train", mb_train_low),
-  summarize_ds("low (10-15)",  "MusicBrainz", "Test",  mb_test_low),
-  summarize_ds("low (10-15)",  "Spotify",    "Train", s_train_low),
-  summarize_ds("low (10-15)",  "Spotify",    "Test",  s_test_low),
-  summarize_ds("high (25-30)", "MusicBrainz", "Train", mb_train_high),
-  summarize_ds("high (25-30)", "MusicBrainz", "Test",  mb_test_high),
-  summarize_ds("high (25-30)", "Spotify",    "Train", s_train_high),
-  summarize_ds("high (25-30)", "Spotify",    "Test",  s_test_high)
+  summarize_ds("low (10-15)",  "Train", mb_train_low),
+  summarize_ds("low (10-15)",  "Test",  mb_test_low),
+  summarize_ds("high (25-30)", "Train", mb_train_high),
+  summarize_ds("high (25-30)", "Test",  mb_test_high),
 )
 
 knitr::kable(
   datasets,
-  col.names = c("Metagenre Resolution", "Platform", "Split", "N~Tracks~", "N~Artists~"),
+  col.names = c("Metagenre Resolution", "Split", "N~Tracks~", "N~Artists~"),
   caption = "Dataset splits used in the analyses"
 )
 ```	
@@ -120,62 +109,32 @@ knitr::asis_output(paste0("- ", cols, collapse = "\n"))
 ```
 
 ### List of selected features after preprocessing and imputation
-#### Low detailed Musicbrainz
+
 ```{r selected_features mb low}
 cols_mb_low <- eval_mb_low$varimp$Variable
 knitr::asis_output(paste0("- ", cols_mb_low, collapse = "\n"))
 ```
-#### Low detailed Spotify
-```{r selected_features s low}
-cols_s_low <- eval_s_low$varimp$Variable
-knitr::asis_output(paste0("- ", cols_s_low, collapse = "\n"))
-```
-#### High detailed Musicbrainz
-```{r selected_features mb high}
-cols_mb_high <- eval_mb_high$varimp$Variable
-knitr::asis_output(paste0("- ", cols_mb_high, collapse = "\n"))
-```
-#### High detailed Spotify
-```{r selected_features s high}
-cols_s_high <- eval_s_high$varimp$Variable
-knitr::asis_output(paste0("- ", cols_s_high, collapse = "\n"))
-```
 
-
-# Low detailed metagenres
-
-## MusicBrainz
-
+# Results 
+## Low detailed
 ```{r low_results_mb}
+#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting low detailed MusicBrainz metagenres. Evaluated on **test set.**"
 plot_cm(eval_mb_low$confusion, eval_mb_low$metrics)
+```
+
+```{r low_results_mb varimp}
+#| fig.cap: "**Most important variables** for Random Forest classifier predicting low detailed MusicBrainz metagenres."
 plot_varimp(eval_mb_low$varimp)
 ```
 
-## Spotify
 
-```{r low_results_s}
-plot_cm(eval_s_low$confusion, eval_s_low$metrics)
-plot_varimp(eval_s_low$varimp)
-```
-
-# High detailed metagenre classification
-
-## MusicBrainz
-
+## High detailed
 ```{r high_results_mb cm, fig.height=10, fig.width=12}
+#| fig.cap: "Confusion matrix and evaluation metrics for Random Forest classifier predicting high detailed MusicBrainz metagenres. Evaluated on **test set.**"
 plot_cm(eval_mb_high$confusion, eval_mb_high$metrics)
 ```
 
 ```{r high_results_mb varimp}
+#| fig.cap: "**Most important variables** for Random Forest classifier predicting high detailed MusicBrainz metagenres."
 plot_varimp(eval_mb_high$varimp)
-```
-
-## Spotify
-
-```{r high_results_s cm, fig.height=10, fig.width=12}
-plot_cm(eval_s_high$confusion, eval_s_high$metrics)
-```
-
-```{r high_results_s varimp}
-plot_varimp(eval_s_high$varimp)
 ```
