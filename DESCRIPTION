@@ -27,11 +27,16 @@ Imports:
     igraph,
     missForestPredict,
     mltools,
+    parsnip,
     quarto,
     r2d3,
+    recipes,
     rgexf,
     scales,
     stats,
     stringr,
     tidyr,
-    utils
+    tune,
+    utils,
+    workflows,
+    yardstick
