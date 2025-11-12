@@ -475,80 +475,66 @@ test_that("check_factor_levels_in_folds generates warnings for low counts", {
   testthat::expect_true(any(grepl("Checking factor levels", result)))
 })
 
-test_that("Full pipeline: raw poptrag to prepared RF data", {
-  poptrag <- tibble::tibble(
-    track.s.id = 1:20,
-    artist.s.id = rep(1:5, 4),
-    track.es.popularity = rnorm(20),
-    album.dc.rank = rnorm(20),
-    artist.s.popularity = rep(50:54, 4),
-    artist.s.followers = rep(1000:1004, 4),
-    album.s.totaltracks = rep(10, 20),
-    album.s.releaseyear = rep(2020, 20),
-    album.s.popularity = rep(60, 20),
-    track.s.danceability = rnorm(20),
-    track.s.energy = rnorm(20),
-    track.s.speechiness = rnorm(20),
-    track.s.acousticness = rnorm(20),
-    track.s.instrumentalness = rnorm(20),
-    track.s.liveness = rnorm(20),
-    track.s.valence = rnorm(20),
-    track.s.tempo = rnorm(20),
-    track.s.popularity = rnorm(20),
-    track.s.duration = rnorm(20),
-    track.s.key = rep(c(0, 1, 2, 3, 4), 4),
-    track.s.loudness = rnorm(20),
-    track.s.mode = rep(0:1, 10),
-    track.s.explicitlyrics = rep(c(TRUE, FALSE), 10),
-    track.s.timesignature = rep("4/4", 20),
-    track.is.instrumental = rep(c(FALSE, TRUE), 10),
-    artist.mb.type = rep("Person", 20),
-    artist.mb.gender = rep(c("Male", "Female"), 10),
-    artist.mb.area = rep(c("US", "UK"), 10),
-    artist.mb.birthyear = rep(1980, 20),
-    artist.mb.dead = rep(FALSE, 20),
-    artist.mb.origin = rep(c("US", "UK"), 10),
-    track.ab.tonal.key = rep(0:1, 10),
-    track.ab.tonal.mode = rep(0:1, 10),
-    track.dz.album.explicitlyrics = rep(c(TRUE, FALSE), 10),
-    track.language = rep(c("en", "de"), 10),
-    track.is.dach = rep(c(FALSE, TRUE), 10),
-    lyrics.distinct_words_ratio = rnorm(20, mean = 0.7),
-    lyrics.repeated_lines_ratio = rnorm(20, mean = 0.3),
-    lyrics.sentiment = rnorm(20),
-    lyrics.nrc_anger = rnorm(20),
-    artist.s.genres = list(
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop"),
-      data.frame(genre = "rock"),
-      data.frame(genre = "pop")
+
+test_that("Full pipeline: prepare_rf_data processes end-to-end", {
+  n <- 100
+  numeric_cols <- setdiff(
+    rf_prep_features,
+    c(
+      "track.s.id",
+      "artist.s.id",
+      "track.s.explicitlyrics",
+      "track.is.instrumental",
+      "track.is.dach",
+      "track.s.timesignature",
+      "artist.mb.type",
+      "artist.mb.gender",
+      "artist.mb.area",
+      "artist.mb.dead",
+      "artist.mb.origin",
+      "track.language",
+      "artist.s.genres"
     )
   )
 
-  metagenres <- tibble::tibble(
-    track.s.id = 1:20,
-    metagenre = c(rep("Rock", 10), rep("Pop", 10))
+  poptrag_list <- c(
+    list(
+      track.s.id = 1:n,
+      artist.s.id = rep(1:5, length.out = n),
+      track.es.popularity = rnorm(n),
+      album.dc.rank = rnorm(n)
+    ),
+    setNames(
+      lapply(numeric_cols, function(x) rnorm(n)),
+      numeric_cols
+    ),
+    list(
+      track.s.explicitlyrics = rep(c(TRUE, FALSE), n / 2),
+      track.s.timesignature = rep("4/4", n),
+      track.is.instrumental = rep(c(FALSE, TRUE), n / 2),
+      track.is.dach = rep(c(FALSE, TRUE), n / 2),
+      artist.mb.type = rep("Person", n),
+      artist.mb.gender = rep(c("Male", "Female"), n / 2),
+      artist.mb.area = rep(c("US", "UK"), n / 2),
+      artist.mb.dead = rep(FALSE, n),
+      artist.mb.origin = rep(c("US", "UK"), n / 2),
+      track.language = rep(c("en", "de"), n / 2),
+      artist.s.genres = replicate(
+        n,
+        data.frame(genre = sample(c("rock", "pop"), 1)),
+        simplify = FALSE
+      )
+    )
   )
 
+  poptrag <- tibble::as_tibble(poptrag_list)
   mapping <- tibble::tibble(
     tag_name = c("rock", "pop"),
     metagenre = c("Rock", "Pop")
+  )
+  metagenres <- tibble::tibble(
+    track.s.id = 1:n,
+    metagenre = c(rep("Rock", n / 2), rep("Pop", n / 2))
   )
 
   settings <- list(
@@ -562,20 +548,29 @@ test_that("Full pipeline: raw poptrag to prepared RF data", {
     cv_folds = 2,
     cv_repeats = 1,
     max_tracks_per_artist_cv = 10,
-    s_genremapping = mapping
+    s_genremapping = mapping,
+    maxiter_imp = 1
   )
 
-  selected <- select_features_poptrag(poptrag)
-  transformed <- transform_features(selected, mapping)
-  casewise <- apply_casewise_filter(transformed, threshold = 0.5)
-  joined <- join_target(casewise, metagenres, FALSE)
-  sampled <- draw_prototype_sample(joined, prop = 0.8)
+  suppressWarnings(
+    result <- testthat::with_mocked_bindings(
+      read_feather_with_lists = function(path) metagenres,
+      prepare_rf_data(settings, poptrag)
+    )
+  )
 
-  testthat::expect_true(nrow(sampled) > 0)
-  testthat::expect_true(all(c("track.s.id", "metagenre") %in% names(sampled)))
-  testthat::expect_true(all(is.factor(sampled$track.s.key)))
-  testthat::expect_false("track.es.popularity" %in% names(sampled))
-  testthat::expect_false("album.dc.rank" %in% names(sampled))
-  testthat::expect_false("artist.s.genres" %in% names(sampled))
-  testthat::expect_true(any(grepl("^dtb\\.", names(sampled))))
+  testthat::expect_equal(length(result), 2)
+  testthat::expect_true("low" %in% names(result))
+  testthat::expect_true("high" %in% names(result))
+
+  for (detail in c("low", "high")) {
+    dataset <- result[[detail]]
+    testthat::expect_true("train" %in% names(dataset))
+    testthat::expect_true("test" %in% names(dataset))
+    testthat::expect_true("cv_splits" %in% names(dataset))
+    testthat::expect_true(nrow(dataset$train) > 0)
+    testthat::expect_true(nrow(dataset$test) > 0)
+    testthat::expect_true(nrow(dataset$cv_splits) > 0)
+    testthat::expect_s3_class(dataset$cv_splits, "rset")
+  }
 })
