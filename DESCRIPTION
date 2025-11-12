@@ -40,3 +40,5 @@ Imports:
     utils,
     workflows,
     yardstick
+Depends: 
+    R (>= 3.5)
