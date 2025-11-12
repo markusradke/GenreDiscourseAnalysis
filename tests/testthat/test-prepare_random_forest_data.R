@@ -421,12 +421,15 @@ test_that("unnest_distribution_genres creates distribution flags", {
 
   mapping <- tibble::tibble(
     tag_name = c("rock", "metal", "pop"),
-    metagenre = c("Rock", "Metal", "Pop")
+    metagenre = c("Rock", "Rock", "Pop")
   )
 
   result <- unnest_distribution_genres(df, mapping)
 
-  testthat::expect_true(any(grepl("^dtb\\.", names(result))))
+  testthat::expect_true(all(c("dtb.rock", "dtb.pop") %in% names(result)))
+  testthat::expect_false("dtb.metal" %in% names(result))
+  testthat::expect_equal(result$dtb.rock, factor(c(TRUE, FALSE)))
+  testthat::expect_equal(result$dtb.pop, factor(c(FALSE, TRUE)))
   testthat::expect_false("artist.s.genres" %in% names(result))
 })
 

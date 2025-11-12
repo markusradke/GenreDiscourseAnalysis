@@ -252,41 +252,38 @@ transform_features <- function(
 }
 
 unnest_distribution_genres <- function(df, mapping) {
-  # in df there is a column artist.s.genres which contains data frames with a column genre.
-  # these genres need to be mapped to higher level genres using the mapping data frame
-  # and then flags for the presense of these higher level genres need to be created in df like this. distribution_rock = TRUE/FALSE
   message("---MAPPING AND CREATING DISTRIBUTION GENRE FLAGS---")
-  pb <- utils::txtProgressBar(min = 0, max = nrow(df), style = 3)
-  on.exit(close(pb), add = TRUE)
-  genre_flags <- lapply(seq_len(nrow(df)), function(i) {
-    utils::setTxtProgressBar(pb, i)
-    genres <- df$artist.s.genres[[i]]$genre
-    mapped_genres <- unique(mapping$metagenre[
-      mapping$tag_name %in% genres
-    ])
-    if (length(mapped_genres) == 0) {
-      mapped_genres <- "POPULAR MUSIC"
+
+  unique_metagenres <- unique(mapping$metagenre)
+  col_names <- paste0("dtb.", gsub("[ -]", ".", unique_metagenres)) |> tolower()
+
+  genre_lookup <- setNames(mapping$metagenre, mapping$tag_name)
+
+  genre_flags_list <- lapply(df$artist.s.genres, function(genres_df) {
+    genres <- genres_df$genre
+    mapped <- unique(genre_lookup[genres])
+    mapped <- mapped[!is.na(mapped)]
+
+    if (length(mapped) == 0) {
+      mapped <- "POPULAR MUSIC"
     }
-    flags <- as.list(setNames(
-      rep(FALSE, length(unique(mapping$metagenre))),
-      paste0("dtb.", gsub("[ -]", ".", unique(mapping$metagenre)))
-    ))
-    for (mg in mapped_genres) {
-      flags[[paste0("dtb.", gsub("[ -]", ".", unique(mg)))]] <- TRUE
-    }
-    return(flags)
+
+    flags <- setNames(rep(FALSE, length(unique_metagenres)), col_names)
+    mapped_cols <- paste0("dtb.", gsub("[ -]", ".", mapped)) |> tolower()
+    flags[mapped_cols] <- TRUE
+
+    flags
   })
-  genre_flags
-  genre_flags_df <- do.call(rbind.data.frame, genre_flags)
-  if ("dtb.POPULAR.MUSIC" %in% colnames(genre_flags_df)) {
-    genre_flags_df <- genre_flags_df |>
-      dplyr::rename(dtb.other = dtb.POPULAR.MUSIC)
+
+  genre_flags_df <- as.data.frame(do.call(rbind, genre_flags_list))
+
+  if ("dtb.popular.music" %in% colnames(genre_flags_df)) {
+    colnames(genre_flags_df)[
+      colnames(genre_flags_df) == "dtb.popular.music"
+    ] <- "dtb.other"
   }
   genre_flags_df |>
-    dplyr::mutate(dplyr::across(
-      dplyr::everything(),
-      as.factor
-    )) |>
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.factor)) |>
     dplyr::bind_cols(df) |>
     dplyr::select(-artist.s.genres)
 }
