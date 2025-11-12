@@ -8,7 +8,8 @@
 #' @param settings A named list of pipeline settings (must contain
 #'   \code{subsample_prop}, \code{casewise_threshold}, \code{seed},
 #'   \code{artist_initial_split}, \code{apply_imputation}, \code{n_cores},
-#'   \code{drop_POPULARMUSIC}, \code{cv_folds}, \code{cv_repeats}, \code{max_tracks_per_artist_cv}).
+#'   \code{drop_POPULARMUSIC}, \code{cv_folds}, \code{cv_repeats}, \code{max_tracks_per_artist_cv},
+#'   \code{s_genremapping}, \code{min_level_total_set}, \code{maxiter_imp}).
 #' @param poptrag A data.frame or tibble containing the full poptrag dataset used for feature selection.
 #' @return A list with elements:
 #'   \describe{
@@ -29,7 +30,9 @@ prepare_rf_data <- function(settings, poptrag) {
       "drop_POPULARMUSIC",
       "cv_folds",
       "cv_repeats",
-      "max_tracks_per_artist_cv"
+      "max_tracks_per_artist_cv",
+      "s_genremapping",
+      "maxiter_imp"
     )
   )
   if (!length(check_settings) == 0) {
@@ -40,7 +43,10 @@ prepare_rf_data <- function(settings, poptrag) {
   }
 
   selected <- select_features_poptrag(poptrag)
-  transformed <- transform_features(selected)
+  transformed <- transform_features(
+    selected,
+    s_genremapping = settings$s_genremapping
+  )
   casewise <- apply_casewise_filter(
     transformed,
     threshold = settings$casewise_threshold
@@ -87,7 +93,8 @@ prepare_rf_data <- function(settings, poptrag) {
     low_imputer <- train_imputer(
       artisthigh_split$low_train,
       nthreads = settings$n_cores,
-      seed = settings$seed
+      seed = settings$seed,
+      maxiter = settings$maxiter_imp
     )
     low_train_imputed <- low_imputer$ximp
     low_test_imputed <- apply_imputer(artisthigh_split$low_test, low_imputer)
@@ -95,7 +102,8 @@ prepare_rf_data <- function(settings, poptrag) {
     high_imputer <- train_imputer(
       artisthigh_split$high_train,
       nthreads = settings$n_cores,
-      seed = settings$seed
+      seed = settings$seed,
+      maxiter = settings$maxiter_imp
     )
     high_train_imputed <- high_imputer$ximp
     high_test_imputed <- apply_imputer(
@@ -183,7 +191,6 @@ select_features_poptrag <- function(poptrag) {
       track.s.explicitlyrics,
       track.s.popularity,
       track.s.duration,
-      album.mb.language,
       artist.mb.type,
       artist.mb.gender,
       artist.mb.area,
@@ -212,6 +219,53 @@ select_features_poptrag <- function(poptrag) {
       track.ab.tonal.chordsnumberrate,
       track.ab.tonal.mode,
       track.ab.tonal.keystrength,
+      track.ab.p.drtmd.alternative,
+      track.ab.p.drtmd.blues,
+      track.ab.p.drtmd.electronic,
+      track.ab.p.drtmd.folk.country,
+      track.ab.p.drtmd.funk.soul.rnb,
+      track.ab.p.drtmd.jazz,
+      track.ab.p.drtmd.pop,
+      track.ab.p.drtmd.rap.hiphop,
+      track.ab.p.drtmd.rock,
+      track.ab.p.eltrc.ambient,
+      track.ab.p.eltrc.drumandbass,
+      track.ab.p.eltrc.house,
+      track.ab.p.eltrc.techno,
+      track.ab.p.eltrc.trance,
+      track.ab.p.rosa.classical,
+      track.ab.p.rosa.dance,
+      track.ab.p.rosa.hiphop,
+      track.ab.p.rosa.jazz,
+      track.ab.p.rosa.pop,
+      track.ab.p.rosa.rhythmandblues,
+      track.ab.p.rosa.rock,
+      track.ab.p.rosa.speech,
+      track.ab.p.tzntk.blues,
+      track.ab.p.tzntk.classical,
+      track.ab.p.tzntk.country,
+      track.ab.p.tzntk.disco,
+      track.ab.p.tzntk.hiphop,
+      track.ab.p.tzntk.jazz,
+      track.ab.p.tzntk.metal,
+      track.ab.p.tzntk.pop,
+      track.ab.p.tzntk.reggae,
+      track.ab.p.tzntk.rock,
+      track.ab.p.ismir.chachacha,
+      track.ab.p.ismir.jive,
+      track.ab.p.ismir.quickstep,
+      track.ab.p.ismir.rumbaamerican,
+      track.ab.p.ismir.rumbainternational,
+      track.ab.p.ismir.rumbamisc,
+      track.ab.p.ismir.samba,
+      track.ab.p.ismir.tango,
+      track.ab.p.ismir.viennesewaltz,
+      track.ab.p.ismir.waltz,
+      track.ab.p.mirex.aggressive,
+      track.ab.p.mirex.humorous,
+      track.ab.p.mirex.literate,
+      track.ab.p.mirex.passionate,
+      track.ab.p.mirex.rollicking,
       track.dz.rank,
       track.dz.tempo,
       track.dz.loudness,
@@ -224,21 +278,22 @@ select_features_poptrag <- function(poptrag) {
       track.is.instrumental,
       dplyr::contains("lyrics."),
       track.is.dach,
-      dplyr::contains("label.med")
+      dplyr::contains("label.med"),
+      artist.s.genres
     )
 }
 
-transform_features <- function(df) {
+transform_features <- function(
+  df,
+  s_genremapping
+) {
   df |>
     dplyr::mutate(
       track.s.key = as.factor(track.s.key),
       track.s.mode = as.factor(track.s.mode),
-      track.s.timesignature = as.factor(track.s.timesignature),
       track.s.explicitlyrics = as.factor(track.s.explicitlyrics),
-      album.mb.language = as.factor(album.mb.language),
-      artist.mb.type = as.factor(artist.mb.type),
-      artist.mb.gender = as.factor(artist.mb.gender),
       artist.mb.area = as.factor(artist.mb.area),
+      artist.mb.origin = as.factor(artist.mb.origin),
       artist.mb.dead = as.factor(artist.mb.dead),
       artist.mb.origin = as.factor(artist.mb.origin),
       track.ab.tonal.key = as.factor(track.ab.tonal.key),
@@ -265,9 +320,85 @@ transform_features <- function(df) {
       ),
       track.is.instrumental = as.factor(track.is.instrumental)
     ) |>
-    dplyr::select(
-      -artist.mb.origin,
+    dplyr::mutate(
+      artist.mb.area = forcats::fct_lump_min(artist.mb.area, min = 850),
+      artist.mb.origin = forcats::fct_lump_min(
+        artist.mb.origin,
+        min = 950
+      ),
+      track.language = forcats::fct_lump_min(track.language, min = 400),
+      artist.mb.gender = ifelse(
+        !artist.mb.gender %in% c("Female", "Male", "Non-Binary"),
+        NA,
+        artist.mb.gender
+      ) |>
+        as.factor(),
+      artist.mb.type = ifelse(
+        artist.mb.type %in% c("Orchestra", "Choir"),
+        "Group",
+        artist.mb.type
+      ),
+      artist.mb.type = ifelse(
+        artist.mb.type == "Character",
+        "Person",
+        artist.mb.type
+      ),
+      artist.mb.type = ifelse(
+        artist.mb.type == "Other",
+        NA,
+        artist.mb.type
+      ),
+      artist.mb.type = as.factor(artist.mb.type),
+      track.s.timesignature = ifelse(
+        track.s.timesignature == "0/4",
+        NA,
+        track.s.timesignature
+      ) |>
+        as.factor()
+    ) |>
+    unnest_distribution_genres(
+      mapping = s_genremapping
     )
+}
+
+unnest_distribution_genres <- function(df, mapping) {
+  # in df there is a column artist.s.genres which contains data frames with a column genre.
+  # these genres need to be mapped to higher level genres using the mapping data frame
+  # and then flags for the presense of these higher level genres need to be created in df like this. distribution_rock = TRUE/FALSE
+  message("---MAPPING AND CREATING DISTRIBUTION GENRE FLAGS---")
+  pb <- utils::txtProgressBar(min = 0, max = nrow(df), style = 3)
+  on.exit(close(pb), add = TRUE)
+  genre_flags <- lapply(seq_len(nrow(df)), function(i) {
+    utils::setTxtProgressBar(pb, i)
+    genres <- df$artist.s.genres[[i]]$genre
+    mapped_genres <- unique(mapping$metagenre[
+      mapping$tag_name %in% genres
+    ])
+    if (length(mapped_genres) == 0) {
+      mapped_genres <- "POPULAR MUSIC"
+    }
+    flags <- as.list(setNames(
+      rep(FALSE, length(unique(mapping$metagenre))),
+      paste0("dtb.", gsub("[ -]", ".", unique(mapping$metagenre)))
+    ))
+    for (mg in mapped_genres) {
+      flags[[paste0("dtb.", gsub("[ -]", ".", unique(mg)))]] <- TRUE
+    }
+    return(flags)
+  })
+  genre_flags
+  genre_flags_df <- do.call(rbind.data.frame, genre_flags)
+  if ("dtb.POPULAR.MUSIC" %in% colnames(genre_flags_df)) {
+    genre_flags_df <- genre_flags_df |>
+      dplyr::rename(dtb.other = dtb.POPULAR.MUSIC)
+  }
+  genre_flags_df |>
+    dplyr::mutate(dplyr::across(
+      dplyr::everything(),
+      as.factor
+    )) |>
+    dplyr::bind_cols(df) |>
+    dplyr::select(-artist.s.genres)
 }
 
 apply_casewise_filter <- function(df, threshold = 0.4) {
@@ -354,7 +485,7 @@ split_artists_and_train_test <- function(
   )
 }
 
-train_imputer <- function(impute_frame, nthreads = 19, seed = 42) {
+train_imputer <- function(impute_frame, nthreads = 19, seed = 42, maxiter = 1) {
   set.seed(seed)
   message("---TRAINING MISSFOREST IMPUTER---")
   missForestPredict::missForest(
@@ -362,7 +493,7 @@ train_imputer <- function(impute_frame, nthreads = 19, seed = 42) {
       impute_frame |>
         dplyr::select(-track.s.id, -metagenre, -n_NA)
     ),
-    maxiter = 1,
+    maxiter = maxiter,
     mtry = floor(sqrt(ncol(impute_frame) - 3)),
     replace = TRUE,
     verbose = TRUE,
@@ -388,13 +519,14 @@ apply_imputer <- function(df, imputer_model) {
 #'
 #' Creates CV folds ensuring no artist appears in multiple folds.
 #' Artists with many tracks are undersampled to facilitate splitting.
+#' Returns tidymodels-compatible rset object.
 #'
 #' @param train_data Training data with artist.s.id and metagenre columns
 #' @param n_folds Number of CV folds
 #' @param repeats Number of repeated CV runs
 #' @param max_tracks_per_artist Maximum tracks per artist before undersampling
 #' @param seed Random seed
-#' @return rsample vfold_cv object
+#' @return rsample vfold_cv object with artist-level splits
 create_artist_cv_splits <- function(
   train_data,
   n_folds = 5,
@@ -433,7 +565,7 @@ create_artist_cv_splits <- function(
   )
 
   # Convert artist-level folds to track-level folds
-  cv_splits <- lapply(seq_len(nrow(artist_folds)), function(fold_idx) {
+  splits_list <- lapply(seq_len(nrow(artist_folds)), function(fold_idx) {
     analysis_artists <- rsample::analysis(artist_folds$splits[[
       fold_idx
     ]])$artist.s.id
@@ -441,42 +573,52 @@ create_artist_cv_splits <- function(
       fold_idx
     ]])$artist.s.id
 
-    # Get corresponding tracks
-    analysis_data <- train_undersampled |>
-      dplyr::filter(artist.s.id %in% analysis_artists)
-    assessment_data <- train_undersampled |>
-      dplyr::filter(artist.s.id %in% assessment_artists)
+    # Get row indices for corresponding tracks
+    analysis_idx <- which(train_undersampled$artist.s.id %in% analysis_artists)
+    assessment_idx <- which(
+      train_undersampled$artist.s.id %in% assessment_artists
+    )
 
-    # Create a manual rsplit object
-    list(
-      analysis = analysis_data,
-      assessment = assessment_data,
-      fold = artist_folds$id[[fold_idx]],
-      id2 = artist_folds$id2[[fold_idx]]
+    # Create proper rsplit object using make_splits
+    rsample::make_splits(
+      x = list(analysis = analysis_idx, assessment = assessment_idx),
+      data = train_undersampled
     )
   })
 
-  cv_splits
+  # Create a proper rset tibble
+  cv_rset <- tibble::tibble(
+    splits = splits_list,
+    id = artist_folds$id
+  )
+
+  # Add id2 column if repeats > 1
+  if (repeats > 1) {
+    cv_rset$id2 <- artist_folds$id2
+  }
+
+  # Add proper classes and attributes for tidymodels compatibility
+  class(cv_rset) <- c("vfold_cv", "rset", "tbl_df", "tbl", "data.frame")
+  attr(cv_rset, "v") <- n_folds
+  attr(cv_rset, "repeats") <- repeats
+  attr(cv_rset, "strata") <- TRUE
+
+  cv_rset
 }
 
 #' Check factor levels in CV folds
 #'
-#' Prints warnings if any factor level has fewer than 30 observations
-#' in any fold.
+#' Prints warnings if any factor level has fewer than 100 observations
+#' in any fold. Works with both list and rset objects.
 #'
-#' @param cv_splits List of CV splits
+#' @param cv_splits rset object or list of CV splits
 #' @param dataset_name Name of dataset for messages
 check_factor_levels_in_folds <- function(cv_splits, dataset_name) {
-  if (is.null(cv_splits)) {
-    return(invisible(NULL))
-  }
-
   message(sprintf("Checking factor levels for %s dataset...", dataset_name))
 
-  for (fold_idx in seq_along(cv_splits)) {
-    fold_data <- cv_splits[[fold_idx]]$analysis
-
-    # Get all factor columns (excluding metagenre which is the target)
+  n_folds <- nrow(cv_splits)
+  for (fold_idx in seq_len(n_folds)) {
+    fold_data <- rsample::analysis(cv_splits$splits[[fold_idx]])
     factor_cols <- names(fold_data)[
       vapply(fold_data, is.factor, logical(1))
     ]
@@ -486,7 +628,7 @@ check_factor_levels_in_folds <- function(cv_splits, dataset_name) {
       level_counts <- table(fold_data[[col]])
       min_count <- min(level_counts)
 
-      if (min_count < 30) {
+      if (min_count < 100) {
         min_level <- names(level_counts)[which.min(level_counts)]
         warning(
           sprintf(
@@ -502,6 +644,4 @@ check_factor_levels_in_folds <- function(cv_splits, dataset_name) {
       }
     }
   }
-
-  invisible(NULL)
 }

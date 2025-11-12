@@ -116,15 +116,19 @@ extract_cv_dfs <- function(cv_splits) {
     return(list())
   }
   result <- list()
-  for (i in seq_along(cv_splits)) {
-    sp <- cv_splits[[i]]
-    split_id <- paste0(sp$fold, "_", sp$id2)
+  for (i in seq_len(nrow(cv_splits))) {
+    split_id <- cv_splits$id[[i]]
+    if ("id2" %in% names(cv_splits)) {
+      split_id <- paste0(split_id, "_", cv_splits$id2[[i]])
+    }
 
-    analysis_counts <- table(sp$analysis$metagenre)
+    analysis_data <- rsample::analysis(cv_splits$splits[[i]])
+    analysis_counts <- table(analysis_data$metagenre)
     result[[length(result) + 1]] <-
       build_split_df(analysis_counts, "CV_Analysis", split_id)
 
-    assessment_counts <- table(sp$assessment$metagenre)
+    assessment_data <- rsample::assessment(cv_splits$splits[[i]])
+    assessment_counts <- table(assessment_data$metagenre)
     result[[length(result) + 1]] <-
       build_split_df(assessment_counts, "CV_Assessment", split_id)
   }

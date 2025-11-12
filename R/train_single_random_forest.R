@@ -115,7 +115,7 @@ train_rf <- function(
     mtry = mtry,
     max.depth = max.depth,
     min.node.size = min.node.size,
-    importance = "impurity",
+    importance = "impurity", # use permutation later when evaluating, slower
     probability = TRUE,
     classification = TRUE,
     seed = seed
@@ -163,6 +163,22 @@ get_cm_and_metrics <- function(model, df) {
     Predicted = factor(pred_classes, levels = all_levels)
   )
 
+  metrics <- get_metrics_from_cm(cm, all_levels, df$metagenre, pred_classes)
+
+  cm_df <- as.data.frame(conf) |>
+    dplyr::group_by(Actual) |>
+    dplyr::mutate(relfreq = Freq / sum(Freq), labelcolor = relfreq > 0.5) |>
+    dplyr::ungroup()
+
+  list(cm = cm_df, metrics = metrics)
+}
+
+get_metrics_from_cm <- function(
+  conf,
+  all_levels,
+  actual_classes,
+  pred_classes
+) {
   acc <- sum(diag(conf)) / sum(conf)
   kappa <- caret::confusionMatrix(conf)$overall["Kappa"]
   f1s <- vapply(
@@ -179,7 +195,7 @@ get_cm_and_metrics <- function(model, df) {
   )
   f1macro <- mean(f1s)
   mcc_val <- mltools::mcc(
-    actuals = factor(df$metagenre, levels = all_levels),
+    actuals = factor(actual_classes, levels = all_levels),
     preds = factor(pred_classes, levels = all_levels)
   )
   metrics <- list(
@@ -188,13 +204,6 @@ get_cm_and_metrics <- function(model, df) {
     f1macro = f1macro,
     mcc = mcc_val
   )
-
-  cm_df <- as.data.frame(conf) |>
-    dplyr::group_by(Actual) |>
-    dplyr::mutate(relfreq = Freq / sum(Freq), labelcolor = relfreq > 0.5) |>
-    dplyr::ungroup()
-
-  list(cm = cm_df, metrics = metrics)
 }
 
 plot_cm <- function(cm_df, metrics) {
@@ -239,8 +248,16 @@ plot_cm <- function(cm_df, metrics) {
         size = 12
       ),
       axis.text.y = ggplot2::element_text(size = 12),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14),
+      axis.title.x = ggplot2::element_text(
+        color = "grey45",
+        size = 14,
+        hjust = 0
+      ),
+      axis.title.y = ggplot2::element_text(
+        color = "grey45",
+        size = 14,
+        hjust = 1
+      ),
       plot.subtitle = ggplot2::element_text(face = "bold")
     )
 }
