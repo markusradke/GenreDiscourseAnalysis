@@ -123,7 +123,8 @@ rf_prep_features <- c(
   "lyrics.nrc_trust",
   "lyrics.nrc_negative",
   "lyrics.nrc_positive",
-  "artist.s.genres"
+  "artist.s.genres",
+  "is.major.label"
 )
 
-use_data(rf_prep_features, overwrite = TRUE, internal = TRUE)
+usethis::use_data(rf_prep_features, overwrite = TRUE, internal = TRUE)
