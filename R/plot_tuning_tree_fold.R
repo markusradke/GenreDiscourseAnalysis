@@ -1,6 +1,6 @@
-plot_tuning_results <- function(
+plot_tuning_results_tree <- function(
   ginis,
-  xlimits = c(0, max(ginis$n_metagenres)),
+  xlimits = c(0, 50),
   best_candidate = 20,
   gini_range = c(0, 1)
 ) {

@@ -81,7 +81,7 @@ tag_sources <- mb_long |> dplyr::distinct(track.s.id, tag_source) |> dplyr::coun
 tag_source_lookup <- setNames(tag_sources$n, tag_sources$tag_source)
 ```
 
-We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025. Additionally, we excluded tags that did not occur with at least `r settings$n_artists_threshold` artists, as these do not classify for a genre (as no community can be assumed for these tags). This way we removed `r format(n_diff_mb, big.mark = ",")` tracks from the data set (`r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ", ")`.
+We filtered out all songs without a genre tag and songs with only non-music genre or tags that were not on the [Musicbrainz genre whitelist](https://musicbrainz.org/genres) on June 16, 2025. Additionally, we excluded tags that did not occur with at least `r settings$n_artists_threshold` artists, as these do not classify for a genre (as no community can be assumed for these tags). Also, we only considered tracks with at least 2 votes to avoid noise from single opinions. This way we removed `r format(n_diff_mb, big.mark = ",")` tracks from the data set (`r round(n_diff_mb / n_poptrag * 100)`%). Non-music genre tags were: `r paste(sprintf('"%s"', mb_non_music_tags), collapse = ", ")`.
 
 This amounts to **N~MusicBrainz~ = `r format(n_mb, big.mark = ",")` tracks** with MusicBrainz music genre tags.
 

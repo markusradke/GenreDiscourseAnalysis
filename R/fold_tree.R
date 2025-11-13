@@ -197,9 +197,10 @@ tune_tree_folding <- function(
   }
 
   n_meta <- nrow(tuning$suggested_solution$n_songs)
-  tuning$plot <- plot_tuning_results(
+  xlimits <- c(0, min(max(tuning$ginis$n_metagenres), 50))
+  tuning$plot <- plot_tuning_results_tree(
     tuning$ginis,
-    xlimits = c(0, min(max(tuning$ginis$n_metagenres), 50)),
+    xlimits = xlimits,
     best_candidate = n_meta
   )
 
