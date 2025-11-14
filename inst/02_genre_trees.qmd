@@ -68,6 +68,9 @@ metal --> rock
 metal -.-x pop
 ```
 
+# Prune tree to improve structure
+Finally, we remove edges with very low weight (= weak parenthood). Corresponding genres are reattached to the root node of the tree. This step is tuned to  minimize the weighted Gini accross hiearrchy levels, ensuring a more balanced distribution of genres across the tree structure.
+
 ## Genre Tree for MusicBrainz
 
 :::{.column-screen-inset-right}

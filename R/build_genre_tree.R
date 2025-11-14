@@ -1,4 +1,9 @@
-build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
+build_genre_tree <- function(
+  tags_long,
+  platform_name,
+  vote_weighted = TRUE,
+  quantile_threhold_for_edges = 0
+) {
   basic_adjacency <- get_tag_cooccurrence_matrix(tags_long)
 
   final_adjacency <- if (vote_weighted) {
@@ -11,7 +16,11 @@ build_genre_tree <- function(tags_long, platform_name, vote_weighted = TRUE) {
   bidirectional_removed <- remove_weaker_direction(final_adjacency)
   tree_structure <- select_strongest_parent(bidirectional_removed)
   igraph_tree <- create_igraph_from_matrix(tree_structure)
-  final_tree <- add_popmusic_as_metagerne(igraph_tree)
+  connected_tree <- add_popmusic_as_metagerne(igraph_tree)
+  final_tree <- prune_ill_structured_tree(
+    connected_tree,
+    tags_long
+  )
   genealogy_graph <- get_genealogy_graph(
     bidirectional_removed,
     final_tree
@@ -60,6 +69,101 @@ add_popmusic_as_metagerne <- function(graph) {
       c(node, "POPULAR MUSIC"),
       attr = list(weight = 0)
     )
+  }
+  graph
+}
+prune_ill_structured_tree <- function(graph, long) {
+  message("REMOVING EDGES TO OPTIMIZE TREE STRUCTURE...")
+  root <- get_graph_root(graph)$name
+  sizes <- get_sizes_lookup(long)
+  n_songs <- tibble::tibble(
+    genre = names(sizes),
+    n = as.numeric(sizes)
+  )
+  edges <- get_sorted_nonroot_edges(graph, root)
+  ginis <- evaluate_gini_for_edges(graph, edges, root, n_songs)
+  threshold <- get_best_gini_threshold(edges, ginis)
+  graph <- remove_edges_below_threshold(graph, threshold)
+  graph <- connect_orphans_to_root(graph, root)
+  graph
+}
+
+get_sorted_nonroot_edges <- function(graph, root) {
+  igraph::as_data_frame(graph, what = "edges") |>
+    dplyr::arrange(weight) |>
+    dplyr::filter(to != root)
+}
+
+evaluate_gini_for_edges <- function(graph, edges, root, n_songs) {
+  current_graph <- graph
+  ginis <- tibble::tibble(
+    n_removed_edges = 0,
+    removed_edge = NA_character_,
+    gini = get_gini_coefficient(
+      n_songs,
+      get_distances_to_root(graph)
+    )
+  )
+  for (edge_idx in seq_len(nrow(edges))) {
+    edge <- edges[edge_idx, ]
+    current_graph <- remove_and_reconnect_edge(
+      current_graph,
+      edge,
+      root
+    )
+    gini <- get_gini_coefficient(
+      n_songs,
+      get_distances_to_root(current_graph)
+    )
+    ginis <- dplyr::bind_rows(
+      ginis,
+      tibble::tibble(
+        n_removed_edges = edge_idx,
+        removed_edge = paste(edge$from, "->", edge$to),
+        gini = gini
+      )
+    )
+  }
+  ginis
+}
+
+remove_and_reconnect_edge <- function(graph, edge, root) {
+  graph <- igraph::delete_edges(
+    graph,
+    igraph::E(graph)[.from(edge$from) & .to(edge$to)]
+  )
+  graph <- igraph::add_edges(
+    graph,
+    c(edge$from, root),
+    attr = list(weight = 0)
+  )
+  graph
+}
+
+get_best_gini_threshold <- function(edges, ginis) {
+  best_gini_idx <- which.min(ginis$gini)
+  edges$weight[best_gini_idx]
+}
+
+remove_edges_below_threshold <- function(graph, threshold) {
+  igraph::delete_edges(
+    graph,
+    igraph::E(graph)[weight < threshold]
+  )
+}
+
+connect_orphans_to_root <- function(graph, root) {
+  orphaned_nodes <- igraph::V(graph)[
+    igraph::degree(graph, mode = "out") == 0
+  ]$name
+  for (node in orphaned_nodes) {
+    if (node != root) {
+      graph <- igraph::add_edges(
+        graph,
+        c(node, root),
+        attr = list(weight = 0)
+      )
+    }
   }
   graph
 }
