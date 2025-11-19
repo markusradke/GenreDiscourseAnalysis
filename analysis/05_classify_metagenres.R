@@ -24,6 +24,7 @@ settings <- list(
 )
 rf_data <- prepare_rf_data(settings, poptrag)
 
+saveRDS(settings, "models/classifier/rf_data_settings.rds")
 saveRDS(rf_data$low, "models/classifier/rf_data_low.rds")
 saveRDS(rf_data$high, "models/classifier/rf_data_high.rds")
 
@@ -80,6 +81,7 @@ settings <- list(
   bayes_iterations = 20, # adjust later
   initial_grid_density = 3 # adjust later
 )
+saveRDS(settings, "models/classifier/rf_tune_settings.rds")
 
 message("---TRAINING LOW RESOLUTION MODEL---")
 start_time <- Sys.time()
