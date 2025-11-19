@@ -4,7 +4,7 @@ devtools::load_all()
 
 poptrag <- readRDS("data-raw/poptrag.rds")
 s_genremapping <- readRDS("models/metagenres/tune_s_metagenres.rds")$solutions[[
-  "1050"
+  "1375"
 ]]$mapping
 
 # Prepare data sets for modeling ----
@@ -64,11 +64,11 @@ model_features <- c(model_features, distribution_genres)
 # Random forest models ----
 settings <- list(
   seed = 42,
-  ntrees = 100, # make 1000 for final
-  ntrees_tuning = 10, # make 100 for now
-  under_ratio = 8, # irrelevant for tuning
-  n_cores = 1,
-  mtry = 15, # irrelevant for tuning
+  ntrees = 1000, # make 1000 for final
+  ntrees_tuning = 100, # make 100 for now
+  under_ratio = 11, # irrelevant for tuning
+  n_cores = 32, # make large only for final
+  mtry = 72, # irrelevant for tuning
   min.node.size = 50, # irrelevant for tuning
   varimp_top_n = 40,
   run_rf_low = TRUE,
@@ -77,49 +77,78 @@ settings <- list(
   tune_hyperparameters = TRUE,
   importance = "impurity", # better for tuning, final model is "permutation" by default
   uncertain_jump = 5,
-  bayes_iterations = 10, # adjust later
-  initial_grid_density = 2 # adjust later
+  bayes_iterations = 20, # adjust later
+  initial_grid_density = 3 # adjust later
 )
 
+message("---TRAINING LOW RESOLUTION MODEL---")
+start_time <- Sys.time()
 res_rf_low <- train_and_evaluate_rf_tidy(
   settings,
   rf_data
 )
+end_time <- Sys.time()
+time_needed <- end_time - start_time
+message(paste("Time needed for training low resolution model:", time_needed))
+res_rf_low$low$evaluation$time_needed <- time_needed
+
+message("Saving model evaluation and settings...")
 saveRDS(res_rf_low$low$evaluation, "models/classifier/rf_mb_lowres_eval.rds")
 saveRDS(
   res_rf_low$low$model_settings,
   "models/classifier/rf_mb_lowres_settings.rds"
 )
-saveRDS(res_rf_low$low, "models/classifier/results_low.rds")
+message("Saving tuning plots...")
+plot_tuning_results(res_rf_low$low$tuning_results)
+ggplot2::ggsave(
+  "models/classifier/rf_mb_lowres_tuning_parameters.png",
+  width = 12,
+  height = 8
+)
+plot_tuning_performance(res_rf_low$low$tuning_results, metric = "f_meas")
+ggplot2::ggsave(
+  "models/classifier/rf_mb_lowres_tuning_performance.png",
+  width = 8,
+  height = 6
+)
+message("Saving best model...")
+saveRDS(res_rf_low$low$model, "models/classifier/best_model_low.rds")
 
+message("---TRAINING HIGH RESOLUTION MODEL---")
 settings$run_rf_low <- FALSE
 settings$run_rf_high <- TRUE
+start_time <- Sys.time()
 res_rf_high <- train_and_evaluate_rf_tidy(
   settings,
   rf_data
 )
+end_time <- Sys.time()
+time_needed <- end_time - start_time
+message(paste("Time needed for training high resolution model:", time_needed))
+res_rf_high$high$evaluation$time_needed <- time_needed
+
+message("Saving model evaluation and settings...")
 saveRDS(res_rf_high$high$evaluation, "models/classifier/rf_mb_highres_eval.rds")
 saveRDS(
   res_rf_high$high$model_settings,
   "models/classifier/rf_mb_highres_settings.rds"
 )
-saveRDS(res_rf_high$high, "models/classifier/results_high.rds")
+message("Saving tuning plots...")
+plot_tuning_results(res_rf_high$high$tuning_results)
+ggplot2::ggsave(
+  "models/classifier/rf_mb_highres_tuning_parameters.png",
+  width = 12,
+  height = 8
+)
+plot_tuning_performance(res_rf_high$high$tuning_results, metric = "f_meas")
+ggplot2::ggsave(
+  "models/classifier/rf_mb_highres_tuning_performance.png",
+  width = 8,
+  height = 6
+)
+message("Saving best model...")
+saveRDS(res_rf_high$high$model, "models/classifier/best_model_high.rds")
 
 
-# inspect plots
-plot_cm(
-  res_rf$low$evaluation$confusion_train,
-  res_rf$low$evaluation$metrics_train
-)
-plot_cm(
-  res_rf$low$evaluation$confusion_test,
-  res_rf$low$evaluation$metrics_test
-)
-plot_tuning_results(res_rf$low$tuning_results)
-plot_tuning_performance(res_rf$low$tuning_results)
-plot_varimp(
-  res_rf$low$evaluation$varimp,
-  top_n = 40
-)
 # Generate resport ----
 generate_report("05_rf_classifier")
