@@ -10,11 +10,11 @@ s_genremapping <- readRDS("models/metagenres/tune_s_metagenres.rds")$solutions[[
 # Prepare data sets for modeling ----
 settings <- list(
   seed = 42,
-  subsample_prop = 0.11, # later 1
+  subsample_prop = 1, # later 1
   casewise_threshold = 0.4,
   artist_initial_split = 0.8, # later 0.8
   drop_POPULARMUSIC = TRUE,
-  cv_folds = 3, # later 5?
+  cv_folds = 10, # later 5?
   cv_repeats = 1, # later 2?
   max_tracks_per_artist_cv = 10000,
   s_genremapping = s_genremapping,
@@ -25,11 +25,14 @@ rf_data_low <- prepare_rf_data(
   poptrag,
   read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
 )
+
+compare_metagenre_distributions(rf_data_low)
 rf_data_high <- prepare_rf_data(
   settings,
   poptrag,
   read_feather_with_lists("models/metagenres/mb_metagenres_25_30.feather")
 )
+compare_metagenre_distributions(rf_data_high)
 
 saveRDS(settings, "models/classifier/rf_data_settings.rds")
 saveRDS(rf_data_low, "models/classifier/rf_data_low.rds")
