@@ -4,7 +4,7 @@ devtools::load_all()
 
 poptrag <- readRDS("data-raw/poptrag.rds")
 s_genremapping <- readRDS("models/metagenres/tune_s_metagenres.rds")$solutions[[
-  "1375"
+  "1050"
 ]]$mapping
 
 # Prepare data sets for modeling ----
@@ -13,21 +13,29 @@ settings <- list(
   subsample_prop = 0.11, # later 1
   casewise_threshold = 0.4,
   artist_initial_split = 0.8, # later 0.8
-  apply_imputation = FALSE,
-  n_cores = 32,
   drop_POPULARMUSIC = TRUE,
   cv_folds = 3, # later 5?
   cv_repeats = 1, # later 2?
   max_tracks_per_artist_cv = 10000,
   s_genremapping = s_genremapping,
-  maxiter_imp = 1,
   min_n_factor_level = 100
 )
-rf_data <- prepare_rf_data(settings, poptrag)
+rf_data_low <- prepare_rf_data(
+  settings,
+  poptrag,
+  read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
+)
+rf_data_high <- prepare_rf_data(
+  settings,
+  poptrag,
+  read_feather_with_lists("models/metagenres/mb_metagenres_25_30.feather")
+)
 
 saveRDS(settings, "models/classifier/rf_data_settings.rds")
-saveRDS(rf_data$low, "models/classifier/rf_data_low.rds")
-saveRDS(rf_data$high, "models/classifier/rf_data_high.rds")
+saveRDS(rf_data_low, "models/classifier/rf_data_low.rds")
+saveRDS(rf_data_high, "models/classifier/rf_data_high.rds")
+
+# Impute missing values with missForestPredict ----
 
 # Train models ----
 rf_data <- list(
