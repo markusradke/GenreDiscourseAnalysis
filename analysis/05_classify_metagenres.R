@@ -91,6 +91,60 @@ saveRDS(rf_data_imp_high$datasets, "models/classifier/rf_data_high_imp.rds")
 # do not use Spotify genres as features
 # model_features <- model_features[!grepl("^dtb\\.", model_features)]
 
+#' Train and Evaluate Baseline Models (tidymodels)
+#'
+#' Trains baseline models (random assignment and elastic net) for metagenre
+#' classification using the tidymodels framework.
+#'
+#' @param settings List containing seed, n_cores, run flags, model_features,
+#'   and glmnet_alpha
+#' @param datasets Output from `prepare_rf_data()` with train/test splits and cv_splits
+#' @return List with `random` and `glmnet` results for low/high resolution
+#' @export
+train_and_evaluate_baselines <- function(settings, datasets) {
+  set.seed(settings$seed)
+
+  results <- list(random = list(), glmnet = list())
+
+  # Random baselines
+  if (isTRUE(settings$run_random_low)) {
+    log_info("---TRAINING RANDOM BASELINE FOR LOW---")
+    results$random$low <- train_random_baseline(
+      datasets$low$train,
+      datasets$low$test,
+      settings
+    )
+  }
+
+  if (isTRUE(settings$run_random_high)) {
+    log_info("---TRAINING RANDOM BASELINE FOR HIGH---")
+    results$random$high <- train_random_baseline(
+      datasets$high$train,
+      datasets$high$test,
+      settings
+    )
+  }
+
+  # Elastic net baselines
+  if (isTRUE(settings$run_glmnet_low)) {
+    log_info("---TRAINING GLMNET BASELINE FOR LOW---")
+    results$glmnet$low <- train_glmnet_baseline(
+      datasets$low,
+      settings
+    )
+  }
+
+  if (isTRUE(settings$run_glmnet_high)) {
+    log_info("---TRAINING GLMNET BASELINE FOR HIGH---")
+    results$glmnet$high <- train_glmnet_baseline(
+      datasets$high,
+      settings
+    )
+  }
+
+  results
+}
+
 # Baseline models ----
 # settings <- list(
 #   seed = 42,
