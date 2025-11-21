@@ -4,15 +4,29 @@
 \alias{macro_f1_with_zeros}
 \title{Macro F1 with zero-filling for unpredicted classes}
 \usage{
-macro_f1_with_zeros(data, ...)
+macro_f1_with_zeros(
+  data,
+  truth = truth,
+  estimate = estimate,
+  estimator = NULL,
+  na_rm = TRUE,
+  event_level = "first",
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame with \code{truth} and \code{estimate} columns}
 
-\item{...}{Additional arguments (for tidymodels compatibility)}
+\item{truth}{The column identifier for the true class results (unquoted).
+Defaults to \code{truth}.}
+
+\item{estimate}{The column identifier for the predicted class results (unquoted).
+Defaults to \code{estimate}.}
+
+\item{...}{Not currently used.}
 }
 \value{
-A tibble with the metric value
+A tibble with columns \code{.metric}, \code{.estimator}, and \code{.estimate}
 }
 \description{
 Calculates macro-averaged F1, setting F1 = 0 for classes that were never
