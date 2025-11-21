@@ -11,6 +11,65 @@ compare_metagenre_distributions_splits <- function(
   )
 }
 
+build_all_data <- function(dataset) {
+  train_counts <- table(dataset$train$metagenre)
+  test_counts <- table(dataset$test$metagenre)
+
+  train_df <- build_split_df(train_counts, "Train", "Train")
+  test_df <- build_split_df(test_counts, "Test", "Test")
+  cv_dfs <- extract_cv_dfs(dataset$cv_splits)
+
+  dplyr::bind_rows(train_df, test_df, cv_dfs)
+}
+
+extract_cv_dfs <- function(cv_splits) {
+  if (is.null(cv_splits)) {
+    return(list())
+  }
+  result <- list()
+  for (i in seq_len(nrow(cv_splits))) {
+    split_id <- cv_splits$id[[i]]
+    if ("id2" %in% names(cv_splits)) {
+      split_id <- paste0(split_id, "_", cv_splits$id2[[i]])
+    }
+
+    analysis_data <- rsample::analysis(cv_splits$splits[[i]])
+    analysis_counts <- table(analysis_data$metagenre)
+    result[[length(result) + 1]] <-
+      build_split_df(analysis_counts, "CV_Analysis", split_id)
+
+    assessment_data <- rsample::assessment(cv_splits$splits[[i]])
+    assessment_counts <- table(assessment_data$metagenre)
+    result[[length(result) + 1]] <-
+      build_split_df(assessment_counts, "CV_Assessment", split_id)
+  }
+  result
+}
+
+build_split_df <- function(counts, split_type, split_id) {
+  data.frame(
+    metagenre = names(counts),
+    count = as.numeric(counts),
+    proportion = as.numeric(counts) / sum(counts),
+    split_type = split_type,
+    split_id = split_id,
+    stringsAsFactors = FALSE
+  )
+}
+
+compute_summary_stats <- function(all_data) {
+  all_data |>
+    dplyr::group_by(metagenre, split_type) |>
+    dplyr::summarize(
+      mean_prop = mean(proportion),
+      sd_prop = sd(proportion),
+      min_prop = min(proportion),
+      max_prop = max(proportion),
+      n_splits = dplyr::n(),
+      .groups = "drop"
+    )
+}
+
 make_plot <- function(all_data) {
   ggplot2::ggplot(
     all_data,
@@ -86,64 +145,5 @@ make_plot <- function(all_data) {
       legend.position = "top",
       legend.justification = "left",
       panel.grid.minor = ggplot2::element_blank()
-    )
-}
-
-build_all_data <- function(dataset) {
-  train_counts <- table(dataset$train$metagenre)
-  test_counts <- table(dataset$test$metagenre)
-
-  train_df <- build_split_df(train_counts, "Train", "Train")
-  test_df <- build_split_df(test_counts, "Test", "Test")
-  cv_dfs <- extract_cv_dfs(dataset$cv_splits)
-
-  dplyr::bind_rows(train_df, test_df, cv_dfs)
-}
-
-extract_cv_dfs <- function(cv_splits) {
-  if (is.null(cv_splits)) {
-    return(list())
-  }
-  result <- list()
-  for (i in seq_len(nrow(cv_splits))) {
-    split_id <- cv_splits$id[[i]]
-    if ("id2" %in% names(cv_splits)) {
-      split_id <- paste0(split_id, "_", cv_splits$id2[[i]])
-    }
-
-    analysis_data <- rsample::analysis(cv_splits$splits[[i]])
-    analysis_counts <- table(analysis_data$metagenre)
-    result[[length(result) + 1]] <-
-      build_split_df(analysis_counts, "CV_Analysis", split_id)
-
-    assessment_data <- rsample::assessment(cv_splits$splits[[i]])
-    assessment_counts <- table(assessment_data$metagenre)
-    result[[length(result) + 1]] <-
-      build_split_df(assessment_counts, "CV_Assessment", split_id)
-  }
-  result
-}
-
-build_split_df <- function(counts, split_type, split_id) {
-  data.frame(
-    metagenre = names(counts),
-    count = as.numeric(counts),
-    proportion = as.numeric(counts) / sum(counts),
-    split_type = split_type,
-    split_id = split_id,
-    stringsAsFactors = FALSE
-  )
-}
-
-compute_summary_stats <- function(all_data) {
-  all_data |>
-    dplyr::group_by(metagenre, split_type) |>
-    dplyr::summarize(
-      mean_prop = mean(proportion),
-      sd_prop = sd(proportion),
-      min_prop = min(proportion),
-      max_prop = max(proportion),
-      n_splits = dplyr::n(),
-      .groups = "drop"
     )
 }

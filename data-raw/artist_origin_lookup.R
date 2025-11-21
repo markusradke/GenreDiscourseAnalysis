@@ -1,6 +1,94 @@
-# library(tidygeocoder)
 rm(list = ls())
 gc()
+save_checkpoint_and_count <- function(
+  f,
+  checkpoint_filename,
+  last_index,
+  checkpoint_data,
+  savingstep = 1,
+  ndatapoints = -1
+) {
+  force(f)
+  force(checkpoint_filename)
+  force(last_index)
+  force(checkpoint_data)
+  force(ndatapoints)
+
+  if (savingstep > 1 & ndatapoints == -1) {
+    stop(paste0(
+      'Please provide the number of data points ndatapoints when using a saving stepsize > 1; used savingstep = ',
+      savingstep,
+      ' and ndatapoints = ',
+      ndatapoints,
+      '...'
+    ))
+  }
+  i <- last_index
+  ndatapoints <- last_index + ndatapoints
+  old_filename <- suppressMessages(
+    read_checkpoint(checkpoint_filename)$last_checkpoint
+  )
+  saved_data <- checkpoint_data
+
+  function(...) {
+    i <<- i + 1
+    result <- f(...)
+    saved_data <<- dplyr::bind_rows(saved_data, result)
+    if (i %% savingstep == 0 | i == ndatapoints) {
+      current_filename <- paste0(checkpoint_filename, '_', i, '.rds')
+      saveRDS(saved_data, current_filename)
+      if (file.exists(old_filename)) {
+        file.remove(old_filename)
+      }
+      old_filename <<- current_filename
+    }
+    Sys.sleep(0.3)
+    result
+  }
+}
+
+
+read_checkpoint <- function(checkpointfilename) {
+  pattern <- paste0('^', checkpointfilename, '_(\\d+)\\.rds$')
+  files <- list.files()
+  matching_files <- grep(pattern, files, value = TRUE)
+
+  if (length(matching_files) > 0) {
+    last_index <- sub(pattern, '\\1', matching_files) |> as.integer() |> max()
+    message(paste0(
+      'Detected checkpoint. Trying to continue with index ',
+      last_index + 1,
+      '...'
+    ))
+    last_checkpoint <- paste0(checkpointfilename, '_', last_index, '.rds')
+    saved_data <- readRDS(last_checkpoint)
+    return(list(
+      last_index = last_index,
+      saved_data = saved_data,
+      last_checkpoint = last_checkpoint
+    ))
+  } else {
+    return(list(last_index = 0, saved_data = c(), last_checkpoint = ''))
+  }
+}
+
+lookup_original <- function(address) {
+  address <- tibble::tibble(original = address)
+  result <- suppressMessages(
+    address |>
+      tidygeocoder::geocode(
+        address = original,
+        method = "osm",
+        lat = latitude,
+        long = longitude,
+        full_results = TRUE
+      )
+  )
+  return(result)
+}
+
+
+# library(tidygeocoder)
 poptrag <- readRDS("data-raw/poptrag.rds")
 
 # Extract unique origins from your data
@@ -8,26 +96,38 @@ unique_origins <- poptrag$artist.mb.origin |>
   unique() |>
   na.omit()
 
-origin_lookup <- tibble::tibble(
-  original = unique_origins
-)
 # Geocode all locations
 message(
   "Starting geocoding process. This may take 30-60 minutes for ",
-  nrow(origin_lookup),
+  length(unique_origins),
   " locations..."
 )
 
-origin_lookup_geocoded <- origin_lookup |>
-  tidygeocoder::geocode(
-    address = original,
-    method = "osm",
-    lat = latitude,
-    long = longitude,
-    full_results = TRUE,
-    progress_bar = TRUE,
-    verbose = TRUE
-  )
+input <- unique_origins
+checkpoint_name <- 'geocode_artist_origins'
+checkpoint <- read_checkpoint(checkpoint_name)
+last_index <- checkpoint$last_index
+saved_data <- checkpoint$saved_data
+if (last_index > 0) {
+  input <- tail(input, -last_index)
+}
+purrr::pmap_df(
+  list(input),
+  lookup_original |>
+    save_checkpoint_and_count(
+      checkpoint_name,
+      last_index,
+      saved_data,
+      300,
+      length(unique_origins)
+    ),
+  .progress = 'Geocoding origins'
+)
+original_lookup_geocoded <- suppressMessages(
+  read_checkpoint(checkpoint_name)$saved_data
+)
+message('Done.')
+
 
 # Extract country and continent from geocoding results
 origin_lookup_final <- origin_lookup_geocoded |>

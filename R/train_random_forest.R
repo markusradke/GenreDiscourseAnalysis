@@ -9,7 +9,7 @@
 #' @return List with \code{low} and \code{high} results containing \code{model}, \code{model_settings},
 #'   \code{evaluation}, \code{train_df}, \code{test_df}, and optionally \code{tuning_results}.
 #' @export
-train_and_evaluate_rf_tidy <- function(settings, datasets) {
+train_random_forest <- function(settings, datasets) {
   start_time <- Sys.time()
   if (
     is.null(settings$features_after_impute) ||
@@ -287,6 +287,16 @@ fit_workflow <- function(workflow, train_df, n_cores) {
   list(fitted_workflow = fitted_workflow, tuning_results = NULL)
 }
 
+
+get_class_weights <- function(metagenres) {
+  tbl <- table(metagenres)
+  total <- sum(tbl)
+  n_classes <- length(tbl)
+  class_weights <- sqrt(total / (n_classes * tbl)) # take square root to reduce extreme weights
+  class_weights
+}
+
+
 extract_ranger_model <- function(fitted_workflow) {
   fitted_workflow |>
     workflows::extract_fit_parsnip() |>
@@ -320,13 +330,10 @@ evaluate_with_metrics <- function(
   test_df,
   varimp_top_n = 40
 ) {
-  train_eval <- compute_confusion_and_metrics(fitted_workflow, train_df)
-  test_eval <- compute_confusion_and_metrics(fitted_workflow, test_df)
+  train_eval <- compute_workflow_predictions(fitted_workflow, train_df)
+  test_eval <- compute_workflow_predictions(fitted_workflow, test_df)
 
-  ranger_model <- extract_ranger_model(fitted_workflow)
-  varimp <- ranger::importance(ranger_model)
-  varimp_df <- data.frame(Variable = names(varimp), Importance = varimp) |>
-    dplyr::arrange(dplyr::desc(Importance))
+  varimp_df <- extract_variable_importance(fitted_workflow)
 
   list(
     confusion_train = train_eval$cm,
@@ -337,97 +344,21 @@ evaluate_with_metrics <- function(
   )
 }
 
-compute_confusion_and_metrics <- function(fitted_workflow, df) {
-  predictions_class <- predict(fitted_workflow, new_data = df, type = "class")
-  predictions_prob <- predict(fitted_workflow, new_data = df, type = "prob")
+compute_workflow_predictions <- function(fitted_workflow, df) {
+  pred_class <- predict(fitted_workflow, new_data = df, type = "class")
+  pred_prob <- predict(fitted_workflow, new_data = df, type = "prob")
 
-  predictions_df <- dplyr::bind_cols(
-    df |> dplyr::select(metagenre),
-    predictions_class,
-    predictions_prob
-  )
-
-  # Ensure all truth levels have corresponding probability columns
-  truth_levels <- levels(df$metagenre)
-  pred_cols <- grep("^\\.pred_", names(predictions_df), value = TRUE)
-  pred_cols <- pred_cols[pred_cols != ".pred_class"]
-  pred_classes <- gsub("^\\.pred_", "", pred_cols)
-
-  missing_classes <- setdiff(truth_levels, pred_classes)
-
-  if (length(missing_classes) > 0) {
-    message(
-      sprintf(
-        "Adding zero probability columns for %d missing classes: %s",
-        length(missing_classes),
-        paste(head(missing_classes, 3), collapse = ", ")
-      )
-    )
-
-    # Add columns with zero probability for missing classes
-    for (missing_class in missing_classes) {
-      col_name <- paste0(".pred_", missing_class)
-      predictions_df[[col_name]] <- 0
-    }
-  }
-
-  all_levels <- union(
-    levels(df$metagenre),
-    levels(predictions_class$.pred_class)
-  )
-
-  conf_table <- table(
-    Actual = factor(df$metagenre, levels = all_levels),
-    Predicted = factor(predictions_class$.pred_class, levels = all_levels)
-  )
-
-  cm_df <- as.data.frame(conf_table) |>
-    dplyr::group_by(Actual) |>
-    dplyr::mutate(
-      relfreq = Freq / sum(Freq),
-      labelcolor = relfreq > 0.5
-    ) |>
-    dplyr::ungroup()
-
-  metrics <- calculate_yardstick_metrics(predictions_df)
-
-  list(cm = cm_df, metrics = metrics)
-}
-
-calculate_yardstick_metrics <- function(predictions_df) {
-  metric_set <- yardstick::metric_set(
-    yardstick::accuracy,
-    yardstick::kap,
-    macro_f1_with_zeros,
-    yardstick::mcc,
-    yardstick::mn_log_loss
-  )
-
-  metrics_result <- metric_set(
-    predictions_df,
-    truth = metagenre,
-    estimate = .pred_class,
-    dplyr::matches(".pred_(?!class$)", perl = TRUE)
-  )
-
-  metrics_list <- setNames(
-    as.list(metrics_result$.estimate),
-    metrics_result$.metric
-  )
-
-  list(
-    accuracy = metrics_list$accuracy,
-    kappa = metrics_list$kap,
-    f1macro = metrics_list$macro_f1_zeros,
-    mcc = metrics_list$mcc,
-    mn_log_loss = metrics_list$mn_log_loss
+  evaluate_predictions(
+    true_labels = df$metagenre,
+    predicted_labels = pred_class$.pred_class,
+    predicted_probs = pred_prob
   )
 }
 
-get_class_weights <- function(metagenres) {
-  tbl <- table(metagenres)
-  total <- sum(tbl)
-  n_classes <- length(tbl)
-  class_weights <- sqrt(total / (n_classes * tbl)) # take square root to reduce extreme weights
-  class_weights
+extract_variable_importance <- function(fitted_workflow) {
+  ranger_model <- extract_ranger_model(fitted_workflow)
+  varimp <- ranger::importance(ranger_model)
+
+  data.frame(Variable = names(varimp), Importance = varimp) |>
+    dplyr::arrange(dplyr::desc(Importance))
 }

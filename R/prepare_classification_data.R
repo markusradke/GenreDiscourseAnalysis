@@ -129,6 +129,7 @@ transform_features <- function(
       track.s.mode = as.factor(track.s.mode),
       track.s.explicitlyrics = as.factor(track.s.explicitlyrics),
       artist.mb.area = as.factor(artist.mb.area),
+      # hier nochmal ran
       artist.mb.origin = as.factor(artist.mb.origin),
       artist.mb.dead = as.factor(artist.mb.dead),
       artist.mb.origin = as.factor(artist.mb.origin),
@@ -139,6 +140,7 @@ transform_features <- function(
       track.is.dach = as.factor(track.is.dach),
       is.major.label = as.factor(is.major.label),
       artist.mb.gender = as.factor(artist.mb.gender),
+      # hier nochmal ran
       artist.mb.type = as.factor(artist.mb.type),
       track.s.timesignature = as.factor(track.s.timesignature),
       lyrics.distinct_words_ratio = ifelse(

@@ -1,4 +1,4 @@
-train_glmnet_baseline <- function(dataset, settings) {
+train_glmnet <- function(dataset, settings) {
   set.seed(settings$seed)
 
   vars_to_remove <- setdiff(
@@ -27,8 +27,8 @@ train_glmnet_baseline <- function(dataset, settings) {
     "Starting hyperparameter tuning for glmnet, registering parallel backend..."
   )
 
+  start_time <- Sys.time()
   cv_splits <- dataset$cv_splits # extract to reduce size for parallel export
-
   tune_results <- tune_penalty_glmnet_parallel(
     workflow,
     cv_splits,
@@ -41,15 +41,16 @@ train_glmnet_baseline <- function(dataset, settings) {
   )
   final_workflow <- tune::finalize_workflow(workflow, best_penalty)
   final_fit <- parsnip::fit(final_workflow, data = dataset$train)
-
-  train_pred <- predict(final_fit, dataset$train)$.pred_class
-  test_pred <- predict(final_fit, dataset$test)$.pred_class
   message("Parallel backend unregistered.")
 
-  evaluation <- list(
-    train = evaluate_predictions(dataset$train$metagenre, train_pred),
-    test = evaluate_predictions(dataset$test$metagenre, test_pred)
+  evaluation <- evaluate_glmnet_model(
+    final_fit,
+    dataset$train,
+    dataset$test
   )
+  end_time <- Sys.time()
+  time_needed <- end_time - start_time
+  evaluation$time_needed <- time_needed
 
   list(
     model = final_fit,
@@ -65,6 +66,28 @@ train_glmnet_baseline <- function(dataset, settings) {
   )
 }
 
+evaluate_glmnet_model <- function(fitted_model, train_df, test_df) {
+  train_eval <- compute_glmnet_predictions(fitted_model, train_df)
+  test_eval <- compute_glmnet_predictions(fitted_model, test_df)
+
+  list(
+    confusion_train = train_eval$cm,
+    metrics_train = train_eval$metrics,
+    confusion_test = test_eval$cm,
+    metrics_test = test_eval$metrics
+  )
+}
+
+compute_glmnet_predictions <- function(fitted_model, df) {
+  pred_class <- predict(fitted_model, df)$.pred_class
+  pred_prob <- predict(fitted_model, df, type = "prob")
+
+  evaluate_predictions(
+    true_labels = df$metagenre,
+    predicted_labels = pred_class,
+    predicted_probs = pred_prob
+  )
+}
 
 tune_penalty_glmnet_parallel <- function(workflow, cv_splits, n_cores) {
   options(future.globals.maxSize = 2L * 1024^3) # 2GB
@@ -73,9 +96,9 @@ tune_penalty_glmnet_parallel <- function(workflow, cv_splits, n_cores) {
     future::plan(future::sequential)
     options(future.globals.maxSize = 500L * 1024^2) # back to 500MB
   })
-  log_info(
+  message(
     paste0(
-      "Tuning with max.",
+      "Tuning with max. ",
       future::nbrOfWorkers(),
       " parallel workers..."
     )
