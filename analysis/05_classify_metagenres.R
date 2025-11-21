@@ -25,13 +25,13 @@ rf_data_low <- prepare_rf_data(
   poptrag,
   read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
 )
-compare_metagenre_distributions(rf_data_low)
+compare_metagenre_distributions_splits(rf_data_low)
 rf_data_high <- prepare_rf_data(
   settings,
   poptrag,
   read_feather_with_lists("models/metagenres/mb_metagenres_25_30.feather")
 )
-compare_metagenre_distributions(rf_data_high)
+compare_metagenre_distributions_splits(rf_data_high)
 
 saveRDS(settings, "models/classifier/rf_data_settings.rds")
 saveRDS(rf_data_low, "models/classifier/rf_data_low.rds")
