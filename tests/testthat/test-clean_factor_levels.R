@@ -57,7 +57,6 @@ test_that("identify_rare_levels_in_partitions finds levels below threshold", {
 
   rare <- identify_rare_levels_in_partitions(
     list(p1, p2, p3),
-    col = "dummy",
     min_n = 2
   )
   expect_true(all(c("b", "c") %in% rare))
@@ -72,7 +71,7 @@ test_that("collect_all_partitions returns analysis/assessment and datasets", {
 
   cv <- rsample::vfold_cv(df, v = 2)
 
-  parts <- collect_all_partitions(cv, df, df, "f")
+  parts <- collect_partitions_for_column(cv, df, df, "f")
 
   expect_true(length(parts) >= 3)
   expect_true(is.factor(parts[[1]]))
