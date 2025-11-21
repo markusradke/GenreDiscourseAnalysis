@@ -480,5 +480,7 @@ origin_lookup_final <- origin_lookup_geocoded |>
   ) |>
   dplyr::select(original, country, continent)
 
-# Save the lookup table
-use_data(origin_lookup_final, internal = TRUE, overwrite = TRUE)
+saveRDS(
+  origin_lookup_final,
+  "data-raw/artist_origin_lookup.rds"
+)

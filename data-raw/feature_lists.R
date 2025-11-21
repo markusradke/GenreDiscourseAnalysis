@@ -1,4 +1,4 @@
-rf_prep_features <- c(
+classification_prep_features <- c(
   "track.s.id",
   "artist.s.id",
   "artist.s.popularity",
@@ -126,5 +126,7 @@ rf_prep_features <- c(
   "artist.s.genres",
   "is.major.label"
 )
-
-usethis::use_data(rf_prep_features, overwrite = TRUE, internal = TRUE)
+saveRDS(
+  classification_prep_features,
+  file = "data-raw/classification_prep_features.rds"
+)
