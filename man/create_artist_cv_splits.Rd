@@ -13,21 +13,22 @@ create_artist_cv_splits(
 )
 }
 \arguments{
-\item{train_data}{Training data with artist.s.id and metagenre columns}
+\item{train_data}{Data frame with artist.s.id and metagenre columns}
 
 \item{n_folds}{Number of CV folds}
 
 \item{repeats}{Number of repeated CV runs}
 
-\item{max_tracks_per_artist}{Maximum tracks per artist before undersampling}
+\item{max_tracks_per_artist}{Maximum tracks per artist before sampling}
 
-\item{seed}{Random seed}
+\item{seed}{Random seed (set at top level for reproducibility)}
 }
 \value{
-rsample vfold_cv object with artist-level splits
+rsample vfold_cv object with artist-level splits mapped to tracks
 }
 \description{
 Creates CV folds ensuring no artist appears in multiple folds.
 Artists with many tracks are undersampled to facilitate splitting.
-Returns tidymodels-compatible rset object.
+Returns a tidymodels-compatible vfold_cv rset where each split's
+$data is the undersampled track-level dataset used to map artists.
 }

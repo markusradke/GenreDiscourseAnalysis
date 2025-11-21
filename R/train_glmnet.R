@@ -29,14 +29,14 @@ train_glmnet <- function(dataset, settings) {
 
   start_time <- Sys.time()
   cv_splits <- dataset$cv_splits # extract to reduce size for parallel export
-  tune_results <- tune_penalty_glmnet_parallel(
+  tuning_results <- tune_penalty_glmnet_parallel(
     workflow,
     cv_splits,
     settings$n_cores
   )
 
   best_penalty <- tune::select_best(
-    tune_results,
+    tuning_results,
     metric = "macro_f1_with_zeros"
   )
   final_workflow <- tune::finalize_workflow(workflow, best_penalty)
@@ -54,7 +54,7 @@ train_glmnet <- function(dataset, settings) {
 
   list(
     model = final_fit,
-    tune_results = tune_results,
+    tuning_results = tuning_results,
     evaluation = evaluation,
     model_settings = list(
       seed = settings$seed,

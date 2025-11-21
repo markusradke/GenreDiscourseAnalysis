@@ -1,134 +1,127 @@
 #' Train and evaluate random-forest models using tidymodels
 #'
-#' @param settings Named list containing \code{features_after_impute}, \code{under_ratio},
-#'   \code{varimp_top_n}, \code{seed}, \code{run_rf_low}, \code{run_rf_high}, \code{tune_hyperparameters},
-#'   \code{n_cores}, and optionally \code{ntrees}, \code{mtry}, \code{min.node.size},
+#' @param datasets List containing \code{train}, \code{test},
+#'   and optionally \code{cv_splits} (required for tuning).
+#' @param settings Named list containing \code{model_features}, \code{under_ratio_fix},
+#'   \code{varimp_top_n}, \code{seed},  \code{tune_hyperparameters},
+#'   \code{n_cores}, and optionally \code{ntrees}, \code{mtry_fix}, \code{min.node.size_fix},
 #'   \code{importance}, \code{initial_grid_density}, \code{bayes_iterations}, \code{uncertain_jump}.
-#' @param datasets List with \code{low} and \code{high} elements containing \code{train}, \code{test},
-#'   and optionally \code{cv_splits}.
 #' @return List with \code{low} and \code{high} results containing \code{model}, \code{model_settings},
 #'   \code{evaluation}, \code{train_df}, \code{test_df}, and optionally \code{tuning_results}.
 #' @export
-train_random_forest <- function(settings, datasets) {
+train_random_forest <- function(datasets, settings) {
   start_time <- Sys.time()
   if (
-    is.null(settings$features_after_impute) ||
-      !is.character(settings$features_after_impute)
+    is.null(settings$model_features) ||
+      !is.character(settings$model_features)
   ) {
-    stop("Please provide settings$features_after_impute as character vector.")
+    stop("Please provide settings$model_features as character vector.")
   }
 
-  feats <- if ("metagenre" %in% settings$features_after_impute) {
-    settings$features_after_impute
+  feats <- if ("metagenre" %in% settings$model_features) {
+    settings$model_features
   } else {
-    c("metagenre", settings$features_after_impute)
+    c("metagenre", settings$model_features)
   }
 
-  results <- list()
+  # Select features - case_wts column will be automatically preserved by tidymodels
+  train_df <- datasets$train |> dplyr::select(dplyr::all_of(feats))
+  test_df <- datasets$test |> dplyr::select(dplyr::all_of(feats))
 
-  for (detail in c("low", "high")) {
-    if (!isTRUE(settings[[paste0("run_rf_", detail)]])) {
-      results[[detail]] <- NULL
-      next
-    }
-
-    # Select features - case_wts column will be automatically preserved by tidymodels
-    train_df <- datasets[[detail]]$train |> dplyr::select(dplyr::all_of(feats))
-    test_df <- datasets[[detail]]$test |> dplyr::select(dplyr::all_of(feats))
-
-    if ("case_wts" %in% names(datasets[[detail]]$train)) {
-      train_df$case_wts <- datasets[[detail]]$train$case_wts
-      test_df$case_wts <- datasets[[detail]]$test$case_wts
-      message(
-        "Case weights detected and will be used during training and tuning"
-      )
-    }
-
-    cv_splits <- datasets[[detail]]$cv_splits
-
-    set.seed(settings$seed)
-    message(sprintf("---TRAINING MODEL FOR %s---", toupper(detail)))
-
-    rf_workflow <- create_rf_workflow(
-      train_df = train_df,
-      tune_hyperparameters = settings$tune_hyperparameters,
-      under_ratio = settings$under_ratio,
-      ntrees = settings$ntrees,
-      ntrees_tuning = settings$ntrees_tuning,
-      mtry = settings$mtry,
-      min.node.size = settings$min.node.size,
-      importance = settings$importance,
-      seed = settings$seed
+  if ("case_wts" %in% names(datasets$train)) {
+    train_df$case_wts <- datasets$train$case_wts
+    test_df$case_wts <- datasets$test$case_wts
+    message(
+      "Case weights detected and will be used during training and tuning"
     )
+  }
 
-    tuning_fit_result <- if (
-      settings$tune_hyperparameters && !is.null(cv_splits)
-    ) {
-      tune_and_fit_workflow(
-        rf_workflow,
-        train_df,
-        cv_splits,
-        settings$seed,
-        settings$n_cores,
-        settings$initial_grid_density,
-        settings$bayes_iterations,
-        settings$uncertain_jump,
-        ntrees_final = settings$ntrees
-      )
-    } else {
-      fit_workflow(rf_workflow, train_df, settings$n_cores)
-    }
+  cv_splits <- datasets$cv_splits
 
-    fitted_workflow <- tuning_fit_result$fitted_workflow
-    rf_model <- extract_ranger_model(fitted_workflow)
-    model_settings <- extract_model_settings(
-      rf_model,
-      tuning_fit_result$tuning_results
-    )
+  set.seed(settings$seed)
 
-    evaluation <- evaluate_with_metrics(
-      fitted_workflow,
+  rf_workflow <- create_rf_workflow(
+    train_df = train_df,
+    tune_hyperparameters = settings$tune_hyperparameters,
+    under_ratio_fix = settings$under_ratio_fix,
+    ntrees = settings$ntrees,
+    ntrees_tuning = settings$ntrees_tuning,
+    mtry_fix = settings$mtry_fix,
+    min.node.size_fix = settings$min.node.size_fix,
+    importance = settings$importance,
+    seed = settings$seed
+  )
+
+  tuning_fit_result <- if (
+    settings$tune_hyperparameters && !is.null(cv_splits)
+  ) {
+    tune_and_fit_workflow(
+      rf_workflow,
       train_df,
-      test_df,
-      varimp_top_n = settings$varimp_top_n
+      cv_splits,
+      settings$seed,
+      settings$n_cores,
+      settings$initial_grid_density,
+      settings$bayes_iterations,
+      settings$uncertain_jump,
+      ntrees_final = settings$ntrees
     )
-
-    end_time <- Sys.time()
-    time_needed <- end_time - start_time
-    message(paste(
-      "Time needed for training and evaluating model:",
-      time_needed
-    ))
-    evaluation$time_needed <- time_needed
-
-    results[[detail]] <- list(
-      model = rf_model,
-      model_settings = model_settings,
-      evaluation = evaluation,
-      train_df = train_df,
-      test_df = test_df,
-      tuning_results = tuning_fit_result$tuning_results
-    )
+  } else {
+    fit_workflow(rf_workflow, train_df, settings$n_cores)
   }
 
-  results
+  fitted_workflow <- tuning_fit_result$fitted_workflow
+  rf_model <- extract_ranger_model(fitted_workflow)
+  model_settings <- extract_model_settings(
+    rf_model,
+    tuning_fit_result$tuning_results,
+    settings$under_ratio_fix
+  )
+
+  evaluation <- evaluate_with_metrics(
+    fitted_workflow,
+    train_df,
+    test_df,
+    varimp_top_n = settings$varimp_top_n
+  )
+
+  end_time <- Sys.time()
+  time_needed <- end_time - start_time
+  message(paste(
+    "Time needed for training and evaluating model:",
+    format(time_needed, units = "auto")
+  ))
+  evaluation$time_needed <- time_needed
+
+  list(
+    model = rf_model,
+    model_settings = model_settings,
+    evaluation = evaluation,
+    train_df = train_df,
+    test_df = test_df,
+    tuning_results = tuning_fit_result$tuning_results
+  )
 }
 
 create_rf_workflow <- function(
   train_df,
   tune_hyperparameters = FALSE,
-  under_ratio = 2,
+  under_ratio_fix = 2,
   ntrees = 1000,
   ntrees_tuning = 500,
-  mtry = NULL,
-  min.node.size = NULL,
+  mtry_fix = NULL,
+  min.node.size_fix = NULL,
   importance = "impurity",
   seed = 42
 ) {
   rf_recipe <- recipes::recipe(metagenre ~ ., data = train_df) |>
     themis::step_downsample(
       metagenre,
-      under_ratio = if (tune_hyperparameters) tune::tune() else under_ratio,
+      under_ratio = if (tune_hyperparameters) {
+        tune::tune()
+      } else {
+        under_ratio_fix
+      },
       seed = seed,
       skip = TRUE
     ) |>
@@ -142,8 +135,8 @@ create_rf_workflow <- function(
   # by tidymodels during both CV tuning and final fit
   rf_spec <- parsnip::rand_forest(
     trees = trees_value,
-    mtry = if (tune_hyperparameters) tune::tune() else mtry,
-    min_n = if (tune_hyperparameters) tune::tune() else min.node.size
+    mtry = if (tune_hyperparameters) tune::tune() else mtry_fix,
+    min_n = if (tune_hyperparameters) tune::tune() else min.node.size_fix
   ) |>
     parsnip::set_engine(
       "ranger",
@@ -249,8 +242,7 @@ tune_and_fit_workflow <- function(
 
   class_weights <- get_class_weights(train_df$metagenre)
 
-  # future::plan(future::multisession, workers = n_cores)
-  # Case weights will be automatically extracted from case_wts column in train_df
+  future::plan(future::multisession, workers = n_cores)
   final_spec <- parsnip::rand_forest(
     trees = ntrees_final,
     mtry = best_params$mtry,
@@ -261,7 +253,8 @@ tune_and_fit_workflow <- function(
       importance = "permutation",
       probability = TRUE,
       class.weights = class_weights,
-      verbose = TRUE
+      verbose = TRUE,
+      num.threads = n_cores
     ) |>
     parsnip::set_mode("classification")
 
@@ -271,7 +264,7 @@ tune_and_fit_workflow <- function(
     workflows::update_model(final_spec)
 
   fitted_workflow <- parsnip::fit(final_workflow, data = train_df)
-  # future::plan(future::sequential)
+  future::plan(future::sequential)
 
   list(
     fitted_workflow = fitted_workflow,
@@ -303,12 +296,21 @@ extract_ranger_model <- function(fitted_workflow) {
     purrr::pluck("fit")
 }
 
-extract_model_settings <- function(ranger_model, tuning_results) {
-  bayes_iterations <- max(tuning_results$.iter)
-  best_under_ratio <- tune::select_best(
-    tuning_results,
-    metric = "f_meas"
-  )$under_ratio
+extract_model_settings <- function(
+  ranger_model,
+  tuning_results,
+  under_ratio_fix
+) {
+  if (!is.null(tuning_results)) {
+    bayes_iterations <- max(tuning_results$.iter)
+    best_under_ratio <- tune::select_best(
+      tuning_results,
+      metric = "macro_f1_with_zeros"
+    )$under_ratio
+  } else {
+    bayes_iterations <- NULL
+    best_under_ratio <- under_ratio_fix
+  }
 
   list(
     ntrees = ranger_model$num.trees,
@@ -316,7 +318,7 @@ extract_model_settings <- function(ranger_model, tuning_results) {
     under_ratio = best_under_ratio,
     bayes_iterations = bayes_iterations,
     max.depth = ranger_model$max.depth,
-    min.node.size = ranger_model$min.node.size,
+    min_n = ranger_model$min.node.size,
     nindependent = ranger_model$num.independent.variables,
     vip.mode = ranger_model$importance.mode,
     splitrule = ranger_model$splitrule,
