@@ -1,33 +1,3 @@
-train_and_impute_missing_data <- function(
-  dataset,
-  n_cores = 1,
-  seed = 42,
-  maxiter_imp = 1,
-  max_rows_for_imputer = 50000,
-  max_missing_prop_for_imputer = 0.3
-) {
-  imputer <- train_imputer(
-    dataset$train,
-    nthreads = n_cores,
-    seed = seed,
-    maxiter = maxiter_imp,
-    max_rows = max_rows_for_imputer,
-    max_missing_prop = max_missing_prop_for_imputer
-  )
-
-  message("---IMPUTING DATASET---")
-  imputed <- list(
-    train = impute_data(dataset$train, imputer),
-    test = impute_data(dataset$test, imputer),
-    cv_splits = impute_cv_splits(dataset$cv_splits, imputer)
-  )
-
-  list(
-    datasets = imputed,
-    imputer_model = imputer
-  )
-}
-
 train_imputer <- function(
   impute_frame,
   max_rows = 50000,

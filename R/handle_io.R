@@ -93,3 +93,43 @@ get_tuning_metadata <- function(tune) {
     optimal_n_metagenres = tune$suggested_solution$n_metagenres
   )
 }
+
+save_classification_model <- function(model, name, subfolder) {
+  message(sprintf(
+    "Saving classification model and evaluation plots: %s...",
+    name
+  ))
+  saveRDS(
+    model$model_settings,
+    sprintf("models/classifier/%s/%s_settings.rds", subfolder, name)
+  )
+  saveRDS(
+    model$evaluation,
+    sprintf("models/classifier/%s/%s_evaluation.rds", subfolder, name)
+  )
+  saveRDS(
+    model$model,
+    sprintf("models/classifier/%s/%s_best_model.rds", subfolder, name)
+  )
+  if (!is.null(model$tuning_results)) {
+    plot_tuning_results(model$tuning_results)
+    ggplot2::ggsave(
+      sprintf("models/classifier/%s/%s_tuning_parameters.png", subfolder, name),
+      width = 24,
+      height = 12
+    )
+    plot_tuning_performance(
+      model$tuning_results,
+      metric = "macro_f1_with_zeros"
+    )
+    ggplot2::ggsave(
+      sprintf(
+        "models/classifier/%s/%s_tuning_performance.png",
+        subfolder,
+        name
+      ),
+      width = 8,
+      height = 6
+    )
+  }
+}

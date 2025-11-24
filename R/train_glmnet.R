@@ -11,6 +11,7 @@ train_glmnet <- function(dataset, settings) {
     recipes::step_unknown(recipes::all_nominal_predictors()) |>
     recipes::step_dummy(recipes::all_nominal_predictors(), one_hot = FALSE) |>
     recipes::step_impute_mean(recipes::all_numeric_predictors())
+  # TODO standardisieren
 
   model_spec <- parsnip::multinom_reg(
     penalty = tune::tune(),
