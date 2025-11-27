@@ -99,6 +99,7 @@ create_sampling_params <- function(train_df) {
 #' @param train_df Training data frame
 #' @param cv_splits Cross-validation splits
 #' @param params dials parameter set (from extract_parameter_set_dials)
+#' @param model_type Character: "rf" for random forest or "glmnet"
 #' @param seed Random seed
 #' @param n_cores_tuning Number of parallel workers for tuning
 #' @param initial_grid_size Number of points for initial space-filling grid
@@ -110,6 +111,7 @@ tune_bayes_workflow <- function(
   train_df,
   cv_splits,
   params,
+  model_type = "rf",
   seed = 42,
   n_cores_tuning = 4,
   initial_grid_size = 10,
@@ -167,14 +169,10 @@ tune_bayes_workflow <- function(
     initial = initial_results,
     param_info = params,
     iter = bayes_iterations,
-    control = bayescontrol #,
-    # objective = "macro_f1_with_zeros"
+    control = bayescontrol
   )
 
-  best_params <- tune::select_by_one_std_err(
-    tuning_results,
-    metric = "macro_f1_with_zeros"
-  )
+  best_params <- select_best_by_complexity(tuning_results, model_type)
   message(
     "Best hyperparameters: ",
     paste(names(best_params), "=", unlist(best_params), collapse = ", ")
@@ -209,4 +207,66 @@ finalize_and_fit <- function(
   }
   print_phase_info("FINAL MODEL FIT", n_cores, is_final_fit = TRUE)
   parsnip::fit(final_workflow, data = train_df)
+}
+
+select_best_by_complexity <- function(tuning_results, model_type) {
+  tuned_params <- get_tuned_param_names(tuning_results)
+  complexity_order <- build_complexity_order(model_type, tuned_params)
+
+  if (length(complexity_order) == 0) {
+    return(tune::select_best(tuning_results, metric = "macro_f1_with_zeros"))
+  }
+
+  select_call <- rlang::call2(
+    tune::select_by_one_std_err,
+    tuning_results,
+    metric = "macro_f1_with_zeros",
+    !!!complexity_order
+  )
+  rlang::eval_tidy(select_call)
+}
+
+get_tuned_param_names <- function(tuning_results) {
+  all_cols <- colnames(tune::collect_metrics(tuning_results))
+  setdiff(
+    all_cols,
+    c(
+      ".metric",
+      ".estimator",
+      "mean",
+      "n",
+      "std_err",
+      ".config",
+      ".iter"
+    )
+  )
+}
+
+build_complexity_order <- function(model_type, tuned_params) {
+  rf_priority <- c("max.depth", "min_n", "mtry")
+  rf_desc <- c(FALSE, TRUE, FALSE)
+
+  glmnet_priority <- c("penalty", "mixture")
+  glmnet_desc <- c(TRUE, FALSE)
+
+  shared_priority <- c("over_ratio", "under_ratio")
+  shared_desc <- c(FALSE, TRUE)
+
+  if (model_type == "rf") {
+    priority <- c(rf_priority, shared_priority)
+    use_desc <- c(rf_desc, shared_desc)
+  } else {
+    priority <- c(glmnet_priority, shared_priority)
+    use_desc <- c(glmnet_desc, shared_desc)
+  }
+
+  available <- priority %in% tuned_params
+  priority <- priority[available]
+  use_desc <- use_desc[available]
+
+  purrr::map2(priority, use_desc, function(param, desc) {
+    sym <- rlang::sym(param)
+    if (desc) rlang::call2(dplyr::desc, sym) else sym
+  }) |>
+    stats::setNames(priority)
 }

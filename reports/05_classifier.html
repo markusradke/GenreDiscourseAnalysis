@@ -149,48 +149,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 flowchart TB
  subgraph Data["Data prep"]
     direction LR
-        B["select potential features"]
-        A["import POPTRAG"]
-        C["transform chars to factors &lt;/br&gt; apply lyrics heuristics"]
-        D["drop observations with more than 40% missing"]
-        E["join metagenre &lt;/br&gt;target labels"]
+        import["import POPTRAG"]
+        select["select potential features"]
+        transform["transform chars to factors &lt;/br&gt; apply lyrics heuristics"]
+        casewise["drop observations with more than 40% missing"]
+        target["join metagenre &lt;/br&gt;target labels"]
+        minn["drop levels with less than 100 observations in one of the splits / folds"]
+        dummy["dummy code categorical predictors&lt;/br&gt;reference level: most common"]
   end
  subgraph Split["Spliting Strategy"]
     direction LR
-        F["split train/test &lt;br&gt; (0.8/0.2, artist-level)"]
-        H["create 5-fold CV splits &lt;/br&gt;(artist-level)"]
+        testtrain["split train/test &lt;br&gt; (0.8/0.2, artist-level)"]
+        cvfold["create 5-fold CV splits &lt;/br&gt;(artist-level)"]
   end
  subgraph Pre["Preprocessing"]
     direction LR
-        I["impute (median/mode)"]
-        J["downsample majority classes &lt;/br&gt;(factor tuned)"]
-        K["upsample minority &lt;/br&gt;(SMOTE-NC, factor tuned)"]
-        N["remove zero-variance predictors"]
-        O["normalize numeric &lt;/br&gt;(z-score)"]
+        impute["impute median"]
+        down["nearmiss downsample majority classes &lt;/br&gt;(factor tuned)"]
+        up["upsample minority &lt;/br&gt;(broderline SMOTE, factor tuned)"]
+        rmzv["remove zero-variance predictors"]
+        normalize["normalize numeric &lt;/br&gt;(z-score)"]
   end
  subgraph Model["Modeling and eval"]
     direction LR
-        P["tune hyperparams on F1 macro &lt;/br&gt;(Bayesian optimization, &lt;/br&gt;20-set latin hypercube inital grid,&lt;/br&gt; max 50 iters, 10-iters stop)"]
-        Q["select best params &lt;/br&gt;(based on F1 macro)"]
-        R["fit final model &lt;/br&gt;(on full training set)"]
-        S["evaluate on test set"]
+        tune["tune hyperparams on F1 macro &lt;/br&gt;(Bayesian optimization, &lt;/br&gt;20-set latin hypercube inital grid,&lt;/br&gt; max 50 iters, 10-iters stop)"]
+        best["select best params &lt;/br&gt;(based on F1 macro, one standard error rule)"]
+        finalfit["fit final model &lt;/br&gt;(on full training set)"]
+        evaluate["evaluate on test set"]
   end
-    A --&gt; B
-    B --&gt; C
-    C --&gt; D
-    D --&gt; E
-    F --&gt; H
-    I -. only during training .-&gt; J
-    J -.-&gt; K
-    K -.-&gt; N
-    N --&gt; O
-    I --&gt; N
-    P --&gt; Q 
-    P &lt;--&gt; Pre
-    Q --&gt; R
-    R --&gt; S 
-    R &lt;--&gt; Pre
-    Data --&gt; Split
+    import --&gt; select
+    select --&gt; transform
+    transform --&gt; casewise
+    casewise --&gt; target
+    target --&gt; minn
+    minn --&gt; dummy
+    minn &lt;-.-&gt; Split
+
+    testtrain --&gt; cvfold
+
+    impute -. only during training .-&gt; down
+    impute --&gt; rmzv
+    down -.-&gt; up
+    up -.-&gt; rmzv
+    rmzv --&gt; normalize
+    tune --&gt; best
+    tune &lt;--&gt; Pre
+    best --&gt; finalfit
+    finalfit --&gt; evaluate
+    evaluate &lt;--&gt; Pre
+    dummy --&gt; Split
     Split --&gt; Model
     S &lt;--&gt; Pre
 

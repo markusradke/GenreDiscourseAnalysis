@@ -79,7 +79,7 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
   )
   train <- train |> dplyr::select(-p_max)
 
-  message("---CREATING ARTIST-BASED CV FOLDS---")
+  message("---CREATING ARTIST-BASED CV FOLDS TO CHECK FACTOR LEVELS---")
   cv_splits <- create_artist_cv_splits(
     train,
     n_folds = settings$cv_folds,
@@ -87,20 +87,38 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
     max_tracks_per_artist = settings$max_tracks_per_artist_cv,
     seed = settings$seed
   )
-  cleaned <- clean_factor_levels_in_folds(
+  cleaned <- clean_factor_levels(
     cv_splits,
     train,
     test,
     settings$min_n_factor_level
   )
-  cv_splits <- cleaned$cv_splits
-  train <- cleaned$train_data
-  test <- cleaned$test_data
+  data_clean <- dplyr::bind_rows(
+    cleaned$train_data,
+    cleaned$test_data
+  )
+  dummy <- dummy_code_factors(data_clean)
+
+  message("---CREATING FINAL SPLITS AND FOLDS---")
+  final_artist_split <- split_artists_and_train_test(
+    dummy,
+    prop = settings$artist_initial_split,
+    seed = settings$seed
+  )
+  train_final <- final_artist_split$train
+  test_final <- final_artist_split$test
+  cv_splits_final <- create_artist_cv_splits(
+    train_final,
+    n_folds = settings$cv_folds,
+    repeats = settings$cv_repeats,
+    max_tracks_per_artist = settings$max_tracks_per_artist_cv,
+    seed = settings$seed
+  )
 
   list(
-    train = train,
-    test = test,
-    cv_splits = cv_splits
+    train = train_final,
+    test = test_final,
+    cv_splits = cv_splits_final
   )
 }
 
@@ -247,6 +265,31 @@ join_target <- function(casewise, metagenres, drop_POPULARMUSIC) {
 draw_prototype_sample <- function(df, prop = 0.12) {
   rsample::initial_split(df, prop = prop, strata = metagenre) |>
     rsample::training()
+}
+
+
+dummy_code_factors <- function(
+  df,
+  exclude = c("metagenre", "track.s.id", "artist.s.id")
+) {
+  factor_cols <- names(df)[vapply(df, is.factor, logical(1))]
+  factor_cols <- setdiff(factor_cols, exclude)
+
+  if (length(factor_cols) == 0) {
+    return(df)
+  }
+
+  for (col in factor_cols) {
+    tbl <- base::table(df[[col]])
+    mode_level <- names(tbl)[which.max(tbl)]
+    df[[col]] <- forcats::fct_relevel(df[[col]], mode_level)
+  }
+
+  rec <- recipes::recipe(~., data = df) |>
+    recipes::step_dummy(dplyr::all_of(factor_cols), one_hot = FALSE) |>
+    recipes::prep()
+
+  suppressWarnings(recipes::bake(rec, new_data = df))
 }
 
 # Produce train/test splits based on first artist genre.

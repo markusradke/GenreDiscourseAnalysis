@@ -8,7 +8,7 @@
 #' @param test_data Test data
 #' @param min_n Minimum observations per level threshold
 #' @return List with cleaned splits and datasets
-clean_factor_levels_in_folds <- function(
+clean_factor_levels <- function(
   cv_splits,
   train_data,
   test_data,
@@ -56,13 +56,11 @@ clean_factor_levels_in_folds <- function(
     log_single_level_removals(single_level)
     train_final <- remove_columns(train_merged, single_level)
     test_final <- remove_columns(test_merged, single_level)
-    cv_final <- remove_columns_from_splits(cv_merged, single_level)
   } else {
     train_final <- train_merged
     test_final <- test_merged
-    cv_final <- cv_merged
   }
-  list(cv_splits = cv_final, train_data = train_final, test_data = test_final)
+  list(train_data = train_final, test_data = test_final)
 }
 
 merge_small_other_with_smallest_level <- function(
@@ -270,20 +268,4 @@ log_single_level_removals <- function(factor_names) {
 
 remove_columns <- function(data, cols) {
   data |> dplyr::select(-dplyr::all_of(cols))
-}
-
-remove_columns_from_splits <- function(cv_splits, cols) {
-  new_splits <- lapply(seq_len(nrow(cv_splits)), function(i) {
-    split_obj <- cv_splits$splits[[i]]
-    data_full <- split_obj$data
-    keep_cols <- setdiff(names(data_full), cols)
-    data_full <- data_full[, keep_cols, drop = FALSE]
-    analysis_idx <- split_obj$in_id
-    assessment_idx <- split_obj$out_id
-    rsample::make_splits(
-      x = list(analysis = analysis_idx, assessment = assessment_idx),
-      data = data_full
-    )
-  })
-  rebuild_cv_splits(cv_splits, new_splits)
 }

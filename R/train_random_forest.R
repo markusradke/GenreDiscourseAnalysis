@@ -101,7 +101,7 @@ train_random_forest <- function(train, test, cv_splits, settings) {
 create_rf_workflow <- function(train_df, vars_to_remove, settings) {
   any_tuning <- any_hyperparameter_tuned(settings)
 
-  rf_recipe <- create_rf_recipe(
+  rf_recipe <- create_pre_recipe(
     train_df,
     vars_to_remove,
     tune_downsample = settings$tune_downsample,
@@ -185,6 +185,7 @@ tune_and_fit_workflow <- function(
     train_df = train_df,
     cv_splits = cv_splits,
     params = rf_params,
+    model_type = "rf",
     seed = settings$seed,
     n_cores_tuning = settings$n_cores_tuning,
     initial_grid_size = settings$initial_grid_size,

@@ -2,13 +2,13 @@ rm(list = ls())
 gc()
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- FALSE
+run_data_pre <- TRUE
 run_baseline <- FALSE
 run_glmnet <- FALSE
-run_rf <- TRUE
-max_cores <- 32 # for final model fitting
+run_rf <- FALSE
+max_cores <- 19 # for final model fitting
 max_cores_tuning <- 10 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
-n_folds <- 5
+n_folds <- 2
 
 if (isTRUE(run_data_pre)) {
   poptrag <- readRDS("data-raw/poptrag.rds")
@@ -17,14 +17,14 @@ if (isTRUE(run_data_pre)) {
   )$solutions[[
     "1050"
   ]]$mapping
-  cv_folds <- 5
+  cv_folds <- n_folds
   cv_repeats <- 1
   max_tracks_per_artist_cv <- 10000
 
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 0.1,
+    subsample_prop = 1,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,
@@ -164,6 +164,7 @@ if (isTRUE(run_glmnet)) {
   )
 
   glmnet_low <- train_glmnet(train_low, test_low, cv_splits_low, settings)
+  beepr::beep()
 
   save_classification_model(
     glmnet_low,
@@ -189,7 +190,7 @@ if (isTRUE(run_rf)) {
   # Random forest models ----
   settings <- list(
     seed = 42,
-    ntrees = 10, # make 1000 for final
+    ntrees = 3, # make 1000 for final
     n_cores = max_cores,
     n_cores_tuning = n_folds, # no of workers (gets multiple threads determined by n_cores)
     varimp_top_n = 40,
@@ -201,7 +202,7 @@ if (isTRUE(run_rf)) {
     tune_max_depth = TRUE,
     tune_downsample = TRUE,
     tune_upsample = TRUE,
-    ntrees_tuning = 10, # make 750 later
+    ntrees_tuning = 1, # make 750 later
     initial_grid_size = 2, # adjust later
     bayes_iterations = 2, # adjust later
     uncertain_jump = 5,

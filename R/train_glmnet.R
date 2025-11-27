@@ -24,7 +24,7 @@ train_glmnet <- function(train, test, cv_splits, settings) {
 
   any_tuning <- any_glmnet_hyperparameter_tuned(settings)
 
-  recipe <- create_glmnet_recipe(
+  recipe <- create_pre_recipe(
     train,
     vars_to_remove,
     tune_downsample = settings$tune_downsample,
@@ -56,6 +56,7 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       train_df = train,
       cv_splits = cv_splits,
       params = glmnet_params,
+      model_type = "glmnet",
       seed = settings$seed,
       n_cores_tuning = settings$n_cores_tuning,
       initial_grid_size = settings$initial_grid_size,

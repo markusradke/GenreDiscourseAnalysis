@@ -52,50 +52,56 @@ The metagenre POPULAR MUSIC was discarded for analysis as the metagenre was only
 flowchart TB
  subgraph Data["Data prep"]
     direction LR
-        B["select potential features"]
-        A["import POPTRAG"]
-        C["transform chars to factors </br> apply lyrics heuristics"]
-        D["drop observations with more than 40% missing"]
-        E["join metagenre </br>target labels"]
+        import["import POPTRAG"]
+        select["select potential features"]
+        transform["transform chars to factors </br> apply lyrics heuristics"]
+        casewise["drop observations with more than 40% missing"]
+        target["join metagenre </br>target labels"]
+        minn["drop levels with less than 100 observations in one of the splits / folds"]
+        dummy["dummy code categorical predictors</br>reference level: most common"]
   end
  subgraph Split["Spliting Strategy"]
     direction LR
-        F["split train/test <br> (0.8/0.2, artist-level)"]
-        H["create 5-fold CV splits </br>(artist-level)"]
+        testtrain["split train/test <br> (0.8/0.2, artist-level)"]
+        cvfold["create 5-fold CV splits </br>(artist-level)"]
   end
  subgraph Pre["Preprocessing"]
     direction LR
-        I["impute median/mode"]
-        J["downsample majority classes </br>(factor tuned)"]
-        K["upsample minority </br>(SMOTE-NC, factor tuned)"]
-        N["remove zero-variance predictors"]
-        O["normalize numeric </br>(z-score)"]
+        impute["impute median"]
+        down["nearmiss downsample majority classes </br>(factor tuned)"]
+        up["upsample minority </br>(broderline SMOTE, factor tuned)"]
+        rmzv["remove zero-variance predictors"]
+        normalize["normalize numeric </br>(z-score)"]
   end
  subgraph Model["Modeling and eval"]
     direction LR
-        P["tune hyperparams on F1 macro </br>(Bayesian optimization, </br>20-set latin hypercube inital grid,</br> max 50 iters, 10-iters stop)"]
-        Q["select best params </br>(based on F1 macro)"]
-        R["fit final model </br>(on full training set)"]
-        S["evaluate on test set"]
+        tune["tune hyperparams on F1 macro </br>(Bayesian optimization, </br>20-set latin hypercube inital grid,</br> max 50 iters, 10-iters stop)"]
+        best["select best params </br>(based on F1 macro, one standard error rule)"]
+        finalfit["fit final model </br>(on full training set)"]
+        evaluate["evaluate on test set"]
   end
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    F --> H
-    I -. only during training .-> J
-    J -.-> K
-    K -.-> N
-    N --> O
-    I --> N
-    P --> Q 
-    P <--> Pre
-    Q --> R
-    R --> S 
-    R <--> Pre
-    Data --> Split
+    import --> select
+    select --> transform
+    transform --> casewise
+    casewise --> target
+    target --> minn
+    minn --> dummy
+    minn <-.-> Split
+
+    testtrain --> cvfold
+
+    impute -. only during training .-> down
+    impute --> rmzv
+    down -.-> up
+    up -.-> rmzv
+    rmzv --> normalize
+    tune --> best
+    tune <--> Pre
+    best --> finalfit
+    finalfit --> evaluate
+    evaluate <--> Pre
+    dummy --> Split
     Split --> Model
-    S <--> Pre
 
     style Pre fill:#f8f0e8,stroke:#cc6600,stroke-width:3px,color:#000
     style Data fill:#e8f4f8,stroke:#0066cc,stroke-width:3px,color:#000
