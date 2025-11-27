@@ -95,6 +95,51 @@ get_features_for_imputation <- function(df) {
 
 bind_imputed_with_metadata <- function(df, imputed) {
   df |>
-    dplyr::select(track.s.id, metagenre) |>
+    dplyr::select(track.s.id, case_wts, artist.s.id, metagenre) |>
     dplyr::bind_cols(as.data.frame(imputed))
+}
+
+
+recreate_splits <- function(cv_splits, training_df) {
+  message("---RECREATING CV SPLITS---")
+  if (!"track.s.id" %in% names(training_df)) {
+    stop("training_df must contain a column named 'track.s.id'")
+  }
+
+  new_splits <- lapply(seq_len(nrow(cv_splits)), function(i) {
+    split_obj <- cv_splits$splits[[i]]
+    orig_data <- split_obj$data
+
+    if (!"track.s.id" %in% names(orig_data)) {
+      stop(sprintf("split %d data does not contain 'track.s.id'", i))
+    }
+
+    analysis_ids <- orig_data$track.s.id[split_obj$in_id]
+    assessment_ids <- orig_data$track.s.id[split_obj$out_id]
+
+    analysis_idx <- match(analysis_ids, training_df$track.s.id)
+    assessment_idx <- match(assessment_ids, training_df$track.s.id)
+
+    missing_analysis <- sum(is.na(analysis_idx))
+    missing_assessment <- sum(is.na(assessment_idx))
+
+    if (missing_analysis > 0 || missing_assessment > 0) {
+      stop(
+        sprintf(
+          "Missing ids in training_df for split %d: %d analysis, %d assessment (ensure training_df contains all track.s.id values)",
+          i,
+          missing_analysis,
+          missing_assessment
+        )
+      )
+    }
+
+    rsample::make_splits(
+      x = list(analysis = analysis_idx, assessment = assessment_idx),
+      data = training_df
+    )
+  })
+
+  cv_splits$splits <- new_splits
+  cv_splits
 }

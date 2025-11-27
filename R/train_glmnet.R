@@ -1,69 +1,183 @@
-train_glmnet <- function(dataset, settings) {
+train_glmnet <- function(train, test, cv_splits, settings) {
   set.seed(settings$seed)
 
   vars_to_remove <- setdiff(
-    colnames(dataset$train),
-    c("metagenre", settings$model_features)
+    colnames(train),
+    c(
+      "metagenre",
+      "artist.s.id",
+      "track.s.id",
+      "case_wts",
+      settings$model_features
+    )
   )
 
-  recipe <- recipes::recipe(metagenre ~ ., data = dataset$train) |>
-    recipes::step_rm(dplyr::all_of(vars_to_remove)) |>
-    recipes::step_unknown(recipes::all_nominal_predictors()) |>
-    recipes::step_dummy(recipes::all_nominal_predictors(), one_hot = FALSE) |>
-    recipes::step_impute_mean(recipes::all_numeric_predictors())
-  # TODO standardisieren
+  if (isFALSE(settings$use_caseweights)) {
+    train <- train |> dplyr::select(-case_wts)
+    cv_splits$splits <- purrr::map(cv_splits$splits, function(split) {
+      rsample::make_splits(
+        rsample::analysis(split) |> dplyr::select(-case_wts),
+        rsample::assessment(split) |> dplyr::select(-case_wts)
+      )
+    })
+  }
 
-  model_spec <- parsnip::multinom_reg(
-    penalty = tune::tune(),
-    mixture = settings$glmnet_alpha
-  ) |>
-    parsnip::set_engine("glmnet") |>
-    parsnip::set_mode("classification")
+  any_tuning <- any_glmnet_hyperparameter_tuned(settings)
+
+  recipe <- create_glmnet_recipe(
+    train,
+    vars_to_remove,
+    tune_downsample = settings$tune_downsample,
+    tune_upsample = settings$tune_upsample,
+    under_ratio_fix = settings$under_ratio_fix,
+    over_ratio_fix = settings$over_ratio_fix,
+    seed = settings$seed
+  )
+
+  model_spec <- create_glmnet_model_spec(settings)
 
   workflow <- workflows::workflow() |>
     workflows::add_recipe(recipe) |>
     workflows::add_model(model_spec)
-
-  message(
-    "Starting hyperparameter tuning for glmnet, registering parallel backend..."
-  )
+  if (isTRUE(settings$use_caseweights)) {
+    workflow <- workflow |>
+      workflows::add_case_weights(case_wts)
+  }
+  print(workflow)
 
   start_time <- Sys.time()
-  cv_splits <- dataset$cv_splits # extract to reduce size for parallel export
-  tuning_results <- tune_penalty_glmnet_parallel(
-    workflow,
-    cv_splits,
-    settings$n_cores
-  )
 
-  best_penalty <- tune::select_best(
-    tuning_results,
-    metric = "macro_f1_with_zeros"
-  )
-  final_workflow <- tune::finalize_workflow(workflow, best_penalty)
-  final_fit <- parsnip::fit(final_workflow, data = dataset$train)
-  message("Parallel backend unregistered.")
+  if (any_tuning && !is.null(cv_splits)) {
+    message("Starting Bayesian hyperparameter tuning for glmnet...")
+    glmnet_params <- create_glmnet_params(workflow, train, settings)
 
-  evaluation <- evaluate_glmnet_model(
-    final_fit,
-    dataset$train,
-    dataset$test
-  )
+    tune_result <- tune_bayes_workflow(
+      workflow = workflow,
+      train_df = train,
+      cv_splits = cv_splits,
+      params = glmnet_params,
+      seed = settings$seed,
+      n_cores_tuning = settings$n_cores_tuning,
+      initial_grid_size = settings$initial_grid_size,
+      bayes_iterations = settings$bayes_iterations,
+      uncertain_jump = settings$uncertain_jump
+    )
+
+    tuning_results <- tune_result$tuning_results
+    best_params <- tune_result$best_params
+    tuning_history <- extract_tuning_history(tuning_results)
+  } else {
+    message("No tuning requested, fitting with fixed parameters...")
+    best_params <- list(
+      penalty = settings$penalty_fix,
+      mixture = settings$alpha_fix
+    )
+    tuning_history <- NULL
+  }
+
+  final_fit <- finalize_and_fit_glmnet(workflow, train, best_params, settings)
+
+  message("---EVALUATING FINAL GLMNET MODEL---")
+  evaluation <- evaluate_glmnet_model(final_fit, train, test)
   end_time <- Sys.time()
-  time_needed <- end_time - start_time
-  evaluation$time_needed <- time_needed
+  evaluation$time_needed <- end_time - start_time
 
   list(
     model = final_fit,
-    tuning_results = tuning_results,
+    tuning_history = tuning_history,
     evaluation = evaluation,
-    model_settings = list(
-      seed = settings$seed,
-      model_type = "glmnet_multinomial",
-      features = settings$model_features,
-      alpha = settings$glmnet_alpha,
-      best_penalty = best_penalty$penalty
-    )
+    model_settings = extract_glmnet_model_settings(settings, best_params)
+  )
+}
+
+any_glmnet_hyperparameter_tuned <- function(settings) {
+  isTRUE(settings$tune_penalty) ||
+    isTRUE(settings$tune_alpha) ||
+    isTRUE(settings$tune_downsample) ||
+    isTRUE(settings$tune_upsample)
+}
+
+create_glmnet_model_spec <- function(settings) {
+  spec <- parsnip::multinom_reg(
+    penalty = settings$penalty_fix,
+    mixture = settings$alpha_fix
+  ) |>
+    parsnip::set_engine("glmnet") |>
+    parsnip::set_mode("classification")
+
+  spec <- add_tunable_glmnet_params(spec, settings)
+  spec
+}
+
+add_tunable_glmnet_params <- function(spec, settings) {
+  if (isTRUE(settings$tune_penalty)) {
+    spec <- parsnip::set_args(spec, penalty = tune::tune())
+  }
+  if (isTRUE(settings$tune_alpha)) {
+    spec <- parsnip::set_args(spec, mixture = tune::tune())
+  }
+  spec
+}
+
+#' Create glmnet parameter definitions for tuning
+#' @param workflow Workflow to extract base params from
+#' @param train_df Training data for sampling ratio bounds
+#' @param settings Settings list with tune switches
+#' @return dials parameter set
+create_glmnet_params <- function(workflow, train_df, settings) {
+  sampling_params <- create_sampling_params(train_df)
+
+  params <- workflow |>
+    hardhat::extract_parameter_set_dials()
+
+  if (isTRUE(settings$tune_penalty)) {
+    params <- params |> update(penalty = dials::penalty())
+  }
+
+  if (isTRUE(settings$tune_alpha)) {
+    params <- params |> update(mixture = dials::mixture())
+  }
+
+  if (isTRUE(settings$tune_downsample)) {
+    params <- params |> update(under_ratio = sampling_params$under_ratio)
+  }
+
+  if (isTRUE(settings$tune_upsample)) {
+    params <- params |> update(over_ratio = sampling_params$over_ratio)
+  }
+
+  params
+}
+
+finalize_and_fit_glmnet <- function(workflow, train_df, best_params, settings) {
+  best_penalty <- best_params$penalty %||% settings$penalty_fix
+  best_alpha <- best_params$mixture %||% settings$alpha_fix
+
+  final_spec <- parsnip::multinom_reg(
+    penalty = best_penalty,
+    mixture = best_alpha
+  ) |>
+    parsnip::set_engine("glmnet", nthreads = settings$n_cores) |>
+    parsnip::set_mode("classification")
+
+  finalize_and_fit(
+    workflow,
+    train_df,
+    best_params,
+    final_spec = final_spec,
+    n_cores = settings$n_cores
+  )
+}
+
+extract_glmnet_model_settings <- function(settings, best_params) {
+  list(
+    seed = settings$seed,
+    model_type = "glmnet_multinomial",
+    features = settings$model_features,
+    alpha = best_params$mixture %||% settings$alpha_fix,
+    penalty = best_params$penalty %||% settings$penalty_fix,
+    under_ratio = best_params$under_ratio %||% settings$under_ratio_fix,
+    over_ratio = best_params$over_ratio %||% settings$over_ratio_fix
   )
 }
 
@@ -87,37 +201,5 @@ compute_glmnet_predictions <- function(fitted_model, df) {
     true_labels = df$metagenre,
     predicted_labels = pred_class,
     predicted_probs = pred_prob
-  )
-}
-
-tune_penalty_glmnet_parallel <- function(workflow, cv_splits, n_cores) {
-  options(future.globals.maxSize = 2L * 1024^3) # 2GB
-  future::plan(future::multisession, workers = n_cores)
-  on.exit({
-    future::plan(future::sequential)
-    options(future.globals.maxSize = 500L * 1024^2) # back to 500MB
-  })
-  message(
-    paste0(
-      "Tuning with max. ",
-      future::nbrOfWorkers(),
-      " parallel workers..."
-    )
-  )
-  tune::tune_grid(
-    workflow,
-    resamples = cv_splits,
-    grid = dials::grid_regular(dials::penalty(), levels = 20),
-    control = tune::control_grid(
-      parallel_over = "everything",
-      verbose = TRUE,
-      allow_par = TRUE
-    ),
-    metrics = yardstick::metric_set(
-      macro_f1_with_zeros,
-      yardstick::accuracy,
-      yardstick::kap,
-      yardstick::mcc
-    )
   )
 }

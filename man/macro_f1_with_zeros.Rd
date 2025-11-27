@@ -11,6 +11,7 @@ macro_f1_with_zeros(
   estimator = NULL,
   na_rm = TRUE,
   event_level = "first",
+  case_weights = NULL,
   ...
 )
 }
@@ -20,8 +21,16 @@ macro_f1_with_zeros(
 \item{truth}{The column identifier for the true class results (unquoted).
 Defaults to \code{truth}.}
 
-\item{estimate}{The column identifier for the predicted class results (unquoted).
-Defaults to \code{estimate}.}
+\item{estimate}{The column identifier for the predicted class results
+(unquoted). Defaults to \code{estimate}.}
+
+\item{estimator}{Not used, always "macro".}
+
+\item{na_rm}{Logical. Should missing values be removed?}
+
+\item{event_level}{Not used for multiclass.}
+
+\item{case_weights}{Not currently used.}
 
 \item{...}{Not currently used.}
 }

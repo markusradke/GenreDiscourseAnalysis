@@ -3,5 +3,6 @@
 export(macro_f1_with_zeros)
 export(plot_interactive_genealogy_graph)
 export(plot_interactive_tree_graph)
-export(prepare_rf_data)
+export(prepare_classification_data)
+export(save_classification_model)
 export(train_random_forest)

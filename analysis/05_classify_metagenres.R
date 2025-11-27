@@ -1,219 +1,253 @@
 rm(list = ls())
 gc()
 devtools::load_all()
+options(tidymodels.dark = TRUE)
+run_data_pre <- FALSE
+run_baseline <- FALSE
+run_glmnet <- FALSE
+run_rf <- TRUE
+max_cores <- 64 # for final model fitting
+max_cores_tuning <- 10 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
+n_folds <- 5
 
-poptrag <- readRDS("data-raw/poptrag.rds")
-s_genremapping <- readRDS("models/metagenres/tune_s_metagenres.rds")$solutions[[
-  "1050"
-]]$mapping
+if (isTRUE(run_data_pre)) {
+  poptrag <- readRDS("data-raw/poptrag.rds")
+  s_genremapping <- readRDS(
+    "models/metagenres/tune_s_metagenres.rds"
+  )$solutions[[
+    "1050"
+  ]]$mapping
+  cv_folds <- 5
+  cv_repeats <- 1
+  max_tracks_per_artist_cv <- 10000
 
-# # Prepare data sets for modeling ----
-settings <- list(
-  seed = 42,
-  subsample_prop = 1,
-  casewise_threshold = 0.4,
-  artist_initial_split = 0.8,
-  drop_POPULARMUSIC = TRUE,
-  cv_folds = 10,
-  cv_repeats = 1,
-  max_tracks_per_artist_cv = 10000,
-  s_genremapping = s_genremapping,
-  min_n_factor_level = 100
+  # # Prepare data sets for modeling ----
+  settings <- list(
+    seed = 42,
+    subsample_prop = 0.1,
+    casewise_threshold = 0.4,
+    artist_initial_split = 0.8,
+    drop_POPULARMUSIC = TRUE,
+    cv_folds = cv_folds,
+    cv_repeats = cv_repeats,
+    max_tracks_per_artist_cv = max_tracks_per_artist_cv,
+    s_genremapping = s_genremapping,
+    min_n_factor_level = 100
+  )
+  data_low <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
+  )
+
+  data_high <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists("models/metagenres/mb_metagenres_25_30.feather")
+  )
+
+  saveRDS(settings, "models/classifier/data_settings.rds")
+  saveRDS(data_low$train, "models/classifier/train_low.rds")
+  saveRDS(data_low$test, "models/classifier/test_low.rds")
+  saveRDS(data_low$cv_splits, "models/classifier/cv_splits_low.rds")
+  saveRDS(data_high$train, "models/classifier/train_high.rds")
+  saveRDS(data_high$test, "models/classifier/test_high.rds")
+  saveRDS(data_high$cv_splits, "models/classifier/cv_splits_high.rds")
+
+  # saveRDS(settings, "models/classifier/mock_data_settings.rds")
+  # saveRDS(data_low$train, "models/classifier/mock_train_low.rds")
+  # saveRDS(data_low$test, "models/classifier/mock_test_low.rds")
+  # saveRDS(data_low$cv_splits, "models/classifier/mock_cv_splits_low.rds")
+  # saveRDS(data_high$train, "models/classifier/mock_train_high.rds")
+  # saveRDS(data_high$test, "models/classifier/mock_test_high.rds")
+  # saveRDS(data_high$cv_splits, "models/classifier/mock_cv_splits_high.rds")
+}
+
+# read in data
+rm(
+  list = ls()[
+    !ls() %in%
+      c(
+        "run_baseline",
+        "run_glmnet",
+        "run_rf",
+        "max_cores",
+        "max_cores_tuning",
+        "n_folds"
+      )
+  ]
 )
-data_low <- prepare_rf_data(
-  settings,
-  poptrag,
-  read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
-)
-
-data_high <- prepare_rf_data(
-  settings,
-  poptrag,
-  read_feather_with_lists("models/metagenres/mb_metagenres_25_30.feather")
-)
-
-saveRDS(settings, "models/classifier/data_settings.rds")
-saveRDS(data_low, "models/classifier/data_low.rds")
-saveRDS(data_high, "models/classifier/data_high.rds")
-rm(list = ls())
 gc()
+message("Reading training and test data...")
 
-# Impute missing values with missForestPredict ----
-settings <- list(
-  n_cores = 8,
-  seed = 42,
-  maxiter_imp = 1,
-  max_rows_for_imputer = 15000,
-  max_missing_prop_for_imputer = 0.3
-)
+# complete data
+cv_splits_low <- readRDS("models/classifier/cv_splits_low.rds")
+train_low <- readRDS("models/classifier/train_low.rds")
+test_low <- readRDS("models/classifier/test_low.rds")
 
-message("Reading data...")
-data_low <- readRDS("models/classifier/data_low.rds")
+cv_splits_high <- readRDS("models/classifier/cv_splits_high.rds")
+train_high <- readRDS("models/classifier/train_high.rds")
+test_high = readRDS("models/classifier/test_high.rds")
 
-imputer_low <- train_imputer(
-  data_low$train,
-  nthreads = settings$n_cores,
-  seed = settings$seed,
-  maxiter = settings$maxiter_imp,
-  max_rows = settings$max_rows_for_imputer,
-  max_missing_prop = settings$max_missing_prop_for_imputer
-)
-saveRDS(
-  data_imp_low$imputer_model,
-  "models/classifier/imputer/rf_imputer_model_low.rds"
-)
+# mock data for testing
+# cv_splits_low <- readRDS("models/classifier/mock_cv_splits_low.rds")
+# train_low <- readRDS("models/classifier/mock_train_low.rds")
+# test_low <- readRDS("models/classifier/mock_test_low.rds")
 
-train_imputed <- impute_data(data_low$train, imputer_low)
-saveRDS(train_imputed, "models/classifier/imputer/train_low_imputed.rds")
-test_imputed <- impute_data(data_low$test, imputer_low)
-saveRDS(test_imputed, "models/classifier/imputer/test_low_imputed.rds")
-cv_splits_imputed <- impute_cv_splits(data_low$cv_splits, imputer_low)
-saveRDS(
-  cv_splits_imputed,
-  "models/classifier/imputer/cv_splits_low_imputed.rds"
-)
-
-rm(list = ls()[ls() != "settings"])
-gc()
-data_high <- readRDS("models/classifier/data_high.rds")
-imputer_high <- train_imputer(
-  data_high$train,
-  nthreads = settings$n_cores,
-  seed = settings$seed,
-  maxiter = settings$maxiter_imp,
-  max_rows = settings$max_rows_for_imputer,
-  max_missing_prop = settings$max_missing_prop_for_imputer
-)
-saveRDS(
-  data_imp_high$imputer_model,
-  "models/classifier/imputer/rf_imputer_model_high.rds"
-)
-train_imputed <- impute_data(data_high$train, imputer_high)
-saveRDS(train_imputed, "models/classifier/imputer/train_high_imputed.rds")
-test_imputed <- impute_data(data_high$test, imputer_high)
-saveRDS(test_imputed, "models/classifier/imputer/test_high_imputed.rds")
-cv_splits_imputed <- impute_cv_splits(data_high$cv_splits, imputer_high)
-saveRDS(
-  cv_splits_imputed,
-  "models/classifier/imputer/cv_splits_high_imputed.rds"
-)
-
-
-# read imputed data
-rm(list = ls())
-gc()
-message("Reading imputed data...")
-data_low <- list(
-  train = readRDS("models/classifier/imputer/train_low_imputed.rds"),
-  test = readRDS("models/classifier/imputer/test_low_imputed.rds"),
-  cv_splits = readRDS("models/classifier/imputer/cv_splits_low_imputed.rds")
-)
-data_high <- list(
-  train = readRDS("models/classifier/imputer/train_high_imputed.rds"),
-  test = readRDS("models/classifier/imputer/test_high_imputed.rds"),
-  cv_splits = readRDS("models/classifier/imputer/cv_splits_high_imputed.rds")
-)
+# cv_splits_high <- readRDS("models/classifier/mock_cv_splits_high.rds")
+# train_high <- readRDS("models/classifier/mock_train_high.rds")
+# test_high = readRDS("models/classifier/mock_test_high.rds")
 
 # Determine model features ----
-model_features <- colnames(data_low$train)
-model_features <- model_features[
-  !model_features %in%
+model_features <- colnames(train_low)[
+  !colnames(train_low) %in%
     c(
       "track.s.id",
       "artist.s.id",
-      "metagenre"
+      "metagenre",
+      "case_wts"
     )
 ]
-# Exclude SPotify distribution genres
+# Exclude Spotify distribution genres
 # model_features <- model_features[!grepl("^dtb\\.", model_features)]
+# Only Spotify ditribution genres
+# model_features <- model_features[grepl("^dtb\\.", model_features)]
 
 # Random Baseline Models ----
-random_baseline_low <- train_random_baseline(
-  data_low$train,
-  data_low$test,
-  list(seed = 42)
-)
-save_classification_model(
-  random_baseline_low,
-  "random_baseline_lowres",
-  subfolder = "baseline"
-)
+if (isTRUE(run_baseline)) {
+  random_baseline_low <- train_random_baseline(
+    train_low,
+    test_low,
+    list(seed = 42)
+  )
+  save_classification_model(
+    random_baseline_low,
+    "random_baseline_lowres",
+    subfolder = "baseline",
+    train_df = train_low,
+    test_df = test_low
+  )
 
-random_baseline_high <- train_random_baseline(
-  data_high$train,
-  data_high$test,
-  list(seed = 42)
-)
-save_classification_model(
-  random_baseline_high,
-  "random_baseline_highres",
-  subfolder = "baseline"
-)
+  random_baseline_high <- train_random_baseline(
+    train_high,
+    test_high,
+    list(seed = 42)
+  )
+  save_classification_model(
+    random_baseline_high,
+    "random_baseline_highres",
+    subfolder = "baseline",
+    train_df = train_high,
+    test_df = test_high
+  )
+}
 
 # GLMNET Models ----
-settings <- list(
-  seed = 42,
-  glmnet_alpha = 0.5,
-  model_features = model_features,
-  n_cores = 1
-)
+if (isTRUE(run_glmnet)) {
+  settings <- list(
+    seed = 42,
+    model_features = model_features,
+    n_cores = max_cores,
+    n_cores_tuning = max_cores_tuning,
+    use_caseweights = FALSE,
+    tune_penalty = TRUE,
+    tune_alpha = FALSE,
+    tune_downsample = TRUE,
+    tune_upsample = TRUE,
+    penalty_fix = 0.002,
+    alpha_fix = 0.5,
+    under_ratio_fix = 10,
+    over_ratio_fix = 0.5,
+    initial_grid_size = 20,
+    bayes_iterations = 50,
+    uncertain_jump = 5
+  )
 
-glmnet_low <- train_glmnet(data_low, settings)
-save_classification_model(
-  glmnet_low,
-  "glmnet_lowres",
-  subfolder = "glmnet"
-)
+  glmnet_low <- train_glmnet(train_low, test_low, cv_splits_low, settings)
 
-glmnet_high <- train_glmnet(data_high, settings)
-save_classification_model(
-  glmnet_high,
-  "glmnet_highres",
-  subfolder = "glmnet"
-)
-# show_important_predictors_glmnet(glmnet_low$model)
-# show_important_predictors_glmnet(glmnet_high$model)
+  save_classification_model(
+    glmnet_low,
+    "glmnet_lowres",
+    subfolder = "glmnet",
+    train_df = train_low,
+    test_df = test_low
+  )
 
-# Random forest models ----
-settings <- list(
-  seed = 42,
-  ntrees = 3, # make 1000 for final
-  n_cores = 19, # make large only for final
-  varimp_top_n = 40,
-  model_features = model_features,
-  importance = "impurity", # better for tuning, final model is "permutation" by default
-  tune_hyperparameters = TRUE,
-  ntrees_tuning = 1, # make 100 for now
-  initial_grid_density = 2, # adjust later
-  bayes_iterations = 2, # adjust later
-  uncertain_jump = 5,
-  min.node.size_fix = 50,
-  mtry_fix = 3,
-  under_ratio_fix = 11
-)
-saveRDS(settings, "models/classifier/rf_tune_settings.rds")
+  # display beta features of glmnet in a data frame
 
-message("---TRAINING LOW RESOLUTION MODEL---")
-rf_low <- train_random_forest(
-  data_low,
-  settings
-)
-save_classification_model(
-  rf_low,
-  "rf_lowres",
-  subfolder = "rf"
-)
+  glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
+  save_classification_model(
+    glmnet_high,
+    "glmnet_highres",
+    subfolder = "glmnet",
+    train_df = train_high,
+    test_df = test_high
+  )
+}
 
-message("---TRAINING HIGH RESOLUTION MODEL---")
-rf_high <- train_random_forest(
-  data_high,
-  settings
-)
-save_classification_model(
-  rf_high,
-  "rf_highres",
-  subfolder = "rf"
-)
+if (isTRUE(run_rf)) {
+  # Random forest models ----
+  settings <- list(
+    seed = 42,
+    ntrees = 1000, # make 1000 for final
+    n_cores = max_cores,
+    n_cores_tuning = n_folds, # no of workers (gets multiple threads determined by n_cores)
+    varimp_top_n = 40,
+    model_features = model_features,
+    importance = "impurity", # better for tuning, final model is "permutation" by default
+    use_caseweights = FALSE,
+    tune_mtry = TRUE,
+    tune_min_n = TRUE,
+    tune_max_depth = TRUE,
+    tune_downsample = TRUE,
+    tune_upsample = TRUE,
+    ntrees_tuning = 750, # make 750 later
+    initial_grid_size = 2, # adjust later
+    bayes_iterations = 2, # adjust later
+    uncertain_jump = 5,
+    min.node.size_fix = 50,
+    max.depth_fix = Inf,
+    mtry_fix = 11,
+    under_ratio_fix = 11,
+    over_ratio_fix = 0.5
+  )
+  saveRDS(settings, "models/classifier/rf_tune_settings.rds")
+
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  rf_low <- train_random_forest(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  # curve <- get_oob_error_curve(
+  #   rf_low$model,
+  #   mode = "classification",
+  #   train_data = train_low |> dplyr::rename("outcome" = "metagenre")
+  # )
+  save_classification_model(
+    rf_low,
+    "rf_lowres",
+    subfolder = "rf",
+    train_df = train_low,
+    test_df = test_low
+  )
+
+  message("---TRAINING HIGH RESOLUTION MODEL---")
+  rf_high <- train_random_forest(
+    train_high,
+    test_high,
+    cv_splits_high,
+    settings
+  )
+  save_classification_model(
+    rf_high,
+    "rf_highres",
+    subfolder = "rf",
+    train_df = train_high,
+    test_df = test_high
+  )
+}
 
 # Generate resport ----
-generate_report("05_rf_classifier")
+# generate_report("05_rf_classifier")

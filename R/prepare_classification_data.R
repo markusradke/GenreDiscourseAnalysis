@@ -1,4 +1,4 @@
-#' Prepare data for the random-forest training (including optional imputation)
+#' Prepare data for the classification model training (including optional imputation)
 #'
 #' Runs the full data preparation pipeline up to and including optional
 #' missForest imputation. Always returns train and test sets for both
@@ -17,7 +17,7 @@
 #'     \item{datasets}{list with elements \code{low} and \code{high}, each a list with \code{train}, \code{test} data.frames, and \code{cv_splits}}
 #'   }
 #' @export
-prepare_rf_data <- function(settings, poptrag, metagenres) {
+prepare_classification_data <- function(settings, poptrag, metagenres) {
   check_settings <- setdiff(
     names(settings),
     c(
@@ -77,11 +77,7 @@ prepare_rf_data <- function(settings, poptrag, metagenres) {
   train$case_wts <- hardhat::importance_weights(
     train$p_max
   )
-  test$case_wts <- hardhat::importance_weights(
-    test$p_max
-  )
   train <- train |> dplyr::select(-p_max)
-  test <- test |> dplyr::select(-p_max)
 
   message("---CREATING ARTIST-BASED CV FOLDS---")
   cv_splits <- create_artist_cv_splits(

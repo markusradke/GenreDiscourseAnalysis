@@ -4,16 +4,17 @@
 \alias{train_random_forest}
 \title{Train and evaluate random-forest models using tidymodels}
 \usage{
-train_random_forest(datasets, settings)
+train_random_forest(train, test, cv_splits, settings)
 }
 \arguments{
-\item{datasets}{List containing \code{train}, \code{test},
-and optionally \code{cv_splits} (required for tuning).}
-
-\item{settings}{Named list containing \code{model_features}, \code{under_ratio_fix},
-\code{varimp_top_n}, \code{seed},  \code{tune_hyperparameters},
+\item{settings}{Named list containing \code{model_features}, \code{under_ratio_fix}, \code{over_ratio_fix},
+\code{max_depth_fix}, \code{tune_downsample}, \code{tune_upsample},
+\code{varimp_top_n}, \code{seed},  \code{tune_hyperparameters}, \code{use_caseweights},
 \code{n_cores}, and optionally \code{ntrees}, \code{mtry_fix}, \code{min.node.size_fix},
 \code{importance}, \code{initial_grid_density}, \code{bayes_iterations}, \code{uncertain_jump}.}
+
+\item{datasets}{List containing \code{train}, \code{test},
+and optionally \code{cv_splits} (required for tuning).}
 }
 \value{
 List with \code{low} and \code{high} results containing \code{model}, \code{model_settings},
