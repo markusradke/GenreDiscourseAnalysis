@@ -171,7 +171,7 @@ tune_bayes_workflow <- function(
     # objective = "macro_f1_with_zeros"
   )
 
-  best_params <- tune::select_best(
+  best_params <- tune::select_by_one_std_err(
     tuning_results,
     metric = "macro_f1_with_zeros"
   )

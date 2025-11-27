@@ -6,7 +6,7 @@ run_data_pre <- FALSE
 run_baseline <- FALSE
 run_glmnet <- FALSE
 run_rf <- TRUE
-max_cores <- 64 # for final model fitting
+max_cores <- 32 # for final model fitting
 max_cores_tuning <- 10 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
 n_folds <- 5
 
@@ -189,7 +189,7 @@ if (isTRUE(run_rf)) {
   # Random forest models ----
   settings <- list(
     seed = 42,
-    ntrees = 1000, # make 1000 for final
+    ntrees = 10, # make 1000 for final
     n_cores = max_cores,
     n_cores_tuning = n_folds, # no of workers (gets multiple threads determined by n_cores)
     varimp_top_n = 40,
@@ -201,7 +201,7 @@ if (isTRUE(run_rf)) {
     tune_max_depth = TRUE,
     tune_downsample = TRUE,
     tune_upsample = TRUE,
-    ntrees_tuning = 750, # make 750 later
+    ntrees_tuning = 10, # make 750 later
     initial_grid_size = 2, # adjust later
     bayes_iterations = 2, # adjust later
     uncertain_jump = 5,
@@ -211,7 +211,7 @@ if (isTRUE(run_rf)) {
     under_ratio_fix = 11,
     over_ratio_fix = 0.5
   )
-  saveRDS(settings, "models/classifier/rf_tune_settings.rds")
+  # saveRDS(settings, "models/classifier/rf_tune_settings.rds")
 
   message("---TRAINING LOW RESOLUTION MODEL---")
   rf_low <- train_random_forest(

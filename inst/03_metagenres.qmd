@@ -4,6 +4,8 @@ author: "Markus Radke"
 date: "`r Sys.Date()`"
 format: 
     html: 
+        mermaid: 
+          theme: neutral
         code-fold: true
         code-summary: "Show/Hide Code"
         output-dir: reports
@@ -41,7 +43,6 @@ To achieve this, we implement a greedy algorithm that iteratively merges the lea
     'htmlLabels': false,
     'curve': 'basis'
   }, 
-  'theme': 'base',
   'themeVariables': {
     'fontSize': '22px',
     'fontFamily': 'Arial, sans-serif',

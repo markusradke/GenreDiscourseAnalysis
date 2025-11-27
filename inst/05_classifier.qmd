@@ -1,0 +1,142 @@
+---
+title: "Random Forest Classification - Genre Discourse Analysis"
+author: "Markus Radke"
+date: "`r Sys.Date()`"
+format: 
+    html: 
+        mermaid: 
+          theme: neutral
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        toc: true
+        toc-location: left
+        toc-depth: 5
+        toc-expand: 5
+        number-sections: true
+        theme: cosmo
+        code-links:
+        - text: Github Repository
+          href: "https://github.com/markusradke/GenreDiscourseAnalysis"
+        css: 
+          styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+devtools::load_all()
+data_settings <- readRDS("../models/classifier/data_settings.rds")
+
+train_low <- readRDS("../models/classifier/train_low.rds")
+test_low <- readRDS("../models/classifier/test_low.rds")
+train_high <- readRDS("../models/classifier/train_high.rds")
+test_high <- readRDS("../models/classifier/test_high.rds")
+
+```
+
+This report presents the evaluation results of different classifier models trained to predict the MusicBrainz folksonomy meta-genres. Classifiers were trained for both low detailed (10-15 genres) and high detailed (25-30) meta-genre taxonomies.
+
+The metagenre POPULAR MUSIC was discarded for analysis as the metagenre was only present for too few tracks.
+
+
+# Complete Workflow
+:::{.column-screen-inset-right}
+```{mermaid}
+%%{init: {
+  'flowchart': {
+    'useMaxWidth': true,
+    'htmlLabels': false
+  }
+}}%%
+
+flowchart TB
+ subgraph Data["Data prep"]
+    direction LR
+        B["select potential features"]
+        A["import POPTRAG"]
+        C["transform chars to factors </br> apply lyrics heuristics"]
+        D["drop observations with more than 40% missing"]
+        E["join metagenre </br>target labels"]
+  end
+ subgraph Split["Spliting Strategy"]
+    direction LR
+        F["split train/test <br> (0.8/0.2, artist-level)"]
+        H["create 5-fold CV splits </br>(artist-level)"]
+  end
+ subgraph Pre["Preprocessing"]
+    direction LR
+        I["impute median/mode"]
+        J["downsample majority classes </br>(factor tuned)"]
+        K["upsample minority </br>(SMOTE-NC, factor tuned)"]
+        N["remove zero-variance predictors"]
+        O["normalize numeric </br>(z-score)"]
+  end
+ subgraph Model["Modeling and eval"]
+    direction LR
+        P["tune hyperparams on F1 macro </br>(Bayesian optimization, </br>20-set latin hypercube inital grid,</br> max 50 iters, 10-iters stop)"]
+        Q["select best params </br>(based on F1 macro)"]
+        R["fit final model </br>(on full training set)"]
+        S["evaluate on test set"]
+  end
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    F --> H
+    I -. only during training .-> J
+    J -.-> K
+    K -.-> N
+    N --> O
+    I --> N
+    P --> Q 
+    P <--> Pre
+    Q --> R
+    R --> S 
+    R <--> Pre
+    Data --> Split
+    Split --> Model
+    S <--> Pre
+
+    style Pre fill:#f8f0e8,stroke:#cc6600,stroke-width:3px,color:#000
+    style Data fill:#e8f4f8,stroke:#0066cc,stroke-width:3px,color:#000
+    style Split fill:#f0e8f8,stroke:#6600cc,stroke-width:3px,color:#000
+    style Model fill:#e8f8e8,stroke:#00aa00,stroke-width:3px,color:#000
+  
+```
+:::
+
+# Data Summary
+
+```{r dataset_summary}	
+summarize_ds <- function(resolution, split, df) {
+  data.frame(
+    Metagenre_Resolution = resolution,
+    Split = split,
+    N_Tracks = format(nrow(df), big.mark = ","),
+    N_Artists = format(nrow(dplyr::distinct(df, .data$artist.s.id)), big.mark = ",")
+  )
+}
+
+datasets <- dplyr::bind_rows(
+  summarize_ds("low (10-15)",  "Train", train_low),
+  summarize_ds("low (10-15)",  "Test",  test_low),
+  summarize_ds("high (25-30)", "Train", train_high),
+  summarize_ds("high (25-30)", "Test",  test_high),
+)
+
+knitr::kable(
+  datasets,
+  col.names = c("Metagenre Resolution", "Split", "N~Tracks~", "N~Artists~"),
+  caption = "Dataset splits used in the analyses"
+)
+```	
+
+# Split outcome distributions
+
+```{r outcome_distributions}	
+# dist_low <- compare_metagenre_distributions(rf_data, detail_level = "low")
+# dist_low$plot
+# dist_high <- compare_metagenre_distributions(rf_data, detail_level = "high")
+# dist_high$plot
+```
+
