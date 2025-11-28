@@ -25,6 +25,7 @@ format:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 devtools::load_all()
+
 data_settings <- readRDS("../models/classifier/data_settings.rds")
 
 train_low <- readRDS("../models/classifier/train_low.rds")
@@ -34,9 +35,24 @@ train_high <- readRDS("../models/classifier/train_high.rds")
 test_high <- readRDS("../models/classifier/test_high.rds")
 cv_splits_high <- readRDS("../models/classifier/cv_splits_high.rds")
 
-top_n <- 20 # show for tuning
+top_n <- 20
 n_glmnet_varimp <- 5
 n_rf_varimp <- 20
+
+# glmnet_params <- c("penalty", "under_ratio", "over_ratio")
+glmnet_params <- c("penalty")
+# rf_params <- c("max.depth", "min_n", "mtry", "under_ratio", "over_ratio")
+rf_params <- c("max.depth", "min_n", "mtry")
+
+glmnet_col_names <- c(
+  "Rank", "Iteration", "Penalty", #"Oversampling Ratio", "Undersampling Ratio",
+  "F1 Macro (mean ± se)", "Kappa (mean ± se)", "Accuracy (mean ± se)", ""
+)
+rf_col_names <- c(
+  "Rank", "Iteration", "Max Depth", "Min Node Size", "MTRY",
+  # "Oversampling Ratio", "Undersampling Ratio",
+  "F1 Macro (mean ± se)", "Kappa (mean ± se)", "Accuracy (mean ± se)", ""
+)
 ```
 
 This report presents the evaluation results of different classifier models trained to predict the MusicBrainz folksonomy meta-genres. Classifiers were trained for both low detailed (10-15 genres) and high detailed (25-30) meta-genre taxonomies.
@@ -117,18 +133,18 @@ flowchart TB
 :::
 
 :::{.callout-caution}
-Currently, the models are tranined with a fixed undersampling rate with factor 10 (low-detail) and 20 (high-detail) due to computational constraints. Also, the oversampling rate is fixed to 0.25.
+Currently, the models are tranined with a fixed undersampling rate with factor 10 (low-detail) and 20 (high-detail) due to computational constraints. Also, the oversampling rate is fixed to 0.25 for both low-detail and high-detailed metagenre labels.
 :::
 
 :::{.callout-note}
-The mixture of Lasso and Ridge regularization for the GLMNET models was fixed to 0.5 (elastic net).
+The mixture of lasso and ridge regularization for the GLMNET models was fixed to 0.5 (elastic net).
 
-Random forest were tuned with 750 trees per ensemble. The final model on the whole tranining set was trained with 1000 trees.
+Random forests were tuned with 750 trees per ensemble. The final model on the whole tranining set was trained with 1000 trees.
 :::
 
 # Data Summary
 
-```{r dataset_summary}	
+```{r dataset_summary}
 summarize_ds <- function(resolution, split, df) {
   data.frame(
     Metagenre_Resolution = resolution,
@@ -142,7 +158,7 @@ datasets <- dplyr::bind_rows(
   summarize_ds("low (10-15)",  "Train", train_low),
   summarize_ds("low (10-15)",  "Test",  test_low),
   summarize_ds("high (25-30)", "Train", train_high),
-  summarize_ds("high (25-30)", "Test",  test_high),
+  summarize_ds("high (25-30)", "Test",  test_high)
 )
 
 knitr::kable(
@@ -150,995 +166,305 @@ knitr::kable(
   col.names = c("Metagenre Resolution", "Split", "N~Tracks~", "N~Artists~"),
   caption = "Dataset splits used in the analyses"
 )
-```	
+```
 
 # Split outcome distributions
 
-```{r outcome_distributions low}	
+```{r outcome_distributions_low}
 #| fig-cap: "Comparison of metagenre distributions in train and test splits for **low-detailed** meta-genre taxonomy."
 distribution_low <- compare_metagenre_distributions_splits(train_low, test_low, cv_splits_low)
 distribution_low$plot
 ```
 
-```{r outcome_distributions high}	
+```{r outcome_distributions_high}
 #| fig-cap: "Comparison of metagenre distributions in train and test splits for **high-detailed** detailed meta-genre taxonomy."
 distribution_high <- compare_metagenre_distributions_splits(train_high, test_high, cv_splits_high)
 distribution_high$plot
 ```
 
 # Random Baseline
+
 This random baseline model predicts the metagenre labels by random guessing according to the distribution of the metagenres in the training set.
 
 :::{.column-screen-inset-right}
 
-```{r random_baseline low}
+```{r random_baseline_low}
 #| layout-ncol: 2
-
-random_low <- load_classification_model(
-  "../models/classifier/baseline",
-  "random_baseline_lowres"
-)
+random_low <- load_classification_model("../models/classifier/baseline", "random_baseline_lowres")
 plot_cm(random_low$evaluation, "train")
 plot_cm(random_low$evaluation, "test")
-```	
+```
 
-
-```{r random_baseline high, fig.width=10, fig.height=8.3}
+```{r random_baseline_high, fig.width=10, fig.height=8.3}
 #| layout-ncol: 2
-
-random_high <- load_classification_model(
-  "../models/classifier/baseline",
-  "random_baseline_highres"
-)
+random_high <- load_classification_model("../models/classifier/baseline", "random_baseline_highres")
 plot_cm(random_high$evaluation, "train")
 plot_cm(random_high$evaluation, "test")
-
 ```
-
-
-
+:::
 
 # Model Features
-```{r model_features}	
+
+:::{.column-screen-inset-right}
+```{r model_features}
 model_features <- colnames(train_low)[
-  !colnames(train_low) %in%
-    c(
-      "track.s.id",
-      "artist.s.id",
-      "metagenre",
-      "case_wts", 
-      "p_max"
-    )
+  !colnames(train_low) %in% c("track.s.id", "artist.s.id", "metagenre", "case_wts")
 ] |> sort()
 ```
-A total of `r length(model_features)` features as used for training the classifiers.
+
+
+A total of `r length(model_features)` features was used for training the classifiers.
 
 ```{r model_features_table}
-
 model_features_padded <- c(
   model_features,
   rep("", times = 5 - (length(model_features) %% 5))
 )
 
 knitr::kable(
-  matrix(
-    model_features_padded,
-    ncol = 5,
-    byrow = TRUE
-  ),
-  col.names = c("Model features", rep("", 4)),
-) |> 
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:5,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |> 
-  kableExtra::row_spec(
-    2:ceiling(length(model_features_padded) / 5),
-    hline_after = FALSE
-  )
-
-``` 
+  matrix(model_features_padded, ncol = 5, byrow = TRUE),
+  col.names = c("Model features", rep("", 4))
+) |>
+  kableExtra::kable_styling(full_width = FALSE, position = "left") |>
+  kableExtra::column_spec(1:5, border_right = FALSE, border_left = FALSE) |>
+  kableExtra::row_spec(2:ceiling(length(model_features_padded) / 5), hline_after = FALSE)
+```
 :::
 
-# GLMENT Classifier
+:::{.callout-note}
+Variables starting with "dtb." refer to artist genres from Spotify. We assume that artist genres are assigned with a strategic aim for distribution on the platform (Valverde, 2025). In that regard, they are different from the musical genres assigned by the listeners. The variables are flags indicating whether an artist genre is assigned to a track's artist or not. To reduce the dimensionality, we used the same hiearchical-tree-based approach as for the MusicBrainz meta-genres.
+:::
+
+# GLMNET Classifier
+
 ## Low-detailed metagenre labels
+
 ### Tuning
+
 #### Model Selection
-```{r glmnet low tuning top graph}
+
+```{r glmnet_low_load}
+glmnet_low <- load_classification_model("../models/classifier/glmnet", "glmnet_lowres")
+
+glmnet_low_chosen <- c(
+  penalty = glmnet_low$settings$penalty#,
+  # under_ratio = glmnet_low$settings$under_ratio,
+  # over_ratio = glmnet_low$settings$over_ratio
+)
+
+glmnet_low_topmodels <- prepare_tuning_topmodels(
+  glmnet_low$tuning_history, glmnet_low_chosen, top_n
+)
+```
+
+```{r glmnet_low_tuning_graph}
 #| fig-cap: "**Best hyperparameter configurations** from tuning of the **GLMNET classifier for low-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
+plot_tuning_model_selection(glmnet_low_topmodels, top_n)
+```
 
-glmnet_low <- load_classification_model(
-  "../models/classifier/glmnet",
-  "glmnet_lowres"
-)
+```{r glmnet_low_tuning_table}
+glmnet_low_table <- create_glmnet_top_table(glmnet_low_topmodels)
+render_tuning_top_table(glmnet_low_table, glmnet_col_names)
+```
 
-
-chosen_parameters <- c(
-  penalty = glmnet_low$settings$penalty,
-  under_ratio = glmnet_low$settings$under_ratio, 
-  over_ratio = glmnet_low$settings$over_ratio
-)
-# find matching model in tuning history
-tuning_topmodels <- glmnet_low$tuning_history |> 
-  dplyr::mutate(
-    is_chosen = dplyr::if_else(
-      penalty == chosen_parameters["penalty"] &
-        under_ratio == chosen_parameters["under_ratio"] &
-        over_ratio == chosen_parameters["over_ratio"],
-      TRUE,
-      FALSE
-    )
-  ) |> 
-  dplyr::arrange(dplyr::desc(macro_f1_with_zeros_mean)) |> 
-  head(top_n) |> 
-  dplyr::mutate(rank = dplyr::row_number())
-best_f1 <- tuning_topmodels$macro_f1_with_zeros_mean[1]
-best_f1_se <- tuning_topmodels$macro_f1_with_zeros_std_err[1]
-tuning_topmodels <-tuning_topmodels |> 
-  dplyr::mutate(
-    within_se_rule = macro_f1_with_zeros_mean >= (best_f1 - best_f1_se), 
-    modelgroup = dplyr::case_when(
-      is_chosen ~ 1,
-      within_se_rule ~ 2,
-      TRUE ~ 3
-    ) |> as.factor()
-  )
-
-
-ggplot2::ggplot(tuning_topmodels, ggplot2::aes(x = rank, y = macro_f1_with_zeros_mean, color = modelgroup)) +
-  ggplot2::geom_point(size = 3) +
-  ggplot2::geom_errorbar(
-    ggplot2::aes(
-      ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
-      ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err
-    ),
-    width = 0.2
-  ) +
-  ggplot2::labs(
-    x = "Rank",
-    y = "F1 Macro (mean ± se)"
-  ) +
-  ggplot2::scale_color_manual(
-    values = c("#23cf00ff", "grey25", "grey75"),
-  ) +
-  ggplot2::scale_x_discrete(position = "top", limits = factor(1:top_n)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none", 
-    axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold"),
-    panel.grid.major.x = ggplot2::element_blank()
-  )
-
-```	
-```{r glmnet low tuning top table}
-
-top_table <- tuning_topmodels |> 
-  dplyr::mutate(
-    `F1 Macro (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      macro_f1_with_zeros_mean,
-      macro_f1_with_zeros_std_err
-    ), 
-    `Kappa (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      kap_mean,
-      kap_std_err
-    ), 
-    `Accuracy (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      accuracy_mean,
-      accuracy_std_err
-    ), 
-    `Undersampling Ratio` = round(under_ratio, 2),
-    `Oversampling Ratio` = round(over_ratio, 2),
-    Penalty = format(penalty, scientific = TRUE, digits = 3)
-  ) |> 
-    dplyr::select(
-      Rank = rank,
-      Iteration = .iter,
-      Penalty,
-      `Oversampling Ratio`,
-      `Undersampling Ratio`,
-      `F1 Macro (mean ± se)`,
-      `Kappa (mean ± se)`,
-      `Accuracy (mean ± se)`, 
-      modelgroup
-    )
-
-knitr::kable(
-  top_table,
-  col.names = c(
-    "Rank",
-    "Iteration",
-    "Penalty",
-    "Oversampling Ratio",
-    "Undersampling Ratio",
-    "F1 Macro (mean ± se)",
-    "Kappa (mean ± se)",
-    "Accuracy (mean ± se)",
-    ""
-  )
-) |> 
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:8,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 1),
-    bold = TRUE,
-    background = "#23cf00ff"
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 2),
-    background = "grey90"
-  ) |> 
-  kableExtra::row_spec(
-   which(top_table$modelgroup == 3),
-    color = "grey35"
-  ) |>
-  kableExtra::remove_column(9)
- 
-```	
 #### Parameter Exploration
+
 :::{.column-screen-inset-right}
-```{r glmnet low tuning param graphs}
+```{r glmnet_low_tuning_params}
 #| layout-ncol: 2
-make_axis_title <- function(x) {
-  with_space <- gsub("[_\\.]", " ", x)
-  split <- strsplit(with_space, " ")[[1]]
-  capitalized <- paste(toupper(substring(split, 1, 1)), substring(split, 2),
-        sep = "", collapse = " ")
-  capitalized
+for (i in seq_along(glmnet_params)) {
+  print(plot_parameter_tuning(glmnet_low$tuning_history, glmnet_params[i], i == 1))
 }
-
-plot_parameter_tuning <- function(parameter, plot_legend) {
-  ggplot2::ggplot(glmnet_low$tuning_history, ggplot2::aes(x = .data[[parameter]], y = macro_f1_with_zeros_mean, color = .iter)) +
-    ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(position = "top") +
-    ggplot2::labs(
-      x = make_axis_title(parameter),
-      y = "F1 Macro (mean)"
-    ) +
-    ggplot2::scale_color_continuous(type = "viridis", name = "Iteration") +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      legend.position = ifelse(plot_legend, "top", "none"),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-      axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-      axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold")
-    )
-  
-}
-
-params <- c("penalty", "under_ratio", "over_ratio")
-for(i in seq_along(params)) {
-  print(plot_parameter_tuning(params[i], ifelse(i == 1, TRUE, FALSE)))
-}
-
 ```
 :::
 
 ### Evaluation on test set
-**`r get_metrics_description(glmnet_low$evaluation$metrics_test)`**
-```{r glmnet low cm}
-plot_cm(glmnet_low$evaluation, "test")
-```	
-### Most important variables per metagenre
-```{r glmnet low var importance}	
-broom::tidy(glmnet_low$model) |> 
-  dplyr::filter(term != "(Intercept)") |> 
-  dplyr::group_by(class) |> 
-  dplyr::slice_max(
-    order_by = abs(estimate),
-    n = 5
-  ) |>
-  dplyr::ungroup() |> 
-  dplyr::arrange(class, dplyr::desc(abs(estimate))) |> 
-  dplyr::mutate(estimate = round(estimate, 2)) |>
-  dplyr::select(
-    Metagenre = class,
-    Feature = term,
-    Coefficient = estimate
-  ) |>
-  knitr::kable(
-    col.names = c("Metagenre", "Feature", "Coefficient"),
-    caption = "Top 5 most important features per metagenre according to the GLMNET classifier for low-detailed metagenre labels."
-  ) |>
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:3,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |>
-  kableExtra::row_spec(
-    0,
-    bold = TRUE,
-  ) |>  
-  kableExtra::collapse_rows(columns = 1, latex_hline = "major", valign = "top")
 
+**`r get_metrics_description(glmnet_low$evaluation$metrics_test)`**
+
+```{r glmnet_low_cm}
+plot_cm(glmnet_low$evaluation, "test")
+```
+
+### Most important variables per metagenre
+
+```{r glmnet_low_varimp}
+render_glmnet_varimp_table(
+  glmnet_low$model, n_glmnet_varimp,
+  "Top 5 most important features per metagenre according to the GLMNET classifier for low-detailed metagenre labels."
+)
 ```
 
 ## High-detailed metagenre labels
+
 ### Tuning
+
 #### Model Selection
-```{r glmnet high tuning top graph}
+
+```{r glmnet_high_load}
+glmnet_high <- load_classification_model("../models/classifier/glmnet", "glmnet_highres")
+
+glmnet_high_chosen <- c(
+  penalty = glmnet_high$settings$penalty#,
+  # under_ratio = glmnet_high$settings$under_ratio,
+  # over_ratio = glmnet_high$settings$over_ratio
+)
+
+glmnet_high_topmodels <- prepare_tuning_topmodels(
+  glmnet_high$tuning_history, glmnet_high_chosen, top_n
+)
+```
+
+```{r glmnet_high_tuning_graph}
 #| fig-cap: "**Best hyperparameter configurations** from tuning of the **GLMNET classifier for high-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
+plot_tuning_model_selection(glmnet_high_topmodels, top_n)
+```
 
-glmnet_high <- load_classification_model(
-  "../models/classifier/glmnet",
-  "glmnet_highres"
-)
+```{r glmnet_high_tuning_table}
+glmnet_high_table <- create_glmnet_top_table(glmnet_high_topmodels)
+render_tuning_top_table(glmnet_high_table, glmnet_col_names)
+```
 
-
-chosen_parameters <- c(
-  penalty = glmnet_high$settings$penalty,
-  under_ratio = glmnet_high$settings$under_ratio, 
-  over_ratio = glmnet_high$settings$over_ratio
-)
-# find matching model in tuning history
-tuning_topmodels <- glmnet_high$tuning_history |> 
-  dplyr::mutate(
-    is_chosen = dplyr::if_else(
-      penalty == chosen_parameters["penalty"] &
-        under_ratio == chosen_parameters["under_ratio"] &
-        over_ratio == chosen_parameters["over_ratio"],
-      TRUE,
-      FALSE
-    )
-  ) |> 
-  dplyr::arrange(dplyr::desc(macro_f1_with_zeros_mean)) |> 
-  head(top_n) |> 
-  dplyr::mutate(rank = dplyr::row_number())
-best_f1 <- tuning_topmodels$macro_f1_with_zeros_mean[1]
-best_f1_se <- tuning_topmodels$macro_f1_with_zeros_std_err[1]
-tuning_topmodels <-tuning_topmodels |> 
-  dplyr::mutate(
-    within_se_rule = macro_f1_with_zeros_mean >= (best_f1 - best_f1_se), 
-    modelgroup = dplyr::case_when(
-      is_chosen ~ 1,
-      within_se_rule ~ 2,
-      TRUE ~ 3
-    ) |> as.factor()
-  )
-
-
-ggplot2::ggplot(tuning_topmodels, ggplot2::aes(x = rank, y = macro_f1_with_zeros_mean, color = modelgroup)) +
-  ggplot2::geom_point(size = 3) +
-  ggplot2::geom_errorbar(
-    ggplot2::aes(
-      ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
-      ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err
-    ),
-    width = 0.2
-  ) +
-  ggplot2::labs(
-    x = "Rank",
-    y = "F1 Macro (mean ± se)"
-  ) +
-  ggplot2::scale_color_manual(
-    values = c("#23cf00ff", "grey25", "grey75"),
-  ) +
-  ggplot2::scale_x_discrete(position = "top", limits = factor(1:top_n)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none", 
-    axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold"),
-    panel.grid.major.x = ggplot2::element_blank()
-  )
-
-
-
-top_table <- tuning_topmodels |> 
-  dplyr::mutate(
-    `F1 Macro (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      macro_f1_with_zeros_mean,
-      macro_f1_with_zeros_std_err
-    ), 
-    `Kappa (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      kap_mean,
-      kap_std_err
-    ), 
-    `Accuracy (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      accuracy_mean,
-      accuracy_std_err
-    ), 
-    `Undersampling Ratio` = round(under_ratio, 2),
-    `Oversampling Ratio` = round(over_ratio, 2),
-    Penalty = format(penalty, scientific = TRUE, digits = 3)
-  ) |> 
-    dplyr::select(
-      Rank = rank,
-      Iteration = .iter,
-      Penalty,
-      `Oversampling Ratio`,
-      `Undersampling Ratio`,
-      `F1 Macro (mean ± se)`,
-      `Kappa (mean ± se)`,
-      `Accuracy (mean ± se)`, 
-      modelgroup
-    )
-```	
-```{r glmnet high tuning top table}
-knitr::kable(
-  top_table,
-  col.names = c(
-    "Rank",
-    "Iteration",
-    "Penalty",
-    "Oversampling Ratio",
-    "Undersampling Ratio",
-    "F1 Macro (mean ± se)",
-    "Kappa (mean ± se)",
-    "Accuracy (mean ± se)",
-    ""
-  )
-) |> 
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:8,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 1),
-    bold = TRUE,
-    background = "#23cf00ff"
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 2),
-    background = "grey90"
-  ) |> 
-  kableExtra::row_spec(
-   which(top_table$modelgroup == 3),
-    color = "grey35"
-  ) |>
-  kableExtra::remove_column(9)
- 
-```	
 #### Parameter Exploration
+
 :::{.column-screen-inset-right}
-```{r glmnet high tuning param graphs}
+```{r glmnet_high_tuning_params}
 #| layout-ncol: 2
-make_axis_title <- function(x) {
-  with_space <- gsub("[_\\.]", " ", x)
-  split <- strsplit(with_space, " ")[[1]]
-  capitalized <- paste(toupper(substring(split, 1, 1)), substring(split, 2),
-        sep = "", collapse = " ")
-  capitalized
+for (i in seq_along(glmnet_params)) {
+  print(plot_parameter_tuning(glmnet_high$tuning_history, glmnet_params[i], i == 1))
 }
-
-plot_parameter_tuning <- function(parameter, plot_legend) {
-  ggplot2::ggplot(glmnet_high$tuning_history, ggplot2::aes(x = .data[[parameter]], y = macro_f1_with_zeros_mean, color = .iter)) +
-    ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(position = "top") +
-    ggplot2::labs(
-      x = make_axis_title(parameter),
-      y = "F1 Macro (mean)"
-    ) +
-    ggplot2::scale_color_continuous(type = "viridis", name = "Iteration") +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      legend.position = ifelse(plot_legend, "top", "none"),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-      axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-      axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold")
-    )
-  
-}
-
-params <- c("penalty", "under_ratio", "over_ratio")
-for(i in seq_along(params)) {
-  print(plot_parameter_tuning(params[i], ifelse(i == 1, TRUE, FALSE)))
-}
-
 ```
 :::
 
 ### Evaluation on test set
-**`r get_metrics_description(glmnet_high$evaluation$metrics_test)`**
-```{r glmnet high cm, fig.width=10, fig.height=8.3}
-plot_cm(glmnet_high$evaluation, "test")
-```	
-### Most important variables per metagenre
-```{r glmnet high var importance}	
-broom::tidy(glmnet_high$model) |> 
-  dplyr::filter(term != "(Intercept)") |> 
-  dplyr::group_by(class) |> 
-  dplyr::slice_max(
-    order_by = abs(estimate),
-    n = n_glmnet_varimp
-  ) |>
-  dplyr::ungroup() |> 
-  dplyr::arrange(class, dplyr::desc(abs(estimate))) |> 
-  dplyr::mutate(estimate = round(estimate, 2)) |>
-  dplyr::select(
-    Metagenre = class,
-    Feature = term,
-    Coefficient = estimate
-  ) |>
-  knitr::kable(
-    col.names = c("Metagenre", "Feature", "Coefficient"),
-    caption = "Most important features per metagenre according to the GLMNET classifier for high-detailed metagenre labels."
-  ) |>
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:3,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |>
-  kableExtra::row_spec(
-    0,
-    bold = TRUE,
-  ) |>  
-  kableExtra::collapse_rows(columns = 1, latex_hline = "major", valign = "top")
 
+**`r get_metrics_description(glmnet_high$evaluation$metrics_test)`**
+
+```{r glmnet_high_cm, fig.width=10, fig.height=8.3}
+plot_cm(glmnet_high$evaluation, "test")
+```
+
+### Most important variables per metagenre
+
+```{r glmnet_high_varimp}
+render_glmnet_varimp_table(
+  glmnet_high$model, n_glmnet_varimp,
+  "Most important features per metagenre according to the GLMNET classifier for high-detailed metagenre labels."
+)
 ```
 
 # Random Forest Classifier
+
 ## Low-detailed metagenre labels
+
 ### Tuning
+
 #### Model Selection
-```{r rf low tuning top graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for low-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
 
-rf_low <- list()
-rf_low$settings <- readRDS("../models/classifier/rf/rf_highres_settings.rds")
-rf_low$evaluation <- readRDS("../models/classifier/rf/rf_highres_evaluation.rds")
-rf_low$tuning_history <- readRDS("../models/classifier/rf/rf_highres_tuning_history.rds")
+```{r rf_low_load}
+rf_low <- load_classification_model("../models/classifier/rf", "rf_lowres")
 
-
-chosen_parameters <- c(
+rf_low_chosen <- c(
   max.depth = rf_low$settings$max.depth,
   min_n = rf_low$settings$min_n,
-  mtry = rf_low$settings$mtry,
-  under_ratio = rf_low$settings$under_ratio, 
-  over_ratio = rf_low$settings$over_ratio
+  mtry = rf_low$settings$mtry#,
+  # under_ratio = rf_low$settings$under_ratio,
+  # over_ratio = rf_low$settings$over_ratio
 )
-# find matching model in tuning history
-tuning_topmodels <- rf_low$tuning_history |> 
-  dplyr::mutate(
-    is_chosen = dplyr::if_else(
-      max.depth == chosen_parameters["max.depth"] &
-        min_n == chosen_parameters["min_n"] &
-        mtry == chosen_parameters["mtry"] &
-        under_ratio == chosen_parameters["under_ratio"] &
-        over_ratio == chosen_parameters["over_ratio"],
-      TRUE,
-      FALSE
-    )
-  ) |> 
-  dplyr::arrange(dplyr::desc(macro_f1_with_zeros_mean)) |> 
-  head(top_n) |> 
-  dplyr::mutate(rank = dplyr::row_number())
-best_f1 <- tuning_topmodels$macro_f1_with_zeros_mean[1]
-best_f1_se <- tuning_topmodels$macro_f1_with_zeros_std_err[1]
-tuning_topmodels <-tuning_topmodels |> 
-  dplyr::mutate(
-    within_se_rule = macro_f1_with_zeros_mean >= (best_f1 - best_f1_se), 
-    modelgroup = dplyr::case_when(
-      is_chosen ~ 1,
-      within_se_rule ~ 2,
-      TRUE ~ 3
-    ) |> as.factor()
-  )
 
+rf_low_topmodels <- prepare_tuning_topmodels(
+  rf_low$tuning_history, rf_low_chosen, top_n
+)
+```
 
-ggplot2::ggplot(tuning_topmodels, ggplot2::aes(x = rank, y = macro_f1_with_zeros_mean, color = modelgroup)) +
-  ggplot2::geom_point(size = 3) +
-  ggplot2::geom_errorbar(
-    ggplot2::aes(
-      ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
-      ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err
-    ),
-    width = 0.2
-  ) +
-  ggplot2::labs(
-    x = "Rank",
-    y = "F1 Macro (mean ± se)"
-  ) +
-  ggplot2::scale_color_manual(
-    values = c("#23cf00ff", "grey25", "grey75"),
-  ) +
-  ggplot2::scale_x_discrete(position = "top", limits = factor(1:top_n)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none", 
-    axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold"),
-    panel.grid.major.x = ggplot2::element_blank()
-  )
+```{r rf_low_tuning_graph}
+#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for low-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
+plot_tuning_model_selection(rf_low_topmodels, top_n)
+```
 
+```{r rf_low_tuning_table}
+rf_low_table <- create_rf_top_table(rf_low_topmodels)
+render_tuning_top_table(rf_low_table, rf_col_names)
+```
 
-
-top_table <- tuning_topmodels |> 
-  dplyr::mutate(
-    `F1 Macro (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      macro_f1_with_zeros_mean,
-      macro_f1_with_zeros_std_err
-    ), 
-    `Kappa (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      kap_mean,
-      kap_std_err
-    ), 
-    `Accuracy (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      accuracy_mean,
-      accuracy_std_err
-    ), 
-    `Undersampling Ratio` = round(under_ratio, 2),
-    `Oversampling Ratio` = round(over_ratio, 2)
-  ) |> 
-    dplyr::select(
-      Rank = rank,
-      Iteration = .iter,
-      `Max Depth` = max.depth,
-      `Min Node Size` = min_n,
-      `MTRY` = mtry,
-      `Oversampling Ratio`,
-      `Undersampling Ratio`,
-      `F1 Macro (mean ± se)`,
-      `Kappa (mean ± se)`,
-      `Accuracy (mean ± se)`, 
-      modelgroup
-    )
-```	
-```{r rf low tuning top table}
-knitr::kable(
-  top_table,
-  col.names = c(
-    "Rank",
-    "Iteration",
-    "Max Depth",
-    "Min Node Size",
-    "MTRY",
-    "Oversampling Ratio",
-    "Undersampling Ratio",
-    "F1 Macro (mean ± se)",
-    "Kappa (mean ± se)",
-    "Accuracy (mean ± se)",
-    ""
-  )
-) |> 
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:8,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 1),
-    bold = TRUE,
-    background = "#23cf00ff"
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 2),
-    background = "grey90"
-  ) |> 
-  kableExtra::row_spec(
-   which(top_table$modelgroup == 3),
-    color = "grey35"
-  ) |>
-  kableExtra::remove_column(9)
- 
-```	
 #### Parameter Exploration
+
 :::{.column-screen-inset-right}
-```{r rf low tuning param graphs}
+```{r rf_low_tuning_params}
 #| layout-ncol: 2
-make_axis_title <- function(x) {
-  with_space <- gsub("[_\\.]", " ", x)
-  split <- strsplit(with_space, " ")[[1]]
-  capitalized <- paste(toupper(substring(split, 1, 1)), substring(split, 2),
-        sep = "", collapse = " ")
-  capitalized
+for (i in seq_along(rf_params)) {
+  print(plot_parameter_tuning(rf_low$tuning_history, rf_params[i], i == 1))
 }
-
-plot_parameter_tuning <- function(parameter, plot_legend) {
-  ggplot2::ggplot(rf_low$tuning_history, ggplot2::aes(x = .data[[parameter]], y = macro_f1_with_zeros_mean, color = .iter)) +
-    ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(position = "top") +
-    ggplot2::labs(
-      x = make_axis_title(parameter),
-      y = "F1 Macro (mean)"
-    ) +
-    ggplot2::scale_color_continuous(type = "viridis", name = "Iteration") +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      legend.position = ifelse(plot_legend, "top", "none"),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-      axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-      axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold")
-    )
-  
-}
-
-params <- c("max.depth", "min_n", "mtry", "under_ratio", "over_ratio")
-for(i in seq_along(params)) {
-  print(plot_parameter_tuning(params[i], ifelse(i == 1, TRUE, FALSE)))
-}
-
 ```
 :::
 
 ### Evaluation on test set
+
 **`r get_metrics_description(rf_low$evaluation$metrics_test)`**
-```{r rf low cm}
+
+```{r rf_low_cm}
 plot_cm(rf_low$evaluation, "test")
-```	
+```
+
 ### Most important variables per metagenre
-```{r rf low var importance}	
-rf_low$evaluation$varimp |> 
-  head(n_rf_varimp) |> 
-  dplyr::arrange(dplyr::desc(Importance)) |>
-  dplyr::mutate(
-    Variable = forcats::fct_inorder(Variable) |> forcats::fct_rev()
-  ) |>
-  ggplot2::ggplot(ggplot2::aes(y = Variable, x = Importance)) +	
-  ggplot2::geom_bar(stat = "identity", fill = "grey65") + 
-  ggplot2::scale_x_continuous(position = "top", expand = ggplot2::expansion(mult = c(0, 0.05))) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    axis.title.y = ggplot2::element_blank(),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 16, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12), 
-    panel.grid.major.y = ggplot2::element_blank()
-  )
+
+```{r rf_low_varimp}
+plot_varimp_bar(rf_low$evaluation$varimp, n_rf_varimp)
 ```
 
 ## High-detailed metagenre labels
+
 ### Tuning
+
 #### Model Selection
-```{r rf high tuning top graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for high-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
 
-rf_high <- list()
-rf_high$settings <- readRDS("../models/classifier/rf/rf_highres_settings.rds")
-rf_high$evaluation <- readRDS("../models/classifier/rf/rf_highres_evaluation.rds")
-rf_high$tuning_history <- readRDS("../models/classifier/rf/rf_highres_tuning_history.rds")
+```{r rf_high_load}
+rf_high <- load_classification_model("../models/classifier/rf", "rf_highres")
 
-
-chosen_parameters <- c(
+rf_high_chosen <- c(
   max.depth = rf_high$settings$max.depth,
   min_n = rf_high$settings$min_n,
-  mtry = rf_high$settings$mtry,
-  under_ratio = rf_high$settings$under_ratio, 
-  over_ratio = rf_high$settings$over_ratio
+  mtry = rf_high$settings$mtry#,
+  # under_ratio = rf_high$settings$under_ratio,
+  # over_ratio = rf_high$settings$over_ratio
 )
-# find matching model in tuning history
-tuning_topmodels <- rf_high$tuning_history |> 
-  dplyr::mutate(
-    is_chosen = dplyr::if_else(
-      max.depth == chosen_parameters["max.depth"] &
-        min_n == chosen_parameters["min_n"] &
-        mtry == chosen_parameters["mtry"] &
-        under_ratio == chosen_parameters["under_ratio"] &
-        over_ratio == chosen_parameters["over_ratio"],
-      TRUE,
-      FALSE
-    )
-  ) |> 
-  dplyr::arrange(dplyr::desc(macro_f1_with_zeros_mean)) |> 
-  head(top_n) |> 
-  dplyr::mutate(rank = dplyr::row_number())
-best_f1 <- tuning_topmodels$macro_f1_with_zeros_mean[1]
-best_f1_se <- tuning_topmodels$macro_f1_with_zeros_std_err[1]
-tuning_topmodels <-tuning_topmodels |> 
-  dplyr::mutate(
-    within_se_rule = macro_f1_with_zeros_mean >= (best_f1 - best_f1_se), 
-    modelgroup = dplyr::case_when(
-      is_chosen ~ 1,
-      within_se_rule ~ 2,
-      TRUE ~ 3
-    ) |> as.factor()
-  )
 
+rf_high_topmodels <- prepare_tuning_topmodels(
+  rf_high$tuning_history, rf_high_chosen, top_n
+)
+```
 
-ggplot2::ggplot(tuning_topmodels, ggplot2::aes(x = rank, y = macro_f1_with_zeros_mean, color = modelgroup)) +
-  ggplot2::geom_point(size = 3) +
-  ggplot2::geom_errorbar(
-    ggplot2::aes(
-      ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
-      ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err
-    ),
-    width = 0.2
-  ) +
-  ggplot2::labs(
-    x = "Rank",
-    y = "F1 Macro (mean ± se)"
-  ) +
-  ggplot2::scale_color_manual(
-    values = c("#23cf00ff", "grey25", "grey75"),
-  ) +
-  ggplot2::scale_x_discrete(position = "top", limits = factor(1:top_n)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none", 
-    axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold"),
-    panel.grid.major.x = ggplot2::element_blank()
-  )
+```{r rf_high_tuning_graph}
+#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for high-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
+plot_tuning_model_selection(rf_high_topmodels, top_n)
+```
 
+```{r rf_high_tuning_table}
+rf_high_table <- create_rf_top_table(rf_high_topmodels)
+render_tuning_top_table(rf_high_table, rf_col_names)
+```
 
-
-top_table <- tuning_topmodels |> 
-  dplyr::mutate(
-    `F1 Macro (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      macro_f1_with_zeros_mean,
-      macro_f1_with_zeros_std_err
-    ), 
-    `Kappa (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      kap_mean,
-      kap_std_err
-    ), 
-    `Accuracy (mean ± se)` = sprintf(
-      "%.3f ± %.3f",
-      accuracy_mean,
-      accuracy_std_err
-    ), 
-    `Undersampling Ratio` = round(under_ratio, 2),
-    `Oversampling Ratio` = round(over_ratio, 2)
-  ) |> 
-    dplyr::select(
-      Rank = rank,
-      Iteration = .iter,
-      `Max Depth` = max.depth,
-      `Min Node Size` = min_n,
-      `MTRY` = mtry,
-      `Oversampling Ratio`,
-      `Undersampling Ratio`,
-      `F1 Macro (mean ± se)`,
-      `Kappa (mean ± se)`,
-      `Accuracy (mean ± se)`, 
-      modelgroup
-    )
-```	
-```{r rf high tuning top table}
-knitr::kable(
-  top_table,
-  col.names = c(
-    "Rank",
-    "Iteration",
-    "Max Depth",
-    "Min Node Size",
-    "MTRY",
-    "Oversampling Ratio",
-    "Undersampling Ratio",
-    "F1 Macro (mean ± se)",
-    "Kappa (mean ± se)",
-    "Accuracy (mean ± se)",
-    ""
-  )
-) |> 
-  kableExtra::kable_styling(
-    full_width = FALSE,
-    position = "left",
-  ) |>
-  kableExtra::column_spec(
-    1:8,
-    border_right = FALSE,
-    border_left = FALSE, 
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 1),
-    bold = TRUE,
-    background = "#23cf00ff"
-  ) |> 
-  kableExtra::row_spec(
-    which(top_table$modelgroup == 2),
-    background = "grey90"
-  ) |> 
-  kableExtra::row_spec(
-   which(top_table$modelgroup == 3),
-    color = "grey35"
-  ) |>
-  kableExtra::remove_column(9)
- 
-```	
 #### Parameter Exploration
+
 :::{.column-screen-inset-right}
-```{r rf high tuning param graphs}
+```{r rf_high_tuning_params}
 #| layout-ncol: 2
-make_axis_title <- function(x) {
-  with_space <- gsub("[_\\.]", " ", x)
-  split <- strsplit(with_space, " ")[[1]]
-  capitalized <- paste(toupper(substring(split, 1, 1)), substring(split, 2),
-        sep = "", collapse = " ")
-  capitalized
+for (i in seq_along(rf_params)) {
+  print(plot_parameter_tuning(rf_high$tuning_history, rf_params[i], i == 1))
 }
-
-plot_parameter_tuning <- function(parameter, plot_legend) {
-  ggplot2::ggplot(rf_high$tuning_history, ggplot2::aes(x = .data[[parameter]], y = macro_f1_with_zeros_mean, color = .iter)) +
-    ggplot2::geom_point(size = 2) +
-    ggplot2::scale_x_continuous(position = "top") +
-    ggplot2::labs(
-      x = make_axis_title(parameter),
-      y = "F1 Macro (mean)"
-    ) +
-    ggplot2::scale_color_continuous(type = "viridis", name = "Iteration") +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      legend.position = ifelse(plot_legend, "top", "none"),
-      axis.title.y = ggplot2::element_text(color = "grey45", size = 14, hjust = 1),
-      axis.title.x = ggplot2::element_text(color = "grey45", size = 14, hjust = 0),
-      axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-      axis.text.y = ggplot2::element_text(color = "black", size = 12, face = "bold")
-    )
-  
-}
-
-params <- c("max.depth", "min_n", "mtry", "under_ratio", "over_ratio")
-for(i in seq_along(params)) {
-  print(plot_parameter_tuning(params[i], ifelse(i == 1, TRUE, FALSE)))
-}
-
 ```
 :::
 
 ### Evaluation on test set
+
 **`r get_metrics_description(rf_high$evaluation$metrics_test)`**
-```{r rf high cm, fig.width=10, fig.height=8.3}
+
+```{r rf_high_cm, fig.width=10, fig.height=8.3}
 plot_cm(rf_high$evaluation, "test")
-```	
+```
+
 ### Most important variables per metagenre
-```{r rf high var importance}	
-rf_high$evaluation$varimp |> 
-  head(n_rf_varimp) |> 
-  dplyr::arrange(dplyr::desc(Importance)) |>
-  dplyr::mutate(
-    Variable = forcats::fct_inorder(Variable) |> forcats::fct_rev()
-  ) |>
-  ggplot2::ggplot(ggplot2::aes(y = Variable, x = Importance)) +	
-  ggplot2::geom_bar(stat = "identity", fill = "grey65") + 
-  ggplot2::scale_x_continuous(position = "top", expand = ggplot2::expansion(mult = c(0, 0.05))) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    axis.title.y = ggplot2::element_blank(),
-    axis.title.x = ggplot2::element_text(color = "grey45", size = 16, hjust = 0),
-    axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-    axis.text.y = ggplot2::element_text(color = "black", size = 12), 
-    panel.grid.major.y = ggplot2::element_blank()
-  )
+
+```{r rf_high_varimp}
+plot_varimp_bar(rf_high$evaluation$varimp, n_rf_varimp)
 ```

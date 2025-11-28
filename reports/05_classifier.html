@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2025-11-27">
+<meta name="dcterms.date" content="2025-11-28">
 
-<title>Random Forest Classification - Genre Discourse Analysis</title>
+<title>Metagenre Classification - Genre Discourse Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -75,6 +75,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="05_classifier_files/libs/quarto-diagram/mermaid.min.js"></script>
 <script src="05_classifier_files/libs/quarto-diagram/mermaid-init.js"></script>
 <link href="05_classifier_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="05_classifier_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="05_classifier_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 
 <link rel="stylesheet" href="styles.css">
@@ -91,6 +95,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#complete-workflow" id="toc-complete-workflow" class="nav-link active" data-scroll-target="#complete-workflow"><span class="header-section-number">1</span> Complete Workflow</a></li>
   <li><a href="#data-summary" id="toc-data-summary" class="nav-link" data-scroll-target="#data-summary"><span class="header-section-number">2</span> Data Summary</a></li>
   <li><a href="#split-outcome-distributions" id="toc-split-outcome-distributions" class="nav-link" data-scroll-target="#split-outcome-distributions"><span class="header-section-number">3</span> Split outcome distributions</a></li>
+  <li><a href="#random-baseline" id="toc-random-baseline" class="nav-link" data-scroll-target="#random-baseline"><span class="header-section-number">4</span> Random Baseline</a></li>
+  <li><a href="#model-features" id="toc-model-features" class="nav-link" data-scroll-target="#model-features"><span class="header-section-number">5</span> Model Features</a></li>
+  <li><a href="#glmnet-classifier" id="toc-glmnet-classifier" class="nav-link" data-scroll-target="#glmnet-classifier"><span class="header-section-number">6</span> GLMNET Classifier</a>
+  <ul>
+  <li><a href="#low-detailed-metagenre-labels" id="toc-low-detailed-metagenre-labels" class="nav-link" data-scroll-target="#low-detailed-metagenre-labels"><span class="header-section-number">6.1</span> Low-detailed metagenre labels</a>
+  <ul>
+  <li><a href="#tuning" id="toc-tuning" class="nav-link" data-scroll-target="#tuning"><span class="header-section-number">6.1.1</span> Tuning</a>
+  <ul class="collapse">
+  <li><a href="#model-selection" id="toc-model-selection" class="nav-link" data-scroll-target="#model-selection"><span class="header-section-number">6.1.1.1</span> Model Selection</a></li>
+  <li><a href="#parameter-exploration" id="toc-parameter-exploration" class="nav-link" data-scroll-target="#parameter-exploration"><span class="header-section-number">6.1.1.2</span> Parameter Exploration</a></li>
+  </ul></li>
+  <li><a href="#evaluation-on-test-set" id="toc-evaluation-on-test-set" class="nav-link" data-scroll-target="#evaluation-on-test-set"><span class="header-section-number">6.1.2</span> Evaluation on test set</a></li>
+  <li><a href="#most-important-variables-per-metagenre" id="toc-most-important-variables-per-metagenre" class="nav-link" data-scroll-target="#most-important-variables-per-metagenre"><span class="header-section-number">6.1.3</span> Most important variables per metagenre</a></li>
+  </ul></li>
+  <li><a href="#high-detailed-metagenre-labels" id="toc-high-detailed-metagenre-labels" class="nav-link" data-scroll-target="#high-detailed-metagenre-labels"><span class="header-section-number">6.2</span> High-detailed metagenre labels</a>
+  <ul>
+  <li><a href="#tuning-1" id="toc-tuning-1" class="nav-link" data-scroll-target="#tuning-1"><span class="header-section-number">6.2.1</span> Tuning</a>
+  <ul class="collapse">
+  <li><a href="#model-selection-1" id="toc-model-selection-1" class="nav-link" data-scroll-target="#model-selection-1"><span class="header-section-number">6.2.1.1</span> Model Selection</a></li>
+  <li><a href="#parameter-exploration-1" id="toc-parameter-exploration-1" class="nav-link" data-scroll-target="#parameter-exploration-1"><span class="header-section-number">6.2.1.2</span> Parameter Exploration</a></li>
+  </ul></li>
+  <li><a href="#evaluation-on-test-set-1" id="toc-evaluation-on-test-set-1" class="nav-link" data-scroll-target="#evaluation-on-test-set-1"><span class="header-section-number">6.2.2</span> Evaluation on test set</a></li>
+  <li><a href="#most-important-variables-per-metagenre-1" id="toc-most-important-variables-per-metagenre-1" class="nav-link" data-scroll-target="#most-important-variables-per-metagenre-1"><span class="header-section-number">6.2.3</span> Most important variables per metagenre</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#random-forest-classifier" id="toc-random-forest-classifier" class="nav-link" data-scroll-target="#random-forest-classifier"><span class="header-section-number">7</span> Random Forest Classifier</a>
+  <ul>
+  <li><a href="#low-detailed-metagenre-labels-1" id="toc-low-detailed-metagenre-labels-1" class="nav-link" data-scroll-target="#low-detailed-metagenre-labels-1"><span class="header-section-number">7.1</span> Low-detailed metagenre labels</a>
+  <ul>
+  <li><a href="#tuning-2" id="toc-tuning-2" class="nav-link" data-scroll-target="#tuning-2"><span class="header-section-number">7.1.1</span> Tuning</a>
+  <ul class="collapse">
+  <li><a href="#model-selection-2" id="toc-model-selection-2" class="nav-link" data-scroll-target="#model-selection-2"><span class="header-section-number">7.1.1.1</span> Model Selection</a></li>
+  <li><a href="#parameter-exploration-2" id="toc-parameter-exploration-2" class="nav-link" data-scroll-target="#parameter-exploration-2"><span class="header-section-number">7.1.1.2</span> Parameter Exploration</a></li>
+  </ul></li>
+  <li><a href="#evaluation-on-test-set-2" id="toc-evaluation-on-test-set-2" class="nav-link" data-scroll-target="#evaluation-on-test-set-2"><span class="header-section-number">7.1.2</span> Evaluation on test set</a></li>
+  <li><a href="#most-important-variables-per-metagenre-2" id="toc-most-important-variables-per-metagenre-2" class="nav-link" data-scroll-target="#most-important-variables-per-metagenre-2"><span class="header-section-number">7.1.3</span> Most important variables per metagenre</a></li>
+  </ul></li>
+  <li><a href="#high-detailed-metagenre-labels-1" id="toc-high-detailed-metagenre-labels-1" class="nav-link" data-scroll-target="#high-detailed-metagenre-labels-1"><span class="header-section-number">7.2</span> High-detailed metagenre labels</a>
+  <ul>
+  <li><a href="#tuning-3" id="toc-tuning-3" class="nav-link" data-scroll-target="#tuning-3"><span class="header-section-number">7.2.1</span> Tuning</a>
+  <ul class="collapse">
+  <li><a href="#model-selection-3" id="toc-model-selection-3" class="nav-link" data-scroll-target="#model-selection-3"><span class="header-section-number">7.2.1.1</span> Model Selection</a></li>
+  <li><a href="#parameter-exploration-3" id="toc-parameter-exploration-3" class="nav-link" data-scroll-target="#parameter-exploration-3"><span class="header-section-number">7.2.1.2</span> Parameter Exploration</a></li>
+  </ul></li>
+  <li><a href="#evaluation-on-test-set-3" id="toc-evaluation-on-test-set-3" class="nav-link" data-scroll-target="#evaluation-on-test-set-3"><span class="header-section-number">7.2.2</span> Evaluation on test set</a></li>
+  <li><a href="#most-important-variables-per-metagenre-3" id="toc-most-important-variables-per-metagenre-3" class="nav-link" data-scroll-target="#most-important-variables-per-metagenre-3"><span class="header-section-number">7.2.3</span> Most important variables per metagenre</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://github.com/markusradke/GenreDiscourseAnalysis"><i class="bi bi-link-45deg"></i>Github Repository</a></li></ul></div></nav>
 </div>
@@ -100,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Random Forest Classification - Genre Discourse Analysis</h1>
+<h1 class="title">Metagenre Classification - Genre Discourse Analysis</h1>
 </div>
 
 
@@ -117,7 +169,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 27, 2025</p>
+      <p class="date">November 28, 2025</p>
     </div>
   </div>
   
@@ -212,6 +264,33 @@ flowchart TB
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Currently, the models are tranined with a fixed undersampling rate with factor 10 (low-detail) and 20 (high-detail) due to computational constraints. Also, the oversampling rate is fixed to 0.25 for both low-detail and high-detailed metagenre labels.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The mixture of lasso and ridge regularization for the GLMNET models was fixed to 0.5 (elastic net).</p>
+<p>Random forests were tuned with 750 trees per ensemble. The final model on the whole tranining set was trained with 1000 trees.</p>
+</div>
+</div>
 </section>
 <section id="data-summary" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Data Summary</h1>
@@ -231,7 +310,7 @@ flowchart TB
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_ds</span>(<span class="st">"low (10-15)"</span>,  <span class="st">"Train"</span>, train_low),</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_ds</span>(<span class="st">"low (10-15)"</span>,  <span class="st">"Test"</span>,  test_low),</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_ds</span>(<span class="st">"high (25-30)"</span>, <span class="st">"Train"</span>, train_high),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_ds</span>(<span class="st">"high (25-30)"</span>, <span class="st">"Test"</span>,  test_high),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_ds</span>(<span class="st">"high (25-30)"</span>, <span class="st">"Test"</span>,  test_high)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
@@ -255,26 +334,26 @@ flowchart TB
 <tr class="odd">
 <td style="text-align: left;">low (10-15)</td>
 <td style="text-align: left;">Train</td>
-<td style="text-align: left;">123,699</td>
+<td style="text-align: left;">123,973</td>
 <td style="text-align: left;">7,031</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">low (10-15)</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: left;">31,394</td>
-<td style="text-align: left;">1,760</td>
+<td style="text-align: left;">3,038</td>
+<td style="text-align: left;">806</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">high (25-30)</td>
 <td style="text-align: left;">Train</td>
-<td style="text-align: left;">123,792</td>
+<td style="text-align: left;">126,278</td>
 <td style="text-align: left;">7,032</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">high (25-30)</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: left;">31,301</td>
-<td style="text-align: left;">1,759</td>
+<td style="text-align: left;">3,125</td>
+<td style="text-align: left;">797</td>
 </tr>
 </tbody>
 </table>
@@ -292,8 +371,8 @@ flowchart TB
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="05_classifier_files/figure-html/outcome_distributions%20low-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Comparison of metagenre distributions in train and test splits for low detailed meta-genre taxonomy.</figcaption>
+<p><img src="05_classifier_files/figure-html/outcome_distributions_low-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Comparison of metagenre distributions in train and test splits for <strong>low-detailed</strong> meta-genre taxonomy.</figcaption>
 </figure>
 </div>
 </div>
@@ -307,12 +386,2110 @@ flowchart TB
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="05_classifier_files/figure-html/outcome_distributions%20high-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption>Comparison of metagenre distributions in train and test splits for low detailed meta-genre taxonomy.</figcaption>
+<p><img src="05_classifier_files/figure-html/outcome_distributions_high-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Comparison of metagenre distributions in train and test splits for <strong>high-detailed</strong> detailed meta-genre taxonomy.</figcaption>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="random-baseline" class="level1 page-columns page-full" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Random Baseline</h1>
+<p>This random baseline model predicts the metagenre labels by random guessing according to the distribution of the metagenres in the training set.</p>
+<div class="column-screen-inset-right">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>random_low <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/baseline"</span>, <span class="st">"random_baseline_lowres"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(random_low<span class="sc">$</span>evaluation, <span class="st">"train"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(random_low<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/random_baseline_low-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/random_baseline_low-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>random_high <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/baseline"</span>, <span class="st">"random_baseline_highres"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(random_high<span class="sc">$</span>evaluation, <span class="st">"train"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(random_high<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/random_baseline_high-1.png" class="img-fluid" width="960"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/random_baseline_high-2.png" class="img-fluid" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="model-features" class="level1 page-columns page-full" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Model Features</h1>
+<div class="column-screen-inset-right">
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_features <span class="ot">&lt;-</span> <span class="fu">colnames</span>(train_low)[</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">colnames</span>(train_low) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"track.s.id"</span>, <span class="st">"artist.s.id"</span>, <span class="st">"metagenre"</span>, <span class="st">"case_wts"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>] <span class="sc">|&gt;</span> <span class="fu">sort</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>A total of 225 features was used for training the classifiers.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model_features_padded <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  model_features,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="st">""</span>, <span class="at">times =</span> <span class="dv">5</span> <span class="sc">-</span> (<span class="fu">length</span>(model_features) <span class="sc">%%</span> <span class="dv">5</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(model_features_padded, <span class="at">ncol =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Model features"</span>, <span class="fu">rep</span>(<span class="st">""</span>, <span class="dv">4</span>))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"left"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">border_right =</span> <span class="cn">FALSE</span>, <span class="at">border_left =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">row_spec</span>(<span class="dv">2</span><span class="sc">:</span><span class="fu">ceiling</span>(<span class="fu">length</span>(model_features_padded) <span class="sc">/</span> <span class="dv">5</span>), <span class="at">hline_after =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Model features</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">album.s.popularity</td>
+<td style="text-align: left;">album.s.releaseyear</td>
+<td style="text-align: left;">album.s.totaltracks</td>
+<td style="text-align: left;">artist.mb.area_AT</td>
+<td style="text-align: left;">artist.mb.area_AU</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.area_CA</td>
+<td style="text-align: left;">artist.mb.area_CH</td>
+<td style="text-align: left;">artist.mb.area_DE</td>
+<td style="text-align: left;">artist.mb.area_FI</td>
+<td style="text-align: left;">artist.mb.area_FR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: left;">artist.mb.area_NO</td>
+<td style="text-align: left;">artist.mb.area_other</td>
+<td style="text-align: left;">artist.mb.area_SE</td>
+<td style="text-align: left;">artist.mb.birthyear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.dead_TRUE.</td>
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: left;">artist.mb.origin_Australia</td>
+<td style="text-align: left;">artist.mb.origin_Canada</td>
+<td style="text-align: left;">artist.mb.origin_Finland</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_France</td>
+<td style="text-align: left;">artist.mb.origin_Germany</td>
+<td style="text-align: left;">artist.mb.origin_Netherlands</td>
+<td style="text-align: left;">artist.mb.origin_Norway</td>
+<td style="text-align: left;">artist.mb.origin_other</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.origin_Sweden</td>
+<td style="text-align: left;">artist.mb.origin_United.Kingdom</td>
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: left;">artist.s.followers</td>
+<td style="text-align: left;">artist.s.popularity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.album.rock_TRUE.</td>
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: left;">dtb.alternative.rock_TRUE.</td>
+<td style="text-align: left;">dtb.blues.rock_TRUE.</td>
+<td style="text-align: left;">dtb.britpop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.chamber.pop_TRUE.</td>
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: left;">dtb.classic.schlager_TRUE.</td>
+<td style="text-align: left;">dtb.dance.pop_TRUE.</td>
+<td style="text-align: left;">dtb.death.metal_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.edm_TRUE.</td>
+<td style="text-align: left;">dtb.electronica_TRUE.</td>
+<td style="text-align: left;">dtb.eurodance_TRUE.</td>
+<td style="text-align: left;">dtb.europop_TRUE.</td>
+<td style="text-align: left;">dtb.german.hip.hop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.german.metal_TRUE.</td>
+<td style="text-align: left;">dtb.german.pop_TRUE.</td>
+<td style="text-align: left;">dtb.german.rock_TRUE.</td>
+<td style="text-align: left;">dtb.german.techno_TRUE.</td>
+<td style="text-align: left;">dtb.glam.metal_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.gothic.metal_TRUE.</td>
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: left;">dtb.hip.hop_TRUE.</td>
+<td style="text-align: left;">dtb.indie.rock_TRUE.</td>
+<td style="text-align: left;">dtb.indietronica_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.latin.pop_TRUE.</td>
+<td style="text-align: left;">dtb.liedermacher_TRUE.</td>
+<td style="text-align: left;">dtb.medieval.rock_TRUE.</td>
+<td style="text-align: left;">dtb.mellow.gold_TRUE.</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.modern.rock_TRUE.</td>
+<td style="text-align: left;">dtb.neo.mellow_TRUE.</td>
+<td style="text-align: left;">dtb.neue.deutsche.harte_TRUE.</td>
+<td style="text-align: left;">dtb.new.romantic_TRUE.</td>
+<td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.new.wave_TRUE.</td>
+<td style="text-align: left;">dtb.nu.metal_TRUE.</td>
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
+<td style="text-align: left;">dtb.pop.dance_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: left;">dtb.post.grunge_TRUE.</td>
+<td style="text-align: left;">dtb.power.metal_TRUE.</td>
+<td style="text-align: left;">dtb.progressive.metal_TRUE.</td>
+<td style="text-align: left;">dtb.progressive.rock_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.punk_TRUE.</td>
+<td style="text-align: left;">dtb.r&amp;b_TRUE.</td>
+<td style="text-align: left;">dtb.rap_TRUE.</td>
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: left;">dtb.schlager_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: left;">dtb.speed.metal_TRUE.</td>
+<td style="text-align: left;">dtb.symphonic.metal_TRUE.</td>
+<td style="text-align: left;">dtb.synthpop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.vocal.jazz_TRUE.</td>
+<td style="text-align: left;">is.major.label_FALSE.</td>
+<td style="text-align: left;">label.med.album.popularity</td>
+<td style="text-align: left;">label.med.artist.popularity</td>
+<td style="text-align: left;">label.med.track.popularity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lyrics.distinct_words_ratio</td>
+<td style="text-align: left;">lyrics.nrc_anger</td>
+<td style="text-align: left;">lyrics.nrc_anticipation</td>
+<td style="text-align: left;">lyrics.nrc_disgust</td>
+<td style="text-align: left;">lyrics.nrc_fear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lyrics.nrc_joy</td>
+<td style="text-align: left;">lyrics.nrc_negative</td>
+<td style="text-align: left;">lyrics.nrc_positive</td>
+<td style="text-align: left;">lyrics.nrc_sadness</td>
+<td style="text-align: left;">lyrics.nrc_surprise</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lyrics.nrc_trust</td>
+<td style="text-align: left;">lyrics.repeated_lines_ratio</td>
+<td style="text-align: left;">lyrics.sentiment</td>
+<td style="text-align: left;">p_max</td>
+<td style="text-align: left;">track.ab.low.dynamiccomplexity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.low.loudness</td>
+<td style="text-align: left;">track.ab.p.acoustic</td>
+<td style="text-align: left;">track.ab.p.aggressive</td>
+<td style="text-align: left;">track.ab.p.bright</td>
+<td style="text-align: left;">track.ab.p.danceable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.drtmd.alternative</td>
+<td style="text-align: left;">track.ab.p.drtmd.blues</td>
+<td style="text-align: left;">track.ab.p.drtmd.electronic</td>
+<td style="text-align: left;">track.ab.p.drtmd.folk.country</td>
+<td style="text-align: left;">track.ab.p.drtmd.funk.soul.rnb</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.p.drtmd.jazz</td>
+<td style="text-align: left;">track.ab.p.drtmd.pop</td>
+<td style="text-align: left;">track.ab.p.drtmd.rap.hiphop</td>
+<td style="text-align: left;">track.ab.p.drtmd.rock</td>
+<td style="text-align: left;">track.ab.p.electronic</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.eltrc.ambient</td>
+<td style="text-align: left;">track.ab.p.eltrc.drumandbass</td>
+<td style="text-align: left;">track.ab.p.eltrc.house</td>
+<td style="text-align: left;">track.ab.p.eltrc.techno</td>
+<td style="text-align: left;">track.ab.p.eltrc.trance</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.p.female</td>
+<td style="text-align: left;">track.ab.p.happy</td>
+<td style="text-align: left;">track.ab.p.ismir.chachacha</td>
+<td style="text-align: left;">track.ab.p.ismir.jive</td>
+<td style="text-align: left;">track.ab.p.ismir.quickstep</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.ismir.rumbaamerican</td>
+<td style="text-align: left;">track.ab.p.ismir.rumbainternational</td>
+<td style="text-align: left;">track.ab.p.ismir.rumbamisc</td>
+<td style="text-align: left;">track.ab.p.ismir.samba</td>
+<td style="text-align: left;">track.ab.p.ismir.tango</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.p.ismir.viennesewaltz</td>
+<td style="text-align: left;">track.ab.p.ismir.waltz</td>
+<td style="text-align: left;">track.ab.p.mirex.aggressive</td>
+<td style="text-align: left;">track.ab.p.mirex.humorous</td>
+<td style="text-align: left;">track.ab.p.mirex.literate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.mirex.passionate</td>
+<td style="text-align: left;">track.ab.p.mirex.rollicking</td>
+<td style="text-align: left;">track.ab.p.party</td>
+<td style="text-align: left;">track.ab.p.relaxed</td>
+<td style="text-align: left;">track.ab.p.rosa.classical</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.p.rosa.dance</td>
+<td style="text-align: left;">track.ab.p.rosa.hiphop</td>
+<td style="text-align: left;">track.ab.p.rosa.jazz</td>
+<td style="text-align: left;">track.ab.p.rosa.pop</td>
+<td style="text-align: left;">track.ab.p.rosa.rhythmandblues</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.rosa.rock</td>
+<td style="text-align: left;">track.ab.p.rosa.speech</td>
+<td style="text-align: left;">track.ab.p.sad</td>
+<td style="text-align: left;">track.ab.p.tonal</td>
+<td style="text-align: left;">track.ab.p.tzntk.blues</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.p.tzntk.classical</td>
+<td style="text-align: left;">track.ab.p.tzntk.country</td>
+<td style="text-align: left;">track.ab.p.tzntk.disco</td>
+<td style="text-align: left;">track.ab.p.tzntk.hiphop</td>
+<td style="text-align: left;">track.ab.p.tzntk.jazz</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.p.tzntk.metal</td>
+<td style="text-align: left;">track.ab.p.tzntk.pop</td>
+<td style="text-align: left;">track.ab.p.tzntk.reggae</td>
+<td style="text-align: left;">track.ab.p.tzntk.rock</td>
+<td style="text-align: left;">track.ab.p.voice</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.rhythm.danceability</td>
+<td style="text-align: left;">track.ab.rhythm.onsetrate</td>
+<td style="text-align: left;">track.ab.rhythm.tempo</td>
+<td style="text-align: left;">track.ab.tonal.chordchangerate</td>
+<td style="text-align: left;">track.ab.tonal.chordsnumberrate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.tonal.key_A</td>
+<td style="text-align: left;">track.ab.tonal.key_A.</td>
+<td style="text-align: left;">track.ab.tonal.key_B</td>
+<td style="text-align: left;">track.ab.tonal.key_C</td>
+<td style="text-align: left;">track.ab.tonal.key_C.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.tonal.key_D</td>
+<td style="text-align: left;">track.ab.tonal.key_D.</td>
+<td style="text-align: left;">track.ab.tonal.key_E</td>
+<td style="text-align: left;">track.ab.tonal.key_F.</td>
+<td style="text-align: left;">track.ab.tonal.key_G</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.tonal.key_G.</td>
+<td style="text-align: left;">track.ab.tonal.keystrength</td>
+<td style="text-align: left;">track.ab.tonal.mode_minor</td>
+<td style="text-align: left;">track.dz.album.duration</td>
+<td style="text-align: left;">track.dz.album.explicitlyrics_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.dz.album.followers</td>
+<td style="text-align: left;">track.dz.firstartist.followers</td>
+<td style="text-align: left;">track.dz.firstartist.nalbums</td>
+<td style="text-align: left;">track.dz.loudness</td>
+<td style="text-align: left;">track.dz.rank</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.dz.tempo</td>
+<td style="text-align: left;">track.is.dach_TRUE.</td>
+<td style="text-align: left;">track.is.instrumental_TRUE.</td>
+<td style="text-align: left;">track.language_French</td>
+<td style="text-align: left;">track.language_German</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_Instrumental</td>
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: left;">track.language_Spanish..Castilian</td>
+<td style="text-align: left;">track.s.acousticness</td>
+<td style="text-align: left;">track.s.danceability</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.duration</td>
+<td style="text-align: left;">track.s.energy</td>
+<td style="text-align: left;">track.s.explicitlyrics_TRUE.</td>
+<td style="text-align: left;">track.s.instrumentalness</td>
+<td style="text-align: left;">track.s.key_A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.key_B</td>
+<td style="text-align: left;">track.s.key_Bb</td>
+<td style="text-align: left;">track.s.key_C</td>
+<td style="text-align: left;">track.s.key_C.</td>
+<td style="text-align: left;">track.s.key_D</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.key_E</td>
+<td style="text-align: left;">track.s.key_Eb</td>
+<td style="text-align: left;">track.s.key_F</td>
+<td style="text-align: left;">track.s.key_F.</td>
+<td style="text-align: left;">track.s.key_G.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.liveness</td>
+<td style="text-align: left;">track.s.loudness</td>
+<td style="text-align: left;">track.s.mode_minor</td>
+<td style="text-align: left;">track.s.popularity</td>
+<td style="text-align: left;">track.s.speechiness</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.tempo</td>
+<td style="text-align: left;">track.s.timesignature_other</td>
+<td style="text-align: left;">track.s.timesignature_X3.4</td>
+<td style="text-align: left;">track.s.timesignature_X5.4</td>
+<td style="text-align: left;">track.s.valence</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Variables starting with “dtb.” refer to artist genres from Spotify. We assume that artist genres are assigned with a strategic aim for distribution on the platform (Valverde, 2025). In that regard, they are different from the musical genres assigned by the listeners. The variables are flags indicating whether an artist genre is assigned to a track’s artist or not. To reduce the dimensionality, we used the same hiearchical-tree-based approach as for the MusicBrainz meta-genres.</p>
+</div>
+</div>
+</section>
+<section id="glmnet-classifier" class="level1 page-columns page-full" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> GLMNET Classifier</h1>
+<section id="low-detailed-metagenre-labels" class="level2 page-columns page-full" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="low-detailed-metagenre-labels"><span class="header-section-number">6.1</span> Low-detailed metagenre labels</h2>
+<section id="tuning" class="level3 page-columns page-full" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="tuning"><span class="header-section-number">6.1.1</span> Tuning</h3>
+<section id="model-selection" class="level4" data-number="6.1.1.1">
+<h4 data-number="6.1.1.1" class="anchored" data-anchor-id="model-selection"><span class="header-section-number">6.1.1.1</span> Model Selection</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>glmnet_low <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/glmnet"</span>, <span class="st">"glmnet_lowres"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>glmnet_low_chosen <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">penalty =</span> glmnet_low<span class="sc">$</span>settings<span class="sc">$</span>penalty<span class="co">#,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># under_ratio = glmnet_low$settings$under_ratio,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># over_ratio = glmnet_low$settings$over_ratio</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>glmnet_low_topmodels <span class="ot">&lt;-</span> <span class="fu">prepare_tuning_topmodels</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  glmnet_low<span class="sc">$</span>tuning_history, glmnet_low_chosen, top_n</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_tuning_model_selection</span>(glmnet_low_topmodels, top_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/glmnet_low_tuning_graph-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><strong>Best hyperparameter configurations</strong> from tuning of the <strong>GLMNET classifier for low-detailed</strong> metagenre labels. The chosen hyperparameter configuration is highlighted in green, other <strong>models within one standard error of the numerically best model</strong> are shown in dark grey.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>glmnet_low_table <span class="ot">&lt;-</span> <span class="fu">create_glmnet_top_table</span>(glmnet_low_topmodels)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">render_tuning_top_table</span>(glmnet_low_table, glmnet_col_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Rank</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Iteration</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Penalty</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F1 Macro (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Kappa (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Accuracy (mean ± se)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">24</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">3.64e-03</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.456 ± 0.013</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.492 ± 0.016</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.568 ± 0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">2</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">19</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">2.13e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.455 ± 0.011</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.498 ± 0.014</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.578 ± 0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">3</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">29</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">3.42e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.454 ± 0.012</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.486 ± 0.015</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.562 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">4</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">16</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">3.96e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.454 ± 0.015</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.486 ± 0.017</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.561 ± 0.015</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">5</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">23</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">2.13e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.452 ± 0.014</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.496 ± 0.017</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.575 ± 0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">6</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">21</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">1.51e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.450 ± 0.014</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.497 ± 0.015</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.578 ± 0.013</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">7</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">22</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">2.57e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.448 ± 0.011</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.479 ± 0.015</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.556 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">8</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">25</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">7.85e-04</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.446 ± 0.011</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.484 ± 0.014</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.562 ± 0.012</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">9</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">15</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">3.34e-03</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.446 ± 0.017</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.505 ± 0.017</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.586 ± 0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">10</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">7</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">4.05e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.441 ± 0.010</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.467 ± 0.013</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.546 ± 0.010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">11</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">18</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">4.94e-03</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.439 ± 0.010</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.456 ± 0.014</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.526 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">12</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.15e-02</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.438 ± 0.013</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.458 ± 0.016</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.528 ± 0.014</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">13</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.25e-03</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.437 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.459 ± 0.014</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.532 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">14</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">2</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">8.71e-03</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.436 ± 0.010</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.454 ± 0.015</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.524 ± 0.013</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">15</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">6.92e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.436 ± 0.012</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.470 ± 0.012</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.547 ± 0.010</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">16</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">33</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">7.22e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.435 ± 0.016</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.508 ± 0.014</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.596 ± 0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">17</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">17</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.01e-08</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.433 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.466 ± 0.015</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.548 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">18</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">9</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">3.70e-06</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.431 ± 0.010</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.462 ± 0.013</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.543 ± 0.010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">19</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">1</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">4.37e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.429 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.443 ± 0.014</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.515 ± 0.012</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">20</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.41e-10</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.429 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.455 ± 0.014</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.534 ± 0.012</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="parameter-exploration" class="level4 page-columns page-full" data-number="6.1.1.2">
+<h4 data-number="6.1.1.2" class="anchored" data-anchor-id="parameter-exploration"><span class="header-section-number">6.1.1.2</span> Parameter Exploration</h4>
+<div class="column-screen-inset-right">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(glmnet_params)) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">plot_parameter_tuning</span>(glmnet_low<span class="sc">$</span>tuning_history, glmnet_params[i], i <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/glmnet_low_tuning_params-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluation-on-test-set" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="evaluation-on-test-set"><span class="header-section-number">6.1.2</span> Evaluation on test set</h3>
+<p><strong>F1-macro: 0.489 Kappa: 0.512 Acc (unbalanced): 0.588</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(glmnet_low<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/glmnet_low_cm-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="most-important-variables-per-metagenre" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="most-important-variables-per-metagenre"><span class="header-section-number">6.1.3</span> Most important variables per metagenre</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">render_glmnet_varimp_table</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  glmnet_low<span class="sc">$</span>model, n_glmnet_varimp,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Top 5 most important features per metagenre according to the GLMNET classifier for low-detailed metagenre labels."</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Top 5 most important features per metagenre according to the GLMNET classifier for low-detailed metagenre labels.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold;">Metagenre</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold;">Feature</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Coefficient</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">alternative rock</td>
+<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
+<td style="text-align: right;">2.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">0.93</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">0.88</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">-0.84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">0.73</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">electronic</td>
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-0.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">is.major.label_TRUE.</td>
+<td style="text-align: right;">-0.64</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">0.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_US</td>
+<td style="text-align: right;">-0.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.instrumentalness</td>
+<td style="text-align: right;">0.43</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">hard rock</td>
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">3.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">0.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.dead_TRUE.</td>
+<td style="text-align: right;">-0.87</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: right;">-0.59</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">heavy metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">3.57</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.93</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">1.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_United.States.of.America</td>
+<td style="text-align: right;">-0.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">-0.68</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">hip hop</td>
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">1.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.explicitlyrics_TRUE.</td>
+<td style="text-align: right;">1.34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">1.15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.area_other</td>
+<td style="text-align: right;">-0.81</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: right;">-0.75</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">indie rock</td>
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.89</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
+<td style="text-align: right;">1.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+<td style="text-align: right;">-1.12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.is.dach_TRUE.</td>
+<td style="text-align: right;">-1.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">0.98</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">jazz</td>
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">1.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">1.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.dz.album.explicitlyrics_TRUE.</td>
+<td style="text-align: right;">-0.92</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">-0.91</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">3.36</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">1.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">-0.82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_other</td>
+<td style="text-align: right;">0.81</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.dead_TRUE.</td>
+<td style="text-align: right;">-0.61</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">pop</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">2.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+<td style="text-align: right;">1.77</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: right;">0.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">0.92</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">pop rock</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">2.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+<td style="text-align: right;">1.44</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: right;">0.99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.timesignature_other</td>
+<td style="text-align: right;">-0.67</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.mode_minor</td>
+<td style="text-align: right;">-0.62</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">rock</td>
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">1.76</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">1.38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+<td style="text-align: right;">0.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
+<td style="text-align: right;">0.73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">0.67</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">schlager</td>
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">2.82</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.mode_minor</td>
+<td style="text-align: right;">-1.31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.tonal.key_other</td>
+<td style="text-align: right;">0.94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">0.94</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.is.dach_TRUE.</td>
+<td style="text-align: right;">0.90</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="high-detailed-metagenre-labels" class="level2 page-columns page-full" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="high-detailed-metagenre-labels"><span class="header-section-number">6.2</span> High-detailed metagenre labels</h2>
+<section id="tuning-1" class="level3 page-columns page-full" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="tuning-1"><span class="header-section-number">6.2.1</span> Tuning</h3>
+<section id="model-selection-1" class="level4" data-number="6.2.1.1">
+<h4 data-number="6.2.1.1" class="anchored" data-anchor-id="model-selection-1"><span class="header-section-number">6.2.1.1</span> Model Selection</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>glmnet_high <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/glmnet"</span>, <span class="st">"glmnet_highres"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>glmnet_high_chosen <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">penalty =</span> glmnet_high<span class="sc">$</span>settings<span class="sc">$</span>penalty<span class="co">#,</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># under_ratio = glmnet_high$settings$under_ratio,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># over_ratio = glmnet_high$settings$over_ratio</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>glmnet_high_topmodels <span class="ot">&lt;-</span> <span class="fu">prepare_tuning_topmodels</span>(</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  glmnet_high<span class="sc">$</span>tuning_history, glmnet_high_chosen, top_n</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_tuning_model_selection</span>(glmnet_high_topmodels, top_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/glmnet_high_tuning_graph-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><strong>Best hyperparameter configurations</strong> from tuning of the <strong>GLMNET classifier for high-detailed</strong> metagenre labels. The chosen hyperparameter configuration is highlighted in green, other <strong>models within one standard error of the numerically best model</strong> are shown in dark grey.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>glmnet_high_table <span class="ot">&lt;-</span> <span class="fu">create_glmnet_top_table</span>(glmnet_high_topmodels)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">render_tuning_top_table</span>(glmnet_high_table, glmnet_col_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Rank</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Iteration</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Penalty</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F1 Macro (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Kappa (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Accuracy (mean ± se)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">17</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">6.96e-04</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.302 ± 0.003</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.417 ± 0.008</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.481 ± 0.006</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">2</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">22</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">7.03e-04</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.302 ± 0.005</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.404 ± 0.011</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.466 ± 0.009</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">3</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">15</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">6.79e-04</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.301 ± 0.004</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.410 ± 0.010</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.472 ± 0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">4</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">25</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">6.95e-04</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.300 ± 0.004</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.402 ± 0.008</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.462 ± 0.006</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">5</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">24</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">6.94e-04</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.300 ± 0.003</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.410 ± 0.010</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.473 ± 0.008</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">6</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">20</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">7.47e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.299 ± 0.004</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.416 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.482 ± 0.009</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">7</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">6</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">6.84e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.298 ± 0.003</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.392 ± 0.010</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.449 ± 0.008</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">8</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">16</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">7.18e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.298 ± 0.006</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.421 ± 0.008</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.488 ± 0.006</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">9</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">3</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">4.85e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.297 ± 0.005</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.420 ± 0.008</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.486 ± 0.006</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">10</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">6.92e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.296 ± 0.005</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.376 ± 0.009</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.430 ± 0.008</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">11</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">14</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">5.10e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.296 ± 0.003</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.397 ± 0.009</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.456 ± 0.008</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">12</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">21</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">7.77e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.296 ± 0.002</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.429 ± 0.008</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.496 ± 0.007</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">13</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">27</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.87e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.294 ± 0.003</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.405 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.471 ± 0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">14</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">10</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">2.00e-03</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.293 ± 0.006</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.420 ± 0.013</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.482 ± 0.011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">15</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.25e-03</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.289 ± 0.006</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.350 ± 0.012</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.397 ± 0.011</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">16</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">9</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.70e-07</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.289 ± 0.004</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.402 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.470 ± 0.009</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">17</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">1</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">3.36e-04</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.288 ± 0.005</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.367 ± 0.012</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.423 ± 0.010</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">18</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">13</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">5.70e-10</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.286 ± 0.003</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.409 ± 0.009</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.477 ± 0.007</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">19</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">12</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">2.06e-10</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.286 ± 0.004</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.392 ± 0.011</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.454 ± 0.009</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">20</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">2</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">1.34e-05</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.285 ± 0.003</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.385 ± 0.012</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.448 ± 0.010</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="parameter-exploration-1" class="level4 page-columns page-full" data-number="6.2.1.2">
+<h4 data-number="6.2.1.2" class="anchored" data-anchor-id="parameter-exploration-1"><span class="header-section-number">6.2.1.2</span> Parameter Exploration</h4>
+<div class="column-screen-inset-right">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(glmnet_params)) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">plot_parameter_tuning</span>(glmnet_high<span class="sc">$</span>tuning_history, glmnet_params[i], i <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/glmnet_high_tuning_params-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluation-on-test-set-1" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="evaluation-on-test-set-1"><span class="header-section-number">6.2.2</span> Evaluation on test set</h3>
+<p><strong>F1-macro: 0.301 Kappa: 0.402 Acc (unbalanced): 0.469</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(glmnet_high<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/glmnet_high_cm-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="most-important-variables-per-metagenre-1" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="most-important-variables-per-metagenre-1"><span class="header-section-number">6.2.3</span> Most important variables per metagenre</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">render_glmnet_varimp_table</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  glmnet_high<span class="sc">$</span>model, n_glmnet_varimp,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Most important features per metagenre according to the GLMNET classifier for high-detailed metagenre labels."</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Most important features per metagenre according to the GLMNET classifier for high-detailed metagenre labels.</caption>
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold;">Metagenre</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; font-weight: bold;">Feature</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold;">Coefficient</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">alternative rock</td>
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">1.94</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">1.23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">1.16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">0.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">-0.87</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">blues rock</td>
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">1.26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.dz.album.explicitlyrics_TRUE.</td>
+<td style="text-align: right;">-1.21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.key_F.</td>
+<td style="text-align: right;">-1.11</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">classic rock</td>
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">2.83</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">-1.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.key_Bb</td>
+<td style="text-align: right;">-1.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.ab.tonal.key_F</td>
+<td style="text-align: right;">1.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_US</td>
+<td style="text-align: right;">1.27</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">classical</td>
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">-1.67</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-1.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">1.24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.dz.album.explicitlyrics_TRUE.</td>
+<td style="text-align: right;">-1.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">-1.10</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">death metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">3.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.dead_TRUE.</td>
+<td style="text-align: right;">-1.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">label.med.artist.popularity</td>
+<td style="text-align: right;">-0.85</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.s.popularity</td>
+<td style="text-align: right;">-0.83</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.key_Bb</td>
+<td style="text-align: right;">0.78</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">electronic</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">1.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">1.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-0.85</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_US</td>
+<td style="text-align: right;">-0.79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">-0.63</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">folk</td>
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">1.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">1.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_United.Kingdom</td>
+<td style="text-align: right;">1.11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">-1.09</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: right;">-0.98</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">folk rock</td>
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">2.59</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">2.20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">2.15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_United.Kingdom</td>
+<td style="text-align: right;">2.08</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.origin_United.States.of.America</td>
+<td style="text-align: right;">1.44</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">hard rock</td>
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">4.37</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">-1.37</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">-0.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">0.77</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">0.73</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">heavy metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">4.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">2.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">1.72</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_United.States.of.America</td>
+<td style="text-align: right;">-1.53</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.30</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">hip hop</td>
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: right;">-3.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">2.31</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.explicitlyrics_TRUE.</td>
+<td style="text-align: right;">1.84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.area_other</td>
+<td style="text-align: right;">-1.49</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">1.48</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">indie rock</td>
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">1.65</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">-1.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">0.99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.is.dach_TRUE.</td>
+<td style="text-align: right;">-0.89</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">jazz</td>
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-1.32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">1.27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">1.18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">-0.99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">0.74</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">2.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">2.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">1.80</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">-1.13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-1.10</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">pop</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">2.51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">1.62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.46</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">-1.33</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">1.11</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">pop rock</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">1.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">1.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">1.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">1.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">0.95</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">power metal</td>
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">3.92</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-2.65</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">-1.82</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">1.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">-1.62</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">progressive rock</td>
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">1.84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">1.66</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.other_TRUE.</td>
+<td style="text-align: right;">-1.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">1.45</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">-1.26</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">punk</td>
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">-1.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: right;">-1.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">1.06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">-1.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.duration</td>
+<td style="text-align: right;">-0.99</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">r&amp;b</td>
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-1.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.rock_TRUE.</td>
+<td style="text-align: right;">-1.56</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">1.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_United.States.of.America</td>
+<td style="text-align: right;">1.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: right;">-1.28</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">rock</td>
+<td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
+<td style="text-align: right;">1.39</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">1.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">0.91</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.metal_TRUE.</td>
+<td style="text-align: right;">-0.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: right;">0.56</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">schlager</td>
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">2.63</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: right;">-2.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.is.dach_TRUE.</td>
+<td style="text-align: right;">1.79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">1.47</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.birthyear</td>
+<td style="text-align: right;">-1.03</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">singer-songwriter</td>
+<td style="text-align: left;">artist.mb.type_other</td>
+<td style="text-align: right;">3.55</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.origin_United.Kingdom</td>
+<td style="text-align: right;">-1.99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: right;">1.85</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">1.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">1.46</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">soul</td>
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-2.79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: right;">2.78</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: right;">-1.89</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: right;">1.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.area_other</td>
+<td style="text-align: right;">-1.17</td>
+</tr>
+<tr class="odd">
+<td rowspan="5" style="text-align: left; vertical-align: top !important;">synth-pop</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: right;">2.51</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.origin_other</td>
+<td style="text-align: right;">-1.95</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.language_German</td>
+<td style="text-align: right;">-1.49</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
+<td style="text-align: right;">-1.39</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.ab.tonal.key_G</td>
+<td style="text-align: right;">1.31</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="random-forest-classifier" class="level1 page-columns page-full" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Random Forest Classifier</h1>
+<section id="low-detailed-metagenre-labels-1" class="level2 page-columns page-full" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="low-detailed-metagenre-labels-1"><span class="header-section-number">7.1</span> Low-detailed metagenre labels</h2>
+<section id="tuning-2" class="level3 page-columns page-full" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="tuning-2"><span class="header-section-number">7.1.1</span> Tuning</h3>
+<section id="model-selection-2" class="level4" data-number="7.1.1.1">
+<h4 data-number="7.1.1.1" class="anchored" data-anchor-id="model-selection-2"><span class="header-section-number">7.1.1.1</span> Model Selection</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rf_low <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/rf"</span>, <span class="st">"rf_lowres"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>rf_low_chosen <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">max.depth =</span> rf_low<span class="sc">$</span>settings<span class="sc">$</span>max.depth,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_n =</span> rf_low<span class="sc">$</span>settings<span class="sc">$</span>min_n,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> rf_low<span class="sc">$</span>settings<span class="sc">$</span>mtry<span class="co">#,</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># under_ratio = rf_low$settings$under_ratio,</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># over_ratio = rf_low$settings$over_ratio</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>rf_low_topmodels <span class="ot">&lt;-</span> <span class="fu">prepare_tuning_topmodels</span>(</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  rf_low<span class="sc">$</span>tuning_history, rf_low_chosen, top_n</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_tuning_model_selection</span>(rf_low_topmodels, top_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_low_tuning_graph-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><strong>Best hyperparameter configurations</strong> from tuning of the <strong>Random Forest classifier for low-detailed</strong> metagenre labels. The chosen hyperparameter configuration is highlighted in green, other <strong>models within one standard error of the numerically best model</strong> are shown in dark grey.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rf_low_table <span class="ot">&lt;-</span> <span class="fu">create_rf_top_table</span>(rf_low_topmodels)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">render_tuning_top_table</span>(rf_low_table, rf_col_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Rank</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Iteration</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Max Depth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Min Node Size</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">MTRY</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F1 Macro (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Kappa (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Accuracy (mean ± se)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">44</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">66</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">117</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.447 ± 0.007</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.460 ± 0.011</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.549 ± 0.006</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">2</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">2</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">55</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">24</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">104</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.442 ± 0.007</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.465 ± 0.010</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.555 ± 0.006</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">3</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">46</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">67</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">118</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.432 ± 0.006</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.453 ± 0.008</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.539 ± 0.004</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">4</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">87</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">47</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">18</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.400 ± 0.007</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.390 ± 0.018</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.462 ± 0.017</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="parameter-exploration-2" class="level4 page-columns page-full" data-number="7.1.1.2">
+<h4 data-number="7.1.1.2" class="anchored" data-anchor-id="parameter-exploration-2"><span class="header-section-number">7.1.1.2</span> Parameter Exploration</h4>
+<div class="column-screen-inset-right">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(rf_params)) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">plot_parameter_tuning</span>(rf_low<span class="sc">$</span>tuning_history, rf_params[i], i <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_low_tuning_params-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_low_tuning_params-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_low_tuning_params-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluation-on-test-set-2" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="evaluation-on-test-set-2"><span class="header-section-number">7.1.2</span> Evaluation on test set</h3>
+<p><strong>F1-macro: 0.479 Kappa: 0.491 Acc (unbalanced): 0.577</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(rf_low<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_low_cm-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="most-important-variables-per-metagenre-2" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="most-important-variables-per-metagenre-2"><span class="header-section-number">7.1.3</span> Most important variables per metagenre</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp_bar</span>(rf_low<span class="sc">$</span>evaluation<span class="sc">$</span>varimp, n_rf_varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_low_varimp-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="high-detailed-metagenre-labels-1" class="level2 page-columns page-full" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="high-detailed-metagenre-labels-1"><span class="header-section-number">7.2</span> High-detailed metagenre labels</h2>
+<section id="tuning-3" class="level3 page-columns page-full" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="tuning-3"><span class="header-section-number">7.2.1</span> Tuning</h3>
+<section id="model-selection-3" class="level4" data-number="7.2.1.1">
+<h4 data-number="7.2.1.1" class="anchored" data-anchor-id="model-selection-3"><span class="header-section-number">7.2.1.1</span> Model Selection</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>rf_high <span class="ot">&lt;-</span> <span class="fu">load_classification_model</span>(<span class="st">"../models/classifier/rf"</span>, <span class="st">"rf_highres"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>rf_high_chosen <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">max.depth =</span> rf_high<span class="sc">$</span>settings<span class="sc">$</span>max.depth,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_n =</span> rf_high<span class="sc">$</span>settings<span class="sc">$</span>min_n,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">mtry =</span> rf_high<span class="sc">$</span>settings<span class="sc">$</span>mtry<span class="co">#,</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># under_ratio = rf_high$settings$under_ratio,</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># over_ratio = rf_high$settings$over_ratio</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>rf_high_topmodels <span class="ot">&lt;-</span> <span class="fu">prepare_tuning_topmodels</span>(</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  rf_high<span class="sc">$</span>tuning_history, rf_high_chosen, top_n</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_tuning_model_selection</span>(rf_high_topmodels, top_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_high_tuning_graph-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption><strong>Best hyperparameter configurations</strong> from tuning of the <strong>Random Forest classifier for high-detailed</strong> metagenre labels. The chosen hyperparameter configuration is highlighted in green, other <strong>models within one standard error of the numerically best model</strong> are shown in dark grey.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rf_high_table <span class="ot">&lt;-</span> <span class="fu">create_rf_top_table</span>(rf_high_topmodels)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">render_tuning_top_table</span>(rf_high_table, rf_col_names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Rank</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Iteration</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Max Depth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Min Node Size</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">MTRY</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">F1 Macro (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Kappa (mean ± se)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Accuracy (mean ± se)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">1</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">44</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">66</td>
+<td style="text-align: right; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">120</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.262 ± 0.007</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.322 ± 0.004</td>
+<td style="text-align: left; font-weight: bold; background-color: rgba(35, 207, 0, 255) !important;">0.383 ± 0.004</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">2</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">0</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">46</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">67</td>
+<td style="text-align: right; background-color: rgba(229, 229, 229, 255) !important;">120</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.261 ± 0.005</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.316 ± 0.007</td>
+<td style="text-align: left; background-color: rgba(229, 229, 229, 255) !important;">0.374 ± 0.007</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">3</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">2</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">11</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">75</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">114</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.250 ± 0.001</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.300 ± 0.016</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.384 ± 0.014</td>
+</tr>
+<tr class="even">
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">4</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">0</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">87</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">47</td>
+<td style="text-align: right; color: rgba(89, 89, 89, 255) !important;">18</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.244 ± 0.002</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.275 ± 0.007</td>
+<td style="text-align: left; color: rgba(89, 89, 89, 255) !important;">0.316 ± 0.007</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="parameter-exploration-3" class="level4 page-columns page-full" data-number="7.2.1.2">
+<h4 data-number="7.2.1.2" class="anchored" data-anchor-id="parameter-exploration-3"><span class="header-section-number">7.2.1.2</span> Parameter Exploration</h4>
+<div class="column-screen-inset-right">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(rf_params)) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">plot_parameter_tuning</span>(rf_high<span class="sc">$</span>tuning_history, rf_params[i], i <span class="sc">==</span> <span class="dv">1</span>))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_high_tuning_params-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_high_tuning_params-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="05_classifier_files/figure-html/rf_high_tuning_params-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluation-on-test-set-3" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="evaluation-on-test-set-3"><span class="header-section-number">7.2.2</span> Evaluation on test set</h3>
+<p><strong>F1-macro: 0.288 Kappa: 0.332 Acc (unbalanced): 0.391</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_cm</span>(rf_high<span class="sc">$</span>evaluation, <span class="st">"test"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_high_cm-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="most-important-variables-per-metagenre-3" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="most-important-variables-per-metagenre-3"><span class="header-section-number">7.2.3</span> Most important variables per metagenre</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_varimp_bar</span>(rf_high<span class="sc">$</span>evaluation<span class="sc">$</span>varimp, n_rf_varimp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/rf_high_varimp-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
 </section>
 
 </main>
