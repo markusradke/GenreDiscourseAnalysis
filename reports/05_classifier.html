@@ -199,7 +199,6 @@ flowchart TB
     evaluate &lt;--&gt; Pre
     dummy --&gt; Split
     Split --&gt; Model
-    S &lt;--&gt; Pre
 
     style Pre fill:#f8f0e8,stroke:#cc6600,stroke-width:3px,color:#000
     style Data fill:#e8f4f8,stroke:#0066cc,stroke-width:3px,color:#000
@@ -287,11 +286,32 @@ flowchart TB
 <div class="cell">
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dist_low &lt;- compare_metagenre_distributions(rf_data, detail_level = "low")</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># dist_low$plot</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dist_high &lt;- compare_metagenre_distributions(rf_data, detail_level = "high")</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># dist_high$plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>distribution_low <span class="ot">&lt;-</span> <span class="fu">compare_metagenre_distributions_splits</span>(train_low, test_low, cv_splits_low)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>distribution_low<span class="sc">$</span>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/outcome_distributions%20low-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Comparison of metagenre distributions in train and test splits for low detailed meta-genre taxonomy.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show/Hide Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>distribution_high <span class="ot">&lt;-</span> <span class="fu">compare_metagenre_distributions_splits</span>(train_high, test_high, cv_splits_high)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>distribution_high<span class="sc">$</span>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05_classifier_files/figure-html/outcome_distributions%20high-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption>Comparison of metagenre distributions in train and test splits for low detailed meta-genre taxonomy.</figcaption>
+</figure>
+</div>
+</div>
 </div>
 </section>
 

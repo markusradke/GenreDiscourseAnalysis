@@ -1,6 +1,13 @@
 compare_metagenre_distributions_splits <- function(
-  dataset
+  train,
+  test,
+  cv_splits
 ) {
+  dataset <- list(
+    train = train,
+    test = test,
+    cv_splits = cv_splits
+  )
   all_data <- build_all_data(dataset)
   summary_stats <- compute_summary_stats(all_data)
   p <- make_plot(all_data)

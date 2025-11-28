@@ -125,7 +125,7 @@ tune_bayes_workflow <- function(
   gridcontrol <- tune::control_grid(
     verbose = TRUE,
     allow_par = TRUE,
-    parallel_over = "everything"
+    parallel_over = "resamples"
   )
   bayescontrol <- tune::control_bayes(
     verbose = TRUE,
@@ -133,7 +133,7 @@ tune_bayes_workflow <- function(
     no_improve = 10,
     seed = seed,
     uncertain = uncertain_jump,
-    parallel_over = "everything"
+    parallel_over = "resamples"
   )
 
   initial_grid <- dials::grid_space_filling(

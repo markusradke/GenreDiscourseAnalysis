@@ -4,11 +4,11 @@ devtools::load_all()
 options(tidymodels.dark = TRUE)
 run_data_pre <- TRUE
 run_baseline <- FALSE
-run_glmnet <- FALSE
-run_rf <- FALSE
-max_cores <- 19 # for final model fitting
-max_cores_tuning <- 10 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
-n_folds <- 2
+run_glmnet <- TRUE
+run_rf <- TRUE
+max_cores <- 64 # for final model fitting
+max_cores_tuning <- 5 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
+n_folds <- 5
 
 if (isTRUE(run_data_pre)) {
   poptrag <- readRDS("data-raw/poptrag.rds")
@@ -152,12 +152,12 @@ if (isTRUE(run_glmnet)) {
     use_caseweights = FALSE,
     tune_penalty = TRUE,
     tune_alpha = FALSE,
-    tune_downsample = TRUE,
-    tune_upsample = TRUE,
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
     penalty_fix = 0.002,
     alpha_fix = 0.5,
     under_ratio_fix = 10,
-    over_ratio_fix = 0.5,
+    over_ratio_fix = 0.25,
     initial_grid_size = 20,
     bayes_iterations = 50,
     uncertain_jump = 5
@@ -176,6 +176,7 @@ if (isTRUE(run_glmnet)) {
 
   # display beta features of glmnet in a data frame
 
+  settings$underratio_fix <- 20
   glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
   save_classification_model(
     glmnet_high,
@@ -190,7 +191,7 @@ if (isTRUE(run_rf)) {
   # Random forest models ----
   settings <- list(
     seed = 42,
-    ntrees = 3, # make 1000 for final
+    ntrees = 1000, # make 1000 for final
     n_cores = max_cores,
     n_cores_tuning = n_folds, # no of workers (gets multiple threads determined by n_cores)
     varimp_top_n = 40,
@@ -200,17 +201,17 @@ if (isTRUE(run_rf)) {
     tune_mtry = TRUE,
     tune_min_n = TRUE,
     tune_max_depth = TRUE,
-    tune_downsample = TRUE,
-    tune_upsample = TRUE,
-    ntrees_tuning = 1, # make 750 later
-    initial_grid_size = 2, # adjust later
-    bayes_iterations = 2, # adjust later
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
+    ntrees_tuning = 750, # make 750 later
+    initial_grid_size = 20, # adjust later
+    bayes_iterations = 50, # adjust later
     uncertain_jump = 5,
     min.node.size_fix = 50,
     max.depth_fix = Inf,
     mtry_fix = 11,
-    under_ratio_fix = 11,
-    over_ratio_fix = 0.5
+    under_ratio_fix = 10,
+    over_ratio_fix = 0.25
   )
   # saveRDS(settings, "models/classifier/rf_tune_settings.rds")
 
@@ -235,6 +236,7 @@ if (isTRUE(run_rf)) {
   )
 
   message("---TRAINING HIGH RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 20
   rf_high <- train_random_forest(
     train_high,
     test_high,

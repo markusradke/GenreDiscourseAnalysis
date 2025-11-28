@@ -29,6 +29,7 @@ Imports:
     glmnet,
     hardhat,
     igraph,
+    kableExtra,
     lobstr,
     missForestPredict,
     mltools,

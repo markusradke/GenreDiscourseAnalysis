@@ -224,8 +224,8 @@ extract_tuning_history <- function(tuning_results) {
 #' @param name Model name
 #' @param subfolder Subfolder within models/classifier/
 #' @return List with model, evaluation, settings, and tuning_history
-load_classification_model <- function(name, subfolder) {
-  base_path <- sprintf("models/classifier/%s/%s", subfolder, name)
+load_classification_model <- function(folder, name) {
+  base_path <- sprintf("%s/%s", folder, name)
 
   result <- list(
     model = readRDS(paste0(base_path, "_model.rds")),
