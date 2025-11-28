@@ -78,6 +78,7 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
     train$p_max
   )
   train <- train |> dplyr::select(-p_max)
+  test <- test |> dplyr::select(-p_max)
 
   message("---CREATING ARTIST-BASED CV FOLDS TO CHECK FACTOR LEVELS---")
   cv_splits <- create_artist_cv_splits(

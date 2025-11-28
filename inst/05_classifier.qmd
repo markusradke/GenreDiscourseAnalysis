@@ -84,7 +84,7 @@ flowchart TB
  subgraph Split["Spliting Strategy"]
     direction LR
         testtrain["split train/test <br> (0.8/0.2, artist-level)"]
-        cvfold["create 5-fold CV splits </br>(artist-level)"]
+        cvfold["create 10-fold CV splits </br>(artist-level)"]
   end
  subgraph Pre["Preprocessing"]
     direction LR
