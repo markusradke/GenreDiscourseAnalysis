@@ -9,7 +9,7 @@
 #'   `album.dc.firstgenre`.
 #' @return A ggplot2 object (tile plot).
 #' @export
-plot_dc_contingency <- function(mb_meta, dc_genres) {
+plot_dc_contingency <- function(mb_meta, dc_genres, name = "COMGET") {
   no_metagenres <- mb_meta$metagenre |> unique() |> length()
   comb <- join_and_filter(mb_meta, dc_genres)
   relfreqs <- compute_relfreqs(comb)
@@ -20,10 +20,9 @@ plot_dc_contingency <- function(mb_meta, dc_genres) {
       fill = list(Freq = 0, relfreq = 0, labelcolor = "black")
     )
 
-  build_plot(padded, no_metagenres)
+  build_plot_dc_contingency(padded, no_metagenres, name)
 }
 
-# Helper: join and filter inputs
 join_and_filter <- function(mb_meta, dc_genres) {
   mb_meta |>
     dplyr::select(track.s.id, metagenre) |>
@@ -49,7 +48,7 @@ compute_relfreqs <- function(comb) {
     )
 }
 
-build_plot <- function(padded, no_metagenres) {
+build_plot_dc_contingency <- function(padded, no_metagenres, name = "COMGET") {
   p <- ggplot2::ggplot(
     padded,
     ggplot2::aes(
@@ -67,13 +66,13 @@ build_plot <- function(padded, no_metagenres) {
       low = "white",
       high = "#c40d20",
       labels = scales::percent_format(accuracy = 1),
-      name = sprintf("Rel. freq\n(Discogs | COMGET-%d)", no_metagenres)
+      name = sprintf("Rel. freq\n(Discogs | %s-%d)", name, no_metagenres)
     ) +
     ggplot2::scale_color_manual(values = c("black", "white")) +
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::labs(
       x = "Discogs",
-      y = sprintf("COMGET-%d", no_metagenres)
+      y = sprintf("%s-%d", name, no_metagenres)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
