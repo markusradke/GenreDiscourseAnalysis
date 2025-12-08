@@ -2,13 +2,13 @@ rm(list = ls())
 gc()
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- FALSE
+run_data_pre <- TRUE
 run_baseline <- FALSE
 run_glmnet <- FALSE
 run_rf <- TRUE
 max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
-n_folds <- 5
+n_folds <- 10
 
 if (isTRUE(run_data_pre)) {
   poptrag <- readRDS("data-raw/poptrag.rds")

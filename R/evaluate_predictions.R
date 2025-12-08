@@ -137,3 +137,32 @@ extract_metric_values <- function(metrics_result, include_log_loss) {
 
   result
 }
+
+
+calculate_class_f1_scores_from_confusion_df <- function(cm) {
+  classes <- unique(cm$Actual)
+  f1_scores <- numeric(length(classes))
+  names(f1_scores) <- classes
+
+  for (class in classes) {
+    tp <- cm %>%
+      dplyr::filter(Actual == class & Predicted == class) |>
+      dplyr::pull(Freq)
+    fp <- cm %>%
+      dplyr::filter(Actual != class & Predicted == class) |>
+      dplyr::pull(Freq) |>
+      sum()
+    fn <- cm %>%
+      dplyr::filter(Actual == class & Predicted != class) |>
+      dplyr::pull(Freq) |>
+      sum()
+    precision <- if ((tp + fp) == 0) 0 else tp / (tp + fp)
+    recall <- if ((tp + fn) == 0) 0 else tp / (tp + fn)
+    f1_scores[class] <- if ((precision + recall) == 0) {
+      0
+    } else {
+      2 * (precision * recall) / (precision + recall)
+    }
+  }
+  f1_scores
+}

@@ -29,6 +29,7 @@ Imports:
     ggtext,
     glmnet,
     hardhat,
+    htmlwidgets,
     igraph,
     kableExtra,
     lobstr,
@@ -48,6 +49,7 @@ Imports:
     tidyr,
     tune,
     utils,
+    webshot2,
     workflows,
     yardstick
 Depends: 

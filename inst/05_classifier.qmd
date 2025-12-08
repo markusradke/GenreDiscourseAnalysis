@@ -39,6 +39,14 @@ top_n <- 40 # top n models to show in report
 n_glmnet_varimp <- 5
 n_rf_varimp <- 20
 
+lowres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_10_15.feather") |> 
+  dplyr::group_by(metagenre) |> 
+  dplyr::summarize(certainty = median(p_max)) 
+
+highres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_25_30.feather") |> 
+  dplyr::group_by(metagenre) |> 
+  dplyr::summarize(certainty = median(p_max))
+
 # glmnet_params <- c("penalty", "under_ratio", "over_ratio")
 glmnet_params <- c("penalty")
 # rf_params <- c("max.depth", "min_n", "mtry", "under_ratio", "over_ratio")
@@ -188,19 +196,15 @@ This random baseline model predicts the metagenre labels by random guessing acco
 
 :::{.column-screen-inset-right}
 
-```{r random_baseline_low}
-#| layout-ncol: 2
+```{r random_baseline}
 random_low <- load_classification_model("../models/classifier/baseline", "random_baseline_lowres")
-plot_cm(random_low$evaluation, "train")
-plot_cm(random_low$evaluation, "test")
-```
-
-```{r random_baseline_high, fig.width=10, fig.height=8.3}
-#| layout-ncol: 2
 random_high <- load_classification_model("../models/classifier/baseline", "random_baseline_highres")
-plot_cm(random_high$evaluation, "train")
-plot_cm(random_high$evaluation, "test")
 ```
+Low resolution metrics:
+**`r get_metrics_description(random_low$evaluation$metrics_test)`**
+
+High resolution metrics:
+**`r get_metrics_description(random_high$evaluation$metrics_test)`**
 :::
 
 # Model Features
@@ -282,10 +286,12 @@ for (i in seq_along(glmnet_params)) {
 
 **`r get_metrics_description(glmnet_low$evaluation$metrics_test)`**
 
-```{r glmnet_low_cm}
-plot_cm(glmnet_low$evaluation, "test")
-```
+**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(lowres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(glmnet_low$evaluation$confusion_test)),3)`**
 
+```{r glmnet_low_cm, fig.width=9, fig.height=6}
+#| column: page-inset-right
+plot_cm(glmnet_low$evaluation, lowres_certainty, "test")
+```
 ### Most important variables per metagenre
 
 ```{r glmnet_low_varimp}
@@ -340,8 +346,11 @@ for (i in seq_along(glmnet_params)) {
 
 **`r get_metrics_description(glmnet_high$evaluation$metrics_test)`**
 
-```{r glmnet_high_cm, fig.width=10, fig.height=8.3}
-plot_cm(glmnet_high$evaluation, "test")
+**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(highres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(glmnet_high$evaluation$confusion_test)), 3)`**
+
+```{r glmnet_high_cm, fig.width=11.5, fig.height=8.3}
+#| column: screen-inset-right
+plot_cm(glmnet_high$evaluation, highres_certainty, "test")
 ```
 
 ### Most important variables per metagenre
@@ -402,8 +411,10 @@ for (i in seq_along(rf_params)) {
 
 **`r get_metrics_description(rf_low$evaluation$metrics_test)`**
 
-```{r rf_low_cm}
-plot_cm(rf_low$evaluation, "test")
+**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(lowres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(rf_low$evaluation$confusion_test)),3)`**
+```{r rf_low_cm, fig.width=9, fig.height=6}
+#| column: page-inset-right
+plot_cm(rf_low$evaluation, lowres_certainty, "test")
 ```
 
 ### Most important variables per metagenre
@@ -459,9 +470,14 @@ for (i in seq_along(rf_params)) {
 
 **`r get_metrics_description(rf_high$evaluation$metrics_test)`**
 
-```{r rf_high_cm, fig.width=10, fig.height=8.3}
-plot_cm(rf_high$evaluation, "test")
+**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(highres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(rf_high$evaluation$confusion_test)),3)`**
+
+
+```{r rf_high_cm, fig.width=11, fig.height=8.3}
+#| column: screen-inset-right
+plot_cm(rf_high$evaluation, highres_certainty, "test")
 ```
+
 
 ### Most important variables per metagenre
 
