@@ -1,5 +1,77 @@
 # Shared Bayesian tuning infrastructure for all classification models
 
+tune_grid_chunked <- function(
+  workflow,
+  cv_splits,
+  grid,
+  metric_set,
+  checkpoint_dir,
+  model_type,
+  chunk_size = 5,
+  n_train_rows = NULL
+) {
+  if (!is.null(checkpoint_dir) && !dir.exists(checkpoint_dir)) {
+    dir.create(checkpoint_dir, recursive = TRUE)
+  }
+
+  checkpoint_path <- get_checkpoint_path(checkpoint_dir, model_type, "grid")
+  current_metadata <- create_checkpoint_metadata(cv_splits, grid, n_train_rows)
+  checkpoint <- load_grid_checkpoint(checkpoint_path, current_metadata)
+
+  grid_chunks <- split_grid(grid, chunk_size)
+  n_chunks <- length(grid_chunks)
+
+  results_list <- checkpoint$results_list
+  start_chunk <- checkpoint$start_chunk
+
+  if (start_chunk > n_chunks) {
+    message("All grid chunks already completed, skipping to merge...")
+    return(merge_tune_results(results_list))
+  }
+
+  if (start_chunk > 1) {
+    message(sprintf(
+      "Resuming from checkpoint: starting at chunk %d/%d",
+      start_chunk,
+      n_chunks
+    ))
+  }
+
+  gridcontrol <- tune::control_grid(
+    verbose = TRUE,
+    allow_par = TRUE,
+    parallel_over = "resamples"
+  )
+
+  for (i in seq(start_chunk, n_chunks)) {
+    message(sprintf(
+      "--- Grid chunk %d/%d (%d points) ---",
+      i,
+      n_chunks,
+      nrow(grid_chunks[[i]])
+    ))
+
+    chunk_result <- tune::tune_grid(
+      workflow,
+      resamples = cv_splits,
+      grid = grid_chunks[[i]],
+      metrics = metric_set,
+      control = gridcontrol
+    )
+
+    results_list[[i]] <- chunk_result
+    save_grid_checkpoint(
+      checkpoint_path,
+      results_list,
+      i,
+      n_chunks,
+      current_metadata
+    )
+  }
+
+  merge_tune_results(results_list)
+}
+
 print_tuning_core_guidance <- function(n_folds, initial_grid_size) {
   total_tasks <- n_folds * initial_grid_size
 
@@ -105,6 +177,8 @@ create_sampling_params <- function(train_df) {
 #' @param initial_grid_size Number of points for initial space-filling grid
 #' @param bayes_iterations Number of Bayesian optimization iterations
 #' @param uncertain_jump Uncertainty parameter for tune_bayes
+#' @param checkpoint_dir Directory for saving checkpoints (NULL to disable)
+#' @param grid_chunk_size Number of grid points per chunk for checkpointing
 #' @return List with tuning_results, best_params
 tune_bayes_workflow <- function(
   workflow,
@@ -116,17 +190,14 @@ tune_bayes_workflow <- function(
   n_cores_tuning = 4,
   initial_grid_size = 10,
   bayes_iterations = 15,
-  uncertain_jump = 5
+  uncertain_jump = 5,
+  checkpoint_dir = "models/classifier/checkpoints",
+  grid_chunk_size = 5
 ) {
   n_folds <- length(cv_splits$splits)
   print_tuning_core_guidance(n_folds, initial_grid_size)
   metric_set <- create_tuning_metrics()
 
-  gridcontrol <- tune::control_grid(
-    verbose = TRUE,
-    allow_par = TRUE,
-    parallel_over = "resamples"
-  )
   bayescontrol <- tune::control_bayes(
     verbose = TRUE,
     verbose_iter = TRUE,
@@ -152,13 +223,17 @@ tune_bayes_workflow <- function(
   })
 
   set.seed(seed)
-  print_phase_info("INITIAL GRID TUNING", n_cores_tuning)
-  initial_results <- tune::tune_grid(
-    workflow,
-    resamples = cv_splits,
+  print_phase_info("INITIAL GRID TUNING (chunked)", n_cores_tuning)
+
+  initial_results <- tune_grid_chunked(
+    workflow = workflow,
+    cv_splits = cv_splits,
     grid = initial_grid,
-    metrics = metric_set,
-    control = gridcontrol
+    metric_set = metric_set,
+    checkpoint_dir = checkpoint_dir,
+    model_type = model_type,
+    chunk_size = grid_chunk_size,
+    n_train_rows = nrow(train_df)
   )
 
   print_phase_info("BAYESIAN OPTIMIZATION", n_cores_tuning)

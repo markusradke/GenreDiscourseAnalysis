@@ -25,14 +25,23 @@ build_genre_tree <- function(
     bidirectional_removed,
     final_tree
   )
+  bidirectional_removed_graph <- create_igraph_from_matrix(
+    bidirectional_removed
+  )
 
   save_results(
     initial_network,
+    bidirectional_removed_graph,
     genealogy_graph,
     final_tree,
     platform_name
   )
-  final_tree
+  list(
+    initial_network = initial_network,
+    bidirectional_removed = bidirectional_removed_graph,
+    genealogy_graph = genealogy_graph,
+    final_tree = final_tree
+  )
 }
 
 get_genealogy_graph <- function(bidirectional_removed, final_tree) {
@@ -171,22 +180,26 @@ connect_orphans_to_root <- function(graph, root) {
 
 save_results <- function(
   initial_graph,
+  bidirectional_removed_graph,
   genealogy_graph,
   final_tree,
   platform_name
 ) {
   export_graph_for_gephi_import(
     initial_graph,
-    sprintf("%s_initial_genre_network", platform_name)
-  )
-
-  export_graph_for_gephi_import(
-    genealogy_graph,
-    sprintf("%s_child_of_network", platform_name)
+    sprintf("%s_initial_network", platform_name)
   )
   export_graph_for_gephi_import(
     final_tree,
     sprintf("%s_genre_tree", platform_name)
+  )
+  saveRDS(
+    initial_graph,
+    sprintf("models/trees/%s_initial_network.rds", platform_name)
+  )
+  saveRDS(
+    bidirectional_removed_graph,
+    sprintf("models/trees/%s_bidirectional_removed.rds", platform_name)
   )
   saveRDS(
     genealogy_graph,

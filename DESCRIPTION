@@ -17,6 +17,7 @@ Imports:
     broom,
     caret,
     DescTools,
+    digest,
     doParallel,
     dplyr,
     flextable,

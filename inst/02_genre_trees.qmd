@@ -71,8 +71,102 @@ metal -.-x pop
 # Prune tree to improve structure
 Finally, we remove edges with very low weight (= weak parenthood). Corresponding genres are reattached to the root node of the tree. This step is tuned to  minimize the weighted Gini accross hiearrchy levels, ensuring a more balanced distribution of genres across the tree structure.
 
+# Genres Trees 
 ## Genre Tree for MusicBrainz
 
+### Tree Building Statistics
+```{r musicbrainz-tree-stats, echo=FALSE}
+get_degree_stats <- function(graph){
+  in_degree <- igraph::degree(graph, mode = "in")
+  out_degree <- igraph::degree(graph, mode = "out")
+  list(
+    in_degree_median = median(in_degree),
+    in_degree_IQR = IQR(in_degree),
+    in_degree_min = min(in_degree),
+    in_degree_max = max(in_degree),
+    node_in_degree_mins = names(which(in_degree == min(in_degree))),
+    node_in_degree_maxs = names(which(in_degree == max(in_degree))),
+    out_degree_median = median(out_degree),
+    out_degree_IQR = IQR(out_degree), 
+    out_degree_min = min(out_degree),
+    out_degree_max = max(out_degree), 
+    node_out_degree_mins = names(which(out_degree == min(out_degree))),
+    node_out_degree_maxs = names(which(out_degree == max(out_degree)))
+    )
+}
+
+initial_network <- readRDS("../models/trees/MusicBrainz_initial_network.rds")
+bidirectional_removed <- readRDS("../models/trees/MusicBrainz_bidirectional_removed.rds")
+tree_graph <- readRDS("../models/trees/MusicBrainz_graph.rds")
+
+no_components_initial <- igraph::components(initial_network)$no
+density_initial <- igraph::edge_density(initial_network)
+no_nodes_initial <- igraph::vcount(initial_network)
+degree_stats_initial <- get_degree_stats(initial_network)
+degree_stats_bidirectional_removed <- get_degree_stats(bidirectional_removed)
+degree_stats_tree <- get_degree_stats(tree_graph)
+```	
+
+The tree comprises `r no_nodes_initial` genres (nodes). The initial genre network had `r no_components_initial` disconnected components and a density of `r round(density_initial, 4)*100`% (observed connections / potential connections in the network). 
+
+```{r musicbrainz-degree-table, echo=FALSE}
+render_degree_stages_table <- function(
+  degree_stats_initial,
+  degree_stats_bidirectional_removed,
+  degree_stats_tree,
+  platform_name) { 
+  degree_table <- data.frame(
+    Metric = c("In-Degree Median", "In-Degree IQR", "In-Degree Min", "In-Degree Max",
+              "Out-Degree Median", "Out-Degree IQR",  "Out-Degree Min", "Out-Degree Max"),
+    Initial_Network = c(degree_stats_initial$in_degree_median,
+                        degree_stats_initial$in_degree_IQR,
+                        degree_stats_initial$in_degree_min,
+                        degree_stats_initial$in_degree_max,
+                        degree_stats_initial$out_degree_median,
+                        degree_stats_initial$out_degree_IQR,
+                        degree_stats_initial$out_degree_min,
+                        degree_stats_initial$out_degree_max),
+    Bidirectional_Removed = c(degree_stats_bidirectional_removed$in_degree_median,
+                              degree_stats_bidirectional_removed$in_degree_IQR,
+                              degree_stats_bidirectional_removed$in_degree_min,
+                              degree_stats_bidirectional_removed$in_degree_max,
+                              degree_stats_bidirectional_removed$out_degree_median,
+                              degree_stats_bidirectional_removed$out_degree_IQR,
+                              degree_stats_bidirectional_removed$out_degree_min,
+                              degree_stats_bidirectional_removed$out_degree_max),
+    Final_Tree = c(degree_stats_tree$in_degree_median,
+                  degree_stats_tree$in_degree_IQR,
+                  degree_stats_tree$in_degree_min,
+                  degree_stats_tree$in_degree_max,
+                  degree_stats_tree$out_degree_median,
+                  degree_stats_tree$out_degree_IQR,
+                  degree_stats_tree$out_degree_min,
+                  degree_stats_tree$out_degree_max)
+  )
+  knitr::kable(degree_table, caption = sprintf("Degree Statistics Across Tree Building Stages for %s Genre Tree", platform_name))
+}
+render_degree_stages_table(
+  degree_stats_initial,
+  degree_stats_bidirectional_removed,
+  degree_stats_tree,
+  platform_name = "MusicBrainz"
+)
+```
+**Initial Network**<br>
+Nodes with minimal number of connections:<br>*`r degree_stats_initial$node_in_degree_mins`*<br>
+Nodes with maximum number of connections:<br>*`r degree_stats_initial$node_out_degree_maxs`*
+
+**Biderectional Removed Network**<br>
+Nodes with minimum in-degree:<br>*`r degree_stats_bidirectional_removed$node_in_degree_mins`* <br>
+Nodes with maximum in-degree:<br>*`r degree_stats_bidirectional_removed$node_in_degree_maxs`* <br>
+Nodes with minimum out-degree:<br>*`r degree_stats_bidirectional_removed$node_out_degree_mins`* <br>
+Nodes with maximum out-degree:<br>*`r degree_stats_bidirectional_removed$node_out_degree_maxs`*
+
+**Final Tree**<br>
+Nodes with maximum in-degree:<br>*`r degree_stats_tree$node_in_degree_maxs`*
+
+
+### Final Tree
 :::{.column-screen-inset-right}
 :::{.plot-container}
 **Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Use search bar to find and highlight genres (green) • Click blue nodes to expand/collapse
@@ -93,6 +187,47 @@ plot_interactive_tree_graph(
 
 
 ## Genre Tree for Spotify
+
+
+### Tree Building Statistics
+```{r spotify-tree-stats, echo=FALSE}
+initial_network <- readRDS("../models/trees/Spotify_initial_network.rds")
+bidirectional_removed <- readRDS("../models/trees/Spotify_bidirectional_removed.rds")
+tree_graph <- readRDS("../models/trees/Spotify_graph.rds")
+
+no_components_initial <- igraph::components(initial_network)$no
+density_initial <- igraph::edge_density(initial_network)
+no_nodes_initial <- igraph::vcount(initial_network)
+degree_stats_initial <- get_degree_stats(initial_network)
+degree_stats_bidirectional_removed <- get_degree_stats(bidirectional_removed)
+degree_stats_tree <- get_degree_stats(tree_graph)
+```	
+
+The tree comprises `r no_nodes_initial` genres (nodes). The initial genre network had `r no_components_initial` disconnected components and a density of `r round(density_initial, 4)*100`% (observed connections / potential connections in the network). 
+
+```{r spotify_degree-table, echo=FALSE}
+render_degree_stages_table(
+  degree_stats_initial,
+  degree_stats_bidirectional_removed,
+  degree_stats_tree,
+  platform_name = "Spotify"
+)
+```
+
+**Initial Network**<br>
+Nodes with minimal number of connections:<br>*`r degree_stats_initial$node_in_degree_mins`*<br>
+Nodes with maximum number of connections:<br>*`r degree_stats_initial$node_out_degree_maxs`*
+
+**Biderectional Removed Network**<br>
+Nodes with minimum in-degree:<br>*`r degree_stats_bidirectional_removed$node_in_degree_mins`* <br>
+Nodes with maximum in-degree:<br>*`r degree_stats_bidirectional_removed$node_in_degree_maxs`* <br>
+Nodes with minimum out-degree:<br>*`r degree_stats_bidirectional_removed$node_out_degree_mins`* <br>
+Nodes with maximum out-degree:<br>*`r degree_stats_bidirectional_removed$node_out_degree_maxs`*
+
+**Final Tree**<br>
+Nodes with maximum in-degree:<br>*`r degree_stats_tree$node_in_degree_maxs`*
+
+### Final Tree
 Please click on the nodes to explore sub-genres. The font size is fixed to ensure readability. Node size represents the number of songs in each genre.
 
 :::{.column-screen-inset-right}

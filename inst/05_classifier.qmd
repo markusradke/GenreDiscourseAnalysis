@@ -35,7 +35,7 @@ train_high <- readRDS("../models/classifier/train_high.rds")
 test_high <- readRDS("../models/classifier/test_high.rds")
 cv_splits_high <- readRDS("../models/classifier/cv_splits_high.rds")
 
-top_n <- 20
+top_n <- 40 # top n models to show in report
 n_glmnet_varimp <- 5
 n_rf_varimp <- 20
 

@@ -90,6 +90,8 @@ train_random_forest <- function(train, test, cv_splits, settings) {
     NULL
   }
 
+  cleanup_checkpoints("models/classifier/checkpoints", "rf")
+
   list(
     model = fitted_workflow,
     model_settings = model_settings,
@@ -128,7 +130,11 @@ create_rf_workflow <- function(train_df, vars_to_remove, settings) {
 create_rf_model_spec <- function(train_df, settings, any_tuning) {
   class_weights <- get_class_weights(train_df$metagenre)
   workers <- settings$n_cores_tuning
-  n_threads <- get_number_of_threads_per_worker(settings$n_cores, workers)
+  n_threads <- get_number_of_threads_per_worker(
+    settings$n_cores,
+    workers,
+    reserve_cores = settings$reserve_cores
+  )
 
   rf_spec <- parsnip::rand_forest(
     trees = if (any_tuning) settings$ntrees_tuning else settings$ntrees,
@@ -143,7 +149,7 @@ create_rf_model_spec <- function(train_df, settings, any_tuning) {
       class.weights = class_weights,
       num.threads = n_threads,
       verbose = TRUE,
-      keep.inbag = TRUE
+      keep.inbag = FALSE
     ) |>
     parsnip::set_mode("classification")
 
@@ -190,7 +196,8 @@ tune_and_fit_workflow <- function(
     n_cores_tuning = settings$n_cores_tuning,
     initial_grid_size = settings$initial_grid_size,
     bayes_iterations = settings$bayes_iterations,
-    uncertain_jump = settings$uncertain_jump
+    uncertain_jump = settings$uncertain_jump,
+    grid_chunk_size = settings$grid_chunk_size %||% 5
   )
 
   best_params <- tune_result$best_params
@@ -373,10 +380,27 @@ extract_variable_importance <- function(fitted_workflow) {
     dplyr::arrange(dplyr::desc(Importance))
 }
 
-get_number_of_threads_per_worker <- function(total_threads, n_workers) {
-  threads_per_worker <- floor(total_threads / n_workers)
+get_number_of_threads_per_worker <- function(
+  total_threads,
+  n_workers,
+  reserve_cores = 10
+) {
+  available_threads <- total_threads - reserve_cores
+  if (available_threads < n_workers) {
+    available_threads <- n_workers
+  }
+  threads_per_worker <- floor(available_threads / n_workers)
   if (threads_per_worker < 1) {
     threads_per_worker <- 1
   }
+
+  message(sprintf(
+    "Thread allocation: %d total - %d reserved = %d available / %d workers = %d threads/worker",
+    total_threads,
+    reserve_cores,
+    available_threads,
+    n_workers,
+    threads_per_worker
+  ))
   as.integer(threads_per_worker)
 }

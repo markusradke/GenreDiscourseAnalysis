@@ -2,13 +2,13 @@ rm(list = ls())
 gc()
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- TRUE
-run_baseline <- TRUE
-run_glmnet <- TRUE
+run_data_pre <- FALSE
+run_baseline <- FALSE
+run_glmnet <- FALSE
 run_rf <- TRUE
 max_cores <- 64 # for final model fitting
-max_cores_tuning <- 10 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
-n_folds <- 10
+max_cores_tuning <- 5 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
+n_folds <- 5
 
 if (isTRUE(run_data_pre)) {
   poptrag <- readRDS("data-raw/poptrag.rds")
@@ -142,6 +142,8 @@ if (isTRUE(run_baseline)) {
     train_df = train_high,
     test_df = test_high
   )
+  rm(random_baseline_low, random_baseline_high)
+  gc()
 }
 
 # GLMNET Models ----
@@ -162,11 +164,11 @@ if (isTRUE(run_glmnet)) {
     over_ratio_fix = 0.25,
     initial_grid_size = 20,
     bayes_iterations = 50,
-    uncertain_jump = 5
+    uncertain_jump = 5,
+    reserve_cores = 10
   )
 
   glmnet_low <- train_glmnet(train_low, test_low, cv_splits_low, settings)
-  beepr::beep()
 
   save_classification_model(
     glmnet_low,
@@ -175,8 +177,8 @@ if (isTRUE(run_glmnet)) {
     train_df = train_low,
     test_df = test_low
   )
-
-  # display beta features of glmnet in a data frame
+  rm(glmnet_low)
+  gc()
 
   settings$underratio_fix <- 20
   glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
@@ -187,35 +189,39 @@ if (isTRUE(run_glmnet)) {
     train_df = train_high,
     test_df = test_high
   )
+  rm(glmnet_high, settings)
+  gc()
 }
 
 if (isTRUE(run_rf)) {
   # Random forest models ----
   settings <- list(
     seed = 42,
-    ntrees = 1000, # make 1000 for final
+    ntrees = 1000,
     n_cores = max_cores,
-    n_cores_tuning = n_folds, # no of workers (gets multiple threads determined by n_cores)
+    n_cores_tuning = 5,
     varimp_top_n = 40,
     model_features = model_features,
-    importance = "impurity", # better for tuning, final model is "permutation" by default
+    importance = "impurity",
     use_caseweights = FALSE,
     tune_mtry = TRUE,
     tune_min_n = TRUE,
     tune_max_depth = TRUE,
     tune_downsample = FALSE,
     tune_upsample = FALSE,
-    ntrees_tuning = 750, # make 750 later
-    initial_grid_size = 20, # adjust later
-    bayes_iterations = 50, # adjust later
+    ntrees_tuning = 500,
+    initial_grid_size = 20,
+    bayes_iterations = 50,
     uncertain_jump = 5,
+    grid_chunk_size = 5,
     min.node.size_fix = 50,
     max.depth_fix = Inf,
     mtry_fix = 11,
     under_ratio_fix = 10,
-    over_ratio_fix = 0.25
+    over_ratio_fix = 0.25,
+    reserve_cores = 10
   )
-  # saveRDS(settings, "models/classifier/rf_tune_settings.rds")
+  saveRDS(settings, "models/classifier/rf_tune_settings.rds")
 
   message("---TRAINING LOW RESOLUTION MODEL---")
   rf_low <- train_random_forest(
@@ -236,6 +242,8 @@ if (isTRUE(run_rf)) {
     train_df = train_low,
     test_df = test_low
   )
+  rm("rf_low")
+  gc()
 
   message("---TRAINING HIGH RESOLUTION MODEL---")
   settings$under_ratio_fix <- 20
