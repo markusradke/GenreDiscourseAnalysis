@@ -1,3 +1,42 @@
+#' Train a multinomial GLMNET classifier for metagenre prediction
+#'
+#' Train and evaluate a multinomial elastic-net model using tidymodels.
+#' Supports optional Bayesian tuning of penalty, mixture and sampling
+#' ratios using provided resampling splits. Respects case weights stored
+#' in `case_wts`, artist-based CV splits, and a reproducible seed.
+#'
+#' @param train A tibble/data.frame with training rows. Must contain
+#'   columns: `metagenre`, `artist.s.id`, `track.s.id`, `case_wts`
+#'   (when `settings$use_caseweights` is TRUE) and the features named in
+#'   `settings$model_features`.
+#' @param test A tibble/data.frame with hold-out test rows.
+#' @param cv_splits Resampling object (e.g. result of
+#'   `create_artist_cv_splits()` or `rsample::vfold_cv`) used for tuning.
+#'   Can be NULL when no tuning is requested.
+#' @param settings List of modelling settings. Required entries include
+#'   `seed`, `model_features`, `use_caseweights`, `penalty_fix`,
+#'   `alpha_fix`, `tune_penalty`, `tune_alpha`, `tune_downsample`,
+#'   `tune_upsample`, `under_ratio_fix`, `over_ratio_fix`, `n_cores`,
+#'   `n_cores_tuning`, `initial_grid_size`, `bayes_iterations`,
+#'   `uncertain_jump`.
+#' @return A list with elements:
+#'   - `model`: fitted workflow object (final fitted model)
+#'   - `tuning_history`: tuning history tibble or NULL
+#'   - `evaluation`: list with confusion matrices and metrics for train
+#'       and test sets
+#'   - `model_settings`: list with chosen hyperparameters and seed
+#' @examples
+#' \dontrun{
+#' settings <- list(
+#'   seed = 42,
+#'   model_features = c("f1", "f2"),
+#'   use_caseweights = TRUE,
+#'   penalty_fix = 1e-4,
+#'   alpha_fix = 0.5
+#' )
+#' out <- train_glmnet(train, test, cv_splits, settings)
+#' }
+#' @export
 train_glmnet <- function(train, test, cv_splits, settings) {
   set.seed(settings$seed)
 

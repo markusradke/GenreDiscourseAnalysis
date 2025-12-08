@@ -5,10 +5,12 @@ options(tidymodels.dark = TRUE)
 run_data_pre <- TRUE
 run_baseline <- FALSE
 run_glmnet <- FALSE
+run_mars <- TRUE
+run_rda <- TRUE
 run_rf <- TRUE
-max_cores <- 64 # for final model fitting
+max_cores <- 19 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET (multiple of n_folds, max n_folds x grid)
-n_folds <- 10
+n_folds <- 5
 
 if (isTRUE(run_data_pre)) {
   poptrag <- readRDS("data-raw/poptrag.rds")
@@ -39,7 +41,6 @@ if (isTRUE(run_data_pre)) {
     poptrag,
     read_feather_with_lists("models/metagenres/mb_metagenres_10_15.feather")
   )
-
   data_high <- prepare_classification_data(
     settings,
     poptrag,
@@ -155,7 +156,7 @@ if (isTRUE(run_glmnet)) {
     n_cores_tuning = max_cores_tuning,
     use_caseweights = FALSE,
     tune_penalty = TRUE,
-    tune_alpha = FALSE,
+    tune_alpha = TRUE,
     tune_downsample = FALSE,
     tune_upsample = FALSE,
     penalty_fix = 0.002,
@@ -191,6 +192,114 @@ if (isTRUE(run_glmnet)) {
   )
   rm(glmnet_high, settings)
   gc()
+}
+
+if (isTRUE(run_mars)) {
+  # MARS Models ----
+  settings <- list(
+    seed = 42,
+    model_features = model_features,
+    n_cores = max_cores,
+    n_cores_tuning = max_cores_tuning,
+    use_caseweights = FALSE,
+    tune_num_terms = TRUE,
+    tune_prod_degree = TRUE,
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
+    num_terms_fix = 50,
+    prod_degree_fix = 2,
+    under_ratio_fix = 10,
+    over_ratio_fix = 0.25,
+    initial_grid_size = 20,
+    bayes_iterations = 50,
+    uncertain_jump = 5,
+    reserve_cores = 10
+  )
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  mars_low <- train_mars(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  save_classification_model(
+    mars_low,
+    "mars_lowres",
+    subfolder = "mars",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm("mars_low")
+  gc()
+  message("---TRAINING HIGH RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 20
+  mars_high <- train_mars(
+    train_high,
+    test_high,
+    cv_splits_high,
+    settings
+  )
+  save_classification_model(
+    mars_high,
+    "mars_highres",
+    subfolder = "mars",
+    train_df = train_high,
+    test_df = test_high
+  )
+}
+
+if (isTRUE(run_rda)) {
+  # RDA Models ----
+  settings <- list(
+    seed = 42,
+    model_features = model_features,
+    n_cores = max_cores,
+    n_cores_tuning = max_cores_tuning,
+    use_caseweights = FALSE,
+    tune_gamma = TRUE,
+    tune_lambda = TRUE,
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
+    gamma_fix = 0.2,
+    lambda_fix = 0.8,
+    under_ratio_fix = 10,
+    over_ratio_fix = 0.25,
+    initial_grid_size = 2,
+    bayes_iterations = 2,
+    uncertain_jump = 5,
+    reserve_cores = 10
+  )
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  rda_low <- train_rda(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  save_classification_model(
+    rda_low,
+    "rda_lowres",
+    subfolder = "rda",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm("rda_low")
+  gc()
+  message("---TRAINING HIGH RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 20
+  rda_high <- train_rda(
+    train_high,
+    test_high,
+    cv_splits_high,
+    settings
+  )
+  save_classification_model(
+    rda_high,
+    "rda_highres",
+    subfolder = "rda",
+    train_df = train_high,
+    test_df = test_high
+  )
 }
 
 if (isTRUE(run_rf)) {
