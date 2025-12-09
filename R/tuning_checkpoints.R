@@ -232,10 +232,12 @@ save_grid_checkpoint <- function(
 
   rotate_checkpoint_files(checkpoint_path)
 
+  slimmed_results_list <- purrr::map(results_list, slim_tuning_results)
+
   saveRDS(
     list(
       phase = "grid",
-      results_list = results_list,
+      results_list = slimmed_results_list,
       completed_chunk = completed_chunk,
       metadata = metadata,
       timestamp = Sys.time()
@@ -268,12 +270,123 @@ rotate_checkpoint_files <- function(checkpoint_path) {
   }
 }
 
+slim_tuning_results <- function(tuning_results) {
+  if (is.null(tuning_results)) {
+    return(NULL)
+  }
+
+  slimmed <- tuning_results
+
+  if ("splits" %in% names(slimmed)) {
+    slimmed$splits <- purrr::map(slimmed$splits, function(x) NULL)
+  }
+
+  if (".predictions" %in% names(slimmed)) {
+    slimmed$.predictions <- purrr::map(slimmed$.predictions, function(x) NULL)
+  }
+  if (".extracts" %in% names(slimmed)) {
+    slimmed$.extracts <- purrr::map(slimmed$.extracts, function(x) NULL)
+  }
+  if (".notes" %in% names(slimmed)) {
+    slimmed$.notes <- purrr::map(slimmed$.notes, function(x) NULL)
+  }
+
+  if (".metrics" %in% names(slimmed)) {
+    non_param_cols <- c(
+      "splits",
+      "id",
+      ".metrics",
+      ".notes",
+      ".predictions",
+      ".extracts",
+      ".iter"
+    )
+    param_cols <- setdiff(names(slimmed), non_param_cols)
+
+    first_metrics <- slimmed$.metrics[[1]]
+    if (!is.null(first_metrics) && nrow(first_metrics) > 0) {
+      metric_cols <- c(
+        ".metric",
+        ".estimator",
+        "mean",
+        ".estimate",
+        "n",
+        "std_err",
+        ".config"
+      )
+      param_cols_in_first_metrics <- setdiff(names(first_metrics), metric_cols)
+      if (length(param_cols_in_first_metrics) > 0) {
+        param_cols <- union(param_cols, param_cols_in_first_metrics)
+      }
+    }
+
+    if (length(param_cols) > 0) {
+      message(sprintf(
+        "Detected hyperparameter columns: %s",
+        paste(param_cols, collapse = ", ")
+      ))
+    }
+
+    slimmed$.metrics <- purrr::map2(
+      slimmed$.metrics,
+      seq_len(nrow(slimmed)),
+      function(metrics_df, row_idx) {
+        if (!is.null(metrics_df) && nrow(metrics_df) > 0) {
+          cols_to_keep <- c(
+            ".metric",
+            ".estimator",
+            "mean",
+            ".estimate",
+            "n",
+            "std_err",
+            ".config"
+          )
+
+          param_cols_in_metrics <- intersect(param_cols, names(metrics_df))
+          if (length(param_cols_in_metrics) > 0) {
+            cols_to_keep <- c(cols_to_keep, param_cols_in_metrics)
+          }
+
+          metrics_slim <- dplyr::select(
+            metrics_df,
+            dplyr::any_of(cols_to_keep)
+          )
+
+          params_to_add <- setdiff(param_cols, param_cols_in_metrics)
+          if (length(params_to_add) > 0) {
+            for (param_col in params_to_add) {
+              if (param_col %in% names(slimmed)) {
+                param_value <- slimmed[[param_col]][row_idx]
+                if (
+                  !is.null(param_value) &&
+                    length(param_value) > 0 &&
+                    !is.na(param_value)
+                ) {
+                  metrics_slim[[param_col]] <- param_value
+                }
+              }
+            }
+          }
+
+          metrics_slim
+        } else {
+          metrics_df
+        }
+      }
+    )
+  }
+
+  slimmed
+}
+
 save_bayes_checkpoint <- function(
   checkpoint_path,
   tuning_results,
   completed_iter,
   total_iter,
-  metadata
+  metadata,
+  best_metric_value = NULL,
+  no_improve_counter = 0
 ) {
   if (is.null(checkpoint_path)) {
     return(invisible(NULL))
@@ -281,12 +394,16 @@ save_bayes_checkpoint <- function(
 
   rotate_checkpoint_files(checkpoint_path)
 
+  slimmed_results <- slim_tuning_results(tuning_results)
+
   saveRDS(
     list(
       phase = "bayes",
-      tuning_results = tuning_results,
+      tuning_results = slimmed_results,
       completed_iter = completed_iter,
       metadata = metadata,
+      best_metric_value = best_metric_value,
+      no_improve_counter = no_improve_counter,
       timestamp = Sys.time()
     ),
     checkpoint_path
@@ -383,7 +500,9 @@ load_bayes_checkpoint <- function(checkpoint_path, current_metadata) {
 
   list(
     tuning_results = checkpoint$tuning_results,
-    completed_iter = checkpoint$completed_iter
+    completed_iter = checkpoint$completed_iter,
+    best_metric_value = checkpoint$best_metric_value,
+    no_improve_counter = checkpoint$no_improve_counter %||% 0
   )
 }
 

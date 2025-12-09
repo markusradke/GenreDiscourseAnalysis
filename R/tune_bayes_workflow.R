@@ -83,6 +83,94 @@ tune_grid_chunked <- function(
   merge_tune_results(results_list)
 }
 
+tune_bayes_with_checkpoints_resume <- function(
+  workflow,
+  cv_splits,
+  metric_set,
+  initial_results,
+  params,
+  bayes_iterations,
+  bayescontrol,
+  checkpoint_path,
+  metadata,
+  start_iter,
+  best_metric_value,
+  no_improve_counter
+) {
+  checkpoint_interval <- max(1, floor(bayes_iterations / 5))
+  no_improve_limit <- bayescontrol$no_improve %||% Inf
+
+  current_results <- initial_results
+  completed_iter <- start_iter - 1
+
+  while (completed_iter < bayes_iterations) {
+    if (no_improve_counter >= no_improve_limit) {
+      message(sprintf(
+        "Stopping early: no improvement for %d iterations",
+        no_improve_limit
+      ))
+      break
+    }
+
+    remaining <- bayes_iterations - completed_iter
+    iter_chunk <- min(checkpoint_interval, remaining)
+
+    message(sprintf(
+      "Running Bayes iterations %d-%d of %d (no_improve: %d/%d)",
+      completed_iter + 1,
+      completed_iter + iter_chunk,
+      bayes_iterations,
+      no_improve_counter,
+      no_improve_limit
+    ))
+
+    chunk_control <- bayescontrol
+    chunk_control$no_improve <- Inf
+
+    current_results <- tune::tune_bayes(
+      workflow,
+      resamples = cv_splits,
+      metrics = metric_set,
+      initial = current_results,
+      param_info = params,
+      iter = iter_chunk,
+      control = chunk_control
+    )
+
+    completed_iter <- completed_iter + iter_chunk
+
+    current_best <- tune::show_best(
+      current_results,
+      metric = "macro_f1_with_zeros",
+      n = 1
+    )
+    current_best_value <- current_best$mean[1]
+
+    if (
+      is.null(best_metric_value) ||
+        current_best_value > best_metric_value + 1e-6
+    ) {
+      best_metric_value <- current_best_value
+      no_improve_counter <- 0
+      message(sprintf("New best metric: %.4f", best_metric_value))
+    } else {
+      no_improve_counter <- no_improve_counter + iter_chunk
+    }
+
+    save_bayes_checkpoint(
+      checkpoint_path,
+      current_results,
+      completed_iter,
+      bayes_iterations,
+      metadata,
+      best_metric_value,
+      no_improve_counter
+    )
+  }
+
+  current_results
+}
+
 tune_bayes_with_checkpoints <- function(
   workflow,
   cv_splits,
@@ -95,20 +183,36 @@ tune_bayes_with_checkpoints <- function(
   metadata
 ) {
   checkpoint_interval <- max(1, floor(bayes_iterations / 5))
+  no_improve_limit <- bayescontrol$no_improve %||% Inf
 
   current_results <- initial_results
   completed_iter <- 0
+  best_metric_value <- NULL
+  no_improve_counter <- 0
 
   while (completed_iter < bayes_iterations) {
+    if (no_improve_counter >= no_improve_limit) {
+      message(sprintf(
+        "Stopping early: no improvement for %d iterations",
+        no_improve_limit
+      ))
+      break
+    }
+
     remaining <- bayes_iterations - completed_iter
     iter_chunk <- min(checkpoint_interval, remaining)
 
     message(sprintf(
-      "Running Bayes iterations %d-%d of %d",
+      "Running Bayes iterations %d-%d of %d (no_improve: %d/%d)",
       completed_iter + 1,
       completed_iter + iter_chunk,
-      bayes_iterations
+      bayes_iterations,
+      no_improve_counter,
+      no_improve_limit
     ))
+
+    chunk_control <- bayescontrol
+    chunk_control$no_improve <- Inf
 
     current_results <- tune::tune_bayes(
       workflow,
@@ -117,17 +221,37 @@ tune_bayes_with_checkpoints <- function(
       initial = current_results,
       param_info = params,
       iter = iter_chunk,
-      control = bayescontrol
+      control = chunk_control
     )
 
     completed_iter <- completed_iter + iter_chunk
+
+    current_best <- tune::show_best(
+      current_results,
+      metric = "macro_f1_with_zeros",
+      n = 1
+    )
+    current_best_value <- current_best$mean[1]
+
+    if (
+      is.null(best_metric_value) ||
+        current_best_value > best_metric_value + 1e-6
+    ) {
+      best_metric_value <- current_best_value
+      no_improve_counter <- 0
+      message(sprintf("New best metric: %.4f", best_metric_value))
+    } else {
+      no_improve_counter <- no_improve_counter + iter_chunk
+    }
 
     save_bayes_checkpoint(
       checkpoint_path,
       current_results,
       completed_iter,
       bayes_iterations,
-      metadata
+      metadata,
+      best_metric_value,
+      no_improve_counter
     )
   }
 
@@ -355,25 +479,23 @@ tune_bayes_workflow <- function(
       tuning_results <- current_results
     } else {
       message(sprintf(
-        "Continuing Bayesian optimization: %d more iterations",
-        remaining_iter
+        "Continuing Bayesian optimization: %d more iterations (starting from %d)",
+        remaining_iter,
+        start_iter
       ))
-      tuning_results <- tune::tune_bayes(
+      tuning_results <- tune_bayes_with_checkpoints_resume(
         workflow,
-        resamples = cv_splits,
-        metrics = metric_set,
-        initial = current_results,
-        param_info = params,
-        iter = remaining_iter,
-        control = bayescontrol
-      )
-
-      save_bayes_checkpoint(
+        cv_splits,
+        metric_set,
+        current_results,
+        params,
+        bayes_iterations,
+        bayescontrol,
         bayes_checkpoint_path,
-        tuning_results,
-        bayes_iterations,
-        bayes_iterations,
-        bayes_metadata
+        bayes_metadata,
+        start_iter,
+        bayes_checkpoint$best_metric_value,
+        bayes_checkpoint$no_improve_counter
       )
     }
   } else {
