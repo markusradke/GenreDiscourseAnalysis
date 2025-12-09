@@ -8,14 +8,25 @@ tune_grid_chunked <- function(
   checkpoint_dir,
   model_type,
   chunk_size = 5,
-  n_train_rows = NULL
+  n_train_rows = NULL,
+  model_hash = NULL
 ) {
   if (!is.null(checkpoint_dir) && !dir.exists(checkpoint_dir)) {
     dir.create(checkpoint_dir, recursive = TRUE)
   }
 
-  checkpoint_path <- get_checkpoint_path(checkpoint_dir, model_type, "grid")
-  current_metadata <- create_checkpoint_metadata(cv_splits, grid, n_train_rows)
+  checkpoint_path <- get_checkpoint_path(
+    checkpoint_dir,
+    model_type,
+    "grid",
+    model_hash
+  )
+  current_metadata <- create_checkpoint_metadata(
+    cv_splits,
+    grid,
+    n_train_rows,
+    model_hash
+  )
   checkpoint <- load_grid_checkpoint(checkpoint_path, current_metadata)
 
   grid_chunks <- split_grid(grid, chunk_size)
@@ -70,6 +81,57 @@ tune_grid_chunked <- function(
   }
 
   merge_tune_results(results_list)
+}
+
+tune_bayes_with_checkpoints <- function(
+  workflow,
+  cv_splits,
+  metric_set,
+  initial_results,
+  params,
+  bayes_iterations,
+  bayescontrol,
+  checkpoint_path,
+  metadata
+) {
+  checkpoint_interval <- max(1, floor(bayes_iterations / 5))
+
+  current_results <- initial_results
+  completed_iter <- 0
+
+  while (completed_iter < bayes_iterations) {
+    remaining <- bayes_iterations - completed_iter
+    iter_chunk <- min(checkpoint_interval, remaining)
+
+    message(sprintf(
+      "Running Bayes iterations %d-%d of %d",
+      completed_iter + 1,
+      completed_iter + iter_chunk,
+      bayes_iterations
+    ))
+
+    current_results <- tune::tune_bayes(
+      workflow,
+      resamples = cv_splits,
+      metrics = metric_set,
+      initial = current_results,
+      param_info = params,
+      iter = iter_chunk,
+      control = bayescontrol
+    )
+
+    completed_iter <- completed_iter + iter_chunk
+
+    save_bayes_checkpoint(
+      checkpoint_path,
+      current_results,
+      completed_iter,
+      bayes_iterations,
+      metadata
+    )
+  }
+
+  current_results
 }
 
 print_tuning_core_guidance <- function(n_folds, initial_grid_size) {
@@ -179,6 +241,7 @@ create_sampling_params <- function(train_df) {
 #' @param uncertain_jump Uncertainty parameter for tune_bayes
 #' @param checkpoint_dir Directory for saving checkpoints (NULL to disable)
 #' @param grid_chunk_size Number of grid points per chunk for checkpointing
+#' @param settings Full settings list (for hash computation)
 #' @return List with tuning_results, best_params
 tune_bayes_workflow <- function(
   workflow,
@@ -192,11 +255,37 @@ tune_bayes_workflow <- function(
   bayes_iterations = 15,
   uncertain_jump = 5,
   checkpoint_dir = "models/classifier/checkpoints",
-  grid_chunk_size = 5
+  grid_chunk_size = 5,
+  settings = NULL
 ) {
   n_folds <- length(cv_splits$splits)
   print_tuning_core_guidance(n_folds, initial_grid_size)
   metric_set <- create_tuning_metrics()
+
+  initial_grid <- dials::grid_space_filling(
+    params,
+    size = initial_grid_size,
+    type = "latin_hypercube"
+  )
+
+  model_hash <- if (!is.null(settings)) {
+    compute_model_hash(train_df, cv_splits, initial_grid, settings, model_type)
+  } else {
+    NULL
+  }
+
+  if (!is.null(model_hash)) {
+    message(sprintf("Model hash: %s", substr(model_hash, 1, 8)))
+    log_model_hash_info(
+      model_hash,
+      train_df,
+      cv_splits,
+      initial_grid,
+      settings,
+      model_type,
+      checkpoint_dir
+    )
+  }
 
   bayescontrol <- tune::control_bayes(
     verbose = TRUE,
@@ -207,11 +296,6 @@ tune_bayes_workflow <- function(
     parallel_over = "resamples"
   )
 
-  initial_grid <- dials::grid_space_filling(
-    params,
-    size = initial_grid_size,
-    type = "latin_hypercube"
-  )
   message(sprintf("Initial grid (%d models):", nrow(initial_grid)))
   print(initial_grid, n = nrow(initial_grid))
 
@@ -233,19 +317,73 @@ tune_bayes_workflow <- function(
     checkpoint_dir = checkpoint_dir,
     model_type = model_type,
     chunk_size = grid_chunk_size,
-    n_train_rows = nrow(train_df)
+    n_train_rows = nrow(train_df),
+    model_hash = model_hash
   )
 
   print_phase_info("BAYESIAN OPTIMIZATION", n_cores_tuning)
-  tuning_results <- tune::tune_bayes(
-    workflow,
-    resamples = cv_splits,
-    metrics = metric_set,
-    initial = initial_results,
-    param_info = params,
-    iter = bayes_iterations,
-    control = bayescontrol
+
+  bayes_checkpoint_path <- get_checkpoint_path(
+    checkpoint_dir,
+    model_type,
+    "bayes",
+    model_hash
   )
+  bayes_metadata <- create_checkpoint_metadata(
+    cv_splits,
+    initial_grid,
+    nrow(train_df),
+    model_hash
+  )
+  bayes_checkpoint <- load_bayes_checkpoint(
+    bayes_checkpoint_path,
+    bayes_metadata
+  )
+
+  if (!is.null(bayes_checkpoint)) {
+    current_results <- bayes_checkpoint$tuning_results
+    start_iter <- bayes_checkpoint$completed_iter + 1
+    remaining_iter <- bayes_iterations - bayes_checkpoint$completed_iter
+
+    if (remaining_iter <= 0) {
+      message("Bayesian optimization already complete from checkpoint")
+      tuning_results <- current_results
+    } else {
+      message(sprintf(
+        "Continuing Bayesian optimization: %d more iterations",
+        remaining_iter
+      ))
+      tuning_results <- tune::tune_bayes(
+        workflow,
+        resamples = cv_splits,
+        metrics = metric_set,
+        initial = current_results,
+        param_info = params,
+        iter = remaining_iter,
+        control = bayescontrol
+      )
+
+      save_bayes_checkpoint(
+        bayes_checkpoint_path,
+        tuning_results,
+        bayes_iterations,
+        bayes_iterations,
+        bayes_metadata
+      )
+    }
+  } else {
+    tuning_results <- tune_bayes_with_checkpoints(
+      workflow,
+      cv_splits,
+      metric_set,
+      initial_results,
+      params,
+      bayes_iterations,
+      bayescontrol,
+      bayes_checkpoint_path,
+      bayes_metadata
+    )
+  }
 
   best_params <- select_best_by_complexity(tuning_results, model_type)
   message(
@@ -255,7 +393,8 @@ tune_bayes_workflow <- function(
 
   list(
     tuning_results = tuning_results,
-    best_params = best_params
+    best_params = best_params,
+    model_hash = model_hash
   )
 }
 

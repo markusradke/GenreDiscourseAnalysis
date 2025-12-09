@@ -100,12 +100,15 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       n_cores_tuning = settings$n_cores_tuning,
       initial_grid_size = settings$initial_grid_size,
       bayes_iterations = settings$bayes_iterations,
-      uncertain_jump = settings$uncertain_jump
+      uncertain_jump = settings$uncertain_jump,
+      grid_chunk_size = settings$grid_chunk_size,
+      settings = settings
     )
 
     tuning_results <- tune_result$tuning_results
     best_params <- tune_result$best_params
     tuning_history <- extract_tuning_history(tuning_results)
+    model_hash <- tune_result$model_hash
   } else {
     message("No tuning requested, fitting with fixed parameters...")
     best_params <- list(
@@ -113,6 +116,7 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       mixture = settings$alpha_fix
     )
     tuning_history <- NULL
+    model_hash <- NULL
   }
 
   final_fit <- finalize_and_fit_glmnet(workflow, train, best_params, settings)
@@ -121,6 +125,10 @@ train_glmnet <- function(train, test, cv_splits, settings) {
   evaluation <- evaluate_glmnet_model(final_fit, train, test)
   end_time <- Sys.time()
   evaluation$time_needed <- end_time - start_time
+
+  if (!is.null(model_hash)) {
+    cleanup_checkpoints("models/classifier/checkpoints", "glmnet", model_hash)
+  }
 
   list(
     model = final_fit,

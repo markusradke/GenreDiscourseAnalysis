@@ -2,9 +2,10 @@
 
 # Check if a script path is provided
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 <path_to_Rscript> [email_recipient] [update_interval_minutes] [max_log_size_mb]"
+    echo "Usage: $0 <path_to_Rscript> [email_recipient] [update_interval_minutes] [max_log_size_mb] [max_restarts]"
     echo "  email_recipient: Email address for notifications (default: mail@markus-radke.de)"
     echo "  update_interval_minutes: Minutes between progress updates (default: 60)"
+    echo "  max_restarts: Maximum number of restart attempts (default: 10)"
     echo "  max_log_size_mb: Maximum log file size in MB before rotation (default: 100)"
     exit 1
 fi
@@ -18,13 +19,19 @@ RECIPIENT="${2:-mail@markus-radke.de}"
 # Update interval in minutes (default: 60)
 UPDATE_INTERVAL="${3:-60}"
 
+# Maximum restart attempts (default: 10)
+MAX_RESTARTS="${4:-10}"
+
 # Maximum log size in MB (default: 100)
-MAX_LOG_SIZE_MB="${4:-100}"
+MAX_LOG_SIZE_MB="${5:-100}"
+
+
 
 SUBJECT_SUCCESS="Rscript finished: $(basename "$RSCRIPT_PATH")"
 SUBJECT_FAIL="Rscript interrupted or failed: $(basename "$RSCRIPT_PATH")"
 SUBJECT_UPDATE="Rscript progress update: $(basename "$RSCRIPT_PATH")"
 SUBJECT_RESTART="Rscript restarting after interrupt: $(basename "$RSCRIPT_PATH")"
+SUBJECT_MAX_RESTARTS="Rscript failed after max restarts: $(basename "$RSCRIPT_PATH")"
 BODY_SUCCESS="Rscript $(basename "$RSCRIPT_PATH") completed successfully on $(hostname) at $(date)."
 
 # Validate script exists
@@ -361,6 +368,7 @@ echo "===== Script started at $(date) =====" | tee -a "$LOG_FILE"
 echo "===== Command: $0 $@ =====" | tee -a "$LOG_FILE"
 echo "===== Update interval: ${UPDATE_INTERVAL} minutes =====" | tee -a "$LOG_FILE"
 echo "===== Max log size: ${MAX_LOG_SIZE_MB}MB =====" | tee -a "$LOG_FILE"
+echo "===== Max restarts: ${MAX_RESTARTS} =====" | tee -a "$LOG_FILE"
 
 # Main loop to run and restart R script
 while [ "$(cat "$RUNNING_FLAG" 2>/dev/null)" = "1" ]; do
@@ -424,6 +432,29 @@ while [ "$(cat "$RUNNING_FLAG" 2>/dev/null)" = "1" ]; do
     echo "$RESTART_COUNT" > "$RESTART_FILE"
     echo "===== Rscript interrupted (exit code $EXIT_CODE) at $(date) =====" | tee -a "$LOG_FILE"
     
+    # Check if max restarts exceeded
+    if [ $RESTART_COUNT -ge $MAX_RESTARTS ]; then
+        # Calculate statistics for max restarts notification
+        local script_start=$(cat "$STATS_FILE" 2>/dev/null)
+        local current_time=$(date +%s)
+        local total_runtime=$((current_time - script_start))
+        local runtime_formatted=$(_format_duration $total_runtime)
+        
+        # Send max restarts notification
+        BODY_MAX_RESTARTS="Rscript $(basename "$RSCRIPT_PATH") failed after $MAX_RESTARTS restart attempts on $(hostname) at $(date).
+Last exit code: $EXIT_CODE
+Total runtime: $runtime_formatted
+
+--- Last 100 lines of output ---
+$(tail -n 100 "$LOG_FILE")"
+        echo "$BODY_MAX_RESTARTS" | mail -r markus@hendrix.ak.tu-berlin.de -s "$SUBJECT_MAX_RESTARTS" "$RECIPIENT"
+        
+        echo "===== Maximum restart attempts ($MAX_RESTARTS) exceeded. Stopping. =====" | tee -a "$LOG_FILE"
+        FINAL_EXIT_CODE=$EXIT_CODE
+        echo "0" > "$RUNNING_FLAG"
+        exit 1
+    fi
+    
     # Calculate statistics for restart notification
     local script_start=$(cat "$STATS_FILE" 2>/dev/null)
     local current_time=$(date +%s)
@@ -435,7 +466,7 @@ while [ "$(cat "$RUNNING_FLAG" 2>/dev/null)" = "1" ]; do
 Exit code: $EXIT_CODE
 Attempt duration: $ATTEMPT_DURATION_FORMATTED
 Total runtime so far: $runtime_formatted
-Restarting automatically (restart #$RESTART_COUNT)...
+Restarting automatically (restart #$RESTART_COUNT of $MAX_RESTARTS)...
 
 --- Last 100 lines of output ---
 $(tail -n 100 "$LOG_FILE")"

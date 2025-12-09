@@ -90,7 +90,13 @@ train_random_forest <- function(train, test, cv_splits, settings) {
     NULL
   }
 
-  cleanup_checkpoints("models/classifier/checkpoints", "rf")
+  if (!is.null(tuning_fit_result$model_hash)) {
+    cleanup_checkpoints(
+      "models/classifier/checkpoints",
+      "rf",
+      tuning_fit_result$model_hash
+    )
+  }
 
   list(
     model = fitted_workflow,
@@ -197,7 +203,8 @@ tune_and_fit_workflow <- function(
     initial_grid_size = settings$initial_grid_size,
     bayes_iterations = settings$bayes_iterations,
     uncertain_jump = settings$uncertain_jump,
-    grid_chunk_size = settings$grid_chunk_size %||% 5
+    grid_chunk_size = settings$grid_chunk_size %||% 5,
+    settings = settings
   )
 
   best_params <- tune_result$best_params
@@ -236,7 +243,8 @@ tune_and_fit_workflow <- function(
 
   list(
     fitted_workflow = fitted_workflow,
-    tuning_results = tune_result$tuning_results
+    tuning_results = tune_result$tuning_results,
+    model_hash = tune_result$model_hash
   )
 }
 
