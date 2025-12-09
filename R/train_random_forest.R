@@ -57,7 +57,7 @@ train_random_forest <- function(train, test, cv_splits, settings) {
       ntrees_final = settings$ntrees
     )
   } else {
-    fit_workflow(rf_workflow, train, settings$n_cores)
+    fit_workflow(rf_workflow, train, settings$n_cores, cv_splits, settings)
   }
 
   fitted_workflow <- tuning_fit_result$fitted_workflow
@@ -66,7 +66,8 @@ train_random_forest <- function(train, test, cv_splits, settings) {
     rf_model,
     tuning_fit_result$tuning_results,
     settings$under_ratio_fix,
-    settings$over_ratio_fix
+    settings$over_ratio_fix,
+    tuning_fit_result$model_hash
   )
 
   evaluation <- evaluate_with_metrics(
@@ -204,7 +205,9 @@ tune_and_fit_workflow <- function(
     bayes_iterations = settings$bayes_iterations,
     uncertain_jump = settings$uncertain_jump,
     grid_chunk_size = settings$grid_chunk_size %||% 5,
-    settings = settings
+    settings = settings,
+    enable_grid_checkpoints = settings$enable_grid_checkpoints %||% TRUE,
+    enable_bayes_checkpoints = settings$enable_bayes_checkpoints %||% TRUE
   )
 
   best_params <- tune_result$best_params
@@ -290,12 +293,42 @@ create_rf_params <- function(workflow, train_df, settings) {
   params
 }
 
-fit_workflow <- function(workflow, train_df, n_cores) {
+fit_workflow <- function(workflow, train_df, n_cores, cv_splits, settings) {
   print_phase_info("FINAL MODEL FIT (no tuning)", n_cores, is_final_fit = TRUE)
+
+  fixed_grid <- dplyr::tibble(
+    mtry = settings$mtry_fix,
+    min_n = settings$min.node.size_fix,
+    max.depth = settings$max.depth_fix
+  )
+  model_hash <- compute_model_hash(
+    train_df,
+    cv_splits,
+    fixed_grid,
+    settings,
+    "rf"
+  )
+  message(sprintf("Model hash: %s", substr(model_hash, 1, 8)))
+
+  log_dir <- file.path("models/classifier", "rf")
+  log_model_hash_info(
+    model_hash,
+    train_df,
+    cv_splits,
+    fixed_grid,
+    settings,
+    "rf",
+    log_dir
+  )
+
   future::plan(future::multisession, workers = n_cores)
   fitted_workflow <- parsnip::fit(workflow, data = train_df)
   future::plan(future::sequential)
-  list(fitted_workflow = fitted_workflow, tuning_results = NULL)
+  list(
+    fitted_workflow = fitted_workflow,
+    tuning_results = NULL,
+    model_hash = model_hash
+  )
 }
 
 
@@ -318,7 +351,8 @@ extract_model_settings <- function(
   ranger_model,
   tuning_results,
   under_ratio_fix,
-  over_ratio_fix = 0.5
+  over_ratio_fix = 0.5,
+  model_hash = NULL
 ) {
   if (!is.null(tuning_results)) {
     bayes_iterations <- max(tuning_results$.iter)
@@ -345,7 +379,8 @@ extract_model_settings <- function(
     nindependent = ranger_model$num.independent.variables,
     vip.mode = ranger_model$importance.mode,
     splitrule = ranger_model$splitrule,
-    treetype = ranger_model$treetype
+    treetype = ranger_model$treetype,
+    model_hash = model_hash
   )
 }
 

@@ -42,19 +42,23 @@ log_model_hash_info <- function(
   grid,
   settings,
   model_type,
-  checkpoint_dir = "models/classifier/checkpoints"
+  log_dir = NULL
 ) {
-  if (is.null(model_hash) || is.null(checkpoint_dir)) {
+  if (is.null(model_hash)) {
     return(invisible(NULL))
   }
 
-  if (!dir.exists(checkpoint_dir)) {
-    dir.create(checkpoint_dir, recursive = TRUE)
+  if (is.null(log_dir)) {
+    log_dir <- file.path("models/classifier", model_type)
+  }
+
+  if (!dir.exists(log_dir)) {
+    dir.create(log_dir, recursive = TRUE)
   }
 
   hash_short <- substr(model_hash, 1, 8)
   log_file <- file.path(
-    checkpoint_dir,
+    log_dir,
     sprintf("%s_%s_info.txt", model_type, hash_short)
   )
 

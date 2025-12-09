@@ -242,6 +242,8 @@ create_sampling_params <- function(train_df) {
 #' @param checkpoint_dir Directory for saving checkpoints (NULL to disable)
 #' @param grid_chunk_size Number of grid points per chunk for checkpointing
 #' @param settings Full settings list (for hash computation)
+#' @param enable_grid_checkpoints Enable checkpointing for grid phase
+#' @param enable_bayes_checkpoints Enable checkpointing for Bayesian phase
 #' @return List with tuning_results, best_params
 tune_bayes_workflow <- function(
   workflow,
@@ -256,7 +258,9 @@ tune_bayes_workflow <- function(
   uncertain_jump = 5,
   checkpoint_dir = "models/classifier/checkpoints",
   grid_chunk_size = 5,
-  settings = NULL
+  settings = NULL,
+  enable_grid_checkpoints = TRUE,
+  enable_bayes_checkpoints = TRUE
 ) {
   n_folds <- length(cv_splits$splits)
   print_tuning_core_guidance(n_folds, initial_grid_size)
@@ -276,6 +280,7 @@ tune_bayes_workflow <- function(
 
   if (!is.null(model_hash)) {
     message(sprintf("Model hash: %s", substr(model_hash, 1, 8)))
+    log_dir <- file.path("models/classifier", model_type)
     log_model_hash_info(
       model_hash,
       train_df,
@@ -283,7 +288,7 @@ tune_bayes_workflow <- function(
       initial_grid,
       settings,
       model_type,
-      checkpoint_dir
+      log_dir
     )
   }
 
@@ -314,7 +319,7 @@ tune_bayes_workflow <- function(
     cv_splits = cv_splits,
     grid = initial_grid,
     metric_set = metric_set,
-    checkpoint_dir = checkpoint_dir,
+    checkpoint_dir = if (enable_grid_checkpoints) checkpoint_dir else NULL,
     model_type = model_type,
     chunk_size = grid_chunk_size,
     n_train_rows = nrow(train_df),
@@ -323,22 +328,22 @@ tune_bayes_workflow <- function(
 
   print_phase_info("BAYESIAN OPTIMIZATION", n_cores_tuning)
 
-  bayes_checkpoint_path <- get_checkpoint_path(
-    checkpoint_dir,
-    model_type,
-    "bayes",
-    model_hash
-  )
+  bayes_checkpoint_path <- if (enable_bayes_checkpoints) {
+    get_checkpoint_path(checkpoint_dir, model_type, "bayes", model_hash)
+  } else {
+    NULL
+  }
   bayes_metadata <- create_checkpoint_metadata(
     cv_splits,
     initial_grid,
     nrow(train_df),
     model_hash
   )
-  bayes_checkpoint <- load_bayes_checkpoint(
-    bayes_checkpoint_path,
-    bayes_metadata
-  )
+  bayes_checkpoint <- if (enable_bayes_checkpoints) {
+    load_bayes_checkpoint(bayes_checkpoint_path, bayes_metadata)
+  } else {
+    NULL
+  }
 
   if (!is.null(bayes_checkpoint)) {
     current_results <- bayes_checkpoint$tuning_results

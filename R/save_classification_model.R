@@ -17,8 +17,15 @@ save_classification_model <- function(
   train_df = NULL,
   test_df = NULL
 ) {
-  base_path <- sprintf("models/classifier/%s/%s", subfolder, name)
-  message(sprintf("Saving classification model bundle: %s...", name))
+  model_hash <- if (!is.null(model_result$model_settings$model_hash)) {
+    sprintf("_%s", substr(model_result$model_settings$model_hash, 1, 8))
+  } else {
+    ""
+  }
+
+  full_name <- sprintf("%s%s", name, model_hash)
+  base_path <- sprintf("models/classifier/%s/%s", subfolder, full_name)
+  message(sprintf("Saving classification model bundle: %s...", full_name))
 
   minimal_model <- butcher_workflow(model_result$model)
   saveRDS(minimal_model, paste0(base_path, "_model.rds"))

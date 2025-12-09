@@ -102,7 +102,9 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       bayes_iterations = settings$bayes_iterations,
       uncertain_jump = settings$uncertain_jump,
       grid_chunk_size = settings$grid_chunk_size,
-      settings = settings
+      settings = settings,
+      enable_grid_checkpoints = settings$enable_grid_checkpoints %||% TRUE,
+      enable_bayes_checkpoints = settings$enable_bayes_checkpoints %||% TRUE
     )
 
     tuning_results <- tune_result$tuning_results
@@ -116,7 +118,30 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       mixture = settings$alpha_fix
     )
     tuning_history <- NULL
-    model_hash <- NULL
+
+    fixed_grid <- dplyr::tibble(
+      penalty = settings$penalty_fix,
+      mixture = settings$alpha_fix
+    )
+    model_hash <- compute_model_hash(
+      train,
+      cv_splits,
+      fixed_grid,
+      settings,
+      "glmnet"
+    )
+    message(sprintf("Model hash: %s", substr(model_hash, 1, 8)))
+
+    log_dir <- file.path("models/classifier", "glmnet")
+    log_model_hash_info(
+      model_hash,
+      train,
+      cv_splits,
+      fixed_grid,
+      settings,
+      "glmnet",
+      log_dir
+    )
   }
 
   final_fit <- finalize_and_fit_glmnet(workflow, train, best_params, settings)
@@ -134,7 +159,11 @@ train_glmnet <- function(train, test, cv_splits, settings) {
     model = final_fit,
     tuning_history = tuning_history,
     evaluation = evaluation,
-    model_settings = extract_glmnet_model_settings(settings, best_params)
+    model_settings = extract_glmnet_model_settings(
+      settings,
+      best_params,
+      model_hash
+    )
   )
 }
 
@@ -217,7 +246,11 @@ finalize_and_fit_glmnet <- function(workflow, train_df, best_params, settings) {
   )
 }
 
-extract_glmnet_model_settings <- function(settings, best_params) {
+extract_glmnet_model_settings <- function(
+  settings,
+  best_params,
+  model_hash = NULL
+) {
   list(
     seed = settings$seed,
     model_type = "glmnet_multinomial",
@@ -225,7 +258,8 @@ extract_glmnet_model_settings <- function(settings, best_params) {
     alpha = best_params$mixture %||% settings$alpha_fix,
     penalty = best_params$penalty %||% settings$penalty_fix,
     under_ratio = best_params$under_ratio %||% settings$under_ratio_fix,
-    over_ratio = best_params$over_ratio %||% settings$over_ratio_fix
+    over_ratio = best_params$over_ratio %||% settings$over_ratio_fix,
+    model_hash = model_hash
   )
 }
 
