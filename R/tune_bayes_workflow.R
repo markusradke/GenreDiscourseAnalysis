@@ -590,12 +590,24 @@ build_complexity_order <- function(model_type, tuned_params) {
   glmnet_priority <- c("penalty", "mixture")
   glmnet_desc <- c(TRUE, FALSE)
 
+  rda_priority <- c("gamma", "lambda")
+  rda_desc <- c(FALSE, TRUE)
+
+  lightgbm_priority <- c("tree_depth", "min_n", "mtry", "trees", "learn_rate")
+  lightgbm_desc <- c(FALSE, TRUE, FALSE, FALSE, TRUE)
+
   shared_priority <- c("over_ratio", "under_ratio")
   shared_desc <- c(FALSE, TRUE)
 
   if (model_type == "rf") {
     priority <- c(rf_priority, shared_priority)
     use_desc <- c(rf_desc, shared_desc)
+  } else if (model_type == "lightgbm") {
+    priority <- c(lightgbm_priority, shared_priority)
+    use_desc <- c(lightgbm_desc, shared_desc)
+  } else if (model_type == "rda") {
+    priority <- c(rda_priority, shared_priority)
+    use_desc <- c(rda_desc, shared_desc)
   } else {
     priority <- c(glmnet_priority, shared_priority)
     use_desc <- c(glmnet_desc, shared_desc)

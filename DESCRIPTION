@@ -14,6 +14,7 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     arrow,
+    bonsai,
     broom,
     caret,
     DescTools,

@@ -2,18 +2,18 @@ rm(list = ls())
 gc()
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- TRUE
+run_data_pre <- FALSE
 run_baseline <- FALSE
-run_glmnet <- TRUE
-run_mars <- FALSE
-run_rda <- FALSE
-run_rf <- TRUE
+run_glmnet <- FALSE
+run_rda <- TRUE
+run_rf <- FALSE
+run_lightgbm <- TRUE
 max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
 reserve_cores <- 4 # cores to leave free on the machine
 n_folds <- 5
-n_initial_grid <- 20
-n_bayes_iter <- 50
+n_initial_grid <- 10
+n_bayes_iter <- 25
 checkpoint_chunk_size <- 1
 enable_grid_checkpoints <- TRUE # Enable/disable grid phase checkpointing
 enable_bayes_checkpoints <- TRUE # Enable/disable Bayesian phase checkpointing
@@ -88,11 +88,11 @@ rm(
         "run_baseline",
         "run_glmnet",
         "run_rda",
-        "run_mars",
         "reserve_cores",
         "n_initial_grid",
         "n_bayes_iter",
         "run_rf",
+        "run_lightgbm",
         "checkpoint_chunk_size",
         "max_cores",
         "max_cores_tuning",
@@ -242,121 +242,6 @@ if (isTRUE(run_glmnet)) {
   gc()
 }
 
-if (isTRUE(run_mars)) {
-  # MARS Models ----
-  settings <- list(
-    seed = 42,
-    model_features = model_features,
-    n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
-    use_caseweights = FALSE,
-    tune_num_terms = TRUE,
-    tune_prod_degree = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
-    num_terms_fix = 50,
-    prod_degree_fix = 2,
-    under_ratio_fix = 10,
-    over_ratio_fix = 0.25,
-    initial_grid_size = n_initial_grid,
-    bayes_iterations = n_bayes_iter,
-    grid_chunk_size = checkpoint_chunk_size,
-    uncertain_jump = 5,
-    reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
-  )
-  message("---TRAINING LOW RESOLUTION MODEL---")
-  mars_low <- train_mars(
-    train_low,
-    test_low,
-    cv_splits_low,
-    settings
-  )
-  save_classification_model(
-    mars_low,
-    "mars_lowres",
-    subfolder = "mars",
-    train_df = train_low,
-    test_df = test_low
-  )
-  rm("mars_low")
-  gc()
-  message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$under_ratio_fix <- 20
-  mars_high <- train_mars(
-    train_high,
-    test_high,
-    cv_splits_high,
-    settings
-  )
-  save_classification_model(
-    mars_high,
-    "mars_highres",
-    subfolder = "mars",
-    train_df = train_high,
-    test_df = test_high
-  )
-}
-
-if (isTRUE(run_rda)) {
-  # RDA Models ----
-  library(discrim)
-  settings <- list(
-    seed = 42,
-    model_features = model_features,
-    n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
-    use_caseweights = FALSE,
-    tune_gamma = TRUE,
-    tune_lambda = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
-    gamma_fix = 0.2,
-    lambda_fix = 0.8,
-    under_ratio_fix = 10,
-    over_ratio_fix = 0.25,
-    initial_grid_size = n_initial_grid,
-    bayes_iterations = n_bayes_iter,
-    grid_chunk_size = checkpoint_chunk_size,
-    uncertain_jump = 5,
-    reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
-  )
-  message("---TRAINING LOW RESOLUTION MODEL---")
-  rda_low <- train_rda(
-    train_low,
-    test_low,
-    cv_splits_low,
-    settings
-  )
-  save_classification_model(
-    rda_low,
-    "rda_lowres",
-    subfolder = "rda",
-    train_df = train_low,
-    test_df = test_low
-  )
-  rm("rda_low")
-  gc()
-  message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$under_ratio_fix <- 20
-  rda_high <- train_rda(
-    train_high,
-    test_high,
-    cv_splits_high,
-    settings
-  )
-  save_classification_model(
-    rda_high,
-    "rda_highres",
-    subfolder = "rda",
-    train_df = train_high,
-    test_df = test_high
-  )
-}
-
 if (isTRUE(run_rf)) {
   # Random forest models ----
   settings <- list(
@@ -426,6 +311,166 @@ if (isTRUE(run_rf)) {
     train_df = train_high,
     test_df = test_high
   )
+}
+
+#LightGBM Models ----
+if (isTRUE(run_lightgbm)) {
+  settings <- list(
+    seed = 42,
+    model_features = model_features,
+    n_cores = max_cores,
+    n_cores_tuning = max_cores_tuning,
+    use_caseweights = FALSE,
+    tune_tree_depth = TRUE,
+    tune_trees = TRUE,
+    tune_learn_rate = TRUE,
+    tune_mtry = TRUE,
+    tune_min_n = TRUE,
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
+    tree_depth_fix = 6,
+    trees_fix = 100,
+    learn_rate_fix = 0.1,
+    mtry_fix = NULL,
+    min_n_fix = 20,
+    under_ratio_fix = 5,
+    over_ratio_fix = 0.25,
+    initial_grid_size = n_initial_grid,
+    bayes_iterations = n_bayes_iter,
+    grid_chunk_size = checkpoint_chunk_size,
+    uncertain_jump = 5,
+    reserve_cores = reserve_cores,
+    enable_grid_checkpoints = enable_grid_checkpoints,
+    enable_bayes_checkpoints = enable_bayes_checkpoints
+  )
+
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  lightgbm_low <- train_lightgbm(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  save_classification_model(
+    lightgbm_low,
+    "lightgbm_lowres",
+    subfolder = "lightgbm",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm(lightgbm_low)
+  gc()
+
+  message("---TRAINING MEDIUM RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 10
+  lightgbm_medium <- train_lightgbm(
+    train_medium,
+    test_medium,
+    cv_splits_medium,
+    settings
+  )
+  save_classification_model(
+    lightgbm_medium,
+    "lightgbm_mediumres",
+    subfolder = "lightgbm",
+    train_df = train_medium,
+    test_df = test_medium
+  )
+  rm(lightgbm_medium)
+  gc()
+
+  # message("---TRAINING HIGH RESOLUTION MODEL---")
+  # settings$under_ratio_fix <- 20
+  # lightgbm_high <- train_lightgbm(
+  #   train_high,
+  #   test_high,
+  #   cv_splits_high,
+  #   settings
+  # )
+  # save_classification_model(
+  #   lightgbm_high,
+  #   "lightgbm_highres",
+  #   subfolder = "lightgbm",
+  #   train_df = train_high,
+  #   test_df = test_high
+  # )
+  # rm(lightgbm_high, settings)
+  # gc()
+}
+
+if (isTRUE(run_rda)) {
+  # RDA Models ----
+  library(discrim)
+  settings <- list(
+    seed = 42,
+    model_features = model_features,
+    n_cores = max_cores,
+    n_cores_tuning = max_cores_tuning,
+    use_caseweights = FALSE,
+    tune_gamma = TRUE,
+    tune_lambda = TRUE,
+    tune_downsample = FALSE,
+    tune_upsample = FALSE,
+    gamma_fix = 0.2,
+    lambda_fix = 0.8,
+    under_ratio_fix = 5,
+    over_ratio_fix = 0.25,
+    initial_grid_size = n_initial_grid,
+    bayes_iterations = n_bayes_iter,
+    grid_chunk_size = checkpoint_chunk_size,
+    uncertain_jump = 5,
+    reserve_cores = reserve_cores,
+    enable_grid_checkpoints = enable_grid_checkpoints,
+    enable_bayes_checkpoints = enable_bayes_checkpoints
+  )
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  rda_low <- train_rda(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  save_classification_model(
+    rda_low,
+    "rda_lowres",
+    subfolder = "rda",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm("rda_low")
+  gc()
+  message("---TRAINING HIGH RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 10
+  rda_medium <- train_rda(
+    train_medium,
+    test_medium,
+    cv_splits_medium,
+    settings
+  )
+  save_classification_model(
+    rda_high,
+    "rda_highres",
+    subfolder = "rda",
+    train_df = train_high,
+    test_df = test_high
+  )
+  rm("rda_medium")
+  gc()
+  # message("---TRAINING HIGH RESOLUTION MODEL---")
+  # settings$under_ratio_fix <- 20
+  # rda_high <- train_rda(
+  #   train_high,
+  #   test_high,
+  #   cv_splits_high,
+  #   settings
+  # )
+  # save_classification_model(
+  #   rda_high,
+  #   "rda_highres",
+  #   subfolder = "rda",
+  #   train_df = train_high,
+  #   test_df = test_high
+  # )
 }
 
 # Generate resport ----
