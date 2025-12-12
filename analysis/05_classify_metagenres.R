@@ -2,18 +2,18 @@ rm(list = ls())
 gc()
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- FALSE
+run_data_pre <- TRUE
 run_baseline <- FALSE
 run_glmnet <- TRUE
 run_mars <- FALSE
 run_rda <- FALSE
-run_rf <- FALSE
-max_cores <- 20 # for final model fitting
+run_rf <- TRUE
+max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
-reserve_cores <- 0 # cores to leave free on the machine
+reserve_cores <- 4 # cores to leave free on the machine
 n_folds <- 5
-n_initial_grid <- 2
-n_bayes_iter <- 2
+n_initial_grid <- 20
+n_bayes_iter <- 50
 checkpoint_chunk_size <- 1
 enable_grid_checkpoints <- TRUE # Enable/disable grid phase checkpointing
 enable_bayes_checkpoints <- TRUE # Enable/disable Bayesian phase checkpointing
@@ -32,7 +32,7 @@ if (isTRUE(run_data_pre)) {
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 0.05,
+    subsample_prop = 1,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,
@@ -363,7 +363,7 @@ if (isTRUE(run_rf)) {
     seed = 42,
     ntrees = 1000,
     n_cores = max_cores,
-    n_cores_tuning = 5,
+    n_cores_tuning = 1, #5,
     varimp_top_n = 40,
     model_features = model_features,
     importance = "impurity",

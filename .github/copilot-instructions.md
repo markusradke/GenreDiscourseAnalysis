@@ -101,3 +101,4 @@ Large data files tracked with DVC (`.dvc` files in `data/`, `data-raw/`, `models
 - Please always use the namespace notation except for Base R function
 - all random processes should be reproducible by setting the seed 42 where applicable
 - Files should not exceed 400 lines of code (ideally not more than 250 line). If they do, please split them into multiple files where applicable.
+

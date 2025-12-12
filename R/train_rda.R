@@ -151,7 +151,7 @@ train_rda <- function(train, test, cv_splits, settings) {
     model_settings = extract_rda_model_settings(
       settings,
       best_params,
-      tuning_fit_result$model_hash
+      model_hash
     )
   )
 }
