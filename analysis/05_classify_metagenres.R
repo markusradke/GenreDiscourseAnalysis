@@ -178,7 +178,7 @@ if (isTRUE(run_glmnet)) {
   settings <- list(
     seed = 42,
     model_features = model_features,
-    n_cores = 1, #max_cores,
+    n_cores = max_cores,
     n_cores_tuning = 5, #max_cores_tuning,
     use_caseweights = FALSE,
     tune_penalty = TRUE,
@@ -340,7 +340,7 @@ if (isTRUE(run_lightgbm)) {
   )
 
   message("---TRAINING LOW RESOLUTION MODEL---")
-  lightgbm_low <- train_lightgbm(
+  lightgbm_low <- train_gbm(
     train_low,
     test_low,
     cv_splits_low,
@@ -358,7 +358,7 @@ if (isTRUE(run_lightgbm)) {
 
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
   settings$target_ratio_fix <- 7
-  lightgbm_medium <- train_lightgbm(
+  lightgbm_medium <- train_gbm(
     train_medium,
     test_medium,
     cv_splits_medium,
@@ -376,7 +376,7 @@ if (isTRUE(run_lightgbm)) {
 
   # message("---TRAINING HIGH RESOLUTION MODEL---")
   # settings$under_ratio_fix <- 20
-  # lightgbm_high <- train_lightgbm(
+  # lightgbm_high <- train_gbm(
   #   train_high,
   #   test_high,
   #   cv_splits_high,

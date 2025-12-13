@@ -21,6 +21,11 @@ Please make sure you have R installed on your machine and restore the renv envir
 renv::restore()
 ```
 
+In order for the parallel tuning of the classifier to work, please install the packages by running devtools::install() in the project directory:
+```R
+devtools::install()
+```
+
 ## Structure and Data
 All necessary data is included in the 'data' folder. The main scripts for analysis are located in the 'analysis' folder. The 'reports' folder contains the final reports, tables and visualizations.
 

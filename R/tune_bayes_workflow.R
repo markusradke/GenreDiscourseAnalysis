@@ -422,28 +422,11 @@ tune_bayes_workflow <- function(
   print(initial_grid, n = nrow(initial_grid))
 
   options(future.globals.maxSize = 15L * 1024^3)
-  
-  # Export S3 methods for step_adaptive_sampling to parallel workers
-  # On Windows, multisession doesn't automatically export S3 methods from
-  # packages in development (loaded via devtools::load_all)
-  # We make them visible in the search path so future can find them
-  .GlobalEnv$prep.step_adaptive_sampling <- prep.step_adaptive_sampling
-  .GlobalEnv$bake.step_adaptive_sampling <- bake.step_adaptive_sampling
-  .GlobalEnv$print.step_adaptive_sampling <- print.step_adaptive_sampling
-  .GlobalEnv$tidy.step_adaptive_sampling <- tidy.step_adaptive_sampling
-  
   future::plan(future::multisession, workers = n_cores_tuning)
   on.exit({
     future::plan(future::sequential)
     options(future.globals.maxSize = 500L * 1024^2)
-    # Clean up exported methods
-    rm(list = c(
-      "prep.step_adaptive_sampling",
-      "bake.step_adaptive_sampling",
-      "print.step_adaptive_sampling",
-      "tidy.step_adaptive_sampling"
-    ), envir = .GlobalEnv, inherits = FALSE)
-  }, add = TRUE)
+  })
 
   set.seed(seed)
   print_phase_info("INITIAL GRID TUNING (chunked)", n_cores_tuning)

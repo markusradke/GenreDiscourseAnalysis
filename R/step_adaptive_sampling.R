@@ -263,3 +263,8 @@ tidy.step_adaptive_sampling <- function(x, ...) {
   )
   res
 }
+
+#' @exportS3Method recipes::required_pkgs
+required_pkgs.step_adaptive_sampling <- function(x, ...) {
+  c("themis", "GenreDiscourseAnalysis")
+}
