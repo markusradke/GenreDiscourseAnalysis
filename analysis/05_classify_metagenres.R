@@ -3,12 +3,12 @@ gc()
 library(bonsai)
 devtools::load_all()
 options(tidymodels.dark = TRUE)
-run_data_pre <- FALSE
+run_data_pre <- TRUE
 run_baseline <- FALSE
-run_glmnet <- FALSE
+run_glmnet <- TRUE
 run_rda <- TRUE
-run_rf <- FALSE
 run_lightgbm <- TRUE
+run_rf <- TRUE
 max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
 reserve_cores <- 4 # cores to leave free on the machine
@@ -33,7 +33,7 @@ if (isTRUE(run_data_pre)) {
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 1,
+    subsample_prop = 0.2,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,
@@ -179,7 +179,7 @@ if (isTRUE(run_glmnet)) {
     seed = 42,
     model_features = model_features,
     n_cores = max_cores,
-    n_cores_tuning = 5, #max_cores_tuning,
+    n_cores_tuning = max_cores_tuning,
     use_caseweights = FALSE,
     tune_penalty = TRUE,
     tune_alpha = TRUE,
@@ -210,7 +210,6 @@ if (isTRUE(run_glmnet)) {
   gc()
 
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
-  settings$target_ratio_fix <- 7
   glmnet_medium <- train_glmnet(
     train_medium,
     test_medium,
@@ -227,91 +226,23 @@ if (isTRUE(run_glmnet)) {
   rm(glmnet_medium)
   gc()
 
-  message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$target_ratio_fix <- 10
-  glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
-  save_classification_model(
-    glmnet_high,
-    "glmnet_highres",
-    subfolder = "glmnet",
-    train_df = train_high,
-    test_df = test_high
-  )
-  rm(glmnet_high, settings)
-  gc()
-}
-
-if (isTRUE(run_rf)) {
-  # Random forest models ----
-  settings <- list(
-    seed = 42,
-    ntrees = 1000,
-    n_cores = max_cores,
-    n_cores_tuning = 1, #5,
-    varimp_top_n = 40,
-    model_features = model_features,
-    importance = "impurity",
-    use_caseweights = FALSE,
-    tune_mtry = TRUE,
-    tune_min_n = TRUE,
-    tune_max_depth = TRUE,
-    tune_sampling = TRUE,
-    ntrees_tuning = 500,
-    initial_grid_size = n_initial_grid,
-    bayes_iterations = n_bayes_iter,
-    uncertain_jump = 5,
-    grid_chunk_size = checkpoint_chunk_size,
-    min.node.size_fix = 50,
-    max.depth_fix = Inf,
-    mtry_fix = 11,
-    target_ratio_fix = 5,
-    reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
-  )
-  saveRDS(settings, "models/classifier/rf_tune_settings.rds")
-
-  message("---TRAINING LOW RESOLUTION MODEL---")
-  rf_low <- train_random_forest(
-    train_low,
-    test_low,
-    cv_splits_low,
-    settings
-  )
-  # curve <- get_oob_error_curve(
-  #   rf_low$model,
-  #   mode = "classification",
-  #   train_data = train_low |> dplyr::rename("outcome" = "metagenre")
+  # message("---TRAINING HIGH RESOLUTION MODEL---")
+  # settings$target_ratio_fix <- 10
+  # glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
+  # save_classification_model(
+  #   glmnet_high,
+  #   "glmnet_highres",
+  #   subfolder = "glmnet",
+  #   train_df = train_high,
+  #   test_df = test_high
   # )
-  save_classification_model(
-    rf_low,
-    "rf_lowres",
-    subfolder = "rf",
-    train_df = train_low,
-    test_df = test_low
-  )
-  rm("rf_low")
-  gc()
-
-  message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$target_ratio_fix <- 10
-  rf_high <- train_random_forest(
-    train_high,
-    test_high,
-    cv_splits_high,
-    settings
-  )
-  save_classification_model(
-    rf_high,
-    "rf_highres",
-    subfolder = "rf",
-    train_df = train_high,
-    test_df = test_high
-  )
+  # rm(glmnet_high, settings)
+  # gc()
 }
 
 #LightGBM Models ----
 if (isTRUE(run_lightgbm)) {
+  library(bonsai)
   settings <- list(
     seed = 42,
     model_features = model_features,
@@ -357,7 +288,6 @@ if (isTRUE(run_lightgbm)) {
   gc()
 
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
-  settings$target_ratio_fix <- 7
   lightgbm_medium <- train_gbm(
     train_medium,
     test_medium,
@@ -432,8 +362,8 @@ if (isTRUE(run_rda)) {
   )
   rm("rda_low")
   gc()
+
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
-  settings$target_ratio_fix <- 7
   rda_medium <- train_rda(
     train_medium,
     test_medium,
@@ -461,6 +391,88 @@ if (isTRUE(run_rda)) {
   #   rda_high,
   #   "rda_highres",
   #   subfolder = "rda",
+  #   train_df = train_high,
+  #   test_df = test_high
+  # )
+}
+
+
+if (isTRUE(run_rf)) {
+  # Random forest models ----
+  settings <- list(
+    seed = 42,
+    ntrees = 1000,
+    n_cores = max_cores,
+    n_cores_tuning = 1, #5,
+    varimp_top_n = 40,
+    model_features = model_features,
+    importance = "impurity",
+    use_caseweights = FALSE,
+    tune_mtry = TRUE,
+    tune_min_n = TRUE,
+    tune_max_depth = TRUE,
+    tune_sampling = TRUE,
+    ntrees_tuning = 500,
+    initial_grid_size = n_initial_grid,
+    bayes_iterations = n_bayes_iter,
+    uncertain_jump = 5,
+    grid_chunk_size = checkpoint_chunk_size,
+    min.node.size_fix = 50,
+    max.depth_fix = Inf,
+    mtry_fix = 11,
+    target_ratio_fix = 5,
+    reserve_cores = reserve_cores,
+    enable_grid_checkpoints = enable_grid_checkpoints,
+    enable_bayes_checkpoints = enable_bayes_checkpoints
+  )
+  saveRDS(settings, "models/classifier/rf_tune_settings.rds")
+
+  message("---TRAINING LOW RESOLUTION MODEL---")
+  rf_low <- train_random_forest(
+    train_low,
+    test_low,
+    cv_splits_low,
+    settings
+  )
+  save_classification_model(
+    rf_low,
+    "rf_lowres",
+    subfolder = "rf",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm("rf_low")
+  gc()
+
+  message("---TRAINING MEDIUM RESOLUTION MODEL---")
+  rf_medium <- train_random_forest(
+    train_medium,
+    test_medium,
+    cv_splits_medium,
+    settings
+  )
+  save_classification_model(
+    rf_medium,
+    "rf_mediumres",
+    subfolder = "rf",
+    train_df = train_low,
+    test_df = test_low
+  )
+  rm("rf_medium")
+  gc()
+
+  # message("---TRAINING HIGH RESOLUTION MODEL---")
+  # settings$target_ratio_fix <- 10
+  # rf_high <- train_random_forest(
+  #   train_high,
+  #   test_high,
+  #   cv_splits_high,
+  #   settings
+  # )
+  # save_classification_model(
+  #   rf_high,
+  #   "rf_highres",
+  #   subfolder = "rf",
   #   train_df = train_high,
   #   test_df = test_high
   # )
