@@ -9,11 +9,17 @@ tune_bayes_workflow(
   train_df,
   cv_splits,
   params,
+  model_type = "rf",
   seed = 42,
-  n_cores = 4,
+  n_cores_tuning = 4,
   initial_grid_size = 10,
   bayes_iterations = 15,
-  uncertain_jump = 5
+  uncertain_jump = 5,
+  checkpoint_dir = "models/classifier/checkpoints",
+  grid_chunk_size = 5,
+  settings = NULL,
+  enable_grid_checkpoints = TRUE,
+  enable_bayes_checkpoints = TRUE
 )
 }
 \arguments{
@@ -25,15 +31,27 @@ tune_bayes_workflow(
 
 \item{params}{dials parameter set (from extract_parameter_set_dials)}
 
+\item{model_type}{Character: "rf" for random forest or "glmnet"}
+
 \item{seed}{Random seed}
 
-\item{n_cores}{Number of parallel workers}
+\item{n_cores_tuning}{Number of parallel workers for tuning}
 
 \item{initial_grid_size}{Number of points for initial space-filling grid}
 
 \item{bayes_iterations}{Number of Bayesian optimization iterations}
 
 \item{uncertain_jump}{Uncertainty parameter for tune_bayes}
+
+\item{checkpoint_dir}{Directory for saving checkpoints (NULL to disable)}
+
+\item{grid_chunk_size}{Number of grid points per chunk for checkpointing}
+
+\item{settings}{Full settings list (for hash computation)}
+
+\item{enable_grid_checkpoints}{Enable checkpointing for grid phase}
+
+\item{enable_bayes_checkpoints}{Enable checkpointing for Bayesian phase}
 }
 \value{
 List with tuning_results, best_params

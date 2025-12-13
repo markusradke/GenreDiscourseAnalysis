@@ -4,7 +4,13 @@
 \alias{finalize_and_fit}
 \title{Finalize and fit a tuned workflow}
 \usage{
-finalize_and_fit(workflow, train_df, best_params, final_spec = NULL)
+finalize_and_fit(
+  workflow,
+  train_df,
+  best_params,
+  final_spec = NULL,
+  n_cores = 1L
+)
 }
 \arguments{
 \item{workflow}{Original workflow with tune() placeholders}
@@ -14,6 +20,8 @@ finalize_and_fit(workflow, train_df, best_params, final_spec = NULL)
 \item{best_params}{Best parameters from tuning}
 
 \item{final_spec}{Optional: replacement model spec for final fit}
+
+\item{n_cores}{Number of cores/threads for final fit}
 }
 \value{
 Fitted workflow

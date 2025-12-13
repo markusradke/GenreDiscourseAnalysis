@@ -66,10 +66,8 @@ train_glmnet <- function(train, test, cv_splits, settings) {
   recipe <- create_pre_recipe(
     train,
     vars_to_remove,
-    tune_downsample = settings$tune_downsample,
-    tune_upsample = settings$tune_upsample,
-    under_ratio_fix = settings$under_ratio_fix,
-    over_ratio_fix = settings$over_ratio_fix,
+    tune_sampling = settings$tune_sampling,
+    target_ratio_fix = settings$target_ratio_fix,
     seed = settings$seed
   )
 
@@ -170,8 +168,7 @@ train_glmnet <- function(train, test, cv_splits, settings) {
 any_glmnet_hyperparameter_tuned <- function(settings) {
   isTRUE(settings$tune_penalty) ||
     isTRUE(settings$tune_alpha) ||
-    isTRUE(settings$tune_downsample) ||
-    isTRUE(settings$tune_upsample)
+    isTRUE(settings$tune_sampling)
 }
 
 create_glmnet_model_spec <- function(settings) {
@@ -215,13 +212,8 @@ create_glmnet_params <- function(workflow, train_df, settings) {
     params <- params |> update(mixture = dials::mixture())
   }
 
-  if (isTRUE(settings$tune_downsample)) {
-    params <- params |> update(under_ratio = sampling_params$under_ratio)
-  }
-
-  if (isTRUE(settings$tune_upsample)) {
-    params <- params |> update(over_ratio = sampling_params$over_ratio)
-  }
+  # Note: target_ratio is a recipe parameter handled by step_adaptive_sampling,
+  # not a model parameter. It's automatically extracted when tune_sampling = TRUE.
 
   params
 }
@@ -257,8 +249,7 @@ extract_glmnet_model_settings <- function(
     features = settings$model_features,
     alpha = best_params$mixture %||% settings$alpha_fix,
     penalty = best_params$penalty %||% settings$penalty_fix,
-    under_ratio = best_params$under_ratio %||% settings$under_ratio_fix,
-    over_ratio = best_params$over_ratio %||% settings$over_ratio_fix,
+    target_ratio = best_params$target_ratio %||% settings$target_ratio_fix,
     model_hash = model_hash
   )
 }

@@ -328,25 +328,18 @@ create_tuning_metrics <- function() {
 
 #' Create sampling ratio parameter definitions
 #' @param train_df Training data frame with metagenre column
-#' @return Named list with under_ratio and over_ratio dials params
+#' @return Named list with target_ratio dials param
 create_sampling_params <- function(train_df) {
-  max_imbalance <- max(table(train_df$metagenre)) /
-    min(table(train_df$metagenre))
+  class_counts <- table(train_df$metagenre)
+  max_imbalance <- max(class_counts) / min(class_counts)
 
   list(
-    under_ratio = dials::new_quant_param(
+    target_ratio = dials::new_quant_param(
       type = "double",
       range = c(1, max_imbalance),
       inclusive = c(TRUE, TRUE),
       trans = NULL,
-      label = c(under_ratio = "Under-Sampling Ratio")
-    ),
-    over_ratio = dials::new_quant_param(
-      type = "double",
-      range = c(0.1, 1.0),
-      inclusive = c(TRUE, TRUE),
-      trans = NULL,
-      label = c(over_ratio = "SMOTENC over_ratio")
+      label = c(target_ratio = "Target Max:Min Class Ratio")
     )
   )
 }
@@ -429,11 +422,28 @@ tune_bayes_workflow <- function(
   print(initial_grid, n = nrow(initial_grid))
 
   options(future.globals.maxSize = 15L * 1024^3)
+  
+  # Export S3 methods for step_adaptive_sampling to parallel workers
+  # On Windows, multisession doesn't automatically export S3 methods from
+  # packages in development (loaded via devtools::load_all)
+  # We make them visible in the search path so future can find them
+  .GlobalEnv$prep.step_adaptive_sampling <- prep.step_adaptive_sampling
+  .GlobalEnv$bake.step_adaptive_sampling <- bake.step_adaptive_sampling
+  .GlobalEnv$print.step_adaptive_sampling <- print.step_adaptive_sampling
+  .GlobalEnv$tidy.step_adaptive_sampling <- tidy.step_adaptive_sampling
+  
   future::plan(future::multisession, workers = n_cores_tuning)
   on.exit({
     future::plan(future::sequential)
     options(future.globals.maxSize = 500L * 1024^2)
-  })
+    # Clean up exported methods
+    rm(list = c(
+      "prep.step_adaptive_sampling",
+      "bake.step_adaptive_sampling",
+      "print.step_adaptive_sampling",
+      "tidy.step_adaptive_sampling"
+    ), envir = .GlobalEnv, inherits = FALSE)
+  }, add = TRUE)
 
   set.seed(seed)
   print_phase_info("INITIAL GRID TUNING (chunked)", n_cores_tuning)
@@ -596,8 +606,8 @@ build_complexity_order <- function(model_type, tuned_params) {
   lightgbm_priority <- c("tree_depth", "min_n", "mtry", "trees", "learn_rate")
   lightgbm_desc <- c(FALSE, TRUE, FALSE, FALSE, TRUE)
 
-  shared_priority <- c("over_ratio", "under_ratio")
-  shared_desc <- c(FALSE, TRUE)
+  shared_priority <- c("target_ratio")
+  shared_desc <- c(TRUE)
 
   if (model_type == "rf") {
     priority <- c(rf_priority, shared_priority)

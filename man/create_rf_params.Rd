@@ -4,12 +4,14 @@
 \alias{create_rf_params}
 \title{Create RF parameter definitions for tuning}
 \usage{
-create_rf_params(workflow, train_df)
+create_rf_params(workflow, train_df, settings)
 }
 \arguments{
 \item{workflow}{Workflow to extract base params from}
 
 \item{train_df}{Training data}
+
+\item{settings}{Settings list with tune switches}
 }
 \value{
 dials parameter set

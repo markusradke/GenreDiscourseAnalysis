@@ -4,7 +4,7 @@
 \alias{load_classification_model}
 \title{Load a saved classification model bundle}
 \usage{
-load_classification_model(name, subfolder)
+load_classification_model(folder, name)
 }
 \arguments{
 \item{name}{Model name}

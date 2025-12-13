@@ -10,7 +10,7 @@ create_sampling_params(train_df)
 \item{train_df}{Training data frame with metagenre column}
 }
 \value{
-Named list with under_ratio and over_ratio dials params
+Named list with target_ratio dials param
 }
 \description{
 Create sampling ratio parameter definitions

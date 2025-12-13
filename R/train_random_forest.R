@@ -113,10 +113,8 @@ create_rf_workflow <- function(train_df, vars_to_remove, settings) {
   rf_recipe <- create_pre_recipe(
     train_df,
     vars_to_remove,
-    tune_downsample = settings$tune_downsample,
-    tune_upsample = settings$tune_upsample,
-    under_ratio_fix = settings$under_ratio_fix,
-    over_ratio_fix = settings$over_ratio_fix,
+    tune_sampling = settings$tune_sampling,
+    target_ratio_fix = settings$target_ratio_fix,
     seed = settings$seed
   )
 
@@ -181,8 +179,7 @@ any_hyperparameter_tuned <- function(settings) {
   isTRUE(settings$tune_mtry) ||
     isTRUE(settings$tune_min_n) ||
     isTRUE(settings$tune_max_depth) ||
-    isTRUE(settings$tune_downsample) ||
-    isTRUE(settings$tune_upsample)
+    isTRUE(settings$tune_sampling)
 }
 
 tune_and_fit_workflow <- function(
@@ -263,13 +260,8 @@ create_rf_params <- function(workflow, train_df, settings) {
   params <- workflow |>
     hardhat::extract_parameter_set_dials()
 
-  if (isTRUE(settings$tune_downsample)) {
-    params <- params |> update(under_ratio = sampling_params$under_ratio)
-  }
-
-  if (isTRUE(settings$tune_upsample)) {
-    params <- params |> update(over_ratio = sampling_params$over_ratio)
-  }
+  # Note: target_ratio is a recipe parameter handled by step_adaptive_sampling,
+  # not a model parameter. It's automatically extracted when tune_sampling = TRUE.
 
   if (isTRUE(settings$tune_mtry)) {
     params <- params |> update(mtry = dials::mtry(range = c(1, n_predictors)))

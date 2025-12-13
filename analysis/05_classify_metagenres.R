@@ -1,5 +1,6 @@
 rm(list = ls())
 gc()
+library(bonsai)
 devtools::load_all()
 options(tidymodels.dark = TRUE)
 run_data_pre <- FALSE
@@ -12,8 +13,8 @@ max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
 reserve_cores <- 4 # cores to leave free on the machine
 n_folds <- 5
-n_initial_grid <- 10
-n_bayes_iter <- 25
+n_initial_grid <- 2
+n_bayes_iter <- 2
 checkpoint_chunk_size <- 1
 enable_grid_checkpoints <- TRUE # Enable/disable grid phase checkpointing
 enable_bayes_checkpoints <- TRUE # Enable/disable Bayesian phase checkpointing
@@ -177,17 +178,15 @@ if (isTRUE(run_glmnet)) {
   settings <- list(
     seed = 42,
     model_features = model_features,
-    n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
+    n_cores = 1, #max_cores,
+    n_cores_tuning = 5, #max_cores_tuning,
     use_caseweights = FALSE,
     tune_penalty = TRUE,
     tune_alpha = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
+    tune_sampling = FALSE,
     penalty_fix = 0.002,
     alpha_fix = 0.5,
-    under_ratio_fix = 5,
-    over_ratio_fix = 0.25,
+    target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
     grid_chunk_size = checkpoint_chunk_size,
@@ -211,7 +210,7 @@ if (isTRUE(run_glmnet)) {
   gc()
 
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
-  settings$underratio_fix <- 10
+  settings$target_ratio_fix <- 7
   glmnet_medium <- train_glmnet(
     train_medium,
     test_medium,
@@ -229,7 +228,7 @@ if (isTRUE(run_glmnet)) {
   gc()
 
   message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$underratio_fix <- 20
+  settings$target_ratio_fix <- 10
   glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
   save_classification_model(
     glmnet_high,
@@ -256,8 +255,7 @@ if (isTRUE(run_rf)) {
     tune_mtry = TRUE,
     tune_min_n = TRUE,
     tune_max_depth = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
+    tune_sampling = TRUE,
     ntrees_tuning = 500,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
@@ -266,8 +264,7 @@ if (isTRUE(run_rf)) {
     min.node.size_fix = 50,
     max.depth_fix = Inf,
     mtry_fix = 11,
-    under_ratio_fix = 10,
-    over_ratio_fix = 0.25,
+    target_ratio_fix = 5,
     reserve_cores = reserve_cores,
     enable_grid_checkpoints = enable_grid_checkpoints,
     enable_bayes_checkpoints = enable_bayes_checkpoints
@@ -297,7 +294,7 @@ if (isTRUE(run_rf)) {
   gc()
 
   message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$under_ratio_fix <- 20
+  settings$target_ratio_fix <- 10
   rf_high <- train_random_forest(
     train_high,
     test_high,
@@ -326,15 +323,13 @@ if (isTRUE(run_lightgbm)) {
     tune_learn_rate = TRUE,
     tune_mtry = TRUE,
     tune_min_n = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
+    tune_sampling = TRUE,
     tree_depth_fix = 6,
     trees_fix = 100,
     learn_rate_fix = 0.1,
     mtry_fix = NULL,
     min_n_fix = 20,
-    under_ratio_fix = 5,
-    over_ratio_fix = 0.25,
+    target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
     grid_chunk_size = checkpoint_chunk_size,
@@ -362,7 +357,7 @@ if (isTRUE(run_lightgbm)) {
   gc()
 
   message("---TRAINING MEDIUM RESOLUTION MODEL---")
-  settings$under_ratio_fix <- 10
+  settings$target_ratio_fix <- 7
   lightgbm_medium <- train_lightgbm(
     train_medium,
     test_medium,
@@ -409,12 +404,10 @@ if (isTRUE(run_rda)) {
     use_caseweights = FALSE,
     tune_gamma = TRUE,
     tune_lambda = TRUE,
-    tune_downsample = FALSE,
-    tune_upsample = FALSE,
+    tune_sampling = TRUE,
     gamma_fix = 0.2,
     lambda_fix = 0.8,
-    under_ratio_fix = 5,
-    over_ratio_fix = 0.25,
+    target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
     grid_chunk_size = checkpoint_chunk_size,
@@ -439,8 +432,8 @@ if (isTRUE(run_rda)) {
   )
   rm("rda_low")
   gc()
-  message("---TRAINING HIGH RESOLUTION MODEL---")
-  settings$under_ratio_fix <- 10
+  message("---TRAINING MEDIUM RESOLUTION MODEL---")
+  settings$target_ratio_fix <- 7
   rda_medium <- train_rda(
     train_medium,
     test_medium,
