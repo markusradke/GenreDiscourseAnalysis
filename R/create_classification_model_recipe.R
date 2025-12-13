@@ -7,7 +7,6 @@ create_pre_recipe <- function(
 ) {
   vars_to_remove <- union(vars_to_remove, c("track.s.id", "artist.s.id"))
   recipe_schema <- train_df[1, , drop = FALSE]
-
   recipes::recipe(metagenre ~ ., data = recipe_schema) |>
     recipes::step_rm(dplyr::all_of(vars_to_remove)) |>
     recipes::step_impute_median(recipes::all_numeric_predictors()) |>

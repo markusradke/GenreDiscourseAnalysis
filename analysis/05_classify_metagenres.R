@@ -13,8 +13,8 @@ max_cores <- 64 # for final model fitting
 max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
 reserve_cores <- 4 # cores to leave free on the machine
 n_folds <- 5
-n_initial_grid <- 2
-n_bayes_iter <- 2
+n_initial_grid <- 10
+n_bayes_iter <- 15
 checkpoint_chunk_size <- 1
 enable_grid_checkpoints <- TRUE # Enable/disable grid phase checkpointing
 enable_bayes_checkpoints <- TRUE # Enable/disable Bayesian phase checkpointing
@@ -183,7 +183,7 @@ if (isTRUE(run_glmnet)) {
     use_caseweights = FALSE,
     tune_penalty = TRUE,
     tune_alpha = TRUE,
-    tune_sampling = FALSE,
+    tune_sampling = TRUE,
     penalty_fix = 0.002,
     alpha_fix = 0.5,
     target_ratio_fix = 5,

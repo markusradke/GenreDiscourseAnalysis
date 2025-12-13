@@ -268,3 +268,33 @@ tidy.step_adaptive_sampling <- function(x, ...) {
 required_pkgs.step_adaptive_sampling <- function(x, ...) {
   c("themis", "GenreDiscourseAnalysis")
 }
+
+#' Create a target_ratio dials parameter
+#' @param range Numeric vector of length 2 with min and max values
+#' @param trans Transformation to apply (NULL for identity)
+#' @return A dials parameter object
+#' @export
+target_ratio <- function(range = c(1, 20), trans = NULL) {
+  dials::new_quant_param(
+    type = "double",
+    range = range,
+    inclusive = c(TRUE, TRUE),
+    trans = trans,
+    label = c(target_ratio = "Target Class Ratio"),
+    finalize = NULL
+  )
+}
+
+#' @exportS3Method tune::tunable
+tunable.step_adaptive_sampling <- function(x, ...) {
+  tibble::tibble(
+    name = "target_ratio",
+    call_info = list(list(
+      pkg = "GenreDiscourseAnalysis",
+      fun = "target_ratio"
+    )),
+    source = "recipe",
+    component = "step_adaptive_sampling",
+    component_id = x$id
+  )
+}

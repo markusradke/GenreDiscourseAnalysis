@@ -379,6 +379,19 @@ tune_bayes_workflow <- function(
   enable_grid_checkpoints = TRUE,
   enable_bayes_checkpoints = TRUE
 ) {
+  # Check if recipe parameters are being tuned (sampling)
+  param_names <- params$id
+  has_recipe_params <- any(c("target_ratio") %in% param_names)
+
+  if (has_recipe_params && n_cores_tuning > 1) {
+    message(
+      "NOTE: Recipe parameter tuning detected (target_ratio). ",
+      "Forcing sequential processing (n_cores_tuning = 1) due to ",
+      "parallel processing limitations with tunable recipe steps."
+    )
+    n_cores_tuning <- 1
+  }
+
   n_folds <- length(cv_splits$splits)
   print_tuning_core_guidance(n_folds, initial_grid_size)
   metric_set <- create_tuning_metrics()

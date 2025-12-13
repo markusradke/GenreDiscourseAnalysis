@@ -260,9 +260,6 @@ create_rf_params <- function(workflow, train_df, settings) {
   params <- workflow |>
     hardhat::extract_parameter_set_dials()
 
-  # Note: target_ratio is a recipe parameter handled by step_adaptive_sampling,
-  # not a model parameter. It's automatically extracted when tune_sampling = TRUE.
-
   if (isTRUE(settings$tune_mtry)) {
     params <- params |> update(mtry = dials::mtry(range = c(1, n_predictors)))
   }
@@ -280,6 +277,10 @@ create_rf_params <- function(workflow, train_df, settings) {
       label = c(max.depth = "Max Tree Depth")
     )
     params <- params |> update(max.depth = max_depth_param)
+  }
+
+  if (isTRUE(settings$tune_sampling) && "target_ratio" %in% params$id) {
+    params <- params |> update(target_ratio = sampling_params$target_ratio)
   }
 
   params

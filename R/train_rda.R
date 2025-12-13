@@ -208,8 +208,9 @@ create_rda_params <- function(workflow, train_df, settings) {
     params <- params |> update(lambda = dials::regularization_factor()) # numeric 0-1
   }
 
-  # Note: target_ratio is a recipe parameter handled by step_adaptive_sampling,
-  # not a model parameter. It's automatically extracted when tune_sampling = TRUE.
+  if (isTRUE(settings$tune_sampling) && "target_ratio" %in% params$id) {
+    params <- params |> update(target_ratio = sampling_params$target_ratio)
+  }
 
   params
 }
