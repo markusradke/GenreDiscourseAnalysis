@@ -21,47 +21,207 @@ Please follow these guidelines when helping me with that. My main goal is to wri
 - Try to be as compact as possible without sacrificing clarity.
 - Always use past-tense when describing methods (What has been done?)
 - Use present-tense when describing results (What is the case?)
+- When writing in English, please prefer American spellings and grammar.
 
-## Concrete context of this paper (this is the papers title, abstract, introduction and structure):
+#  TISMIR Style Guidelines
+This is a TISMIR publication; please follow these guidlines: 
+    Capitalisation
 
-### Power to the people!  Assigning German popular music genres based on listeners’ perspective using a genre tree approach
+For the submission title:
 
-### Abstract
-Despite the popularity of playlists on streaming platforms, music genres still remain a primary organizational tool among listeners, stakeholders, and researchers. Yet both ‘correct’ genre labels for individual popular music phenomena and structure of genre taxonomies are often contested. Nevertheless, assumed assignments often form the basis of music genre recognition models in MIR research as well as musical taste and recommender systems research, raising questions about reliability, validity, and comparability of results. By contrast, popular music studies have emphasized the listener-dependent nature of genre assignments. In other words: Genre assignment may be considered a matter of majority voting within a certain community. So why not make a virtue of necessity? We constructed a hierarchical tree from MusicBrainz folksonomy genre votes for 167,762 tracks listened to in Germany across the past 50 years. The resulting Community Music Genre Tree (COMGET) comprises 234 genres—usefully granular but probably too detailed for many research and applied tasks. We address this by an additional tree-folding algorithm that aggregates genres to the desired level of detail for any research problem. For automatic genre assignment of new tracks, we developed classifiers at multiple granularity levels using music features and meta-data drawn from online databases. Results indicate that the approach is able to assign genres that correspond to listeners’ perspective, in a transparent, reproducible, and intersubjectively comprehensible way.
+Capitalise all nouns, pronouns, adjectives, verbs, adverbs and subordinate conjunctions (i.e. as, because, although). Use lowercase for all articles, coordinate conjunctions and prepositions.
 
-### Introduction
-Although playlist-driven listening has grown on streaming platforms, genre labels remain the primary way people and institutions organize popular music: Listeners search and browse by genre; playlist editors and DJs assemble genre playlists; A&R, marketing and label teams position and promote artists using genre tags; and music journalists and researchers rely on genre labels to describe and compare popular music (Bonini & Magaudda, 2024; Frith, 1996). Some scholars argue that classificatory practices have weakened since the late twentieth century (DiMaggio, 1987) and that certain genre boundaries are unstable (Silver et al., 2016), but empirical evidence shows that listening and social signaling remain organized around genres (Airoldi et al., 2016; Lonsdale, 2021). On streaming platforms, genre is embedded in metadata and pipeline logic—used as search filters, playlist seeds, and features in recommender systems—which means platform infrastructures amplify genre’s practical significance for discovery and market positioning (Valverde, 2025). For researchers, genre labels serve both theoretical and methodological roles: they are variables in preference and reception studies (Lepa et al., 2020), inputs to recommender-system research (Porcaro et al., 2024), and useful aggregators for measuring perceived diversity and mitigating hubness in high-dimensional audio and metadata feature spaces (Flexer et al., 2018; Flexer & Grill, 2016).
-However, ‘correct’ genre labels for individual popular music phenomena (i.e., tracks, artists, releases, scenes, market, playlists, labels, performances etc.) are frequently contested (van Venrooij & Schmutz, 2018). Different actors attach different labels for different reasons: artists may self‑label to narrate their musical biography; publishers and distributors tag releases to support marketing and placement; critics and musicologists apply normative or historical taxonomies; and listeners use genre terms to organize their listening repertoires and to signal identity (Frith, 1996; Negus, 1999). Not only do chosen labels diverge, but the taxonomies they derive from differ as well. Commercial platform taxonomies illustrate these structural differences: The metadata platform Gracenote uses a compact set of 25 genre tags (Jiang et al., 2024), whereas Spotify exposes many thousands of genre tags (McDonald, 2024). Platforms also differ in the level of abstraction at which they apply genre (track, release, or artist) and in assignment strategy (single primary genre versus multi‑label tag sets).
-These disagreements pose concrete methodological challenges for empirical researchers across MIR and computational musicology. Problems include inconsistent genre labels that degrade generalization of supervised Machine‑Learning training (Bogdanov et al., 2019), survey items that ask about genre in ways listeners interpret differently (Lange et al., 2025), and cross‑study noncomparability that undermines replication and meta‑analysis (Sturm & Flexer, 2023). Faced with these constraints, researchers often pragmatically adopt available commercial or open taxonomies, without systematically engaging with the source of labels or underlying theoretical assumptions (Green et al., 2024). To address this gap, we present a reproducible procedure to derive a scalable and transparently constructed genre taxonomy for a given corpus by analyzing the corresponding genre discourse in a folksonomy. Paired with automated music‑genre recognition, this approach can (1) surface empirical regularities and disagreements in label use that inform validity debates (Sturm & Flexer, 2023), and (2) provide a shared, probabilistic ‘currency’ for cross‑disciplinary quantitative work—so that classifiers, preference studies, and sociological analyses operate from a common, well‑documented mapping between recordings and meta‑genres.
-####	 Musical Genres as hierarchical discourse formation
-Musical genres are organized hierarchically: Pachet et al. (2000) identified genealogical links (e.g., "rock" as parent of "alternative rock"), geographical links ("hip hop" as supergenre of "German hip hop"), and historical-period links ("pop" as supergenre of "80s pop") in existing taxonomies. As Brackett (2016, p. 8) argues, hierarchy depth is not limited to two levels but can extend virtually indefinitely—yet consensus on which labels to select and how to relate them remains contested. Expert-constructed taxonomies show limited agreement (Pachet et al., 2000), and expert classifications often diverge from listener community norms (Sordo, 2008). Adopting the power-critical perspective of cultural studies (du Gay et al., 2013), we interpret genre discourse through Foucault's (2013) concept of discourse formation, in which industry, listeners, and artists exert unequal influence over which labels circulate and stabilize. Given that emerging genres are primarily defined by listeners (Lena & Peterson, 2008), genre assignment can be understood as implicit majority voting within a community of listeners.
-We therefore ground our taxonomy in the genre assignments of a large listener community captured in an online folksonomy. Platforms such as RateYourMusic , Discogs , or MusicBrainz  provide crowdsourced ‘truth’ reflected in aggregate tagging behavior. MusicBrainz seems particularly suitable for our endevour: it maintains a detailed whitelist of over 2,000 genre tags without imposing an a priori hierarchy, and its democratic voting system allows users to assign and vote on tags at multiple levels (track, release, artist), enabling nuanced analysis of consensus and disagreement. Although we use MusicBrainz as our primary data source, external validation against other folksonomies (i.e., Discogs) remains necessary to judge generalizability (Sturm & Flexer, 2023). Schreiber (2015, 2016) demonstrated that hierarchical genre relationships can be inferred from tag co-occurrence patterns on digital platforms. Crucially, however, genre assignment conventions vary across listener communities in different countries and time periods (Pichl et al., 2017; Nie, 2022). As a case study, we anchor our exemplary analysis in popular music tracks listened to in Germany over the past 50 years to ensure the resulting taxonomy reflects a coherent discursive context.
-For the use of hierarchical genre taxonomies in empirical research, three pragmatic issues arise. First, balanced genre distributions improve statistical power and classifier performance (Japkowicz & Stephen, 2002). However, subgenres are typically assigned to fewer tracks than their parent categories (Bogdanov et al., 2019), creating inherent imbalance that must be considered when constructing or aggregating within the taxonomy. Second, the optimal number of genres depends on the research question: surveys of musical taste may require moderate to high resolution (e.g., 24 genres; Lange et al., 2025), robust machine learning models often perform better with fewer, broader categories (Genussov & Cohen, 2010), and fine-grained subcultural analyses may demand more genres (Caparrini et al., 2020). At the same time, preserving consistency with the overall tree structure is desired. This demands a scalable taxonomy that supports multiple resolutions derived from a single underlying hierarchy. Third, applying such taxonomies to large corpora in computational contexts requires an automated classifier that can assign genres in an efficient, consistent and transparent way, serving as a neutral arbiter when human dissent over labels is expected.
-####	Towards an automated classifier for popular music studies
-Music genre recognition (MGR) is a core task in Music Information Retrieval. Green et al. (2024) provide a systematic state-of-the-art review and critique how genre theory from the social sciences and humanities is often overlooked when selecting features (for a systematic review on genre theories see Merlini, 2020). Commonly, researchers in MIR and music psychology often assume that genre can be inferred from audio features alone (Tzanetakis & Cook, 2002; Rentfrow et al., 2011). This conflicts with sociological genre theories that describe genres as "systems of orientations, expectations and conventions that circulate between industry, text and subject" (Neale, 1980, p. 19), emphasizing extra-musical context alongside sound. Fabbri's (1982) genre theory offers a synthesis: musical style (instrumentation, rhythm, harmony, timbre) and release milieu (subcultural context, artist positioning, market placement) together inform how listeners assign genres. Modern MIR tools can extract style features from audio signals (Bogdanov et al., 2013), and open music databases provide access to distributional metadata (label, chart performance, platform placement). 
-Lyrics occupy an intermediate position, conveying both emotional expression as stylistic content (Brand et al., 2019) and contextual information through language codes and topics that signal subcultural affiliation (Carbone et al., 2024). A classifier might need to pay special attention to the "mainstream pop" or "pop" metagenre that Fabbri (1982) describes as encompassing eclectic, commercially optimized works that resist association with a specific milieu. In addition, artists from former niche scenes are often retrospectively relabeled as "pop" or "mainstream" after achieving commercial success (Holt, 2007, p. 20). Therefore, popularity itself seems to be a relevant feature dimension for classification. We thus propose a feature space spanning four dimensions—musical style, release context, lyrical content, and popularity—to operationalize the multi-dimensional constitution of genre.
-Drawing on the theoretical and methodological foundations outlined above, we pose three research questions: 
-RQ1 How can we construct an empirically grounded and balanced hierarchical genre tree for popular music in Germany? 
-RQ2 How can we aggregate to a scalable number of supergenres from the inferred tree suitable for machine learning and statistical applications? 
-RQ3 Can an automatic classifier predict genres at different levels of detail with robust performance using stylistic, distributional, lyrical, and popularity features?
-In the following sections, we will: (2) introduce a method to create a balanced hierarchical genre taxonomy based on genre co-occurrences in folksonomy tags, (3) describe a folding algorithm to reduce the number of genres for various tasks, (4) present automatic classifiers for different levels of granularity, and (5) discuss our findings and summarize the results.
-###	A Balanced Hierarchical Genre Tree 
-####	 Data
-400 words
-####	 From Co-Occurrences to Taxonomy
-400 words
-####	 Community Music Genre Tree
-400 words
-##	Scalable Granularity 
-####	 Folding Algorithm
-400 words
-###	 Germany’s Supergenres
-400 words
-##	ML-Classfier
-####	 Outcome, Features, Workflow
-600 words
-####	 Evaluation
-600 words
-##	Discussion
-1500 words
+    Slip-Sliding on a Yellow Brick Road: Stabilization Efforts in Afghanistan
 
+Headings within the main text:
+
+First level headings in the text should follow the same rule as the main title.
+
+For lower-level subheadings, only capitalise first letter and proper nouns.
+
+Headings should be under 75 characters.
+Spelling
+
+Submissions must be made in English. Authors are welcome to use American or British spellings as long as they are used consistently throughout the whole of the submission.
+
+    Colour (UK) vs. Color (US)
+
+When referring to proper nouns and normal institutional titles, the official, original spelling must be used.
+
+    World Health Organization, not World Health Organisation
+
+    Grammar
+
+American or English grammar rules may be used as long as they are used consistently and match the spelling format (see above). For instance, you may use a serial comma or not.
+
+    red, white, and blue OR red, white and blue
+
+Font
+
+The font used should be commonly available and in an easily readable size. This may be changed during the typesetting process.
+
+Underlined text should be avoided whenever possible.
+
+Bold or italicised text to emphasise a point are permitted, although should be restricted to minimal occurrences to maximise their efficiency.
+Lists
+
+Use bullet points to denote a list without hierarchy or order of value. If the list indicates a specific sequence then a numbered list must be used.
+
+Lists should be used sparingly to maximise their impact.
+Quotation marks
+
+Use single quotation marks except for quotes within another speech, in which case double quotation marks are used.
+
+Quotations that are longer than three lines in length must be in an indented paragraph separate from the main text.
+
+The standard, non-italicised font must be used for all quotes.
+
+It must be clear from the text and/or citation where the quote is sourced. If quoting from material that is under copyright then permission will need to be obtained from the copyright holder.
+Acronyms & Abbreviations
+
+With abbreviations, the crucial goal is to ensure that the reader – particularly one who may not be fully familiar with the topic or context being addressed – is able to follow along. Spell out almost all acronyms on first use, indicating the acronym in parentheses immediately thereafter. Use the acronym for all subsequent references.
+
+    Research completed by the World Health Organization (WHO) shows …
+
+A number of abbreviations are so common that they do not require the full text on the first instance. Examples of these can be found here.
+
+Abbreviations should usually be in capital letters without full stops.
+
+    USA, not U.S.A
+
+Common examples from Latin origin do not follow this rule and should be lower case and can include full stops.
+
+    e.g., i.e., etc.
+
+Use of footnotes/endnotes
+
+Use endnotes rather than footnotes (we refer to these as ‘Notes’ in the online publication). These will appear at the end of the main text, before ‘References’.
+
+All notes should be used only where crucial clarifying information needs to be conveyed.
+
+Avoid using notes for purposes of referencing, with in-text citations used instead. If in-text citations cannot be used, a source can be cited as part of a note.
+
+Please insert the endnote marker after the end punctuation.
+Hyphenation, em and en dashes
+
+There is no set rule on the use of hyphenation between words, as long as they are consistently used.
+
+Em dashes should be used sparingly. If they are present, they should denote emphasis, change of thought or interruption to the main sentence and can replace commas, parentheses, colons or semicolons.
+
+    The president’s niece—daughter of his younger brother—caused a media scandal when…
+
+En dashes can be used to replace ‘to’ when indicating a range. No space should surround the dash.
+
+    10-25 years
+    pp. 10-65
+
+Numbers
+
+For numbers zero to nine please spell the whole words. Please use figures for numbers 10 or higher.
+
+We are happy for authors to use either words or figures to represent large whole figures (i.e. one million or 1,000,000) as long as the usage is consistent throughout the text.
+
+If the sentence includes a series of numbers then figures must be used in each instance.
+
+    Artefacts were found at depths of 5, 9, and 29 cm.
+If the number appears as part of a dataset, in conjunction with a symbol or as part of a table then the figure must be used.
+
+    This study confirmed that 5% of…
+
+If a sentence starts with a number it must be spelt, or the sentence should be re-written so that it no longer starts with the number.
+
+    Fifteen examples were found to exist…
+    The result showed that 15 examples existed…
+
+Do not use a comma for a decimal place.
+
+    2.43 NOT 2,43
+
+Numbers that are less than one must have ‘0’ precede the decimal point.
+
+    0.24 NOT .24
+
+Units of measurement
+
+Symbols following a figure to denote a unit of measurement must be taken from the latest SI brochure.  If units are in a different system, then the SI units must be given along with the other units, e.g. 2.5 m (8 ft 2.4 in).
+Formula
+
+Formulae must be proofed carefully by the author. Editors will not edit formulae. If special software has been used to create formulae, the way it is laid out is the way they will appear in the publication.
+
+Figures
+
+Figures, including graphs and diagrams, must be professionally and clearly presented. If a figure is not easy to understand or does not appear to be of a suitable quality, the editor may ask to re-render or omit it.
+
+All figures must be cited within the main text, in consecutive order using Arabic numerals (e.g. Figure 1, Figure 2, etc.).
+
+Each figure must have an accompanying descriptive main title. This should clearly and concisely summarise the content and/or use of the figure image. A short additional figure legend is optional to offer a further description.
+
+    Figure 1: 1685 map of London.
+    Figure 1: 1685 map of London. Note the addition of St Paul’s Cathedral, absent from earlier maps.
+
+Figure titles and legends should be placed within the text document, either after the paragraph of their first citation, or as a list after the references.
+
+The source of the image should be included, along with any relevant copyright information and a statement of authorisation (if needed).
+
+    Figure 1: Firemen try to free workers buried under piles of concrete and metal girders. Photo: Claude-Michel Masson. Reproduced with permission of the photographer.
+
+If your figure file includes text then please present the font as Ariel, Helvetica, or Verdana. This will mean that it matches the typeset text.
+
+Tables
+
+Tables must be created using a word processor's table function, not tabbed text.
+
+Tables should be included in the manuscript. The final layout will place the tables as close to their first citation as possible.
+
+All tables must be cited within the main text, numbered with Arabic numerals in consecutive order (e.g. Table 1, Table 2, etc.).
+
+Each table must have an accompanying descriptive title. This should clearly and concisely summarise the content and/or use of the table. A short additional table legend is optional to offer a further description of the table. The table title and legend should be placed underneath the table.
+
+Tables should not include:
+
+    Rotated text
+    Colour to denote meaning (it will not display the same on all devices)
+    Images
+    Vertical or diagonal lines
+    Multiple parts (e.g. ‘Table 1a’ and ‘Table 1b’). These should either be merged into one table, or separated into ‘Table 1’ and ‘Table 2’.
+In-text citations 
+Every use of information from other sources must be cited in the text so that it is clear that external material has been used. Please use parenthetical citations according to the 'Author: Year style'.
+
+If the author is already mentioned in the main text then the year should follow the name within parenthesis.
+
+    Both Jones (2013) and Brown (2010) showed that …
+
+If the author name is not mentioned in the main text then the surname and year should be inserted, in parenthesis, after the relevant text. Multiple citations should be separated by semi-colon and follow alphabetical order.
+
+    The statistics clearly show this to be untrue (Brown, 2010; Jones, 2013).
+
+If three or fewer authors are cited from the same citation then all should be listed. If four or more authors are part of the citation then ‘et al.’ should follow the first author name.
+
+    (Jones, Smith & Brown 2008)
+    (Jones et al., 2008)
+
+If citations are used from the same author and the same year, then a lowercase letter, starting from ‘a’, should be placed after the year.
+
+    (Jones, 2013a; Jones, 2013b)
+
+If specific pages are being cited then the page number should follow the year, after a colon.
+
+    (Brown, 2004: 65; Jones, 2013: 143)
+
+For publications authored and published by organisations, use the short form of the organisation’s name or its acronym in lieu of the full name.
+
+    (ICRC 2000) NOT (International Committee of Red Cross and Red Crescent Societies 2000)
+
+Please do not include URLs in parenthetical citations, but rather cite the author or page title and include all details, including the URL, in the reference list.
+
+In-text tables, figures and equations
+All tables, figures and equations used in the manuscript must be referenced somewhere within the text. Wherever they are referenced, please type out the name in full and add the number in which they appear. The number should not be placed within parentheses.
+
+    Table 1; Table 2; Table 3 etc.
+    Figure 1; Figure 2; Figure 3 etc.
+    Equation 1; Equation 2; Equation 3 etc.
+
+Reference list
+If you are not using bibtex, please note the following details. All citations must be listed at the end of the text file, in alphabetical order of authors’ surnames. References should not be listed if they are not cited in the main text.
+
+NOTE: If multiple works by the same author are being listed, please re-type the author’s name out for each entry, rather than using a long dash.
