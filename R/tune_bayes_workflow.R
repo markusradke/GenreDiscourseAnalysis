@@ -104,14 +104,6 @@ tune_bayes_with_checkpoints_resume <- function(
   completed_iter <- start_iter - 1
 
   while (completed_iter < bayes_iterations) {
-    if (no_improve_counter >= no_improve_limit) {
-      message(sprintf(
-        "Stopping early: no improvement for %d iterations",
-        no_improve_limit
-      ))
-      break
-    }
-
     remaining <- bayes_iterations - completed_iter
     iter_chunk <- min(checkpoint_interval, remaining)
 
@@ -166,6 +158,14 @@ tune_bayes_with_checkpoints_resume <- function(
       best_metric_value,
       no_improve_counter
     )
+
+    if (no_improve_counter >= no_improve_limit) {
+      message(sprintf(
+        "Stopping early: no improvement for %d iterations",
+        no_improve_limit
+      ))
+      break
+    }
   }
 
   current_results
@@ -191,14 +191,6 @@ tune_bayes_with_checkpoints <- function(
   no_improve_counter <- 0
 
   while (completed_iter < bayes_iterations) {
-    if (no_improve_counter >= no_improve_limit) {
-      message(sprintf(
-        "Stopping early: no improvement for %d iterations",
-        no_improve_limit
-      ))
-      break
-    }
-
     remaining <- bayes_iterations - completed_iter
     iter_chunk <- min(checkpoint_interval, remaining)
 
@@ -253,6 +245,14 @@ tune_bayes_with_checkpoints <- function(
       best_metric_value,
       no_improve_counter
     )
+
+    if (no_improve_counter >= no_improve_limit) {
+      message(sprintf(
+        "Stopping early: no improvement for %d iterations",
+        no_improve_limit
+      ))
+      break
+    }
   }
 
   current_results
