@@ -88,13 +88,11 @@ We need to ensure that when merging a genre with its parent, we also merge all s
 mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
 mb_tuning <- readRDS("../models/metagenres/tune_mb_metagenres.rds")
 mb_tuning_metadata <- readRDS("../models/metagenres/tune_mb_metadata.rds")
-mb_gini_plot <- readRDS("../models/metagenres/tune_mb_gini_plot.rds")
 mb_suggested_solution <- readRDS("../models/metagenres/metagenres_mb_suggested_solution.rds")
 
 s <- read_feather_with_lists("../data/filtered_s_long.feather")
 s_tuning <- readRDS("../models/metagenres/tune_s_metagenres.rds")
 s_tuning_metadata <- readRDS("../models/metagenres/tune_s_metadata.rds")
-s_gini_plot <- readRDS("../models/metagenres/tune_s_gini_plot.rds")
 s_suggested_solution <- readRDS("../models/metagenres/metagenres_s_suggested_solution.rds")
 ```
 
@@ -155,10 +153,23 @@ s_all_solutions <- get_solutions_in_range(s_tuning, s_suggested_solution)
 
 ## MusicBrainz Metagenres
 :::{#fig-musicbrainz-gini}
-```{r gini_plot_musicbrainz}
-mb_gini_plot
+```{r gini_plot_musicbrainz, fig.width=8, fig.height=6}
+plot <- plot_tuning_results_tree(
+  mb_tuning$ginis, 
+  xlimits = c(0, min(c(max(mb_tuning$ginis$n_metagenre), 50)))
+)
+ggplot2::ggsave(
+  filename = "../reports/paper_v1/figures/folding_gini_trajectory.png",
+  plot = plot,
+  width = 180,
+  height = 115,
+  dpi = 300,
+  units = "mm"
+)
+plot
+
 ```
-Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree. Calculated for a minimum n tracks per genre of `r format(mb_tuning_metadata$min_min_n, big.mark = ",")` to `r format(mb_tuning_metadata$max_min_n, big.mark = ",")` with stepsize `r mb_tuning_metadata$size`. Resulting number of metagenres ranged from `r mb_tuning_metadata$min_n_metagenre` to `r mb_tuning_metadata$max_n_metagenre`.
+Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the MusicBrainz genre tree.   .
 :::
 
 ```{r mb_solution_selector, results='asis', echo=FALSE}
@@ -237,7 +248,10 @@ document.getElementById('mb-solution-select').addEventListener('change', functio
 ## Spotify Metagenres
 :::{#fig-spotify-gini}
 ```{r gini_plot_spotify}
-s_gini_plot
+plot_tuning_results_tree(
+  s_tuning$ginis, 
+  xlimits = c(0, min(c(max(s_tuning$ginis$n_metagenre), 50)))
+)
 ```
 Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding the Spotify genre tree. Calculated for a minimum n tracks per genre of `r format(s_tuning_metadata$min_min_n, big.mark = ",")` to `r format(s_tuning_metadata$max_min_n, big.mark = ",")` with stepsize `r s_tuning_metadata$size`. Resulting number of metagenres ranged from `r s_tuning_metadata$min_n_metagenre` to `r s_tuning_metadata$max_n_metagenre`.
 :::

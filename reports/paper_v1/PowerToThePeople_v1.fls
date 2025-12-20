@@ -1014,6 +1014,11 @@ INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchr8t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchr8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchri8t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchri8r.tfm
+INPUT ./figures/folding_gini_trajectory.png
+INPUT ./figures/folding_gini_trajectory.png
+INPUT figures/folding_gini_trajectory.png
+INPUT ./figures/folding_gini_trajectory.png
+INPUT ./figures/folding_gini_trajectory.png
 INPUT ./PowerToThePeople_v1.bbl
 INPUT PowerToThePeople_v1.bbl
 INPUT ./PowerToThePeople_v1.bbl

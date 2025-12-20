@@ -154,7 +154,7 @@ Finally, we balanced the tree across levels. We estimated each genre's size as t
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{figures/balancing_gini_trajectory.png}
-  \caption{Weighted Gini coefficient across iterations of cutting weak genre connections and connecting resulting dangling trees to articifial root \textit{POPULAR MUSIC}.}
+  \caption{Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) across iterations of cutting weak genre connections in the hierarchical genre tree and connecting the resulting dangling trees to the articifial root \textit{POPULAR MUSIC}.}
 \label{fig:rq1_gini_trajectory}
 \end{figure}
 
@@ -175,7 +175,7 @@ Level & \# nodes & \# tracks & Gini   \\
 \label{tab:rq1_structure}
 \end{table}
 
-The initial POPTRAG genre co occurrence network contains 234 genre nodes. The network forms a single connected component and exhibits a density of 45.14\% (observed links / potential links), indicating relatively high inter tag connectivity. By median, a genre co occurred with 97 different other genres (IQR 63.5; range 3 for \textit{waltz} to 229 for \textit{pop}), which shows large differences between niche and ubiquitous tags. After removing weaker reciprocal directions, each genre receives on average 29.5 incoming candidate subgenre links (IQR 32; min 0; max 228 for \textit{pop}\textit{rock}), and has on average 55 outgoing candidate supergenre links (IQR 32; min 0 for \textit{rock}; max 105 for \textit{dub}). After selecting the single strongest parent per node and running the balance optimization (see figure \ref{fig:rq1_gini_trajectory}, \textit{pop} and \textit{hip hop} were reattached to \textit{POPULAR MUSIC}. \textit{pop} was a subgenre of \textit{rock} before. \textit{hip hop} was a subgenre of \textit{pop} before. The three weakest links that remain (exemplary) are: \textit{electronic} to \textit{pop} with 0.22, \textit{classical} to \textit{pop} with 0.27, and \textit{jazz} to \textit{pop} with 0.29.), the tree becomes highly leaf heavy: 89.36\% of nodes are leaves. \textit{rock} emerges as the largest supergenre with 63 direct subgenres, and only \textit{rock}, \textit{pop} and \textit{hip hop} remain directly connected to the artificial root \textit{POPULAR MUSIC}, forming three broad meta categories that subsume the remaining tags. Please see the digital appendix for an interactive plot to explore COMGET. The tree exhibits 4 hierarchy levels (excluding artificial root genre) (see table \ref{tab:rq1_structure} for details on the tree structure).
+The initial POPTRAG genre co-occurrence network contains 234 genre nodes. The network forms a single connected component and exhibits a density of 45.14\% (observed links / potential links), indicating relatively high inter tag connectivity. By median, a genre co occurred with 97 different other genres (IQR 63.5; range 3 for \textit{waltz} to 229 for \textit{pop}), which shows large differences between niche and ubiquitous tags. After removing weaker reciprocal directions, each genre receives on average 29.5 incoming candidate subgenre links (IQR 32; min 0; max 228 for \textit{pop}\textit{rock}), and has on average 55 outgoing candidate supergenre links (IQR 32; min 0 for \textit{rock}; max 105 for \textit{dub}). After selecting the single strongest parent per node and running the balance optimization (see figure \ref{fig:rq1_gini_trajectory}, \textit{pop} and \textit{hip hop} were reattached to \textit{POPULAR MUSIC}. \textit{pop} was a subgenre of \textit{rock} before. \textit{hip hop} was a subgenre of \textit{pop} before. The three weakest links that remain (exemplary) are: \textit{electronic} to \textit{pop} with 0.22, \textit{classical} to \textit{pop} with 0.27, and \textit{jazz} to \textit{pop} with 0.29.), the tree becomes highly leaf heavy: 89.36\% of nodes are leaves. \textit{rock} emerges as the largest supergenre with 63 direct subgenres, and only \textit{rock}, \textit{pop} and \textit{hip hop} remain directly connected to the artificial root \textit{POPULAR MUSIC}, forming three broad meta categories that subsume the remaining tags. Please see the digital appendix for an interactive plot to explore COMGET. The tree exhibits 4 hierarchy levels (excluding artificial root genre) (see table \ref{tab:rq1_structure} for details on the tree structure).
 
 
 
@@ -188,7 +188,12 @@ We evaluated different minimum song counts using a grid search approach to find 
 
 \subsection{Results: Germany's Popular Music Supergenres}
 
-TODO: GINIPLOT
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/folding_gini_trajectory.png}
+  \caption{Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding COMGET.}
+\label{fig:rq2_gini_trajectory}
+\end{figure}
 
 We applied the folding algorithm described above to COMGET and identified 4 optimal solutions (see figure X): a low detailed solution with 5 genres (min. 12,930 songs, Gini 0.307), a medium detailed solution with 12 genres (min 3,520 songs per genre, Gini 0.342), a high detailed solution with 31 genres (min 1,260 songs per genre, Gini 0.387) and a solution with even higher degree of detail comprising 38 supergenres (min 1,045 genres, Gini 0.385). The imbalance in-between the hierarchies increases until it reaches a sort of plateau from 20 supergenres upwards. Naturally the differences in minimum n between solutions with a lower number so supergenres is way higher than for solutions with a higher number of metagenres.
 

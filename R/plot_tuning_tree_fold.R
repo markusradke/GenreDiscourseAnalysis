@@ -1,7 +1,6 @@
 plot_tuning_results_tree <- function(
   ginis,
   xlimits = c(0, 50),
-  best_candidate = 20,
   gini_range = c(0, 1)
 ) {
   if (nrow(dplyr::distinct(ginis, n_metagenres)) < 2) {
@@ -15,8 +14,7 @@ plot_tuning_results_tree <- function(
     dplyr::arrange(-n_metagenres, -min_n) |>
     dplyr::distinct(n_metagenres, .keep_all = T) |>
     dplyr::mutate(
-      label = sprintf('%d genres\nmin n: %d', n_metagenres, min_n),
-      color = ifelse(n_metagenres == best_candidate, F, T)
+      label = sprintf('%d genres\nmin n: %d', n_metagenres, min_n)
     )
   gini_trajectory <- ginis |>
     dplyr::distinct(n_metagenres, weighted_gini, .keep_all = T)
@@ -25,11 +23,11 @@ plot_tuning_results_tree <- function(
     gini_trajectory,
     ggplot2::aes(x = n_metagenres, y = weighted_gini)
   ) +
-    ggplot2::geom_line(color = 'grey30', linewidth = 1) +
+    ggplot2::geom_line(color = 'grey45', linewidth = 1.25) +
     ggplot2::geom_point(
       data = candidates,
       mapping = ggplot2::aes(x = n_metagenres, y = weighted_gini),
-      color = '#c40d20',
+      color = '#3e578e',
       size = 3
     ) +
     ggplot2::theme_minimal() +
@@ -38,14 +36,23 @@ plot_tuning_results_tree <- function(
     ggplot2::scale_x_continuous(
       breaks = pretty(seq(xlimits[1], xlimits[2]), n = 10),
       limits = xlimits,
-      name = '# of metagenres'
+      name = '# of Supergenres',
+      position = 'top'
     ) +
     ggplot2::scale_size(range = c(1, 4), name = 'Minimum n') +
     ggplot2::theme(
-      axis.title = ggplot2::element_text(color = 'grey30'),
-      axis.text.x = ggplot2::element_text(color = 'grey30', size = 12),
-      axis.text.y = ggplot2::element_text(color = c('grey30'), size = 12),
-      panel.grid = ggplot2::element_blank(),
+      axis.title = ggplot2::element_text(
+        color = 'grey35',
+        size = 18,
+      ),
+      axis.title.x = ggplot2::element_text(
+        hjust = 0
+      ),
+      axis.title.y = ggplot2::element_text(
+        hjust = 1
+      ),
+      axis.text.x = ggplot2::element_text(color = 'grey35', size = 16),
+      axis.text.y = ggplot2::element_text(color = 'grey35', size = 16),
     ) +
     ggrepel::geom_label_repel(
       data = candidates,
@@ -53,16 +60,16 @@ plot_tuning_results_tree <- function(
         x = n_metagenres,
         y = weighted_gini,
         label = label,
-        color = color
       ),
+      color = "black",
       show.legend = F,
+      size = 14 / ggplot2::.pt,
       box.padding = 0.5
     ) +
-    ggplot2::scale_color_manual(values = c('black', 'grey30')) +
     ggplot2::geom_point(
       data = data.frame(x = 0, y = 1),
       ggplot2::aes(x = x, y = y),
-      color = '#c40d20',
+      color = '#3e578e',
       size = 3
     ) +
     ggplot2::annotate(
@@ -70,9 +77,9 @@ plot_tuning_results_tree <- function(
       x = 0,
       y = 1,
       label = ' = local Gini minima',
-      size = 10,
+      size = 16,
       size.unit = 'pt',
-      color = '#c40d20',
+      color = '#3e578e',
       hjust = -0.05
     )
   plot

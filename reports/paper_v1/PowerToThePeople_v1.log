@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 14:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 16:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -708,21 +708,24 @@ File: figures/balancing_gini_trajectory.png Graphic file (type png)
 <use figures/balancing_gini_trajectory.png>
 Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 156.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
- [4 <./figures/balancing_gini_trajectory.png>] [5]
+ [4 <./figures/balancing_gini_trajectory.png>]
+<figures/folding_gini_trajectory.png, id=260, 511.9125pt x 327.1422pt>
+File: figures/folding_gini_trajectory.png Graphic file (type png)
+<use figures/folding_gini_trajectory.png>
+Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 193.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+ [5 <./figures/folding_gini_trajectory.png>]
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [6] [7]
-Underfull \vbox (badness 2538) has occurred while \output is active []
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
 
-Underfull \hbox (badness 1231) in paragraph at lines 254--255
+Underfull \hbox (badness 1231) in paragraph at lines 259--260
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
-
-Underfull \vbox (badness 6016) has occurred while \output is active []
-
- [8] (./PowerToThePeople_v1.bbl
+[8] (./PowerToThePeople_v1.bbl
 Underfull \hbox (badness 2229) in paragraph at lines 44--51
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., Pérez-Molina, L., and
  []
@@ -782,23 +785,25 @@ Underfull \hbox (badness 1043) in paragraph at lines 273--277
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
-) [10] (./PowerToThePeople_v1.aux)
+[10]) [11
+
+] (./PowerToThePeople_v1.aux)
 Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
  ) 
 Here is how much of TeX's memory you used:
- 14660 strings out of 476091
- 246389 string characters out of 5795540
- 1887324 words of memory out of 5000000
- 34677 multiletter control sequences out of 15000+600000
+ 14672 strings out of 476091
+ 246720 string characters out of 5795540
+ 1886324 words of memory out of 5000000
+ 34686 multiletter control sequences out of 15000+600000
  690568 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2260b,639s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,2260b,683s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (10 pages, 334759 bytes).
+Output written on PowerToThePeople_v1.pdf (11 pages, 506871 bytes).
 PDF statistics:
- 420 PDF objects out of 1000 (max. 8388607)
- 381 compressed objects within 4 object streams
- 82 named destinations out of 1000 (max. 500000)
- 147 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 426 PDF objects out of 1000 (max. 8388607)
+ 385 compressed objects within 4 object streams
+ 84 named destinations out of 1000 (max. 500000)
+ 152 words of extra memory for PDF output out of 10000 (max. 10000000)
 

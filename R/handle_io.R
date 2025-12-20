@@ -73,10 +73,6 @@ save_tuning <- function(tune, platform = "") {
     sprintf("models/metagenres/metagenres_%s_suggested_solution.rds", platform)
   )
   saveRDS(
-    tune$plot,
-    sprintf("models/metagenres/tune_%s_gini_plot.rds", platform)
-  )
-  saveRDS(
     get_tuning_metadata(tune),
     sprintf("models/metagenres/tune_%s_metadata.rds", platform)
   )
