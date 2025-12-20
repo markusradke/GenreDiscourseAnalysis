@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  15 DEC 2025 15:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 14:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -503,8 +503,7 @@ Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
 LaTeX Font Info:    Trying to load font information for T1+bch on input line 62.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
-)
-No file PowerToThePeople_v1.aux.
+) (./PowerToThePeople_v1.aux)
 \openout1 = `PowerToThePeople_v1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
@@ -523,7 +522,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
 LaTeX Font Info:    ... okay on input line 62.
 LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 62.
 LaTeX Font Info:    Trying to load font information for FML+futm on input line 62.
-(c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
+ (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
 LaTeX Font Info:    ... okay on input line 62.
@@ -552,6 +551,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring OFF on input line 62.
+ (./PowerToThePeople_v1.out) (./PowerToThePeople_v1.out)
 \@outlinefile=\write4
 \openout4 = `PowerToThePeople_v1.out'.
 
@@ -634,85 +634,35 @@ LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
 (Font)              `T1/QuattroSans-LF/regular/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
 (Font)              scaled to size 8.0pt on input line 80.
-
-
-Package lineno Warning: Linenumber reference failed, 
-(lineno)                rerun to get it right.
-
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
 (Font)              `T1/QuattroSans-LF/regular/n' on input line 86.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
 (Font)              scaled to size 6.0pt on input line 86.
 
-Package natbib Warning: Citation `boniniPlatformedHowStreaming2024' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `frithPerformingRitesValue1996' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `dimaggioClassificationArt1987' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `silverGenreComplexesPopular2016' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `airoldiFollowAlgorithmExploratory2016' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `lonsdaleMusicalTasteIngroup2021' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `valverdeInequityDesignMusic2025' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `lepaPopularMusicEntertainment2020' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `porcaroAssessingImpactMusic2024' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `flexerHubnessCaseTechnical2018' on page 1 undefined on input line 88.
-
-
-Package natbib Warning: Citation `flexerProblemLimitedInterrater2016' on page 1 undefined on input line 88.
-
-
-Underfull \hbox (badness 4805) in paragraph at lines 88--90
+Underfull \hbox (badness 4805) in paragraph at lines 88--89
 \T1/bch/m/n/10 Although playlist-driven lis-ten-ing has grown on
  []
 
 
-Package natbib Warning: Citation `vanvenrooijCategoricalAmbiguityCultural2018' on page 1 undefined on input line 91.
-
-
-Package natbib Warning: Citation `frithPerformingRitesValue1996' on page 1 undefined on input line 91.
-
-
-Package natbib Warning: Citation `negusMusicGenresCorporate1999' on page 1 undefined on input line 91.
-
-
-Package natbib Warning: Citation `jiangGenreBasedAnalysisNew2024' on page 1 undefined on input line 91.
-
-
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-<tismir.png, id=4, 534.99875pt x 134.5025pt>
+<tismir.png, id=102, 534.99875pt x 134.5025pt>
 File: tismir.png Graphic file (type png)
 <use tismir.png>
-Package pdftex.def Info: tismir.png  used on input line 92.
+Package pdftex.def Info: tismir.png  used on input line 93.
 (pdftex.def)             Requested size: 145.59631pt x 36.60347pt.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 92.
+(Font)              scaled to size 6.99199pt on input line 93.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 92.
+(Font)              scaled to size 6.99199pt on input line 93.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 92.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 93.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 92.
+(Font)              scaled to size 9.0pt on input line 93.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
-(Font)              `T1/QuattroSans-LF/regular/it' on input line 92.
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 93.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
-(Font)              scaled to size 9.0pt on input line 92.
+(Font)              scaled to size 9.0pt on input line 93.
 
 Underfull \hbox (badness 1448) has occurred while \output is active
 []\T1/QuattroSans-LF/regular/n/9 Radke, M. and Lepa, S. (2025). Power to the Peo-ple! As-sign-
@@ -739,736 +689,116 @@ Package fancyhdr Warning: \headheight is too small (40.0pt):
 
 
  <./tismir.png>]
-
-Package natbib Warning: Citation `bogdanovAcousticbrainzGenreDataset2019' on page 2 undefined on input line 93.
-
-
-Package natbib Warning: Citation `langeCategorizingMusicGenres2025' on page 2 undefined on input line 93.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:93: Undefined control sequence.
-l.93 ...ity that undermines replication and meta\�
-                                                  ��analysis~\citep{sturmRev...
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:93: LaTeX Error: Invalid UTF-8 byte "80.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.93 ...ty that undermines replication and meta\�
-                                                  �analysis~\citep{sturmRevi...
-The document does not appear to be in UTF-8 encoding.
-Try adding \UseRawInputEncoding as the first line of the file
-or specify an encoding such as \usepackage [latin1]{inputenc}
-in the document preamble.
-Alternatively, save the file in UTF-8 using your editor or another tool
-
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:93: LaTeX Error: Invalid UTF-8 byte "91.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.93 ...y that undermines replication and meta\‑
-                                                  analysis~\citep{sturmRevie...
-The document does not appear to be in UTF-8 encoding.
-Try adding \UseRawInputEncoding as the first line of the file
-or specify an encoding such as \usepackage [latin1]{inputenc}
-in the document preamble.
-Alternatively, save the file in UTF-8 using your editor or another tool
-
-
-Package natbib Warning: Citation `sturmReviewValidityIts2023' on page 2 undefined on input line 93.
-
-
-Package natbib Warning: Citation `greenCriticalSurveyResearch2024' on page 2 undefined on input line 93.
-
-
-Package natbib Warning: Citation `sturmReviewValidityIts2023' on page 2 undefined on input line 93.
-
-
-Underfull \hbox (badness 1194) in paragraph at lines 93--94
-\T1/bch/m/n/10 ad-dress this gap, we present a re-pro-ducible pro-
- []
-
-
-Package natbib Warning: Citation `pachetTaxonomyMusicalGenres2000' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `brackettCategorizingSoundGenre2016' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `pachetTaxonomyMusicalGenres2000' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `sordoQuestMusicalGenres2008' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `dugayDoingCulturalStudies2013' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `foucaultArchaeologyKnowledge2013' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `lenaClassificationCultureTypes2008' on page 2 undefined on input line 98.
-
-
-Package natbib Warning: Citation `sturmReviewValidityIts2023' on page 2 undefined on input line 100.
-
-
-Package natbib Warning: Citation `schreiberImprovingGenreAnnotations2015' on page 2 undefined on input line 100.
-
-
-Package natbib Warning: Citation `schreiberGenreOntologyLearning2016' on page 2 undefined on input line 100.
-
-
-Package natbib Warning: Citation `pichlMiningCultureSpecificMusic2017' on page 2 undefined on input line 100.
-
-
-Package natbib Warning: Citation `nieInaccuratePredictionGenre2022' on page 2 undefined on input line 100.
-
-
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
-
-
-Package natbib Warning: Citation `japkowiczClassImbalanceProblem2002' on page 2 undefined on input line 102.
-
-
-Package natbib Warning: Citation `bogdanovAcousticbrainzGenreDataset2019' on page 2 undefined on input line 102.
-
-
-Package natbib Warning: Citation `langeCategorizingMusicGenres2025' on page 2 undefined on input line 102.
-
-
-Package natbib Warning: Citation `genussovMusicalGenreClassification2010' on page 2 undefined on input line 102.
-
-
-Package natbib Warning: Citation `caparriniAutomaticSubgenreClassification2020' on page 2 undefined on input line 102.
-
-
-Package natbib Warning: Citation `greenCriticalSurveyResearch2024' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `merliniCriticalInterdisciplinarySurvey2020' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `tzanetakisMusicalGenreClassification2002' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `rentfrowStructureMusicalPreferences2011' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `nealeGenre1980' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `fabbriTheoryMusicalGenres1982' on page 2 undefined on input line 105.
-
-
-Package natbib Warning: Citation `bogdanovESSENTIAOpensourceLibrary2013' on page 2 undefined on input line 105.
-
-
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [2]
-
-Package natbib Warning: Citation `brandCulturalEvolutionEmotional2019a' on page 3 undefined on input line 107.
-
-
-Package natbib Warning: Citation `carboneMetaAnalysisStudiesExamining2024' on page 3 undefined on input line 107.
-
-
-Package natbib Warning: Citation `fabbriTheoryMusicalGenres1982' on page 3 undefined on input line 107.
-
-
-Package natbib Warning: Citation `holtGenrePopularMusic2007' on page 3 undefined on input line 107.
-
-
-Underfull \hbox (badness 5548) in paragraph at lines 111--112
+Underfull \hbox (badness 5548) in paragraph at lines 112--113
 []\T1/bch/b/n/10 RQ1 \T1/bch/m/n/10 How can we con-struct an em-pir-i-cally
- []
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:128: Missing $ inserted.
-<inserted text> 
-                $
-l.128 ...ented genre labels and a directed edge e_
-                                                  {A$\rightarrow$B} quantifi...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:128: Missing } inserted.
-<inserted text> 
-                }
-l.128 ...ed genre labels and a directed edge e_{A$
-                                                  \rightarrow$B} quantified ...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:128: Missing $ inserted.
-<inserted text> 
-                $
-l.128 ...bels and a directed edge e_{A$\rightarrow
-                                                  $B} quantified how strongl...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:128: Too many }'s.
-l.128 ...s and a directed edge e_{A$\rightarrow$B}
-                                                   quantified how strongly g...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...his formula produced asymmetric edges (e_
-                                                  {A$\rightarrow$B} ≠ e_{B...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing } inserted.
-<inserted text> 
-                }
-l.134 ... formula produced asymmetric edges (e_{A$
-                                                  \rightarrow$B} ≠ e_{B$\r...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...oduced asymmetric edges (e_{A$\rightarrow
-                                                  $B} ≠ e_{B$\rightarrow$A...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Too many }'s.
-l.134 ...ced asymmetric edges (e_{A$\rightarrow$B}
-                                                   ≠ e_{B$\rightarrow$A}) ...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: LaTeX Error: Unicode character ≠ (U+2260)
-               not set up for use with LaTeX.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.134 ...asymmetric edges (e_{A$\rightarrow$B} ≠
-                                                   e_{B$\rightarrow$A}) that...
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...mmetric edges (e_{A$\rightarrow$B} ≠ e_
-                                                  {B$\rightarrow$A}) that co...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing } inserted.
-<inserted text> 
-                }
-l.134 ...tric edges (e_{A$\rightarrow$B} ≠ e_{B$
-                                                  \rightarrow$A}) that combi...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...(e_{A$\rightarrow$B} ≠ e_{B$\rightarrow
-                                                  $A}) that combined directi...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Too many }'s.
-l.134 ...{A$\rightarrow$B} ≠ e_{B$\rightarrow$A}
-                                                  ) that combined directiona...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...” and “metal” equalled 0.5, then e_
-                                                  {metal$\rightarrow$rock}=0...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing } inserted.
-<inserted text> 
-                }
-l.134 ... “metal” equalled 0.5, then e_{metal$
-                                                  \rightarrow$rock}=0.6 × 0...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...� equalled 0.5, then e_{metal$\rightarrow
-                                                  $rock}=0.6 × 0.5 = 0.3. C...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Too many }'s.
-l.134 ...lled 0.5, then e_{metal$\rightarrow$rock}
-                                                  =0.6 × 0.5 = 0.3. Convers...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...ote share of 0.7 on “rock” tracks, e_
-                                                  {rock$\rightarrow$metal} =...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing } inserted.
-<inserted text> 
-                }
-l.134 ...are of 0.7 on “rock” tracks, e_{rock$
-                                                  \rightarrow$metal} = 0.07....
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Missing $ inserted.
-<inserted text> 
-                $
-l.134 ...on “rock” tracks, e_{rock$\rightarrow
-                                                  $metal} = 0.07. These raw ...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:134: Too many }'s.
-l.134 ...ock” tracks, e_{rock$\rightarrow$metal}
-                                                   = 0.07. These raw weights...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-[3]
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing $ inserted.
-<inserted text> 
-                $
-l.142 In the example this yields e'_
-                                    {metal$\rightarrow$rock} = 0.6 − 0.07 ...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing } inserted.
-<inserted text> 
-                }
-l.142 In the example this yields e'_{metal$
-                                           \rightarrow$rock} = 0.6 − 0.07 ...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing $ inserted.
-<inserted text> 
-                $
-l.142 ...example this yields e'_{metal$\rightarrow
-                                                  $rock} = 0.6 − 0.07 = 0....
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Too many }'s.
-l.142 ...e this yields e'_{metal$\rightarrow$rock}
-                                                   = 0.6 − 0.07 = 0.53 and...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: LaTeX Error: Unicode character − (U+2212)
-               not set up for use with LaTeX.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.142 ...lds e'_{metal$\rightarrow$rock} = 0.6 −
-                                                   0.07 = 0.53 and e'_{rock$...
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing $ inserted.
-<inserted text> 
-                $
-l.142 ...arrow$rock} = 0.6 − 0.07 = 0.53 and e'_
-                                                  {rock$\rightarrow$metal}= ...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing } inserted.
-<inserted text> 
-                }
-l.142 ...rock} = 0.6 − 0.07 = 0.53 and e'_{rock$
-                                                  \rightarrow$metal}= 0, mak...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Missing $ inserted.
-<inserted text> 
-                $
-l.142 ... − 0.07 = 0.53 and e'_{rock$\rightarrow
-                                                  $metal}= 0, making “meta...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:142: Too many }'s.
-l.142 ...07 = 0.53 and e'_{rock$\rightarrow$metal}
-                                                  = 0, making “metal$\righ...
-You've closed more groups than you opened.
-Such booboos are generally harmless, so keep going.
-
-
-Overfull \hbox (150.74916pt too wide) in paragraph at lines 158--165
- [][] 
- []
-
-
-Underfull \hbox (badness 4441) in paragraph at lines 165--165
-[] []|\T1/bch/m/n/10 De-tails on the hi-er-ar-chi-cal struc-ture of
- []
-
-[4]
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:184: Misplaced alignment tab character &.
-l.184 ..., “classical”, “synth-pop”, “r&
-                                                  b”, “dance-pop”, and...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:188: Misplaced alignment tab character &.
-l.188 ...y, Discogs genres “Blues”, “Brass &
-                                                   Military”, “Children�...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:188: Misplaced alignment tab character &.
-l.188 ...n’s”, “Non-Music”, and “Stage &
-                                                   Screen” show no to litt...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-Underfull \hbox (badness 2096) in paragraph at lines 188--189
-[]\T1/bch/m/n/10 Discogs' genre tax-on-omy com-prises 15 gen-res
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [5]
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:195: Misplaced alignment tab character &.
-l.195 ...evel to mitigate artist effects (Flexer &
-                                                   Schnitzer, 2009). We tune...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
+ [3]
+<figures/balancing_gini_trajectory.png, id=244, 511.9125pt x 327.1422pt>
+File: figures/balancing_gini_trajectory.png Graphic file (type png)
+<use figures/balancing_gini_trajectory.png>
+Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 156.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+ [4 <./figures/balancing_gini_trajectory.png>] [5]
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:195: LaTeX Error: Unicode character ≤ (U+2264)
-               not set up for use with LaTeX.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.195 ...nt from class frequencies (median for ≤
-                                                  10 classes; 60th percentil...
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:195: Missing $ inserted.
-<inserted text> 
-                $
-l.195 ...pled classes exceeding reference×target_
-                                                  ratio using NearMiss (Zhan...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:195: Misplaced alignment tab character &.
-l.195 ...nce×target_ratio using NearMiss (Zhang &
-                                                   Mani, 2003) and upsampled...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-LaTeX Warning: Command \textdiv invalid in math mode on input line 195.
-
-
-LaTeX Warning: Command \textdiv invalid in math mode on input line 195.
-
-
-LaTeX Warning: Command \textquotedblleft invalid in math mode on input line 195.
-
-
-LaTeX Warning: Command \textquotedblright invalid in math mode on input line 195.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:196: Missing $ inserted.
-<inserted text> 
-                $
-l.196 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Underfull \hbox (badness 1442) in paragraph at lines 195--196
-\T1/bch/m/n/10 hold-out set), re-moval of zero-variance pre-dic-tors,
- []
-
-
-Overfull \hbox (609.14383pt too wide) in paragraph at lines 195--196
-\T1/bch/m/n/10 reference\TS1/bch/m/n/10 �\T1/bch/m/n/10 target$[]\FML/futmi/m/it/10 atiousingNearMiss\T1/futs/m/n/10 (\FML/futmi/m/it/10 ZhangMani; \T1/futs/m/n/10 2003)\FML/futmi/m/it/10 andupsampledclassesbelowreference\T1/futs/m/n/10 �\FML/futmi/m/it/10 target[]atiousingADASYN\T1/futs/m/n/10 (\FML/futmi/m/it/10 Heetal:; \T1/futs/m/n/10 2008)\FML/futmi/m/it/10 :Thisapproachpreservedmoredatathanfixed \FMS/futm/m/n/10 ^^@
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 195--196
-\FML/futmi/m/it/10 ratiosamplingwhilemaintainingtunability \T1/futs/m/n/10 :
- []
-
-
-Overfull \hbox (218.5737pt too wide) in paragraph at lines 195--196
-\FML/futmi/m/it/10 target[]atio \FMS/futm/m/n/10 � \T1/futs/m/n/10 1\FML/futmi/m/it/10 enforcedperfectbalance\T1/futs/m/n/10 ; \FML/futmi/m/it/10 highervaluesretainedoriginalimbalance:Thereference \FMS/futm/m/n/10 ^^@
- []
-
-
-Overfull \hbox (189.30644pt too wide) in paragraph at lines 195--196
-\FML/futmi/m/it/10 countheuristicadjustedtoproblemcomplexity; preventingexcessivedownsamplinginhigh \FMS/futm/m/n/10 ^^@
- []
-
-
-Overfull \hbox (2640.15851pt too wide) in paragraph at lines 195--196
-\FML/futmi/m/it/10 resolutionscenarios:WeusedaBayesianoptimizationapproach\T1/futs/m/n/10 (\FML/futmi/m/it/10 Snoeketal:; \T1/futs/m/n/10 2012)\FML/futmi/m/it/10 withalatinhypercubeinitialgrid\T1/futs/m/n/10 (\FML/futmi/m/it/10 Husslageetal:; \T1/futs/m/n/10 2010)\FML/futmi/m/it/10 with\T1/futs/m/n/10 20\FML/futmi/m/it/10 gridpoints\T1/futs/m/n/10 (\FML/futmi/m/it/10 forprototyping\T1/futs/m/n/10 10)\FML/futmi/m/it/10 :Weemployedamaximumof\T1/futs/m/n/10 50\FML/futmi/m/it/10 Bayessteps\T1/futs/m/n/10 (\FML/futmi/m/it/10 forprototyping\T1/futs/m/n/10 25)\FML/futmi/m/it/10 ; setanearlystoppingcriterionifnoimprovementsoccurafter\T1/futs/m/n/10 10\FML/futmi/m/it/10 iterations; andletthealgorithmexploremaximallyuncertainareasofthehyperparameterspace; iftherewerenoimprovementsafter\T1/futs/m/n/10 5\FML/futmi/m/it/10 iterations:Afterselectingthehyperparameterswiththeonestandarderrorrule\T1/futs/m/n/10 (\FML/futmi/m/it/10 Hastieetal:; \T1/futs/m/n/10 2009)\FML/futmi/m/it/10 ; wetrainedthefinalmodelsonthefulltrainingsetandevaluatedtheestimatedmodelsonthehold \FMS/futm/m/n/10 ^^@
- []
-
-
-Underfull \vbox (badness 1755) has occurred while \output is active []
-
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:205: Missing $ inserted.
-<inserted text> 
-                $
-l.205 ...r the 5 genre solution yielded a mean F1_
-                                                  macro of XX on the CV fold...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:206: Missing $ inserted.
-<inserted text> 
-                $
-l.206 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 205--206
-[]\T1/bch/m/n/10 The fi-nal mod-els on the full data set
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 205--206
-\T1/bch/m/n/10 showed some un-der-fit-ting. For clas-si-fier
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 205--206
-\T1/bch/m/n/10 for the 5 genre so-lu-tion yielded a mean
- []
-
-
-Overfull \hbox (36.08179pt too wide) in paragraph at lines 205--206
-\T1/bch/m/n/10 F1$[]\FML/futmi/m/it/10 acroofXXontheCVfoldsandF\T1/futs/m/n/10 1[]\FML/futmi/m/it/10 acroofXXonthehold \FMS/futm/m/n/10 ^^@
- []
-
-
-Overfull \hbox (264.68642pt too wide) in paragraph at lines 205--206
-\FML/futmi/m/it/10 outset\T1/futs/m/n/10 ; \FML/futmi/m/it/10 F\T1/futs/m/n/10 1\FML/futmi/m/it/10 perclasshighlypositivelycorrelatedwithXXwiththeassignmentcertaintywithinthecommunity\T1/futs/m/n/10 (\FMS/futm/m/n/10 �
- []
-
-
-Overfull \hbox (655.89554pt too wide) in paragraph at lines 205--206
-\FML/futmi/m/it/10 meanassignmentprobabilityfortheclassacrosstags\T1/futs/m/n/10 )\FML/futmi/m/it/10 :InthelightofthemeanassignmentprobabilityofXX; wecanconsidertheclassifierasverysatisfactory:\T1/futs/m/n/10 [\FML/futmi/m/it/10 Descriptionoftheconfusionmatrix\T1/futs/m/n/10 ]\FML/futmi/m/it/10 :$ 
- []
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:207: Missing $ inserted.
-<inserted text> 
-                $
-l.207 ...shows a little underfitting with mean F1_
-                                                  macro of XX on CV folds an...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:209: Missing $ inserted.
-<inserted text> 
-                $
-l.209 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 207--209
-[]\T1/bch/m/n/10 The clas-si-fier for the 12 genre so-lu-tion
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 207--209
-\T1/bch/m/n/10 also shows a lit-tle un-der-fit-ting with mean
- []
-
-
-Overfull \hbox (36.79178pt too wide) in paragraph at lines 207--209
-\T1/bch/m/n/10 F1$[]\FML/futmi/m/it/10 acroofXXonCVfoldsandF\T1/futs/m/n/10 1[]\FML/futmi/m/it/10 acroofXXontheholdout \FMS/futm/m/n/10 ^^@
- []
-
-
-Overfull \hbox (1742.55193pt too wide) in paragraph at lines 207--209
-\FML/futmi/m/it/10 set:Comparetotheclassifierforthelowdetailedsolutionclassificationperformancewasdegraded:However; alsotheassignmentcertainty\T1/futs/m/n/10 (\FML/futmi/m/it/10 XX\T1/futs/m/n/10 %)\FML/futmi/m/it/10 waslower:Here; againF\T1/futs/m/n/10 1\FML/futmi/m/it/10 perclassshowedhighcorrelationwithperclassvotingcertainty\T1/futs/m/n/10 (\FML/futmi/m/it/10 XX\T1/futs/m/n/10 )\FML/futmi/m/it/10 :\T1/futs/m/n/10 [\FML/futmi/m/it/10 Descriptionoftheconfusionmatrix\T1/futs/m/n/10 ]\FML/futmi/m/it/10 :Finally; theclassifierforthe\T1/futs/m/n/10 31\FML/futmi/m/it/10 genresolutionagainshowedadegradationinperformancewithmeanF\T1/futs/m/n/10 1[]\FML/futmi/m/it/10 acroofXXonCVfoldsandF\T1/futs/m/n/10 1[]\FML/futmi/m/it/10 acroofXonthehold \FMS/futm/m/n/10 ^^@
- []
-
-
-Overfull \hbox (842.85532pt too wide) in paragraph at lines 207--209
-\FML/futmi/m/it/10 outset; matchingadegradationinclassassignmentcertaintywithinthecommunity\T1/futs/m/n/10 (\FML/futmi/m/it/10 XX\T1/futs/m/n/10 %)\FML/futmi/m/it/10 :Correlationofperclassassignmentcertaintyandisalittlelowerthanitwasfortheothertwolevelsofdetail\T1/futs/m/n/10 (\FML/futmi/m/it/10 XX\T1/futs/m/n/10 )\FML/futmi/m/it/10 :\T1/futs/m/n/10 [\FML/futmi/m/it/10 Descriptionofconfusionmatrix\T1/futs/m/n/10 ]$ 
- []
-
-[6]
+ [6] [7]
 Underfull \vbox (badness 2538) has occurred while \output is active []
 
 
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:231: Misplaced alignment tab character &.
-l.231 ... cannot exceed human consistency (Sturm &
-                                                   Flexer, 2023). That said,...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:231: Misplaced alignment tab character &.
-l.231 ...all performance.  In line with Genussov &
-                                                   Cohen (2010) we also obse...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:231: Misplaced alignment tab character &.
-l.231 ...rding the classification of music (Lena &
-                                                   Peterson, 2008, Negus, 19...
-I can't figure out why you would want to use a tab mark
-here. If you just want an ampersand, the remedy is
-simple: Just type `I\&' now. But if some right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
- [7]
-
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:234: LaTeX Error: Unicode character ≈ (U+2248)
-               not set up for use with LaTeX.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.234 ...se and voting behavior remain opaque (≈
-                                                  1 million anonymous editor...
-You may provide a definition with
-\DeclareUnicodeCharacter 
+Underfull \hbox (badness 1231) in paragraph at lines 254--255
+\T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
+ []
 
 
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
- (./PowerToThePeople_v1.bbl)
-
-Package natbib Warning: There were undefined citations.
-
-[8] (./PowerToThePeople_v1.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+ [8] (./PowerToThePeople_v1.bbl
+Underfull \hbox (badness 2229) in paragraph at lines 44--51
+[]\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., P�rez-Molina, L., and
+ []
 
 
-Package rerunfilecheck Warning: File `PowerToThePeople_v1.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
+Underfull \hbox (badness 6608) in paragraph at lines 44--51
+\T1/bch/m/n/10 S�nchez-Hern�ndez, J. (2020).  Au-to-matic
+ []
 
-Package rerunfilecheck Info: Checksums for `PowerToThePeople_v1.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  B94A96768B6394A08E85664324354E0D;3888.
+
+Underfull \hbox (badness 2150) in paragraph at lines 44--51
+\T1/bch/m/n/10 sub-genre clas-si-fi-ca-tion in an elec-tronic dance
+ []
+
+
+Overfull \hbox (5.4593pt too wide) in paragraph at lines 44--51
+\T1/bch/m/n/10 https://doi.org/10.1080/09298215.2020.1761399. 
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 53--58
+\T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--124
+[]\T1/bch/m/n/10 Gracyk, T. (2016).  Heavy metal: Genre?
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--124
+\T1/bch/m/n/10 Style? Sub-cul-ture?  \T1/bch/m/it/10 Phi-los-o-phy
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--124
+\T1/bch/m/it/10 Com-pass\T1/bch/m/n/10 , 11(12):775--785.  _eprint:
+ []
+
+
+Overfull \hbox (92.71902pt too wide) in paragraph at lines 119--124
+\T1/bch/m/n/10 https://compass.onlinelibrary.wiley.com/doi/pdf/10.1111/phc3.12386. 
+ []
+
+
+Underfull \hbox (badness 2181) in paragraph at lines 132--138
+[]\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
+ []
+
+[9]
+Underfull \hbox (badness 1303) in paragraph at lines 217--221
+\T1/bch/m/it/10 ume 2\T1/bch/m/n/10 , Guide Pro-ceed-ings, pages 1238--1245.
+ []
+
+
+Underfull \hbox (badness 1043) in paragraph at lines 273--277
+[]\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
+ []
+
+) [10] (./PowerToThePeople_v1.aux)
+Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
+(rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
  ) 
 Here is how much of TeX's memory you used:
- 14389 strings out of 476091
- 237443 string characters out of 5795540
- 1891324 words of memory out of 5000000
- 34474 multiletter control sequences out of 15000+600000
- 681145 words of font info for 114 fonts, out of 8000000 for 9000
+ 14660 strings out of 476091
+ 246389 string characters out of 5795540
+ 1887324 words of memory out of 5000000
+ 34677 multiletter control sequences out of 15000+600000
+ 690568 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2602b,607s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (8 pages, 168223 bytes).
+ 84i,17n,131p,2260b,639s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on PowerToThePeople_v1.pdf (10 pages, 334759 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 88 compressed objects within 1 object stream
- 29 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 420 PDF objects out of 1000 (max. 8388607)
+ 381 compressed objects within 4 object streams
+ 82 named destinations out of 1000 (max. 500000)
+ 147 words of extra memory for PDF output out of 10000 (max. 10000000)
 

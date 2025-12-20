@@ -60,7 +60,7 @@ metal -- P(rock|metal) - P(rock|metal) --> rock
 
 
 # 'Radically democratic' genre trees
-Now, we transform the directed network of descendant genres into a hierarchical tree. We assume that the strongest link to a potential parent genre determines the most suitable parent genre. Thus, we eliminate all other outgoing links to potential parents (see the continued example).
+Now, we transform the directed network of descendant genres into a hierarchical tree. We assume that the strongest link to a potential supergenre determines the most suitable parent genre. Thus, we eliminate all other outgoing links to potential supergenres (see the continued example).
 
 ```{mermaid}
 flowchart LR
@@ -165,6 +165,22 @@ Nodes with maximum out-degree:<br>*`r degree_stats_bidirectional_removed$node_ou
 **Final Tree**<br>
 Nodes with maximum in-degree:<br>*`r degree_stats_tree$node_in_degree_maxs`*
 
+### Tree balancing
+```{r musicbrainz-tree-pruning, echo=FALSE, fig.width=8, fig.height=6}	
+#| fig-cap: "Gini coefficient across iterations of cutting weak genre connections and connecting resulting trees to root"
+mb_gini <- readRDS("../models/trees/MusicBrainz_gini_evaluation.rds")
+plot <- plot_gini_trajectory(mb_gini)
+ggplot2::ggsave(
+  "../reports/paper_v1/figures/balancing_gini_trajectory.png", 
+  plot, 
+  width = 180, 
+  height = 115,
+  units = "mm",
+  dpi = 300,#300, 
+  device = ragg::agg_png)
+plot
+```	
+
 
 ### Final Tree
 :::{.column-screen-inset-right}
@@ -226,6 +242,14 @@ Nodes with maximum out-degree:<br>*`r degree_stats_bidirectional_removed$node_ou
 
 **Final Tree**<br>
 Nodes with maximum in-degree:<br>*`r degree_stats_tree$node_in_degree_maxs`*
+
+### Tree balancing
+```{r spotify-tree-balancing, echo=FALSE, fig.width=8, fig.height=6}	
+#| fig-cap: "Gini Coefficient Across Tree Pruning Steps"
+s_gini <- readRDS("../models/trees/Spotify_gini_evaluation.rds")
+plot_gini_trajectory(s_gini)
+```	
+
 
 ### Final Tree
 Please click on the nodes to explore sub-genres. The font size is fixed to ensure readability. Node size represents the number of songs in each genre.

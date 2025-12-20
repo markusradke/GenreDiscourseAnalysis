@@ -71,14 +71,6 @@ if (isTRUE(run_data_pre)) {
   saveRDS(data_high$train, "models/classifier/train_high.rds")
   saveRDS(data_high$test, "models/classifier/test_high.rds")
   saveRDS(data_high$cv_splits, "models/classifier/cv_splits_high.rds")
-
-  # saveRDS(settings, "models/classifier/mock_data_settings.rds")
-  # saveRDS(data_low$train, "models/classifier/mock_train_low.rds")
-  # saveRDS(data_low$test, "models/classifier/mock_test_low.rds")
-  # saveRDS(data_low$cv_splits, "models/classifier/mock_cv_splits_low.rds")
-  # saveRDS(data_high$train, "models/classifier/mock_train_high.rds")
-  # saveRDS(data_high$test, "models/classifier/mock_test_high.rds")
-  # saveRDS(data_high$cv_splits, "models/classifier/mock_cv_splits_high.rds")
 }
 
 # read in data
@@ -225,19 +217,6 @@ if (isTRUE(run_glmnet)) {
   )
   rm(glmnet_medium)
   gc()
-
-  # message("---TRAINING HIGH RESOLUTION MODEL---")
-  # settings$target_ratio_fix <- 10
-  # glmnet_high <- train_glmnet(train_high, test_high, cv_splits_high, settings)
-  # save_classification_model(
-  #   glmnet_high,
-  #   "glmnet_highres",
-  #   subfolder = "glmnet",
-  #   train_df = train_high,
-  #   test_df = test_high
-  # )
-  # rm(glmnet_high, settings)
-  # gc()
 }
 
 #LightGBM Models ----
@@ -304,23 +283,23 @@ if (isTRUE(run_lightgbm)) {
   rm(lightgbm_medium)
   gc()
 
-  # message("---TRAINING HIGH RESOLUTION MODEL---")
-  # settings$under_ratio_fix <- 20
-  # lightgbm_high <- train_gbm(
-  #   train_high,
-  #   test_high,
-  #   cv_splits_high,
-  #   settings
-  # )
-  # save_classification_model(
-  #   lightgbm_high,
-  #   "lightgbm_highres",
-  #   subfolder = "lightgbm",
-  #   train_df = train_high,
-  #   test_df = test_high
-  # )
-  # rm(lightgbm_high, settings)
-  # gc()
+  message("---TRAINING HIGH RESOLUTION MODEL---")
+  settings$under_ratio_fix <- 20
+  lightgbm_high <- train_gbm(
+    train_high,
+    test_high,
+    cv_splits_high,
+    settings
+  )
+  save_classification_model(
+    lightgbm_high,
+    "lightgbm_highres",
+    subfolder = "lightgbm",
+    train_df = train_high,
+    test_df = test_high
+  )
+  rm(lightgbm_high, settings)
+  gc()
 }
 
 if (isTRUE(run_rda)) {
@@ -379,21 +358,6 @@ if (isTRUE(run_rda)) {
   )
   rm("rda_medium")
   gc()
-  # message("---TRAINING HIGH RESOLUTION MODEL---")
-  # settings$under_ratio_fix <- 20
-  # rda_high <- train_rda(
-  #   train_high,
-  #   test_high,
-  #   cv_splits_high,
-  #   settings
-  # )
-  # save_classification_model(
-  #   rda_high,
-  #   "rda_highres",
-  #   subfolder = "rda",
-  #   train_df = train_high,
-  #   test_df = test_high
-  # )
 }
 
 
@@ -460,23 +424,247 @@ if (isTRUE(run_rf)) {
   )
   rm("rf_medium")
   gc()
-
-  # message("---TRAINING HIGH RESOLUTION MODEL---")
-  # settings$target_ratio_fix <- 10
-  # rf_high <- train_random_forest(
-  #   train_high,
-  #   test_high,
-  #   cv_splits_high,
-  #   settings
-  # )
-  # save_classification_model(
-  #   rf_high,
-  #   "rf_highres",
-  #   subfolder = "rf",
-  #   train_df = train_high,
-  #   test_df = test_high
-  # )
 }
 
 # Generate resport ----
+
+# generate graphs for paper
+glmnet_low_tuning <- readRDS(
+  "models/classifier/glmnet/glmnet_lowres_436e205a_tuning_history.rds"
+)
+glmnet_low_settings <- readRDS(
+  "models/classifier/glmnet/glmnet_lowres_436e205a_settings.rds"
+)
+glmnet_medium_tuning <- readRDS(
+  "models/classifier/glmnet/glmnet_mediumres_01f3f5dd_tuning_history.rds"
+)
+glmnet_medium_settings <- readRDS(
+  "models/classifier/glmnet/glmnet_mediumres_01f3f5dd_settings.rds"
+)
+rda_low_tuning <- readRDS(
+  "models/classifier/rda/rda_lowres_d07f8bb4_tuning_history.rds"
+)
+rda_low_settings <- readRDS(
+  "models/classifier/rda/rda_lowres_d07f8bb4_settings.rds"
+)
+rda_medium_tuning <- readRDS(
+  "models/classifier/rda/rda_mediumres_4d480cd8_tuning_history.rds"
+)
+rda_medium_settings <- readRDS(
+  "models/classifier/rda/rda_mediumres_4d480cd8_settings.rds"
+)
+rf_low_tuning <- readRDS(
+  "models/classifier/rf/rf_lowres_759e2621_tuning_history.rds"
+)
+rf_low_settings <- readRDS(
+  "models/classifier/rf/rf_lowres_759e2621_settings.rds"
+)
+rf_medium_tuning <- readRDS(
+  "models/classifier/rf/rf_mediumres_2cc36c89_tuning_history.rds"
+)
+rf_medium_settings <- readRDS(
+  "models/classifier/rf/rf_mediumres_2cc36c89_settings.rds"
+)
+gbm_low_tuning <- readRDS(
+  "models/classifier/lightgbm/lightgbm_lowres_1776db28_tuning_history.rds"
+)
+gbm_low_settings <- readRDS(
+  "models/classifier/lightgbm/lightgbm_lowres_1776db28_settings.rds"
+)
+gbm_medium_tuning <- readRDS(
+  "models/classifier/lightgbm/lightgbm_mediumres_b8c05240_tuning_history.rds"
+)
+gbm_medium_settings <- readRDS(
+  "models/classifier/lightgbm/lightgbm_mediumres_b8c05240_settings.rds"
+)
+
+# get chosen model F1 macro cv mean and standard error for each model
+glmnet_chosen_low <- c(
+  penalty = glmnet_low_settings$penalty,
+  mixture = glmnet_low_settings$alpha,
+  target_ratio = glmnet_low_settings$target_ratio
+)
+glmnet_low_f1_cv <- prepare_tuning_topmodels(
+  glmnet_low_tuning,
+  glmnet_chosen_low,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "GLMNET", detail = "low")
+
+glmnet_chosen_medium <- c(
+  penalty = glmnet_medium_settings$penalty,
+  mixture = glmnet_medium_settings$alpha,
+  target_ratio = glmnet_medium_settings$target_ratio
+)
+glmnet_medium_f1_cv <- prepare_tuning_topmodels(
+  glmnet_medium_tuning,
+  glmnet_chosen_medium,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "GLMNET", detail = "medium")
+
+rda_chosen_low <- c(
+  gamma = rda_low_settings$gamma,
+  lambda = rda_low_settings$lambda,
+  target_ratio = rda_low_settings$target_ratio
+)
+rda_low_f1_cv <- prepare_tuning_topmodels(
+  rda_low_tuning,
+  rda_chosen_low,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "RDA", detail = "low")
+
+rda_chosen_medium <- c(
+  gamma = rda_medium_settings$gamma,
+  lambda = rda_medium_settings$lambda,
+  target_ratio = rda_medium_settings$target_ratio
+)
+rda_medium_f1_cv <- prepare_tuning_topmodels(
+  rda_medium_tuning,
+  rda_chosen_medium,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "RDA", detail = "medium")
+
+rf_chosen_low <- c(
+  mtry = rf_low_settings$mtry,
+  min_n = rf_low_settings$min_n,
+  max_depth = rf_low_settings$max_depth,
+  target_ratio = rf_low_settings$target_ratio
+)
+rf_low_f1_cv <- prepare_tuning_topmodels(
+  rf_low_tuning,
+  rf_chosen_low,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "RF", detail = "low")
+
+rf_chosen_medium <- c(
+  mtry = rf_medium_settings$mtry,
+  min_n = rf_medium_settings$min_n,
+  max_depth = rf_medium_settings$max_depth,
+  target_ratio = rf_medium_settings$target_ratio
+)
+rf_medium_f1_cv <- prepare_tuning_topmodels(
+  rf_medium_tuning,
+  rf_chosen_medium,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "RF", detail = "medium")
+
+gbm_chosen_low <- c(
+  tree_depth = gbm_low_settings$tree_depth,
+  trees = gbm_low_settings$trees,
+  learn_rate = gbm_low_settings$learn_rate,
+  mtry = gbm_low_settings$mtry,
+  min_n = gbm_low_settings$min_n,
+  target_ratio = gbm_low_settings$target_ratio
+)
+gbm_low_f1_cv <- prepare_tuning_topmodels(
+  gbm_low_tuning,
+  gbm_chosen_low,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "LightGBM", detail = "low")
+
+gbm_chosen_medium <- c(
+  tree_depth = gbm_medium_settings$tree_depth,
+  trees = gbm_medium_settings$trees,
+  learn_rate = gbm_medium_settings$learn_rate,
+  mtry = gbm_medium_settings$mtry,
+  min_n = gbm_medium_settings$min_n,
+  target_ratio = gbm_medium_settings$target_ratio
+)
+gbm_medium_f1_cv <- prepare_tuning_topmodels(
+  gbm_medium_tuning,
+  gbm_chosen_medium,
+  top_n = 100
+) |>
+  dplyr::filter(is_chosen) |>
+  dplyr::select(
+    macro_f1_with_zeros_mean,
+    macro_f1_with_zeros_std_err
+  ) |>
+  dplyr::mutate(learner = "LightGBM", detail = "medium")
+
+chosen_models <- dplyr::bind_rows(
+  glmnet_low_f1_cv,
+  glmnet_medium_f1_cv,
+  rda_low_f1_cv,
+  rda_medium_f1_cv,
+  rf_low_f1_cv,
+  rf_medium_f1_cv,
+  gbm_low_f1_cv,
+  gbm_medium_f1_cv
+)
+
+# plot with detail on the x axis, macro f1 with error bars on the y axis, lightGBM is gree, all other learners grey, namespace ggplot notation
+ggplot2::ggplot(
+  chosen_models,
+  ggplot2::aes(
+    x = detail,
+    y = macro_f1_with_zeros_mean,
+    color = ifelse(learner == "LightGBM", "LightGBM", "Other"),
+    group = learner
+  )
+) +
+  ggplot2::geom_point(
+    position = ggplot2::position_dodge(width = 0.5),
+    size = 3
+  ) +
+  ggplot2::geom_errorbar(
+    ggplot2::aes(
+      ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
+      ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err
+    ),
+    width = 0.2,
+    position = ggplot2::position_dodge(width = 0.5)
+  ) +
+  ggplot2::scale_color_manual(
+    values = c("LightGBM" = "green", "Other" = "grey")
+  ) +
+  ggplot2::labs(
+    title = "Chosen Model Macro F1 Score by Resolution",
+    x = "Resolution",
+    y = "Macro F1 Score",
+    color = "Learner"
+  ) +
+  ggplot2::theme_minimal()
+
 # generate_report("05_rf_classifier")

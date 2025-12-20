@@ -1,8 +1,7 @@
 build_genre_tree <- function(
   tags_long,
   platform_name,
-  vote_weighted = TRUE,
-  quantile_threhold_for_edges = 0
+  vote_weighted = TRUE
 ) {
   basic_adjacency <- get_tag_cooccurrence_matrix(tags_long)
 
@@ -17,10 +16,12 @@ build_genre_tree <- function(
   tree_structure <- select_strongest_parent(bidirectional_removed)
   igraph_tree <- create_igraph_from_matrix(tree_structure)
   connected_tree <- add_popmusic_as_metagerne(igraph_tree)
-  final_tree <- prune_ill_structured_tree(
+  pruned <- prune_ill_structured_tree(
     connected_tree,
     tags_long
   )
+  final_tree <- pruned[[1]]
+  gini_evaluation = pruned[[2]]
   genealogy_graph <- get_genealogy_graph(
     bidirectional_removed,
     final_tree
@@ -34,13 +35,15 @@ build_genre_tree <- function(
     bidirectional_removed_graph,
     genealogy_graph,
     final_tree,
-    platform_name
+    platform_name,
+    gini_evaluation
   )
   list(
     initial_network = initial_network,
     bidirectional_removed = bidirectional_removed_graph,
     genealogy_graph = genealogy_graph,
-    final_tree = final_tree
+    final_tree = final_tree,
+    gini_evaluation = gini_evaluation
   )
 }
 
@@ -94,7 +97,7 @@ prune_ill_structured_tree <- function(graph, long) {
   threshold <- get_best_gini_threshold(edges, ginis)
   graph <- remove_edges_below_threshold(graph, threshold)
   graph <- connect_orphans_to_root(graph, root)
-  graph
+  list(graph, ginis)
 }
 
 get_sorted_nonroot_edges <- function(graph, root) {
@@ -183,7 +186,8 @@ save_results <- function(
   bidirectional_removed_graph,
   genealogy_graph,
   final_tree,
-  platform_name
+  platform_name,
+  gini_evalutation
 ) {
   export_graph_for_gephi_import(
     initial_graph,
@@ -206,6 +210,10 @@ save_results <- function(
     sprintf("models/trees/%s_genealogy.rds", platform_name)
   )
   saveRDS(final_tree, sprintf("models/trees/%s_graph.rds", platform_name))
+  saveRDS(
+    pruning_gini_evalutation,
+    sprintf("models/trees/%s_gini_evaluation.rds", platform_name)
+  )
 }
 
 
@@ -540,4 +548,61 @@ remove_cycles_preserve_tree <- function(graph, tree) {
   }
 
   g
+}
+
+plot_gini_trajectory <- function(gini) {
+  ggplot2::ggplot(gini, ggplot2::aes(x = n_removed_edges, y = gini)) +
+    ggplot2::geom_line(color = "grey45", linewidth = 1.25) +
+    ggplot2::geom_point(
+      data = gini[which.min(gini$gini), ],
+      ggplot2::aes(x = n_removed_edges, y = gini),
+      color = "#3e578e",
+      size = 3
+    ) +
+    ggplot2::geom_vline(
+      xintercept = gini$n_removed_edges[which.min(gini$gini)],
+      linetype = "solid",
+      color = "#3e578e",
+      linewidth = 1
+    ) +
+    ggplot2::annotate(
+      geom = "text",
+      x = gini$n_removed_edges[which.min(gini$gini)] + 3,
+      y = gini$gini[which.max(gini$gini)] - 0.02,
+      label = paste0(
+        "Global minimum:\n",
+        gini$n_removed_edges[which.min(gini$gini)],
+        " edges removed\n",
+        "Gini = ",
+        round(gini$gini[which.min(gini$gini)], 2)
+      ),
+      color = "#3e578e",
+      size = 16 / ggplot2::.pt,
+      hjust = 0,
+      fontface = "bold"
+    ) +
+    ggplot2::labs(
+      x = "# Removed Edges / Re-attached Subtrees",
+      y = "Weighted Gini Coefficient"
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = scales::pretty_breaks(n = 5),
+      position = "top",
+      expand = c(0.01, 0.01)
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.title.x = ggplot2::element_text(
+        size = 18,
+        hjust = 0,
+        color = "grey35"
+      ),
+      axis.title.y = ggplot2::element_text(
+        size = 18,
+        hjust = 1,
+        color = "grey35"
+      ),
+      axis.text.x = ggplot2::element_text(size = 16, color = "grey35"),
+      axis.text.y = ggplot2::element_text(size = 16, face = "bold")
+    )
 }
