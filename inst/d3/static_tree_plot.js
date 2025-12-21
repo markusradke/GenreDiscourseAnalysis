@@ -14,7 +14,8 @@ const config = {
     labelColor: "#000000",
     minLabelSpacing: 2,
     horizontalLabelLevels: data.horizontal_label_levels,
-    spacingFactor: data.spacing_factor == null ? 0 : Number(data.spacing_factor)
+    spacingX: data.spacing_x == null ? 20 : Number(data.spacing_x),
+    spacingY: data.spacing_y == null ? 20 : Number(data.spacing_y)
 };
 
 const treeData = data.tree;
@@ -47,11 +48,6 @@ function render() {
 
     treeLayout(root);
 
-    root.each(node => {
-        node.originalX = node.x;
-        node.originalY = node.y;
-    });
-
     // Determine which levels can have horizontal labels (vertical layout only)
     if (config.layout === "vertical") {
         horizontalLabelDepths = detectHorizontalLabelLevels(root, charWidth);
@@ -73,8 +69,7 @@ function render() {
         .domain(weightExtent)
         .range([0.5, 4]);
 
-    adjustDepthSpacing(root, sizeScale, charWidth, charHeight);
-    applySpacingFactor(root);
+    applyNodeSpacing(root);
 
     renderLinks(g, root, strokeScale);
     renderNodes(g, root, sizeScale);
@@ -410,99 +405,134 @@ function getLabelBaseline(d) {
     }
 }
 
-function adjustDepthSpacing(root, sizeScale, charWidth, charHeight) {
-    if (Math.abs(Number(config.spacingFactor) - 1) < 1e-9) {
-        return;
-    }
-
-    const axis = config.layout === "vertical" ? "y" : "x";
-    const available = config.layout === "vertical" ?
-        config.height - config.marginTop - config.marginBottom :
-        config.width - config.marginLeft - config.marginRight;
-
-    const maxDepth = d3.max(root.descendants(), d => d.depth);
-    const depthSpacing = new Array(maxDepth).fill(0);
-    const gapPadding = 4;
-
+function applyNodeSpacing(root) {
+    // Group nodes by depth to calculate depth positions
+    const nodesByDepth = {};
     root.descendants().forEach(node => {
-        if (!node.children) {
-            return;
+        if (!nodesByDepth[node.depth]) {
+            nodesByDepth[node.depth] = [];
         }
-        const parentExtents = getDepthExtents(node, sizeScale, charWidth, charHeight);
-        node.children.forEach(child => {
-            const childExtents = getDepthExtents(child, sizeScale, charWidth, charHeight);
-            const required = parentExtents.forward + childExtents.backward + gapPadding;
-            depthSpacing[node.depth] = Math.max(depthSpacing[node.depth], required);
-        });
+        nodesByDepth[node.depth].push(node);
     });
 
-    const positions = [0];
-    for (let depth = 0; depth < depthSpacing.length; depth += 1) {
-        const gap = depthSpacing[depth] || (charHeight + gapPadding);
-        positions[depth + 1] = positions[depth] + gap;
-    }
+    const depths = Object.keys(nodesByDepth).map(Number).sort((a, b) => a - b);
+    const maxDepth = depths[depths.length - 1];
 
-    const totalRequired = positions[positions.length - 1] || 0;
-    let scale = 1;
-    if (totalRequired > 0 && available < totalRequired) {
-        scale = available / totalRequired;
-    }
+    if (config.layout === "horizontal") {
+        // Horizontal layout: y = depth axis, x = breadth axis
 
-    if (totalRequired > available && console && console.warn) {
-        console.warn(
-            `Available ${axis}-space ${available}px is smaller than required ${totalRequired}px. ` +
-            "Labels may overlap. Consider increasing plot size."
-        );
-    }
+        // Apply depth spacing: set exact gap between depth levels
+        if (maxDepth > 0) {
+            const depthPositions = {};
+            depthPositions[0] = d3.mean(nodesByDepth[0], d => d.y);
 
-    const effectiveSpan = totalRequired * scale;
-    const offset = (available - effectiveSpan) / 2;
+            for (let i = 1; i <= maxDepth; i++) {
+                const prevPos = depthPositions[i - 1];
+                depthPositions[i] = prevPos + config.spacingX;
+            }
 
-    root.descendants().forEach(node => {
-        const basePosition = positions[node.depth] || 0;
-        node[axis] = offset + basePosition * scale;
-    });
-}
+            // Apply adjusted positions
+            depths.forEach(depth => {
+                const originalMean = d3.mean(nodesByDepth[depth], d => d.y);
+                const newMean = depthPositions[depth];
+                const offset = newMean - originalMean;
 
-function getDepthExtents(node, sizeScale, charWidth, charHeight) {
-    const radius = sizeScale(node.data.size || 1);
-    const hasChildren = node.children && node.children.length > 0;
-    const labelSpan = getLabelSpanAlongDepth(node, charWidth, charHeight);
-
-    return {
-        backward: radius + (hasChildren ? labelSpan : 0),
-        forward: radius + (hasChildren ? 0 : labelSpan)
-    };
-}
-
-function getLabelSpanAlongDepth(node, charWidth, charHeight) {
-    const nameLength = node.data.name.length;
-    const useHorizontal = usesHorizontalLabels(node);
-
-    if (config.layout === "vertical") {
-        return useHorizontal ? charHeight : nameLength * charWidth;
-    }
-
-    // Horizontal layout
-    return nameLength * charWidth;
-}
-
-function applySpacingFactor(root) {
-    const factor = Number(config.spacingFactor);
-    if (!Number.isFinite(factor) || factor === 0) {
-        return;
-    }
-
-    const axis = config.layout === "vertical" ? "y" : "x";
-
-    root.descendants().forEach(node => {
-        const original = config.layout === "vertical" ? node.originalY : node.originalX;
-        const tight = node[axis];
-        if (original == null || tight == null) {
-            return;
+                nodesByDepth[depth].forEach(node => {
+                    node.y += offset;
+                });
+            });
         }
-        node[axis] = tight + factor * (original - tight);
-    });
+
+        // Apply breadth spacing: scale x coordinates to ensure minimum spacing
+        const xValues = root.descendants().map(d => d.x).sort((a, b) => a - b);
+        let needsScaling = false;
+
+        for (let i = 1; i < xValues.length; i++) {
+            if (xValues[i] - xValues[i - 1] < config.spacingY && xValues[i] !== xValues[i - 1]) {
+                needsScaling = true;
+                break;
+            }
+        }
+
+        if (needsScaling) {
+            const xExtent = d3.extent(root.descendants(), d => d.x);
+            const xCenter = (xExtent[0] + xExtent[1]) / 2;
+            const currentSpan = xExtent[1] - xExtent[0];
+
+            if (currentSpan > 0) {
+                // Calculate required scale to achieve minimum spacing
+                const uniqueX = [...new Set(xValues)].sort((a, b) => a - b);
+                let minObservedGap = Infinity;
+                for (let i = 1; i < uniqueX.length; i++) {
+                    minObservedGap = Math.min(minObservedGap, uniqueX[i] - uniqueX[i - 1]);
+                }
+
+                if (minObservedGap > 0 && minObservedGap < config.spacingY) {
+                    const scale = config.spacingY / minObservedGap;
+                    root.descendants().forEach(node => {
+                        node.x = xCenter + (node.x - xCenter) * scale;
+                    });
+                }
+            }
+        }
+    } else {
+        // Vertical layout: x = breadth axis, y = depth axis
+
+        // Apply depth spacing: set exact gap between depth levels
+        if (maxDepth > 0) {
+            const depthPositions = {};
+            depthPositions[0] = d3.mean(nodesByDepth[0], d => d.y);
+
+            for (let i = 1; i <= maxDepth; i++) {
+                const prevPos = depthPositions[i - 1];
+                depthPositions[i] = prevPos + config.spacingY;
+            }
+
+            // Apply adjusted positions
+            depths.forEach(depth => {
+                const originalMean = d3.mean(nodesByDepth[depth], d => d.y);
+                const newMean = depthPositions[depth];
+                const offset = newMean - originalMean;
+
+                nodesByDepth[depth].forEach(node => {
+                    node.y += offset;
+                });
+            });
+        }
+
+        // Apply breadth spacing: scale x coordinates to ensure minimum spacing
+        const xValues = root.descendants().map(d => d.x).sort((a, b) => a - b);
+        let needsScaling = false;
+
+        for (let i = 1; i < xValues.length; i++) {
+            if (xValues[i] - xValues[i - 1] < config.spacingX && xValues[i] !== xValues[i - 1]) {
+                needsScaling = true;
+                break;
+            }
+        }
+
+        if (needsScaling) {
+            const xExtent = d3.extent(root.descendants(), d => d.x);
+            const xCenter = (xExtent[0] + xExtent[1]) / 2;
+            const currentSpan = xExtent[1] - xExtent[0];
+
+            if (currentSpan > 0) {
+                // Calculate required scale to achieve minimum spacing
+                const uniqueX = [...new Set(xValues)].sort((a, b) => a - b);
+                let minObservedGap = Infinity;
+                for (let i = 1; i < uniqueX.length; i++) {
+                    minObservedGap = Math.min(minObservedGap, uniqueX[i] - uniqueX[i - 1]);
+                }
+
+                if (minObservedGap > 0 && minObservedGap < config.spacingX) {
+                    const scale = config.spacingX / minObservedGap;
+                    root.descendants().forEach(node => {
+                        node.x = xCenter + (node.x - xCenter) * scale;
+                    });
+                }
+            }
+        }
+    }
 }
 
 render();

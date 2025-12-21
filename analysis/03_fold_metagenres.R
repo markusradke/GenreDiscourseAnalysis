@@ -32,17 +32,36 @@ generate_report("03_metagenres")
 beepr::beep()
 
 # get static metagenre graph for paper
-# sizes <- mb_res$solutions[["1020"]]$n_songs$n
-# names(sizes) <- mb_res$solutions[["1020"]]$n_songs$genre
-# sizes <- c(sizes, "POPULAR MUSIC" = 0.001)
+mb_res <- readRDS("models/metagenres/tune_mb_metagenres.rds")
+sizes <- mb_res$solutions[["1195"]]$n_songs$n # 25 genres
+names(sizes) <- mb_res$solutions[["1195"]]$n_songs$genre
+sizes <- c(sizes, "POPULAR MUSIC" = 0.001)
 
-# mb_res$solutions[["1020"]]$metagenre_graph |>
-#   plot_static_tree_graph(
-#     sizes_lookup = sizes,
-#     fill_lookup = get_fills_lookup(read_feather_with_lists(
-#       "data/filtered_mb_long.feather"
-#     )),
-#     layout = "vertical",
-#     spacing_factor = 0.4,
-#     output_file = "reports/paper_v1/figures/supergenre_hierarchy.png"
-#   )
+genres_5 <- mb_res$solutions[["12930"]]$n_songs$genre
+genres_12 <- mb_res$solutions[["3520"]]$n_songs$genre
+genres_25 <- mb_res$solutions[["1485"]]$n_songs$genre
+genres_32 <- mb_res$solutions[["1195"]]$n_songs$genre
+add12 <- setdiff(genres_12, genres_5)
+add25 <- setdiff(genres_25, genres_12)
+add32 <- setdiff(genres_32, genres_25)
+
+fills <- c(
+  rep("#3e578eff", length(genres_5)),
+  rep("#c40d20", length(add12)),
+  rep("#139e07ff", length(add25)),
+  rep("#979797ff", length(add32))
+)
+names(fills) <- c(genres_5, add12, add25, add32)
+fills <- c(fills, "POPULAR MUSIC" = "#ffffffff")
+
+mb_res$solutions[["1195"]]$metagenre_graph |>
+  plot_static_tree_graph(
+    sizes_lookup = sizes,
+    fill_lookup = fills,
+    layout = "vertical",
+    horizontal_label_levels = 2,
+    spacing_x = 1,
+    spacing_y = 150,
+    font_size = 14,
+    output_file = "reports/paper_v1/figures/supergenre_hierarchy.png"
+  )

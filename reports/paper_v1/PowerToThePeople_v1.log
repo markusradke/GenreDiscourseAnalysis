@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 19:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  21 DEC 2025 11:14
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -718,34 +718,37 @@ File: figures/folding_gini_trajectory.png Graphic file (type png)
 <use figures/folding_gini_trajectory.png>
 Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 193.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-<figures/supergenre_hierarchy.png, id=262, 519.44063pt x 642.14906pt>
+<figures/supergenre_hierarchy.png, id=262, 746.03719pt x 840.89156pt>
 File: figures/supergenre_hierarchy.png Graphic file (type png)
 <use figures/supergenre_hierarchy.png>
 Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 203.
-(pdftex.def)             Requested size: 237.5805pt x 293.69702pt.
+(pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
  [5 <./figures/folding_gini_trajectory.png>]
 <figures/dc_contingency.png, id=269, 511.9125pt x 455.0601pt>
 File: figures/dc_contingency.png Graphic file (type png)
 <use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 212.
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 215.
 (pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
 
-Underfull \hbox (badness 2343) in paragraph at lines 213--213
+Underfull \hbox (badness 2343) in paragraph at lines 216--216
 [] []|\T1/bch/m/n/10 Con-tin-gency ta-ble of genre as-sign-ments
  []
 
 
-Underfull \hbox (badness 2302) in paragraph at lines 213--213
+Underfull \hbox (badness 2302) in paragraph at lines 216--216
 \T1/bch/m/n/10 be-tween COMGET-12 and \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 (first men-
  []
 
-[6 <./figures/supergenre_hierarchy.png> <./figures/dc_contingency.png>]
+
+Underfull \vbox (badness 2005) has occurred while \output is active []
+
+ [6 <./figures/supergenre_hierarchy.png> <./figures/dc_contingency.png>]
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
 <figures/learner_comparison.png, id=289, 511.9125pt x 327.1422pt>
 File: figures/learner_comparison.png Graphic file (type png)
 <use figures/learner_comparison.png>
-Package pdftex.def Info: figures/learner_comparison.png  used on input line 236.
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 239.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
  [7 <./figures/learner_comparison.png>]
 Underfull \vbox (badness 3068) has occurred while \output is active []
@@ -754,7 +757,7 @@ Underfull \vbox (badness 3068) has occurred while \output is active []
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
 
-Underfull \hbox (badness 1231) in paragraph at lines 275--276
+Underfull \hbox (badness 1231) in paragraph at lines 278--279
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
@@ -834,7 +837,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  84i,17n,131p,2260b,655s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (11 pages, 911283 bytes).
+Output written on PowerToThePeople_v1.pdf (11 pages, 926526 bytes).
 PDF statistics:
  436 PDF objects out of 1000 (max. 8388607)
  391 compressed objects within 4 object streams
