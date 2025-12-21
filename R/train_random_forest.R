@@ -65,8 +65,7 @@ train_random_forest <- function(train, test, cv_splits, settings) {
   model_settings <- extract_model_settings(
     rf_model,
     tuning_fit_result$tuning_results,
-    settings$under_ratio_fix,
-    settings$over_ratio_fix,
+    settings$target_ratio_fix,
     tuning_fit_result$model_hash
   )
 
@@ -343,8 +342,7 @@ extract_ranger_model <- function(fitted_workflow) {
 extract_model_settings <- function(
   ranger_model,
   tuning_results,
-  under_ratio_fix,
-  over_ratio_fix = 0.5,
+  target_ratio_fix,
   model_hash = NULL
 ) {
   if (!is.null(tuning_results)) {
@@ -353,21 +351,17 @@ extract_model_settings <- function(
       tuning_results,
       metric = "macro_f1_with_zeros"
     )
-    best_under_ratio <- best_params$under_ratio
-    best_over_ratio <- best_params$over_ratio
+    best_target_ratio <- best_params$target_ratio %||% target_ratio_fix
   } else {
     bayes_iterations <- NULL
-    best_under_ratio <- under_ratio_fix
-    best_over_ratio <- over_ratio_fix
   }
 
   list(
     ntrees = ranger_model$num.trees,
     mtry = ranger_model$mtry,
-    under_ratio = best_under_ratio,
-    over_ratio = best_over_ratio,
+    target_ratio = best_target_ratio %||% target_ratio_fix,
     bayes_iterations = bayes_iterations,
-    max.depth = ranger_model$max.depth,
+    max_depth = ranger_model$max.depth,
     min_n = ranger_model$min.node.size,
     nindependent = ranger_model$num.independent.variables,
     vip.mode = ranger_model$importance.mode,
