@@ -211,7 +211,7 @@ save_results <- function(
   )
   saveRDS(final_tree, sprintf("models/trees/%s_graph.rds", platform_name))
   saveRDS(
-    pruning_gini_evalutation,
+    gini_evalutation,
     sprintf("models/trees/%s_gini_evaluation.rds", platform_name)
   )
 }

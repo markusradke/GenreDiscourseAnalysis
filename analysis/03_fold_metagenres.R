@@ -30,3 +30,19 @@ tune_s <- tune_tree_folding(
 save_tuning(tune_s, "s")
 generate_report("03_metagenres")
 beepr::beep()
+
+# get static metagenre graph for paper
+# sizes <- mb_res$solutions[["1020"]]$n_songs$n
+# names(sizes) <- mb_res$solutions[["1020"]]$n_songs$genre
+# sizes <- c(sizes, "POPULAR MUSIC" = 0.001)
+
+# mb_res$solutions[["1020"]]$metagenre_graph |>
+#   plot_static_tree_graph(
+#     sizes_lookup = sizes,
+#     fill_lookup = get_fills_lookup(read_feather_with_lists(
+#       "data/filtered_mb_long.feather"
+#     )),
+#     layout = "vertical",
+#     spacing_factor = 0.4,
+#     output_file = "reports/paper_v1/figures/supergenre_hierarchy.png"
+#   )

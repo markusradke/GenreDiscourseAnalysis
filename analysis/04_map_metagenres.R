@@ -53,7 +53,15 @@ mb_medium <- map_genres_solution_range(
 mb_high <- map_genres_solution_range(
   read_feather_with_lists("data/filtered_mb_long.feather"),
   tune_mb,
-  31,
+  25,
+  min_votes,
+  min_prop
+)
+
+mb_very_high <- map_genres_solution_range(
+  read_feather_with_lists("data/filtered_mb_long.feather"),
+  tune_mb,
+  32,
   min_votes,
   min_prop
 )
@@ -69,6 +77,10 @@ save_feather_with_lists(
 save_feather_with_lists(
   mb_high,
   "models/metagenres/mb_metagenres_high.feather"
+)
+save_feather_with_lists(
+  mb_very_high,
+  "models/metagenres/mb_metagenres_very_high.feather"
 )
 
 

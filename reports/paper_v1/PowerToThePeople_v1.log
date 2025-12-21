@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 16:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  20 DEC 2025 19:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -503,7 +503,11 @@ Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
 LaTeX Font Info:    Trying to load font information for T1+bch on input line 62.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
-) (./PowerToThePeople_v1.aux)
+) (./PowerToThePeople_v1.aux
+
+LaTeX Warning: Label `fig:rq2_gini_trajectory' multiply defined.
+
+)
 \openout1 = `PowerToThePeople_v1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
@@ -714,37 +718,47 @@ File: figures/folding_gini_trajectory.png Graphic file (type png)
 <use figures/folding_gini_trajectory.png>
 Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 193.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+<figures/supergenre_hierarchy.png, id=262, 519.44063pt x 642.14906pt>
+File: figures/supergenre_hierarchy.png Graphic file (type png)
+<use figures/supergenre_hierarchy.png>
+Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 203.
+(pdftex.def)             Requested size: 237.5805pt x 293.69702pt.
  [5 <./figures/folding_gini_trajectory.png>]
-<figures/dc_contingency.png, id=266, 511.9125pt x 455.0601pt>
+<figures/dc_contingency.png, id=269, 511.9125pt x 455.0601pt>
 File: figures/dc_contingency.png Graphic file (type png)
 <use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 206.
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 212.
 (pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
 
-Underfull \hbox (badness 2343) in paragraph at lines 207--207
+Underfull \hbox (badness 2343) in paragraph at lines 213--213
 [] []|\T1/bch/m/n/10 Con-tin-gency ta-ble of genre as-sign-ments
  []
 
 
-Underfull \hbox (badness 2302) in paragraph at lines 207--207
+Underfull \hbox (badness 2302) in paragraph at lines 213--213
 \T1/bch/m/n/10 be-tween COMGET-12 and \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 (first men-
  []
 
-[6 <./figures/dc_contingency.png>]
-Underfull \vbox (badness 1297) has occurred while \output is active []
+[6 <./figures/supergenre_hierarchy.png> <./figures/dc_contingency.png>]
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
- [7]
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
-
-Underfull \vbox (badness 6016) has occurred while \output is active []
+<figures/learner_comparison.png, id=289, 511.9125pt x 327.1422pt>
+File: figures/learner_comparison.png Graphic file (type png)
+<use figures/learner_comparison.png>
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 236.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+ [7 <./figures/learner_comparison.png>]
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [8]
-Underfull \hbox (badness 1231) in paragraph at lines 264--265
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+
+Underfull \hbox (badness 1231) in paragraph at lines 275--276
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
-(./PowerToThePeople_v1.bbl
+(./PowerToThePeople_v1.bbl [9]
 Underfull \hbox (badness 2229) in paragraph at lines 44--51
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., Pérez-Molina, L., and
  []
@@ -769,7 +783,7 @@ Underfull \hbox (badness 1253) in paragraph at lines 53--58
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
-[9]
+
 Underfull \hbox (badness 10000) in paragraph at lines 119--124
 []\T1/bch/m/n/10 Gracyk, T. (2016).  Heavy metal: Genre?
  []
@@ -799,30 +813,31 @@ Underfull \hbox (badness 1303) in paragraph at lines 217--221
 \T1/bch/m/it/10 ume 2\T1/bch/m/n/10 , Guide Pro-ceed-ings, pages 1238--1245.
  []
 
-
+[10]
 Underfull \hbox (badness 1043) in paragraph at lines 273--277
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
-[10]) [11
+) [11] (./PowerToThePeople_v1.aux)
 
-] (./PowerToThePeople_v1.aux)
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
  ) 
 Here is how much of TeX's memory you used:
- 14681 strings out of 476091
- 246953 string characters out of 5795540
- 1886324 words of memory out of 5000000
- 34693 multiletter control sequences out of 15000+600000
+ 14699 strings out of 476091
+ 247488 string characters out of 5795540
+ 1887324 words of memory out of 5000000
+ 34707 multiletter control sequences out of 15000+600000
  690568 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2260b,671s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,2260b,655s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (11 pages, 769073 bytes).
+Output written on PowerToThePeople_v1.pdf (11 pages, 911283 bytes).
 PDF statistics:
- 430 PDF objects out of 1000 (max. 8388607)
- 388 compressed objects within 4 object streams
- 85 named destinations out of 1000 (max. 500000)
- 157 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 436 PDF objects out of 1000 (max. 8388607)
+ 391 compressed objects within 4 object streams
+ 87 named destinations out of 1000 (max. 500000)
+ 167 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -195,9 +195,15 @@ We evaluated different minimum song counts using a grid search approach to find 
 \label{fig:rq2_gini_trajectory}
 \end{figure}
 
-We applied the folding algorithm described above to COMGET and identified 4 optimal solutions (see figure X): a low detailed solution with 5 genres (min. 12,930 songs, Gini 0.307), a medium detailed solution with 12 genres (min 3,520 songs per genre, Gini 0.342), a high detailed solution with 31 genres (min 1,260 songs per genre, Gini 0.387) and a solution with even higher degree of detail comprising 38 supergenres (min 1,045 genres, Gini 0.385). The imbalance in-between the hierarchies increases until it reaches a sort of plateau from 20 supergenres upwards. Naturally the differences in minimum n between solutions with a lower number so supergenres is way higher than for solutions with a higher number of metagenres.
+%TODO: Update
+We applied the folding algorithm described above to COMGET and identified 4 optimal solutions (see figure \ref{fig:rq2_gini_trajectory}): a low detailed solution with 5 genres (min. 12,930 songs, Gini 0.307), a medium detailed solution with 12 genres (min 3,520 songs per genre, Gini 0.342), a high detailed solution with 31 genres (min 1,260 songs per genre, Gini 0.387) and a solution with even higher degree of detail comprising 38 supergenres (min 1,045 genres, Gini 0.385). The imbalance in-between the hierarchies increases until it reaches a sort of plateau from 20 supergenres upwards. Naturally the differences in minimum n between solutions with a lower number so supergenres is way higher than for solutions with a higher number of metagenres.
 
-TODO: Metagenre graph with detail color code
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/supergenre_hierarchy.png}
+  \caption{Folded COMGET for different levels of detail.}
+\label{fig:rq2_gini_trajectory}
+\end{figure}
 
 The 5 genres solution comprises the supergenres \textit{rock},  \textit{pop}, \textit{hip hop}, \textit{electronic}, and \textit{metal} (in descending order of their song counts, see figure X). For the medium resolution solution, \textit{jazz} and \textit{schlager} appear as distinct subgenres within the \textit{pop} domain.  All other tracks still remain mapped to the general \textit{pop} category. Also, \textit{heavy metal}, \textit{alternative rock}, \textit{pop rock}, \textit{hard rock}, and \textit{indie rock} appear as distinguished subgenres of \textit{rock}. Notably, the majority of people do not see \textit{heavy metal} as a subgenre of \textit{metal}, but as a direct subgenre of \textit{rock}, on the same hierarchy level as \textit{metal}. The solution with 31 genres shows further distinct rock subgenres \textit{punk}, \textit{progressive rock}, \textit{folk}, \textit{folk rock}, \textit{classic rock}, \textit{blues rock}, \textit{singer-songwriter}, \textit{blues}, \textit{country}, \textit{new wave}, \textit{soft rock}. Furthermore, a third level is introduced to the hierarchy with \textit{death metal} as a subgenre of \textit{metal} and \textit{power metal} as subgenre of \textit{heavy metal}. Within \textit{pop}, \textit{soul}, \textit{classical}, \textit{synth-pop}, \textit{r\&b}, \textit{dance-pop}, and \textit{reggae} appear as distinct subgenres. \textit{hip hop} subgenres (\textit{pop rap}, \textit{trap}) do only appear in the very detailed solution with 38 gernes.   In this very detailed solution, also electronic gets a subgenre (\textit{house}), but overall no additional level remains in the resulting hierarchy.
 
@@ -225,7 +231,12 @@ We used a Bayesian optimization approach ~\citep{snoekPracticalBayesianOptimizat
 
 \subsection{Results: Performance in the Light of Uncertainty}
 
-TODO: PROTOTYPE LEARNERS COMPARISON PLOT
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/learner_comparison.png}
+  \caption{Performance comparison of different learners (GLMNET, RDA, RF, GBM) on 20\% of the data set for COMGET-5 (left) and COMGET-12 (right); plots show mean and standard error of $\text{F1}_{\text{macro}}$ across CV folds.}
+\label{fig:rq3_proto}
+\end{figure}
 
 Model comparison (see fig x) shows that all four learners (GLMNET, RDA, RF, GBM) perform nearly equally well in terms of macro F1 on 20\% of the data set. That is why we chose GLMNET to train models on the full data set due to its high interpretability, computational efficiency, and parsimontiy. 
 
