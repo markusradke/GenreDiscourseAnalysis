@@ -200,7 +200,7 @@ tune_and_fit_workflow <- function(
     initial_grid_size = settings$initial_grid_size,
     bayes_iterations = settings$bayes_iterations,
     uncertain_jump = settings$uncertain_jump,
-    grid_chunk_size = settings$grid_chunk_size %||% 5,
+    chunk_size = settings$chunk_size %||% 5,
     settings = settings,
     enable_grid_checkpoints = settings$enable_grid_checkpoints %||% TRUE,
     enable_bayes_checkpoints = settings$enable_bayes_checkpoints %||% TRUE

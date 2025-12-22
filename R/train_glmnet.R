@@ -99,7 +99,7 @@ train_glmnet <- function(train, test, cv_splits, settings) {
       initial_grid_size = settings$initial_grid_size,
       bayes_iterations = settings$bayes_iterations,
       uncertain_jump = settings$uncertain_jump,
-      grid_chunk_size = settings$grid_chunk_size,
+      chunk_size = settings$chunk_size,
       settings = settings,
       enable_grid_checkpoints = settings$enable_grid_checkpoints %||% TRUE,
       enable_bayes_checkpoints = settings$enable_bayes_checkpoints %||% TRUE

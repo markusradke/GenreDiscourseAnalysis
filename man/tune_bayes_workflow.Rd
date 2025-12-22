@@ -16,7 +16,7 @@ tune_bayes_workflow(
   bayes_iterations = 15,
   uncertain_jump = 5,
   checkpoint_dir = "models/classifier/checkpoints",
-  grid_chunk_size = 5,
+  chunk_size = 5,
   settings = NULL,
   enable_grid_checkpoints = TRUE,
   enable_bayes_checkpoints = TRUE
@@ -45,7 +45,7 @@ tune_bayes_workflow(
 
 \item{checkpoint_dir}{Directory for saving checkpoints (NULL to disable)}
 
-\item{grid_chunk_size}{Number of grid points per chunk for checkpointing}
+\item{chunk_size}{Number of grid points per chunk for checkpointing}
 
 \item{settings}{Full settings list (for hash computation)}
 

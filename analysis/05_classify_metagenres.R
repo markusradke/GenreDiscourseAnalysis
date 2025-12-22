@@ -1,6 +1,5 @@
 rm(list = ls())
 gc()
-library(bonsai)
 devtools::load_all()
 options(tidymodels.dark = TRUE)
 run_data_pre <- FALSE
@@ -9,17 +8,13 @@ run_rda <- FALSE
 run_lightgbm <- TRUE
 run_rf <- FALSE
 max_cores <- 64 # for final model fitting
-max_cores_tuning <- 5 # for parallel tuning of GLMNET, MARS and RDA (multiple of n_folds, max n_folds x grid)
 reserve_cores <- 4 # cores to leave free on the machine
 n_folds <- 5
 n_initial_grid <- 20
 n_bayes_iter <- 50
-checkpoint_chunk_size <- 1
-enable_grid_checkpoints <- TRUE # Enable/disable grid phase checkpointing
-enable_bayes_checkpoints <- TRUE # Enable/disable Bayesian phase checkpointing
 process_low <- FALSE
 process_medium <- FALSE
-process_high <- TRUE
+process_high <- FALSE
 process_very_high <- TRUE
 
 if (isTRUE(run_data_pre)) {
@@ -36,7 +31,7 @@ if (isTRUE(run_data_pre)) {
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 1.0,
+    subsample_prop = 1,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,
@@ -169,10 +164,6 @@ model_features <- featureset[
 ]
 message("--MODEL FEATURES--")
 print(model_features)
-# Exclude Spotify distribution genres
-# model_features <- model_features[!grepl("^dtb\\.", model_features)]
-# Only Spotify ditribution genres
-# model_features <- model_features[grepl("^dtb\\.", model_features)]
 
 # GLMNET Models ----
 if (isTRUE(run_glmnet)) {
@@ -180,7 +171,7 @@ if (isTRUE(run_glmnet)) {
     seed = 42,
     model_features = model_features,
     n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
+    n_cores_tuning = 1, # when tuning sampling
     use_caseweights = FALSE,
     tune_penalty = TRUE,
     tune_alpha = TRUE,
@@ -190,11 +181,11 @@ if (isTRUE(run_glmnet)) {
     target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
-    grid_chunk_size = checkpoint_chunk_size,
+    chunk_size = 1,
     uncertain_jump = 5,
     reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
+    enable_grid_checkpoints = TRUE,
+    enable_bayes_checkpoints = TRUE
   )
 
   if (isTRUE(process_low)) {
@@ -239,7 +230,7 @@ if (isTRUE(run_lightgbm)) {
     seed = 42,
     model_features = model_features,
     n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
+    n_cores_tuning = 1, # when tuning sampling
     use_caseweights = FALSE,
     tune_tree_depth = TRUE,
     tune_trees = TRUE,
@@ -255,11 +246,11 @@ if (isTRUE(run_lightgbm)) {
     target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
-    grid_chunk_size = checkpoint_chunk_size,
+    chunk_size = 1,
     uncertain_jump = 5,
     reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
+    enable_grid_checkpoints = TRUE,
+    enable_bayes_checkpoints = TRUE
   )
 
   if (isTRUE(process_low)) {
@@ -315,7 +306,7 @@ if (isTRUE(run_lightgbm)) {
       train_df = train_high,
       test_df = test_high
     )
-    rm(lightgbm_high, settings)
+    rm(lightgbm_high)
     gc()
   }
 
@@ -334,7 +325,7 @@ if (isTRUE(run_lightgbm)) {
       train_df = train_very_high,
       test_df = test_very_high
     )
-    rm(lightgbm_very_high, settings)
+    rm(lightgbm_very_high)
     gc()
   }
 }
@@ -346,7 +337,7 @@ if (isTRUE(run_rda)) {
     seed = 42,
     model_features = model_features,
     n_cores = max_cores,
-    n_cores_tuning = max_cores_tuning,
+    n_cores_tuning = 1, # when tuning sampling
     use_caseweights = FALSE,
     tune_gamma = TRUE,
     tune_lambda = TRUE,
@@ -356,11 +347,11 @@ if (isTRUE(run_rda)) {
     target_ratio_fix = 5,
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
-    grid_chunk_size = checkpoint_chunk_size,
+    chunk_size = 1,
     uncertain_jump = 5,
     reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
+    enable_grid_checkpoints = TRUE,
+    enable_bayes_checkpoints = TRUE
   )
 
   if (isTRUE(process_low)) {
@@ -391,11 +382,11 @@ if (isTRUE(run_rda)) {
       settings
     )
     save_classification_model(
-      rda_high,
-      "rda_highres",
+      rda_medium,
+      "rda_mediumres",
       subfolder = "rda",
-      train_df = train_high,
-      test_df = test_high
+      train_df = train_medium,
+      test_df = test_medium
     )
     rm("rda_medium")
     gc()
@@ -409,10 +400,10 @@ if (isTRUE(run_rf)) {
     seed = 42,
     ntrees = 1000,
     n_cores = max_cores,
-    n_cores_tuning = 1, #5,
+    n_cores_tuning = 1, # when tuning sampling
     varimp_top_n = 40,
     model_features = model_features,
-    importance = "impurity",
+    importance = "permutation",
     use_caseweights = FALSE,
     tune_mtry = TRUE,
     tune_min_n = TRUE,
@@ -422,14 +413,14 @@ if (isTRUE(run_rf)) {
     initial_grid_size = n_initial_grid,
     bayes_iterations = n_bayes_iter,
     uncertain_jump = 5,
-    grid_chunk_size = checkpoint_chunk_size,
+    chunk_size = 1,
     min.node.size_fix = 50,
     max.depth_fix = Inf,
     mtry_fix = 11,
     target_ratio_fix = 5,
     reserve_cores = reserve_cores,
-    enable_grid_checkpoints = enable_grid_checkpoints,
-    enable_bayes_checkpoints = enable_bayes_checkpoints
+    enable_grid_checkpoints = TRUE,
+    enable_bayes_checkpoints = TRUE
   )
   saveRDS(settings, "models/classifier/rf_tune_settings.rds")
 
@@ -474,4 +465,4 @@ if (isTRUE(run_rf)) {
 
 # Generate resport ----
 
-generate_report("05_classify_metagenres")
+# generate_report("05_classify_metagenres")

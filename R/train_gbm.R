@@ -104,7 +104,7 @@ train_gbm <- function(train, test, cv_splits, settings) {
       initial_grid_size = settings$initial_grid_size,
       bayes_iterations = settings$bayes_iterations,
       uncertain_jump = settings$uncertain_jump,
-      grid_chunk_size = settings$grid_chunk_size,
+      chunk_size = settings$chunk_size,
       settings = settings,
       enable_grid_checkpoints = settings$enable_grid_checkpoints %||% TRUE,
       enable_bayes_checkpoints = settings$enable_bayes_checkpoints %||% TRUE
@@ -197,6 +197,12 @@ any_lightgbm_hyperparameter_tuned <- function(settings) {
 create_lightgbm_model_spec <- function(settings, train_df) {
   n_features <- length(settings$model_features)
 
+  n_threads <- get_number_of_threads_per_worker(
+    settings$n_cores,
+    settings$n_cores_tuning,
+    settings$reserve_cores
+  )
+
   spec <- parsnip::boost_tree(
     tree_depth = settings$tree_depth_fix,
     trees = settings$trees_fix,
@@ -204,7 +210,7 @@ create_lightgbm_model_spec <- function(settings, train_df) {
     mtry = settings$mtry_fix,
     min_n = settings$min_n_fix
   ) |>
-    parsnip::set_engine("lightgbm", num_threads = 1) |>
+    parsnip::set_engine("lightgbm", num_threads = n_threads) |>
     parsnip::set_mode("classification")
 
   spec <- add_tunable_lightgbm_params(spec, settings)
@@ -332,7 +338,8 @@ extract_lightgbm_model_settings <- function(
 evaluate_lightgbm_model <- function(fitted_model, train_df, test_df) {
   train_eval <- compute_lightgbm_predictions(fitted_model, train_df)
   test_eval <- compute_lightgbm_predictions(fitted_model, test_df)
-  varimp <- extract_variable_importance(fitted_model)
+  varimp <- lightgbm::lgb.importance(fitted_model$fit$fit$fit) |>
+    dplyr::arrange(dplyr::desc(Gain))
 
   list(
     confusion_train = train_eval$cm,

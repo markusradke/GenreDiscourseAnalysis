@@ -95,9 +95,9 @@ tune_bayes_with_checkpoints_resume <- function(
   metadata,
   start_iter,
   best_metric_value,
-  no_improve_counter
+  no_improve_counter,
+  checkpoint_interval
 ) {
-  checkpoint_interval <- max(1, floor(bayes_iterations / 5))
   no_improve_limit <- bayescontrol$no_improve %||% Inf
 
   current_results <- initial_results
@@ -180,9 +180,9 @@ tune_bayes_with_checkpoints <- function(
   bayes_iterations,
   bayescontrol,
   checkpoint_path,
-  metadata
+  metadata,
+  checkpoint_interval
 ) {
-  checkpoint_interval <- max(1, floor(bayes_iterations / 5))
   no_improve_limit <- bayescontrol$no_improve %||% Inf
 
   current_results <- initial_results
@@ -258,39 +258,6 @@ tune_bayes_with_checkpoints <- function(
   current_results
 }
 
-print_tuning_core_guidance <- function(n_folds, initial_grid_size) {
-  total_tasks <- n_folds * initial_grid_size
-
-  message("--- Parallel Tuning Configuration ---")
-  message("\nCore selection guidance:\n")
-  message(sprintf(
-    "  - Initial grid: %d tasks (%d folds x %d grid points)",
-    total_tasks,
-    n_folds,
-    initial_grid_size
-  ))
-  message(sprintf(
-    "  - Bayesian phase: %d tasks per iteration (1 per fold)",
-    n_folds
-  ))
-  message("  - Use n_cores_tuning as multiple of n_folds to avoid idle workers")
-  message(
-    "  - For GLMNET: Try to use as many workers (n_cores_tuning) as possible (1 thread per worker)"
-  )
-  message(
-    "  - For random forests: Automatically uses threads_per_worker for hybrid parallelism"
-  )
-  message(
-    "    Threads per worker = max cores / n_cores_tuning |> floor()"
-  )
-  message(
-    "    It is recommended to set n_cores_tuning = n_folds to maximize resource usage during bayesian phase"
-  )
-  message("  - Monitor worker memory with htop (RES column)")
-  message("  - RAM needed: ~3GB main + n_workers x per_worker_memory")
-  message("--------------------------------------")
-}
-
 print_phase_info <- function(
   phase,
   n_workers,
@@ -357,7 +324,7 @@ create_sampling_params <- function(train_df) {
 #' @param bayes_iterations Number of Bayesian optimization iterations
 #' @param uncertain_jump Uncertainty parameter for tune_bayes
 #' @param checkpoint_dir Directory for saving checkpoints (NULL to disable)
-#' @param grid_chunk_size Number of grid points per chunk for checkpointing
+#' @param chunk_size Number of grid points / Bayes iterations per chunk for checkpointing
 #' @param settings Full settings list (for hash computation)
 #' @param enable_grid_checkpoints Enable checkpointing for grid phase
 #' @param enable_bayes_checkpoints Enable checkpointing for Bayesian phase
@@ -374,7 +341,7 @@ tune_bayes_workflow <- function(
   bayes_iterations = 15,
   uncertain_jump = 5,
   checkpoint_dir = "models/classifier/checkpoints",
-  grid_chunk_size = 5,
+  chunk_size = 5,
   settings = NULL,
   enable_grid_checkpoints = TRUE,
   enable_bayes_checkpoints = TRUE
@@ -393,7 +360,6 @@ tune_bayes_workflow <- function(
   }
 
   n_folds <- length(cv_splits$splits)
-  print_tuning_core_guidance(n_folds, initial_grid_size)
   metric_set <- create_tuning_metrics()
 
   initial_grid <- dials::grid_space_filling(
@@ -451,7 +417,7 @@ tune_bayes_workflow <- function(
     metric_set = metric_set,
     checkpoint_dir = if (enable_grid_checkpoints) checkpoint_dir else NULL,
     model_type = model_type,
-    chunk_size = grid_chunk_size,
+    chunk_size = chunk_size,
     n_train_rows = nrow(train_df),
     model_hash = model_hash
   )
@@ -501,7 +467,8 @@ tune_bayes_workflow <- function(
         bayes_metadata,
         start_iter,
         bayes_checkpoint$best_metric_value,
-        bayes_checkpoint$no_improve_counter
+        bayes_checkpoint$no_improve_counter,
+        checkpoint_interval = chunk_size
       )
     }
   } else {
@@ -514,7 +481,8 @@ tune_bayes_workflow <- function(
       bayes_iterations,
       bayescontrol,
       bayes_checkpoint_path,
-      bayes_metadata
+      bayes_metadata,
+      checkpoint_interval = chunk_size
     )
   }
 
