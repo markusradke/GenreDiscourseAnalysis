@@ -4,45 +4,45 @@ The top-level auxiliary file: PowerToThePeople_v1.aux
 The style file: apalike.bst
 Database file #1: refs.bib
 Warning--empty booktitle in mayerRhymeStyleFeatures2008
-You've used 49 entries,
+You've used 50 entries,
             1935 wiz_defined-function locations,
-            822 strings with 16201 characters,
-and the built_in function-call counts, 20906 in all, are:
-= -- 2075
-> -- 839
-< -- 39
-+ -- 298
-- -- 276
-* -- 1668
-:= -- 3540
-add.period$ -- 173
-call.type$ -- 49
-change.case$ -- 368
-chr.to.int$ -- 49
-cite$ -- 50
-duplicate$ -- 875
-empty$ -- 1508
-format.name$ -- 347
-if$ -- 4221
+            830 strings with 16442 characters,
+and the built_in function-call counts, 21503 in all, are:
+= -- 2138
+> -- 862
+< -- 40
++ -- 306
+- -- 284
+* -- 1713
+:= -- 3631
+add.period$ -- 177
+call.type$ -- 50
+change.case$ -- 377
+chr.to.int$ -- 50
+cite$ -- 51
+duplicate$ -- 902
+empty$ -- 1552
+format.name$ -- 356
+if$ -- 4352
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 56
-newline$ -- 261
-num.names$ -- 155
-pop$ -- 376
+missing$ -- 57
+newline$ -- 266
+num.names$ -- 158
+pop$ -- 387
 preamble$ -- 1
-purify$ -- 374
+purify$ -- 383
 quote$ -- 0
-skip$ -- 635
+skip$ -- 656
 stack$ -- 0
-substring$ -- 1371
-swap$ -- 161
-text.length$ -- 13
+substring$ -- 1415
+swap$ -- 171
+text.length$ -- 14
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 280
+type$ -- 286
 warning$ -- 1
-while$ -- 171
+while$ -- 176
 width$ -- 0
-write$ -- 675
+write$ -- 690
 (There was 1 warning)

@@ -316,14 +316,14 @@ Note
 <tr class="odd">
 <td style="text-align: left;">low (10-15)</td>
 <td style="text-align: left;">Train</td>
-<td style="text-align: left;">12,431</td>
-<td style="text-align: left;">3,185</td>
+<td style="text-align: left;">126,504</td>
+<td style="text-align: left;">7,032</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">low (10-15)</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: left;">3,077</td>
-<td style="text-align: left;">798</td>
+<td style="text-align: left;">28,589</td>
+<td style="text-align: left;">1,759</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">high (25-30)</td>
@@ -420,7 +420,7 @@ Note
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>] <span class="sc">|&gt;</span> <span class="fu">sort</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>A total of 166 features was used for training the classifiers on the full data set.</p>
+<p>A total of 225 features was used for training the classifiers on the full data set.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -466,235 +466,319 @@ Note
 <td style="text-align: left;">album.s.popularity</td>
 <td style="text-align: left;">album.s.releaseyear</td>
 <td style="text-align: left;">album.s.totaltracks</td>
-<td style="text-align: left;">artist.mb.area_DE</td>
-<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: left;">artist.mb.area_AU</td>
+<td style="text-align: left;">artist.mb.area_CA</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">artist.mb.area_other</td>
-<td style="text-align: left;">artist.mb.birthyear</td>
-<td style="text-align: left;">artist.mb.dead_TRUE.</td>
-<td style="text-align: left;">artist.mb.gender_other</td>
-<td style="text-align: left;">artist.mb.origin_Germany</td>
+<td style="text-align: left;">artist.mb.area_DE</td>
+<td style="text-align: left;">artist.mb.area_FI</td>
+<td style="text-align: left;">artist.mb.area_FR</td>
+<td style="text-align: left;">artist.mb.area_GB</td>
+<td style="text-align: left;">artist.mb.area_IE</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">artist.mb.area_NO</td>
+<td style="text-align: left;">artist.mb.area_other</td>
+<td style="text-align: left;">artist.mb.area_SE</td>
+<td style="text-align: left;">artist.mb.birthyear</td>
+<td style="text-align: left;">artist.mb.dead_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.gender_other</td>
+<td style="text-align: left;">artist.mb.origin_Australia</td>
+<td style="text-align: left;">artist.mb.origin_Canada</td>
+<td style="text-align: left;">artist.mb.origin_Finland</td>
+<td style="text-align: left;">artist.mb.origin_France</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">artist.mb.origin_Germany</td>
+<td style="text-align: left;">artist.mb.origin_Ireland</td>
+<td style="text-align: left;">artist.mb.origin_Italy</td>
+<td style="text-align: left;">artist.mb.origin_Norway</td>
 <td style="text-align: left;">artist.mb.origin_other</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">artist.mb.origin_Sweden</td>
 <td style="text-align: left;">artist.mb.origin_United.Kingdom</td>
 <td style="text-align: left;">artist.mb.type_other</td>
 <td style="text-align: left;">artist.s.followers</td>
 <td style="text-align: left;">artist.s.popularity</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">dtb.album.rock_TRUE.</td>
 <td style="text-align: left;">dtb.alternative.metal_TRUE.</td>
 <td style="text-align: left;">dtb.alternative.rock_TRUE.</td>
+<td style="text-align: left;">dtb.blues.rock_TRUE.</td>
+<td style="text-align: left;">dtb.canadian.pop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.chamber.pop_TRUE.</td>
 <td style="text-align: left;">dtb.classic.rock_TRUE.</td>
+<td style="text-align: left;">dtb.classic.schlager_TRUE.</td>
 <td style="text-align: left;">dtb.dance.pop_TRUE.</td>
+<td style="text-align: left;">dtb.death.metal_TRUE.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">dtb.edm_TRUE.</td>
+<td style="text-align: left;">dtb.electronica_TRUE.</td>
+<td style="text-align: left;">dtb.eurodance_TRUE.</td>
+<td style="text-align: left;">dtb.europop_TRUE.</td>
+<td style="text-align: left;">dtb.german.hip.hop_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.german.indie_TRUE.</td>
+<td style="text-align: left;">dtb.german.metal_TRUE.</td>
+<td style="text-align: left;">dtb.german.pop_TRUE.</td>
 <td style="text-align: left;">dtb.german.rock_TRUE.</td>
+<td style="text-align: left;">dtb.german.techno_TRUE.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">dtb.glam.metal_TRUE.</td>
+<td style="text-align: left;">dtb.gothic.metal_TRUE.</td>
 <td style="text-align: left;">dtb.hard.rock_TRUE.</td>
+<td style="text-align: left;">dtb.hip.hop_TRUE.</td>
+<td style="text-align: left;">dtb.indie.rock_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.indietronica_TRUE.</td>
+<td style="text-align: left;">dtb.industrial.metal_TRUE.</td>
+<td style="text-align: left;">dtb.latin.pop_TRUE.</td>
+<td style="text-align: left;">dtb.liedermacher_TRUE.</td>
+<td style="text-align: left;">dtb.medieval.rock_TRUE.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">dtb.mellow.gold_TRUE.</td>
 <td style="text-align: left;">dtb.metal_TRUE.</td>
 <td style="text-align: left;">dtb.modern.rock_TRUE.</td>
+<td style="text-align: left;">dtb.neo.mellow_TRUE.</td>
+<td style="text-align: left;">dtb.neue.deutsche.harte_TRUE.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">dtb.new.romantic_TRUE.</td>
 <td style="text-align: left;">dtb.new.wave.pop_TRUE.</td>
+<td style="text-align: left;">dtb.new.wave_TRUE.</td>
+<td style="text-align: left;">dtb.nu.metal_TRUE.</td>
 <td style="text-align: left;">dtb.other_TRUE.</td>
-<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
-<td style="text-align: left;">dtb.pop_TRUE.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">dtb.permanent.wave_TRUE.</td>
+<td style="text-align: left;">dtb.pop.dance_TRUE.</td>
+<td style="text-align: left;">dtb.pop_TRUE.</td>
+<td style="text-align: left;">dtb.post.grunge_TRUE.</td>
 <td style="text-align: left;">dtb.power.metal_TRUE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">dtb.progressive.metal_TRUE.</td>
+<td style="text-align: left;">dtb.progressive.rock_TRUE.</td>
+<td style="text-align: left;">dtb.psychedelic.rock_TRUE.</td>
+<td style="text-align: left;">dtb.punk_TRUE.</td>
+<td style="text-align: left;">dtb.r&amp;b_TRUE.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">dtb.rap_TRUE.</td>
 <td style="text-align: left;">dtb.rock_TRUE.</td>
 <td style="text-align: left;">dtb.singer.songwriter_TRUE.</td>
 <td style="text-align: left;">dtb.soft.rock_TRUE.</td>
+<td style="text-align: left;">dtb.speed.metal_TRUE.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">dtb.speed.metal_TRUE.</td>
+<td style="text-align: left;">dtb.symphonic.metal_TRUE.</td>
+<td style="text-align: left;">dtb.synthpop_TRUE.</td>
+<td style="text-align: left;">dtb.vocal.jazz_TRUE.</td>
 <td style="text-align: left;">is.major.label_FALSE.</td>
 <td style="text-align: left;">label.med.album.popularity</td>
-<td style="text-align: left;">label.med.artist.popularity</td>
-<td style="text-align: left;">label.med.track.popularity</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">label.med.artist.popularity</td>
+<td style="text-align: left;">label.med.track.popularity</td>
 <td style="text-align: left;">lyrics.distinct_words_ratio</td>
 <td style="text-align: left;">lyrics.nrc_anger</td>
 <td style="text-align: left;">lyrics.nrc_anticipation</td>
-<td style="text-align: left;">lyrics.nrc_disgust</td>
-<td style="text-align: left;">lyrics.nrc_fear</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">lyrics.nrc_disgust</td>
+<td style="text-align: left;">lyrics.nrc_fear</td>
 <td style="text-align: left;">lyrics.nrc_joy</td>
 <td style="text-align: left;">lyrics.nrc_negative</td>
 <td style="text-align: left;">lyrics.nrc_positive</td>
-<td style="text-align: left;">lyrics.nrc_sadness</td>
-<td style="text-align: left;">lyrics.nrc_surprise</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">lyrics.nrc_sadness</td>
+<td style="text-align: left;">lyrics.nrc_surprise</td>
 <td style="text-align: left;">lyrics.nrc_trust</td>
 <td style="text-align: left;">lyrics.repeated_lines_ratio</td>
 <td style="text-align: left;">lyrics.sentiment</td>
-<td style="text-align: left;">track.ab.low.dynamiccomplexity</td>
-<td style="text-align: left;">track.ab.low.loudness</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.low.dynamiccomplexity</td>
+<td style="text-align: left;">track.ab.low.loudness</td>
 <td style="text-align: left;">track.ab.p.acoustic</td>
 <td style="text-align: left;">track.ab.p.aggressive</td>
 <td style="text-align: left;">track.ab.p.bright</td>
-<td style="text-align: left;">track.ab.p.danceable</td>
-<td style="text-align: left;">track.ab.p.drtmd.alternative</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.danceable</td>
+<td style="text-align: left;">track.ab.p.drtmd.alternative</td>
 <td style="text-align: left;">track.ab.p.drtmd.blues</td>
 <td style="text-align: left;">track.ab.p.drtmd.electronic</td>
 <td style="text-align: left;">track.ab.p.drtmd.folk.country</td>
-<td style="text-align: left;">track.ab.p.drtmd.funk.soul.rnb</td>
-<td style="text-align: left;">track.ab.p.drtmd.jazz</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.drtmd.funk.soul.rnb</td>
+<td style="text-align: left;">track.ab.p.drtmd.jazz</td>
 <td style="text-align: left;">track.ab.p.drtmd.pop</td>
 <td style="text-align: left;">track.ab.p.drtmd.rap.hiphop</td>
 <td style="text-align: left;">track.ab.p.drtmd.rock</td>
-<td style="text-align: left;">track.ab.p.electronic</td>
-<td style="text-align: left;">track.ab.p.eltrc.ambient</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.electronic</td>
+<td style="text-align: left;">track.ab.p.eltrc.ambient</td>
 <td style="text-align: left;">track.ab.p.eltrc.drumandbass</td>
 <td style="text-align: left;">track.ab.p.eltrc.house</td>
 <td style="text-align: left;">track.ab.p.eltrc.techno</td>
-<td style="text-align: left;">track.ab.p.eltrc.trance</td>
-<td style="text-align: left;">track.ab.p.female</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.eltrc.trance</td>
+<td style="text-align: left;">track.ab.p.female</td>
 <td style="text-align: left;">track.ab.p.happy</td>
 <td style="text-align: left;">track.ab.p.ismir.chachacha</td>
 <td style="text-align: left;">track.ab.p.ismir.jive</td>
-<td style="text-align: left;">track.ab.p.ismir.quickstep</td>
-<td style="text-align: left;">track.ab.p.ismir.rumbaamerican</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.ismir.quickstep</td>
+<td style="text-align: left;">track.ab.p.ismir.rumbaamerican</td>
 <td style="text-align: left;">track.ab.p.ismir.rumbainternational</td>
 <td style="text-align: left;">track.ab.p.ismir.rumbamisc</td>
 <td style="text-align: left;">track.ab.p.ismir.samba</td>
-<td style="text-align: left;">track.ab.p.ismir.tango</td>
-<td style="text-align: left;">track.ab.p.ismir.viennesewaltz</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.ismir.tango</td>
+<td style="text-align: left;">track.ab.p.ismir.viennesewaltz</td>
 <td style="text-align: left;">track.ab.p.ismir.waltz</td>
 <td style="text-align: left;">track.ab.p.mirex.aggressive</td>
 <td style="text-align: left;">track.ab.p.mirex.humorous</td>
-<td style="text-align: left;">track.ab.p.mirex.literate</td>
-<td style="text-align: left;">track.ab.p.mirex.passionate</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.mirex.literate</td>
+<td style="text-align: left;">track.ab.p.mirex.passionate</td>
 <td style="text-align: left;">track.ab.p.mirex.rollicking</td>
 <td style="text-align: left;">track.ab.p.party</td>
 <td style="text-align: left;">track.ab.p.relaxed</td>
-<td style="text-align: left;">track.ab.p.rosa.classical</td>
-<td style="text-align: left;">track.ab.p.rosa.dance</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.rosa.classical</td>
+<td style="text-align: left;">track.ab.p.rosa.dance</td>
 <td style="text-align: left;">track.ab.p.rosa.hiphop</td>
 <td style="text-align: left;">track.ab.p.rosa.jazz</td>
 <td style="text-align: left;">track.ab.p.rosa.pop</td>
-<td style="text-align: left;">track.ab.p.rosa.rhythmandblues</td>
-<td style="text-align: left;">track.ab.p.rosa.rock</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.rosa.rhythmandblues</td>
+<td style="text-align: left;">track.ab.p.rosa.rock</td>
 <td style="text-align: left;">track.ab.p.rosa.speech</td>
 <td style="text-align: left;">track.ab.p.sad</td>
 <td style="text-align: left;">track.ab.p.tonal</td>
-<td style="text-align: left;">track.ab.p.tzntk.blues</td>
-<td style="text-align: left;">track.ab.p.tzntk.classical</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.tzntk.blues</td>
+<td style="text-align: left;">track.ab.p.tzntk.classical</td>
 <td style="text-align: left;">track.ab.p.tzntk.country</td>
 <td style="text-align: left;">track.ab.p.tzntk.disco</td>
 <td style="text-align: left;">track.ab.p.tzntk.hiphop</td>
-<td style="text-align: left;">track.ab.p.tzntk.jazz</td>
-<td style="text-align: left;">track.ab.p.tzntk.metal</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.p.tzntk.jazz</td>
+<td style="text-align: left;">track.ab.p.tzntk.metal</td>
 <td style="text-align: left;">track.ab.p.tzntk.pop</td>
 <td style="text-align: left;">track.ab.p.tzntk.reggae</td>
 <td style="text-align: left;">track.ab.p.tzntk.rock</td>
-<td style="text-align: left;">track.ab.p.voice</td>
-<td style="text-align: left;">track.ab.rhythm.danceability</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.ab.p.voice</td>
+<td style="text-align: left;">track.ab.rhythm.danceability</td>
 <td style="text-align: left;">track.ab.rhythm.onsetrate</td>
 <td style="text-align: left;">track.ab.rhythm.tempo</td>
 <td style="text-align: left;">track.ab.tonal.chordchangerate</td>
-<td style="text-align: left;">track.ab.tonal.chordsnumberrate</td>
-<td style="text-align: left;">track.ab.tonal.key_A</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.tonal.chordsnumberrate</td>
+<td style="text-align: left;">track.ab.tonal.key_A</td>
+<td style="text-align: left;">track.ab.tonal.key_A.</td>
+<td style="text-align: left;">track.ab.tonal.key_B</td>
 <td style="text-align: left;">track.ab.tonal.key_C</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">track.ab.tonal.key_C.</td>
 <td style="text-align: left;">track.ab.tonal.key_D</td>
 <td style="text-align: left;">track.ab.tonal.key_D.</td>
 <td style="text-align: left;">track.ab.tonal.key_E</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">track.ab.tonal.key_F</td>
-<td style="text-align: left;">track.ab.tonal.key_G</td>
-<td style="text-align: left;">track.ab.tonal.key_G.</td>
-<td style="text-align: left;">track.ab.tonal.key_other</td>
-<td style="text-align: left;">track.ab.tonal.keystrength</td>
+<td style="text-align: left;">track.ab.tonal.key_F.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.ab.tonal.key_G</td>
+<td style="text-align: left;">track.ab.tonal.key_G.</td>
+<td style="text-align: left;">track.ab.tonal.keystrength</td>
 <td style="text-align: left;">track.ab.tonal.mode_minor</td>
 <td style="text-align: left;">track.dz.album.duration</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">track.dz.album.explicitlyrics_TRUE.</td>
 <td style="text-align: left;">track.dz.album.followers</td>
 <td style="text-align: left;">track.dz.firstartist.followers</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">track.dz.firstartist.nalbums</td>
 <td style="text-align: left;">track.dz.loudness</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">track.dz.rank</td>
 <td style="text-align: left;">track.dz.tempo</td>
 <td style="text-align: left;">track.is.dach_TRUE.</td>
-</tr>
-<tr class="odd">
+<td style="text-align: left;">track.is.instrumental_TRUE.</td>
 <td style="text-align: left;">track.language_German</td>
-<td style="text-align: left;">track.language_other</td>
-<td style="text-align: left;">track.s.acousticness</td>
-<td style="text-align: left;">track.s.danceability</td>
-<td style="text-align: left;">track.s.duration</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">track.language_Instrumental</td>
+<td style="text-align: left;">track.language_other</td>
+<td style="text-align: left;">track.language_Spanish..Castilian</td>
+<td style="text-align: left;">track.s.acousticness</td>
+<td style="text-align: left;">track.s.danceability</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">track.s.duration</td>
 <td style="text-align: left;">track.s.energy</td>
 <td style="text-align: left;">track.s.explicitlyrics_TRUE.</td>
 <td style="text-align: left;">track.s.instrumentalness</td>
 <td style="text-align: left;">track.s.key_A</td>
-<td style="text-align: left;">track.s.key_B</td>
 </tr>
-<tr class="odd">
+<tr class="even">
+<td style="text-align: left;">track.s.key_B</td>
 <td style="text-align: left;">track.s.key_Bb</td>
 <td style="text-align: left;">track.s.key_C</td>
 <td style="text-align: left;">track.s.key_C.</td>
 <td style="text-align: left;">track.s.key_D</td>
-<td style="text-align: left;">track.s.key_E</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">track.s.key_F</td>
-<td style="text-align: left;">track.s.key_G.</td>
-<td style="text-align: left;">track.s.key_other</td>
-<td style="text-align: left;">track.s.liveness</td>
-<td style="text-align: left;">track.s.loudness</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">track.s.key_E</td>
+<td style="text-align: left;">track.s.key_Eb</td>
+<td style="text-align: left;">track.s.key_F</td>
+<td style="text-align: left;">track.s.key_F.</td>
+<td style="text-align: left;">track.s.key_G.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">track.s.liveness</td>
+<td style="text-align: left;">track.s.loudness</td>
 <td style="text-align: left;">track.s.mode_minor</td>
 <td style="text-align: left;">track.s.popularity</td>
 <td style="text-align: left;">track.s.speechiness</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">track.s.tempo</td>
 <td style="text-align: left;">track.s.timesignature_other</td>
+<td style="text-align: left;">track.s.timesignature_X3.4</td>
+<td style="text-align: left;">track.s.timesignature_X5.4</td>
+<td style="text-align: left;">track.s.valence</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">track.s.valence</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
@@ -890,35 +974,39 @@ Note
 <span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  cm_plot <span class="ot">&lt;-</span> <span class="fu">plot_cm</span>(data<span class="sc">$</span>eval, res_config<span class="sc">$</span>certainty, <span class="st">"test"</span>)</span>
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>  width_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"low"</span>, <span class="dv">180</span>, <span class="dv">360</span>)</span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  heigth_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"low"</span>, <span class="dv">100</span>, <span class="dv">200</span>)</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    cm_plot,</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">sprintf</span>(<span class="st">"../reports/paper_v1/figures/lightgbm_%sres_cm.png"</span>, res_name),</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> width_cm_paper,</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> heigth_cm_paper,</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"mm"</span>,</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cm_plot)</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">#### Feature Importance</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  varimp_plot <span class="ot">&lt;-</span> <span class="fu">plot_gbm_varimp</span>(</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>eval<span class="sc">$</span>varimp,</span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_top =</span> n_top_varimp</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>    varimp_plot,</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">sprintf</span>(<span class="st">"../reports/paper_v1/figures/lightgbm_%sres_varimp.png"</span>, res_name),</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">180</span>,</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">150</span>,</span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"mm"</span>,</span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(varimp_plot)</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  width_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"medium"</span>, <span class="dv">240</span>, width_cm_paper)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>  width_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"high"</span>, <span class="dv">320</span>, width_cm_paper)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  heigth_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"low"</span>, <span class="dv">100</span>, <span class="dv">225</span>)</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>  heigth_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"medium"</span>, <span class="dv">150</span>, heigth_cm_paper)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  heigth_cm_paper <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(res_name <span class="sc">==</span> <span class="st">"high"</span>, <span class="dv">200</span>, heigth_cm_paper)</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    cm_plot,</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">sprintf</span>(<span class="st">"../reports/paper_v1/figures/lightgbm_%sres_cm.png"</span>, res_name),</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> width_cm_paper,</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> heigth_cm_paper,</span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"mm"</span>,</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cm_plot)</span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">#### Feature Importance</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>  varimp_plot <span class="ot">&lt;-</span> <span class="fu">plot_gbm_varimp</span>(</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>    data<span class="sc">$</span>eval<span class="sc">$</span>varimp,</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_top =</span> n_top_varimp</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>    varimp_plot,</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="fu">sprintf</span>(<span class="st">"../reports/paper_v1/figures/lightgbm_%sres_varimp.png"</span>, res_name),</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> <span class="dv">180</span>,</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">150</span>,</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"mm"</span>,</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">dpi =</span> <span class="dv">300</span></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(varimp_plot)</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <section id="low-detailed-supergenre-labels" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="low-detailed-supergenre-labels"><span class="header-section-number">7.1</span> Low-detailed supergenre labels</h2>

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  22 DEC 2025 12:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  22 DEC 2025 15:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -717,7 +717,7 @@ Underfull \hbox (badness 5548) in paragraph at lines 113--114
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [3]
-<figures/balancing_gini_trajectory.png, id=244, 511.9125pt x 327.1422pt>
+<figures/balancing_gini_trajectory.png, id=246, 511.9125pt x 327.1422pt>
 File: figures/balancing_gini_trajectory.png Graphic file (type png)
 <use figures/balancing_gini_trajectory.png>
 Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 157.
@@ -765,44 +765,66 @@ File: figures/lightgbm_lowres_cm.png Graphic file (type png)
 <use figures/lightgbm_lowres_cm.png>
 Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 249.
 (pdftex.def)             Requested size: 237.5805pt x 132.03635pt.
-<figures/lightgbm_mediumres_cm.png, id=292, 1024.0659pt x 569.0058pt>
+<figures/lightgbm_mediumres_cm.png, id=292, 682.7106pt x 426.6339pt>
 File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
 <use figures/lightgbm_mediumres_cm.png>
 Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 258.
-(pdftex.def)             Requested size: 489.38739pt x 271.91284pt.
-<figures/lightgbm_highres_cm.png, id=293, 1024.0659pt x 569.0058pt>
+(pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
+<figures/lightgbm_highres_cm.png, id=293, 910.3611pt x 569.0058pt>
 File: figures/lightgbm_highres_cm.png Graphic file (type png)
 <use figures/lightgbm_highres_cm.png>
 Package pdftex.def Info: figures/lightgbm_highres_cm.png  used on input line 266.
-(pdftex.def)             Requested size: 489.38739pt x 271.91284pt.
+(pdftex.def)             Requested size: 489.38739pt x 305.88675pt.
  [7 <./figures/learner_comparison.png>]
-<figures/lightgbm_lowres_varimp.png, id=310, 511.9125pt x 426.6339pt>
+Underfull \vbox (badness 2626) has occurred while \output is active []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 282--283
+[]\T1/bch/m/n/10 The clas-si-fier for so-lu-tion with 25 gen-res
+ []
+
+
+Underfull \hbox (badness 1189) in paragraph at lines 282--283
+\T1/bch/m/n/10 again showed a degra-da-tion in per-for-mance with
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 282--283
+\T1/bch/m/n/10 match-ing fur-ther degra-da-tion in class as-sign-ment
+ []
+
+
+Underfull \hbox (badness 1297) in paragraph at lines 282--283
+\T1/bch/m/n/10 cer-tainty within the com-mu-nity (56%). Cor-re-la-
+ []
+
+<figures/lightgbm_lowres_varimp.png, id=315, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
 <use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 287.
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 291.
 (pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
-<figures/lightgbm_mediumres_varimp.png, id=311, 511.9125pt x 426.6339pt>
+<figures/lightgbm_mediumres_varimp.png, id=316, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
 <use figures/lightgbm_mediumres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 295.
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 299.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
-<figures/lightgbm_highres_varimp.png, id=313, 511.9125pt x 426.6339pt>
+<figures/lightgbm_highres_varimp.png, id=318, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_highres_varimp.png Graphic file (type png)
 <use figures/lightgbm_highres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_highres_varimp.png  used on input line 303.
+Package pdftex.def Info: figures/lightgbm_highres_varimp.png  used on input line 307.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
-Underfull \vbox (badness 2538) has occurred while \output is active []
+Underfull \vbox (badness 3068) has occurred while \output is active []
 
- [8 <./figures/lightgbm_lowres_cm.png>] [9 <./figures/lightgbm_mediumres_cm.png> <./figures/lightgbm_highres_cm.png>]
-Underfull \vbox (badness 6016) has occurred while \output is active []
+ [8 <./figures/lightgbm_lowres_cm.png>] [9 <./figures/lightgbm_mediumres_cm.png> <./figures/lightgbm_highres_cm.png>] [10 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_highres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [10 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_highres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \hbox (badness 1231) in paragraph at lines 332--333
+
+Underfull \hbox (badness 1231) in paragraph at lines 336--337
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
-(./PowerToThePeople_v1.bbl
+[11] (./PowerToThePeople_v1.bbl
 Underfull \hbox (badness 2229) in paragraph at lines 44--51
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., Pérez-Molina, L., and
  []
@@ -827,7 +849,7 @@ Underfull \hbox (badness 1253) in paragraph at lines 53--58
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
-[11]
+
 Underfull \hbox (badness 10000) in paragraph at lines 119--124
 []\T1/bch/m/n/10 Gracyk, T. (2016).  Heavy metal: Genre?
  []
@@ -852,38 +874,36 @@ Underfull \hbox (badness 2181) in paragraph at lines 132--138
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-
-Underfull \hbox (badness 1303) in paragraph at lines 217--221
+[12]
+Underfull \hbox (badness 1303) in paragraph at lines 223--227
 \T1/bch/m/it/10 ume 2\T1/bch/m/n/10 , Guide Pro-ceed-ings, pages 1238--1245.
  []
 
 
-Underfull \hbox (badness 1043) in paragraph at lines 273--277
+Underfull \hbox (badness 1043) in paragraph at lines 279--283
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
-[12]) [13
-
-] (./PowerToThePeople_v1.aux)
+) [13] (./PowerToThePeople_v1.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
-(rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
+(rerunfilecheck)             Checksum: B65682D349D43EA736CC052E4ADDA3B9;4102.
  ) 
 Here is how much of TeX's memory you used:
- 14871 strings out of 476091
- 251495 string characters out of 5795540
+ 14876 strings out of 476091
+ 251648 string characters out of 5795540
  1886324 words of memory out of 5000000
- 34864 multiletter control sequences out of 15000+600000
+ 34868 multiletter control sequences out of 15000+600000
  696497 words of font info for 128 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2260b,669s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (13 pages, 3044964 bytes).
+ 84i,17n,131p,2260b,635s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on PowerToThePeople_v1.pdf (13 pages, 2981921 bytes).
 PDF statistics:
- 461 PDF objects out of 1000 (max. 8388607)
- 405 compressed objects within 5 object streams
- 92 named destinations out of 1000 (max. 500000)
+ 473 PDF objects out of 1000 (max. 8388607)
+ 415 compressed objects within 5 object streams
+ 93 named destinations out of 1000 (max. 500000)
  209 words of extra memory for PDF output out of 10000 (max. 10000000)
 

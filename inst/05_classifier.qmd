@@ -393,7 +393,11 @@ for (res_name in names(resolutions)) {
   cm_plot <- plot_cm(data$eval, res_config$certainty, "test")
   
   width_cm_paper <- ifelse(res_name == "low", 180, 360)
-  heigth_cm_paper <- ifelse(res_name == "low", 100, 200)
+  width_cm_paper <- ifelse(res_name == "medium", 240, width_cm_paper)
+  width_cm_paper <- ifelse(res_name == "high", 320, width_cm_paper)
+  heigth_cm_paper <- ifelse(res_name == "low", 100, 225)
+  heigth_cm_paper <- ifelse(res_name == "medium", 150, heigth_cm_paper)
+  heigth_cm_paper <- ifelse(res_name == "high", 200, heigth_cm_paper)
 
   ggplot2::ggsave(
     cm_plot,
