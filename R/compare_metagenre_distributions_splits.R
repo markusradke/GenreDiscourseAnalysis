@@ -127,7 +127,7 @@ make_plot <- function(all_data) {
     ) +
     ggplot2::labs(
       x = "Metagenre",
-      y = "Proportion"
+      y = "Relative Frequency"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
