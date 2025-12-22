@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  21 DEC 2025 19:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  22 DEC 2025 12:06
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -499,78 +499,88 @@ Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
 \g__lipsum_par_int=\count304
 \l__lipsum_a_int=\count305
 \l__lipsum_b_int=\count306
- (c:/texlive/2022/texmf-dist/tex/latex/lipsum/lipsum.ltd.tex))
-LaTeX Font Info:    Trying to load font information for T1+bch on input line 62.
+ (c:/texlive/2022/texmf-dist/tex/latex/lipsum/lipsum.ltd.tex)) (c:/texlive/2022/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
+\c@subfigure=\count307
+\c@subtable=\count308
+)
+LaTeX Font Info:    Trying to load font information for T1+bch on input line 63.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
 ) (./PowerToThePeople_v1.aux
 
 LaTeX Warning: Label `fig:rq2_gini_trajectory' multiply defined.
 
+
+LaTeX Warning: Label `fig:rq3_varimp_low' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:rq3_varimp_low' multiply defined.
+
 )
 \openout1 = `PowerToThePeople_v1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 62.
-LaTeX Font Info:    Trying to load font information for FML+futm on input line 62.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 63.
+LaTeX Font Info:    Trying to load font information for FML+futm on input line 63.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 62.
-LaTeX Font Info:    Trying to load font information for FMS+futm on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 63.
+LaTeX Font Info:    Trying to load font information for FMS+futm on input line 63.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmsfutm.fd
 File: fmsfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FMS/futm.
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 62.
-LaTeX Font Info:    Trying to load font information for FMX+futm on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 63.
+LaTeX Font Info:    Trying to load font information for FMX+futm on input line 63.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmxfutm.fd
 File: fmxfutm.fd futm-extension
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
  (c:/texlive/2022/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
 )
-\c@mv@tabular=\count307
-\c@mv@boldtabular=\count308
+\c@mv@tabular=\count309
+\c@mv@boldtabular=\count310
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 62.
+Package hyperref Info: Link coloring OFF on input line 63.
  (./PowerToThePeople_v1.out) (./PowerToThePeople_v1.out)
 \@outlinefile=\write4
 \openout4 = `PowerToThePeople_v1.out'.
 
  (c:/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count309
+\scratchcounter=\count311
 \scratchdimen=\dimen191
 \scratchbox=\box57
-\nofMPsegments=\count310
-\nofMParguments=\count311
+\nofMPsegments=\count312
+\nofMParguments=\count313
 \everyMPshowfont=\toks30
-\MPscratchCnt=\count312
+\MPscratchCnt=\count314
 \MPscratchDim=\dimen192
-\MPnumerator=\count313
-\makeMPintoPDFobject=\count314
+\MPnumerator=\count315
+\makeMPintoPDFobject=\count316
 \everyMPtoPDFconversion=\toks31
 ) (c:/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -578,72 +588,72 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (c:/texlive/2022/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 79.
+LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 80.
  (c:/texlive/2022/texmf-dist/tex/latex/quattrocento/T1QuattroSans-LF.fd
 File: T1QuattroSans-LF.fd 2020/07/28 (autoinst) Font definitions for T1/QuattroSans-LF.
 )
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 10.0pt on input line 79.
+(Font)              scaled to size 10.0pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 10.0pt on input line 79.
+(Font)              scaled to size 10.0pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 12.0pt on input line 79.
+(Font)              scaled to size 12.0pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 20.74pt on input line 79.
+(Font)              scaled to size 20.74pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 14.4pt on input line 79.
-LaTeX Font Info:    Trying to load font information for FML+futmi on input line 79.
+(Font)              scaled to size 14.4pt on input line 80.
+LaTeX Font Info:    Trying to load font information for FML+futmi on input line 80.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutmi.fd
 File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 79.
+(Font)              scaled to size 13.24796pt on input line 80.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 79.
+(Font)              scaled to size 9.19998pt on input line 80.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 79.
+(Font)              scaled to size 7.35999pt on input line 80.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 79.
+(Font)              scaled to size 13.24796pt on input line 80.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 79.
+(Font)              scaled to size 9.19998pt on input line 80.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 79.
-LaTeX Font Info:    Trying to load font information for TS1+bch on input line 79.
+(Font)              scaled to size 7.35999pt on input line 80.
+LaTeX Font Info:    Trying to load font information for TS1+bch on input line 80.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/ts1bch.fd
 File: ts1bch.fd 2004/10/18 font definitions for TS1/bch.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.25598pt on input line 79.
+(Font)              scaled to size 6.25598pt on input line 80.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 79.
+(Font)              scaled to size 5.51999pt on input line 80.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.25598pt on input line 79.
+(Font)              scaled to size 6.25598pt on input line 80.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 79.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 12.0pt on input line 79.
+(Font)              scaled to size 5.51999pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
 (Font)              `T1/QuattroSans-LF/regular/n' on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 8.0pt on input line 80.
+(Font)              scaled to size 12.0pt on input line 80.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 86.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 81.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 6.0pt on input line 86.
+(Font)              scaled to size 8.0pt on input line 81.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 87.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 6.0pt on input line 87.
 
-Underfull \hbox (badness 4805) in paragraph at lines 88--89
+Underfull \hbox (badness 4805) in paragraph at lines 89--90
 \T1/bch/m/n/10 Although playlist-driven lis-ten-ing has grown on
  []
 
@@ -653,20 +663,20 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <tismir.png, id=102, 534.99875pt x 134.5025pt>
 File: tismir.png Graphic file (type png)
 <use tismir.png>
-Package pdftex.def Info: tismir.png  used on input line 93.
+Package pdftex.def Info: tismir.png  used on input line 94.
 (pdftex.def)             Requested size: 145.59631pt x 36.60347pt.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 93.
+(Font)              scaled to size 6.99199pt on input line 94.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 93.
+(Font)              scaled to size 6.99199pt on input line 94.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 93.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 94.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 93.
+(Font)              scaled to size 9.0pt on input line 94.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
-(Font)              `T1/QuattroSans-LF/regular/it' on input line 93.
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 94.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
-(Font)              scaled to size 9.0pt on input line 93.
+(Font)              scaled to size 9.0pt on input line 94.
 
 Underfull \hbox (badness 1448) has occurred while \output is active
 []\T1/QuattroSans-LF/regular/n/9 Radke, M. and Lepa, S. (2025). Power to the Peo-ple! As-sign-
@@ -699,7 +709,7 @@ Underfull \vbox (badness 6016) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [2]
-Underfull \hbox (badness 5548) in paragraph at lines 112--113
+Underfull \hbox (badness 5548) in paragraph at lines 113--114
 []\T1/bch/b/n/10 RQ1 \T1/bch/m/n/10 How can we con-struct an em-pir-i-cally
  []
 
@@ -710,32 +720,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <figures/balancing_gini_trajectory.png, id=244, 511.9125pt x 327.1422pt>
 File: figures/balancing_gini_trajectory.png Graphic file (type png)
 <use figures/balancing_gini_trajectory.png>
-Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 156.
+Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 157.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
  [4 <./figures/balancing_gini_trajectory.png>]
 <figures/folding_gini_trajectory.png, id=260, 511.9125pt x 327.1422pt>
 File: figures/folding_gini_trajectory.png Graphic file (type png)
 <use figures/folding_gini_trajectory.png>
-Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 193.
+Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 194.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
 <figures/supergenre_hierarchy.png, id=262, 746.03719pt x 840.89156pt>
 File: figures/supergenre_hierarchy.png Graphic file (type png)
 <use figures/supergenre_hierarchy.png>
-Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 203.
+Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 204.
 (pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
  [5 <./figures/folding_gini_trajectory.png>]
 <figures/dc_contingency.png, id=269, 511.9125pt x 455.0601pt>
 File: figures/dc_contingency.png Graphic file (type png)
 <use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 215.
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 216.
 (pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
 
-Underfull \hbox (badness 2343) in paragraph at lines 216--216
+Underfull \hbox (badness 2343) in paragraph at lines 217--217
 [] []|\T1/bch/m/n/10 Con-tin-gency ta-ble of genre as-sign-ments
  []
 
 
-Underfull \hbox (badness 2302) in paragraph at lines 216--216
+Underfull \hbox (badness 2302) in paragraph at lines 217--217
 \T1/bch/m/n/10 be-tween COMGET-12 and \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 (first men-
  []
 
@@ -748,28 +758,51 @@ Underfull \vbox (badness 3068) has occurred while \output is active []
 <figures/learner_comparison.png, id=289, 511.9125pt x 327.1422pt>
 File: figures/learner_comparison.png Graphic file (type png)
 <use figures/learner_comparison.png>
-Package pdftex.def Info: figures/learner_comparison.png  used on input line 239.
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 240.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
 <figures/lightgbm_lowres_cm.png, id=291, 511.9125pt x 284.5029pt>
 File: figures/lightgbm_lowres_cm.png Graphic file (type png)
 <use figures/lightgbm_lowres_cm.png>
-Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 248.
+Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 249.
 (pdftex.def)             Requested size: 237.5805pt x 132.03635pt.
+<figures/lightgbm_mediumres_cm.png, id=292, 1024.0659pt x 569.0058pt>
+File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
+<use figures/lightgbm_mediumres_cm.png>
+Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 258.
+(pdftex.def)             Requested size: 489.38739pt x 271.91284pt.
+<figures/lightgbm_highres_cm.png, id=293, 1024.0659pt x 569.0058pt>
+File: figures/lightgbm_highres_cm.png Graphic file (type png)
+<use figures/lightgbm_highres_cm.png>
+Package pdftex.def Info: figures/lightgbm_highres_cm.png  used on input line 266.
+(pdftex.def)             Requested size: 489.38739pt x 271.91284pt.
  [7 <./figures/learner_comparison.png>]
-<figures/lightgbm_lowres_varimp.png, id=308, 511.9125pt x 426.6339pt>
+<figures/lightgbm_lowres_varimp.png, id=310, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
 <use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 262.
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 287.
 (pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
- [8 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+<figures/lightgbm_mediumres_varimp.png, id=311, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
+<use figures/lightgbm_mediumres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 295.
+(pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
+<figures/lightgbm_highres_varimp.png, id=313, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_highres_varimp.png Graphic file (type png)
+<use figures/lightgbm_highres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_highres_varimp.png  used on input line 303.
+(pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
+Underfull \vbox (badness 2538) has occurred while \output is active []
 
-Underfull \hbox (badness 1231) in paragraph at lines 288--289
+ [8 <./figures/lightgbm_lowres_cm.png>] [9 <./figures/lightgbm_mediumres_cm.png> <./figures/lightgbm_highres_cm.png>]
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+ [10 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_highres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
+Underfull \hbox (badness 1231) in paragraph at lines 332--333
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
-[9] (./PowerToThePeople_v1.bbl
+(./PowerToThePeople_v1.bbl
 Underfull \hbox (badness 2229) in paragraph at lines 44--51
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., Pérez-Molina, L., and
  []
@@ -794,7 +827,7 @@ Underfull \hbox (badness 1253) in paragraph at lines 53--58
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
-
+[11]
 Underfull \hbox (badness 10000) in paragraph at lines 119--124
 []\T1/bch/m/n/10 Gracyk, T. (2016).  Heavy metal: Genre?
  []
@@ -819,7 +852,7 @@ Underfull \hbox (badness 2181) in paragraph at lines 132--138
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-[10]
+
 Underfull \hbox (badness 1303) in paragraph at lines 217--221
 \T1/bch/m/it/10 ume 2\T1/bch/m/n/10 , Guide Pro-ceed-ings, pages 1238--1245.
  []
@@ -829,7 +862,9 @@ Underfull \hbox (badness 1043) in paragraph at lines 273--277
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
-) [11] (./PowerToThePeople_v1.aux)
+[12]) [13
+
+] (./PowerToThePeople_v1.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -837,18 +872,18 @@ Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
  ) 
 Here is how much of TeX's memory you used:
- 14717 strings out of 476091
- 248046 string characters out of 5795540
- 1885324 words of memory out of 5000000
- 34721 multiletter control sequences out of 15000+600000
- 690568 words of font info for 124 fonts, out of 8000000 for 9000
+ 14871 strings out of 476091
+ 251495 string characters out of 5795540
+ 1886324 words of memory out of 5000000
+ 34864 multiletter control sequences out of 15000+600000
+ 696497 words of font info for 128 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2260b,633s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,2260b,669s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (11 pages, 1268843 bytes).
+Output written on PowerToThePeople_v1.pdf (13 pages, 3044964 bytes).
 PDF statistics:
- 441 PDF objects out of 1000 (max. 8388607)
- 394 compressed objects within 4 object streams
- 89 named destinations out of 1000 (max. 500000)
- 177 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 461 PDF objects out of 1000 (max. 8388607)
+ 405 compressed objects within 5 object streams
+ 92 named destinations out of 1000 (max. 500000)
+ 209 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -19,6 +19,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{lipsum}
+\usepackage{subcaption} 
 
 \graphicspath{ {./figures/} }
 
@@ -250,17 +251,60 @@ Model comparison (see fig \ref{fig:rq3_proto}) shows that all four learners (GLM
 \label{fig:rq3_cm_low}
 \end{figure}
 
+\begin{figure*}[htbp]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_mediumres_cm.png}
+    \caption{COMGET-12}
+    \label{fig:rq3_cm_medium}
+  \end{subfigure}
+  \hfil
+  \vspace{0.5 cm}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_highres_cm.png}
+    \caption{COMGET-25}
+    \label{fig:rq3_cm_high}
+  \end{subfigure}
+  \caption{Confusion matrices for the final GBM models on the hold-out set for COMGET-12 and COMGET-25; grading shows $P(\text{Predicted}|\text{Actual})$; certainty is mean relative frequency of assignments within tracks that were assigned to the genre.}
+\label{fig:rq3_cm_medium_high}
+\end{figure*}
+
 TODO: The final models on the full data set showed some underfitting. For classifier for the 5 genre solution yielded a mean $\text{F1}_{\text{macro}}$ of XX on the CV folds and $\text{F1}_{\text{macro}}$ of XX on the hold-out set; $F1$ per class highly positively correlated with XX with the assignment certainty within the community (= mean assignment probability for the class across tags). In the light of the mean assignment probability of XX, we can consider the classifier as very satisfactory. TODO: Description of the confusion matrix.
 
+
 TODO: The classifier for the 12 genre solution also shows a little underfitting with mean $\text{F1}_{\text{macro}}$ of XX on CV folds and $\text{F1}_{\text{macro}}$ of XX on the holdout-set. Compare to the classifier for the low detailed solution classification performance was degraded. However, also the assignment certainty (XX\%) was lower. Here, again F1 per class showed high correlation with per class voting certainty (XX). TODO:Description of the confusion matrix.
+
 
 
 Finally, the classifier for the 31 genre solution again showed a degradation in performance with mean $\text{F1}_{\text{macro}}$ of XX on CV folds and $\text{F1}_{\text{macro}}$ of X on the hold-out set, matching a degradation in class assignment certainty within the community (XX\%). Correlation of per class assignment certainty and  is a little lower than it was for the other two levels of detail (XX). 
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\columnwidth]{figures/lightgbm_lowres_varimp.png}
-  \caption{Top 20 most important features for automated classification of COMGET-5 with final LightGBM learner.}
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_lowres_varimp.png}
+    \caption{COMGET-5}
+    \label{fig:rq3_varimp_low}
+  \end{subfigure}
+  \hfill
+  \vspace{0.25 cm}
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_mediumres_varimp.png}
+    \caption{COMGET-12}
+    \label{fig:rq3_varimp_low}
+  \end{subfigure}
+  \hfill
+  \vspace{0.25 cm}
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_highres_varimp.png}
+    \caption{COMGET-25}
+    \label{fig:rq3_varimp_high}
+  \end{subfigure}
+  \caption{Top 20 most important features for automated classification of COMGET-5, COMGET-12, and COMGET-25 with final LightGBM learner.}
 \label{fig:rq3_varimp}
 \end{figure}
 

@@ -45,7 +45,7 @@ tune_bayes_workflow(
 
 \item{checkpoint_dir}{Directory for saving checkpoints (NULL to disable)}
 
-\item{chunk_size}{Number of grid points per chunk for checkpointing}
+\item{chunk_size}{Number of grid points / Bayes iterations per chunk for checkpointing}
 
 \item{settings}{Full settings list (for hash computation)}
 

@@ -18,12 +18,27 @@ plot_cm <- function(evaluation, certainty, set = "test") {
   cm_df <- cm_df |>
     dplyr::mutate(
       Actual_label = sprintf(
-        "%s (F1: %.0f%%, Certain: %.0f%%)",
+        "%s (F1: %.3f, Certain: %.0f%%)",
         Actual,
-        f1_scores[Actual] * 100,
+        f1_scores[Actual],
         certainty_vec[Actual] * 100
       )
     )
+  f1_macro <- metrics$f1macro
+  mean_certainty <- mean(certainty_vec)
+  cor_f1_certain <- cor(
+    f1_scores[names(certainty_vec)],
+    certainty_vec,
+    method = "spearman"
+  )
+  metrics_label <- sprintf(
+    "F1<sub>macro</sub>: %.3f<br>
+Mean Community Certainty: %.0f%%<br>
+Cor<sub>Spearman</sub>(F1, Certainty): %.3f",
+    f1_macro,
+    mean_certainty * 100,
+    cor_f1_certain
+  )
 
   ggplot2::ggplot(
     cm_df,
@@ -49,16 +64,33 @@ plot_cm <- function(evaluation, certainty, set = "test") {
       name = ""
     ) +
     ggplot2::scale_color_manual(values = c("black", "white")) +
-    ggplot2::scale_x_discrete(position = "top") +
+    ggplot2::scale_x_discrete(
+      position = "top",
+      expand = ggplot2::expansion(mult = 0)
+    ) +
+    ggplot2::scale_y_discrete(
+      expand = ggplot2::expansion(mult = 0)
+    ) +
     ggplot2::labs(
+      title = metrics_label,
       x = "PREDICTED",
-      y = "ACTUAL",
+      y = "ACTUAL"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
+      plot.title = ggtext::element_markdown(
+        size = 16,
+        face = "bold",
+        color = "black",
+        hjust = 0,
+        lineheight = 1.5,
+        margin = ggplot2::margin(b = -72)
+      ),
+      plot.title.position = "plot",
       legend.position = "right",
       legend.text = ggplot2::element_text(color = "grey45", size = 16),
       legend.title = ggplot2::element_text(color = "grey45", size = 16),
+      panel.grid = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(
         angle = 65,
         hjust = 0,
@@ -87,37 +119,6 @@ get_metrics_description <- function(metrics) {
     metrics$kappa,
     metrics$accuracy
   )
-}
-
-plot_varimp <- function(varimp_df, top_n = 40) {
-  df <- varimp_df |>
-    dplyr::arrange(dplyr::desc(Importance)) |>
-    head(top_n)
-  p <- ggplot2::ggplot(
-    df,
-    ggplot2::aes(
-      x = reorder(Variable, Importance),
-      y = Importance
-    )
-  ) +
-    ggplot2::geom_col(fill = "grey50") +
-    ggplot2::coord_flip() +
-    ggplot2::scale_y_continuous(
-      expand = ggplot2::expansion(mult = c(0, 0.05))
-    ) +
-    ggplot2::labs(
-      x = "Variable",
-      y = "Importance"
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      axis.text.y = ggplot2::element_text(size = 12),
-      axis.text.x = ggplot2::element_text(color = "grey45"),
-      panel.grid.major.y = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_text(color = "grey45"),
-      axis.title.y = ggplot2::element_blank()
-    )
-  p
 }
 
 
@@ -332,35 +333,6 @@ render_tuning_top_table <- function(top_table) {
     kableExtra::remove_column(ncol(top_table))
 }
 
-#' Plot variable importance bar chart
-#' @param varimp_df Variable importance data frame with Variable and Importance columns
-#' @param n_top Number of top variables to show
-plot_varimp_bar <- function(varimp_df, n_top = 20) {
-  varimp_df |>
-    head(n_top) |>
-    dplyr::arrange(dplyr::desc(Importance)) |>
-    dplyr::mutate(
-      Variable = forcats::fct_inorder(Variable) |> forcats::fct_rev()
-    ) |>
-    ggplot2::ggplot(ggplot2::aes(y = Variable, x = Importance)) +
-    ggplot2::geom_bar(stat = "identity", fill = "grey65") +
-    ggplot2::scale_x_continuous(
-      position = "top",
-      expand = ggplot2::expansion(mult = c(0, 0.05))
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      axis.title.y = ggplot2::element_blank(),
-      axis.title.x = ggplot2::element_text(
-        color = "grey45",
-        size = 16,
-        hjust = 0
-      ),
-      axis.text.x = ggplot2::element_text(color = "grey45", size = 12),
-      axis.text.y = ggplot2::element_text(color = "black", size = 12),
-      panel.grid.major.y = ggplot2::element_blank()
-    )
-}
 
 #' Render GLMNET variable importance table
 #' @param model GLMNET model object
@@ -479,41 +451,60 @@ plot_learner_comparison <- function(chosen_models) {
 }
 
 plot_gbm_varimp <- function(varimp, n_top) {
+  level_colors <- c(
+    album = "#c40d20",
+    artist = "grey65",
+    track = "#3e578eff"
+  )
+  all_levels <- names(level_colors)
+
   prep <- varimp |>
     head(n_top) |>
     dplyr::mutate(
       Feature = forcats::fct_inorder(Feature) |> forcats::fct_rev(),
       level = dplyr::case_when(
-        grepl("track", Feature) ~ "track",
-        grepl("lyrics", Feature) ~ "track",
         grepl("artist", Feature) ~ "artist",
         grepl("dtb", Feature) ~ "artist",
         grepl("album", Feature) ~ "album",
-        grepl("label", Feature) ~ "album"
+        grepl("label", Feature) ~ "album",
+        grepl("track", Feature) ~ "track",
+        grepl("lyrics", Feature) ~ "track"
       ),
-      level = factor(level, levels = c("album", "artist", "track"))
+      level = factor(level, levels = all_levels)
     )
+
+  dummy_data <- data.frame(
+    Gain = NA_real_,
+    Feature = prep$Feature[1],
+    level = factor(all_levels, levels = all_levels)
+  )
+
   ggplot2::ggplot(
     prep,
     ggplot2::aes(x = Gain, y = Feature, fill = level)
   ) +
     ggplot2::geom_bar(stat = "identity") +
+    ggplot2::geom_col(
+      # to show all colors in legend
+      data = dummy_data,
+      ggplot2::aes(x = Gain, y = Feature, fill = level),
+      na.rm = TRUE
+    ) +
     ggplot2::scale_x_continuous(
       position = "top",
       expand = ggplot2::expansion(mult = c(0, 0.05))
     ) +
     ggplot2::scale_fill_manual(
-      values = c(
-        "album" = "#c40d20",
-        "artist" = "grey65",
-        "track" = "#3e578eff"
-      ),
-      name = "Feature level"
+      values = level_colors,
+      name = "Feature",
+      drop = FALSE
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
-      # legend.position = c(0.8, 0.2),
       legend.position = "top",
+      legend.direction = "horizontal",
+      legend.justification = "left",
+      legend.box.just = "left",
       legend.text = ggplot2::element_text(
         size = 18,
         color = "grey45"
@@ -522,7 +513,6 @@ plot_gbm_varimp <- function(varimp, n_top) {
         size = 18,
         color = "grey45"
       ),
-      legend.justification = "left",
       axis.title.y = ggplot2::element_blank(),
       axis.title.x = ggplot2::element_text(
         color = "grey45",

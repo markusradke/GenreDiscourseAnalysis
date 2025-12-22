@@ -312,17 +312,17 @@ resolutions <- list(
     hash = "dc8426d1",
     certainty = lowres_certainty,
     title = "Low-detailed"
-  )#,
-  # medium = list(
-  #   hash = "811e1b4e",
-  #   certainty = mediumres_certainty,
-  #   title = "Medium-detailed"
-  # ),
-  # high = list(
-  #   hash = "83f9d6d2",
-  #   certainty = highres_certainty,
-  #   title = "High-detailed"
-  # )
+  ),
+  medium = list(
+    hash = "811e1b4e",
+    certainty = mediumres_certainty,
+    title = "Medium-detailed"
+  ),
+  high = list(
+    hash = "de549d7b",
+    certainty = highres_certainty,
+    title = "High-detailed"
+  )
 )
 
 params <- c("tree_depth", "trees", "learn_rate", "mtry", "min_n", "target_ratio")
@@ -355,6 +355,7 @@ extract_chosen_params <- function(settings) {
 
 # Final GBM Classifier Results
 
+:::{.column-screen-inset-right}
 ```{r results, results='asis'}
 for (res_name in names(resolutions)) {
   res_config <- resolutions[[res_name]]
@@ -374,11 +375,9 @@ for (res_name in names(resolutions)) {
   print(render_tuning_top_table(table))
   
   cat("\n#### Parameter Exploration\n\n")
-  cat(":::{.column-screen-inset-right}\n")
   for (i in seq_along(params)) {
     print(plot_parameter_tuning(data$tuning, params[i], i == 1))
   }
-  cat(":::\n\n")
   
   cat("### Evaluation on test set\n\n")
   
@@ -393,11 +392,14 @@ for (res_name in names(resolutions)) {
   
   cm_plot <- plot_cm(data$eval, res_config$certainty, "test")
   
+  width_cm_paper <- ifelse(res_name == "low", 180, 360)
+  heigth_cm_paper <- ifelse(res_name == "low", 100, 200)
+
   ggplot2::ggsave(
     cm_plot,
     filename = sprintf("../reports/paper_v1/figures/lightgbm_%sres_cm.png", res_name),
-    width = 180,
-    height = 100,
+    width = width_cm_paper,
+    height = heigth_cm_paper,
     units = "mm",
     dpi = 300
   )
@@ -421,3 +423,4 @@ for (res_name in names(resolutions)) {
   print(varimp_plot)
 }
 ```
+:::
