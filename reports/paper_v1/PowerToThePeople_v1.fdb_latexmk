@@ -1,17 +1,17 @@
 # Fdb version 4
-["bibtex PowerToThePeople_v1"] 1766312048 "PowerToThePeople_v1.aux" "PowerToThePeople_v1.bbl" "PowerToThePeople_v1" 1766312053 0
+["bibtex PowerToThePeople_v1"] 1766342706 "PowerToThePeople_v1.aux" "PowerToThePeople_v1.bbl" "PowerToThePeople_v1" 1766342712 0
   "./refs.bib" 1765906675 71553 a9b4720df6e4ac2e562609f30e550bbc ""
-  "PowerToThePeople_v1.aux" 1766312052 26495 ced3a7b52fece0748641510f2a084c16 "pdflatex"
+  "PowerToThePeople_v1.aux" 1766342711 27616 b11d6d3fdad7e59606de462d56ebddd4 "pdflatex"
   "c:/texlive/2022/texmf-dist/bibtex/bst/base/apalike.bst" 1673948027 24635 604dafcc79f521a11ea73e506e1fbd98 ""
   (generated)
   "PowerToThePeople_v1.bbl"
   "PowerToThePeople_v1.blg"
   (rewritten before read)
-["pdflatex"] 1766312049 "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" "PowerToThePeople_v1.pdf" "PowerToThePeople_v1" 1766312053 0
-  "PowerToThePeople_v1.aux" 1766312052 26495 ced3a7b52fece0748641510f2a084c16 "pdflatex"
-  "PowerToThePeople_v1.bbl" 1766312049 14519 d7ac44a98cf80582448dd849fa1a6492 "bibtex PowerToThePeople_v1"
-  "PowerToThePeople_v1.out" 1766312052 3888 b94a96768b6394a08e85664324354e0d "pdflatex"
-  "PowerToThePeople_v1.tex" 1766312043 51707 4628732ed26b5156f582b2ef1dedf31b ""
+["pdflatex"] 1766342707 "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" "PowerToThePeople_v1.pdf" "PowerToThePeople_v1" 1766342712 0
+  "PowerToThePeople_v1.aux" 1766342711 27616 b11d6d3fdad7e59606de462d56ebddd4 "pdflatex"
+  "PowerToThePeople_v1.bbl" 1766342707 14519 d7ac44a98cf80582448dd849fa1a6492 "bibtex PowerToThePeople_v1"
+  "PowerToThePeople_v1.out" 1766342711 3888 b94a96768b6394a08e85664324354e0d "pdflatex"
+  "PowerToThePeople_v1.tex" 1766342700 52339 9304d14e86da286f855ae1d4e59e55ef ""
   "c:/Users/marku/.texlive2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1674402862 7877576 05b29992d99eb979939f0f842f21097e ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1673948792 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc" 1673952063 2986 306c3e81569158bf5703378dac42b857 ""
@@ -158,9 +158,11 @@
   "figures/balancing_gini_trajectory.png" 1766253699 145214 b69207b846fe6ded5172e244f3c1f028 ""
   "figures/dc_contingency.png" 1766245846 353870 dcfb3ace27f22ad5442dd7a7aaa7e757 ""
   "figures/folding_gini_trajectory.png" 1766270149 161713 698b28596c79bf26e3ac7ebad2d83310 ""
-  "figures/learner_comparison.png" 1766254794 101217 eb0b48083ac9839f73a5ae9da2d9a827 ""
+  "figures/learner_comparison.png" 1766342668 96858 69b557196cb0f45a204342c52602713c ""
+  "figures/lightgbm_lowres_cm.png" 1766342670 191774 4d6c13804a82f919c038119cf24f8f26 ""
+  "figures/lightgbm_lowres_varimp.png" 1766342671 229272 e7d504ecd900c96333e8fe1618867e0e ""
   "figures/supergenre_hierarchy.png" 1766311843 148253 01189e135ed5026dc57711dfdba42f82 ""
-  "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" 1766312043 51707 4628732ed26b5156f582b2ef1dedf31b ""
+  "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" 1766342700 52339 9304d14e86da286f855ae1d4e59e55ef ""
   "tismir.png" 1758618485 8494 f55f7c46db82ebcfb29c33f202eae308 ""
   "tismir.sty" 1758618485 8108 c573d67616a04a95ba139fcb2cb4fab3 ""
   (generated)

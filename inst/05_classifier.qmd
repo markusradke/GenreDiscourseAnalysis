@@ -31,42 +31,38 @@ data_settings <- readRDS("../models/classifier/data_settings.rds")
 train_low <- readRDS("../models/classifier/train_low.rds")
 test_low <- readRDS("../models/classifier/test_low.rds")
 cv_splits_low <- readRDS("../models/classifier/cv_splits_low.rds")
+
+train_medium <- readRDS("../models/classifier/train_medium.rds")
+test_medium <- readRDS("../models/classifier/test_medium.rds")
+cv_splits_medium <- readRDS("../models/classifier/cv_splits_medium.rds")
+
 train_high <- readRDS("../models/classifier/train_high.rds")
 test_high <- readRDS("../models/classifier/test_high.rds")
 cv_splits_high <- readRDS("../models/classifier/cv_splits_high.rds")
 
-top_n <- 40 # top n models to show in report
-n_glmnet_varimp <- 5
-n_rf_varimp <- 20
+train_very_high <- readRDS("../models/classifier/train_very_high.rds")
+test_very_high <- readRDS("../models/classifier/test_very_high.rds")
+cv_splits_very_high <- readRDS("../models/classifier/cv_splits_very_high.rds")
 
-lowres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_10_15.feather") |> 
+top_n <- 40 # top n models to show in report
+n_top_varimp <- 20
+
+lowres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_low.feather") |> 
   dplyr::group_by(metagenre) |> 
   dplyr::summarize(certainty = median(p_max)) 
 
-highres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_25_30.feather") |> 
+mediumres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_medium.feather") |> 
   dplyr::group_by(metagenre) |> 
   dplyr::summarize(certainty = median(p_max))
 
-# glmnet_params <- c("penalty", "under_ratio", "over_ratio")
-glmnet_params <- c("penalty")
-# rf_params <- c("max.depth", "min_n", "mtry", "under_ratio", "over_ratio")
-rf_params <- c("max.depth", "min_n", "mtry")
+highres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_high.feather") |> 
+  dplyr::group_by(metagenre) |> 
+  dplyr::summarize(certainty = median(p_max))
 
-glmnet_col_names <- c(
-  "Rank", "Iteration", "Penalty", #"Oversampling Ratio", "Undersampling Ratio",
-  "F1 Macro (mean ± se)", "Kappa (mean ± se)", "Accuracy (mean ± se)", ""
-)
-rf_col_names <- c(
-  "Rank", "Iteration", "Max Depth", "Min Node Size", "MTRY",
-  # "Oversampling Ratio", "Undersampling Ratio",
-  "F1 Macro (mean ± se)", "Kappa (mean ± se)", "Accuracy (mean ± se)", ""
-)
+veryhighres_certainty <- read_feather_with_lists("../models/metagenres/mb_metagenres_very_high.feather") |> 
+  dplyr::group_by(metagenre) |> 
+  dplyr::summarize(certainty = median(p_max))
 ```
-
-This report presents the evaluation results of different classifier models trained to predict the MusicBrainz folksonomy meta-genres. Classifiers were trained for both low detailed (10-15 genres) and high detailed (25-30) meta-genre taxonomies.
-
-The metagenre POPULAR MUSIC was discarded for analysis as the metagenre was only present for too few tracks.
-
 
 # Complete Workflow
 :::{.column-screen-inset-right}
@@ -140,14 +136,13 @@ flowchart TB
 ```
 :::
 
-:::{.callout-caution}
-Currently, the models are tranined with a fixed undersampling rate with factor 10 (low-detail) and 20 (high-detail) due to computational constraints. Also, the oversampling rate is fixed to 0.25 for both low-detail and high-detailed metagenre labels.
+:::{.callout-note}
+For up- and down-sampling, we employed adaptive balancing: We employed a target-ratio parameter (tunable range: 1 to observed max:min ratio) that governed the degree of class rebalancing. The algorithm computed a reference count from class frequencies (median for <= 10 classes; 60th percentile for 11-20 classes; 65th percentile for > 20 classes), then downsampled classes exceeding reference$\times$target ratio using NearMiss and upsampled classes below reference < target ratio using Borderline SMOTE, and regular SMOTE in case of non sufficient danger observations.
 :::
 
-:::{.callout-note}
-The mixture of lasso and ridge regularization for the GLMNET models was fixed to 0.5 (elastic net).
 
-Random forests were tuned with 750 trees per ensemble. The final model on the whole tranining set was trained with 1000 trees.
+:::{.callout-note}
+Random forests were tuned with 500 trees per ensemble during tuning. The final model on the whole tranining set was trained with 1000 trees.
 :::
 
 # Data Summary
@@ -184,28 +179,27 @@ distribution_low <- compare_metagenre_distributions_splits(train_low, test_low, 
 distribution_low$plot
 ```
 
+```{r outcome_distributions_medium}
+#| fig-cap: "Comparison of metagenre distributions in train and test splits for **high-detailed** detailed meta-genre taxonomy."
+distribution_medium <- compare_metagenre_distributions_splits(train_medium, test_medium, cv_splits_medium)
+distribution_medium$plot
+```
+
 ```{r outcome_distributions_high}
 #| fig-cap: "Comparison of metagenre distributions in train and test splits for **high-detailed** detailed meta-genre taxonomy."
 distribution_high <- compare_metagenre_distributions_splits(train_high, test_high, cv_splits_high)
 distribution_high$plot
 ```
 
-# Random Baseline
-
-This random baseline model predicts the metagenre labels by random guessing according to the distribution of the metagenres in the training set.
-
-:::{.column-screen-inset-right}
-
-```{r random_baseline}
-random_low <- load_classification_model("../models/classifier/baseline", "random_baseline_lowres")
-random_high <- load_classification_model("../models/classifier/baseline", "random_baseline_highres")
+```{r outcome_distributions_very_high}
+#| fig-cap: "Comparison of metagenre distributions in train and test splits for **high-detailed** detailed meta-genre taxonomy."
+distribution_very_high <- compare_metagenre_distributions_splits(
+  train_very_high,
+  test_very_high, 
+  cv_splits_very_high
+)
+distribution_very_high$plot
 ```
-Low resolution metrics:
-**`r get_metrics_description(random_low$evaluation$metrics_test)`**
-
-High resolution metrics:
-**`r get_metrics_description(random_high$evaluation$metrics_test)`**
-:::
 
 # Model Features
 
@@ -217,7 +211,11 @@ model_features <- colnames(train_low)[
 ```
 
 
-A total of `r length(model_features)` features was used for training the classifiers.
+A total of `r length(model_features)` features was used for training the classifiers on the full data set.
+
+:::{.callout-note}
+For training on a subsample of the dataset the number of model features was reduced to 171 due to the requirment of 100 observations per class and fold in every factor level. 
+:::
 
 ```{r model_features_table}
 model_features_padded <- c(
@@ -239,248 +237,187 @@ knitr::kable(
 Variables starting with "dtb." refer to artist genres from Spotify. We assume that artist genres are assigned with a strategic aim for distribution on the platform (Valverde, 2025). In that regard, they are different from the musical genres assigned by the listeners. The variables are flags indicating whether an artist genre is assigned to a track's artist or not. To reduce the dimensionality, we used the same hiearchical-tree-based approach as for the MusicBrainz meta-genres.
 :::
 
-# GLMNET Classifier
+# Choosing the best learner on 20% subsample
+```{r best_learner_comparison}
+load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names) {
+  tuning <- readRDS(
+    sprintf(
+      "../models/classifier/%s/%s_%s_%s_tuning_history.rds",
+      model_dir, learner, resolution, hash
+    )
+  )
+  settings <- readRDS(
+    sprintf(
+      "../models/classifier/%s/%s_%s_%s_settings.rds",
+      model_dir, learner, resolution, hash
+    )
+  )
+  params <- unlist(param_names)
+  chosen_params <- setNames(unlist(settings[params]), params)
+  # exchange "alpha" with "mixture" if in names for GLMNET
+  if (learner == "GLMNET"){
+    names(chosen_params) <- gsub("alpha", "mixture", names(chosen_params))
+  }
+   
+  prepare_tuning_topmodels(tuning, chosen_params, top_n = 100) |>
+    dplyr::filter(is_chosen) |>
+    dplyr::select(
+      macro_f1_with_zeros_mean,
+      macro_f1_with_zeros_std_err
+    ) |>
+    dplyr::mutate(learner = learner, detail = resolution)
+}
 
-## Low-detailed metagenre labels
-
-### Tuning
-
-#### Model Selection
-
-```{r glmnet_low_load}
-glmnet_low <- load_classification_model("../models/classifier/glmnet", "glmnet_lowres")
-
-glmnet_low_chosen <- c(
-  penalty = glmnet_low$settings$penalty#,
-  # under_ratio = glmnet_low$settings$under_ratio,
-  # over_ratio = glmnet_low$settings$over_ratio
+model_configs <- tibble::tribble(
+  ~learner, ~resolution, ~hash, ~model_dir, ~param_names,
+  "GLMNET", "lowres", "436e205a", "glmnet", 
+    list(c("penalty", "alpha", "target_ratio")),
+  "GLMNET", "mediumres", "01f3f5dd", "glmnet", 
+    list(c("penalty", "alpha", "target_ratio")),
+  "RDA", "lowres", "d07f8bb4", "rda", 
+    list(c("gamma", "lambda", "target_ratio")),
+  "RDA", "mediumres", "4d480cd8", "rda", 
+    list(c("gamma", "lambda", "target_ratio")),
+  "RF", "lowres", "759e2621", "rf", 
+    list(c("mtry", "min_n", "max.depth", "target_ratio")),
+  "RF", "mediumres", "2cc36c89", "rf", 
+    list(c("mtry", "min_n", "max.depth", "target_ratio")),
+  "LightGBM", "lowres", "1776db28", "lightgbm", 
+    list(c("tree_depth", "trees", "learn_rate", "mtry", 
+           "min_n", "target_ratio")),
+  "LightGBM", "mediumres", "b8c05240", "lightgbm", 
+    list(c("tree_depth", "trees", "learn_rate", "mtry", 
+           "min_n", "target_ratio"))
 )
 
-glmnet_low_topmodels <- prepare_tuning_topmodels(
-  glmnet_low$tuning_history, glmnet_low_chosen, top_n
+chosen_models <- purrr::pmap_df(model_configs, load_learner_f1_cv)
+learner_comp_plot <- plot_learner_comparison(chosen_models)
+
+ggplot2::ggsave(
+  "../reports/paper_v1/figures/learner_comparison.png",
+  plot = learner_comp_plot,
+  width = 180,
+  height = 115,
+  units = "mm",
+  dpi = 300
 )
+learner_comp_plot
 ```
 
-```{r glmnet_low_tuning_graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **GLMNET classifier for low-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
-plot_tuning_model_selection(glmnet_low_topmodels, top_n)
-```
 
-```{r glmnet_low_tuning_table}
-glmnet_low_table <- create_glmnet_top_table(glmnet_low_topmodels)
-render_tuning_top_table(glmnet_low_table, glmnet_col_names)
-```
+# Final GBM Classifier Results
+```{r setup_resolutions}
+resolutions <- list(
+  low = list(
+    hash = "dc8426d1",
+    certainty = lowres_certainty,
+    title = "Low-detailed"
+  )#,
+  # medium = list(
+  #   hash = "811e1b4e",
+  #   certainty = mediumres_certainty,
+  #   title = "Medium-detailed"
+  # ),
+  # high = list(
+  #   hash = "83f9d6d2",
+  #   certainty = highres_certainty,
+  #   title = "High-detailed"
+  # )
+)
 
-#### Parameter Exploration
+params <- c("tree_depth", "trees", "learn_rate", "mtry", "min_n", "target_ratio")
 
-:::{.column-screen-inset-right}
-```{r glmnet_low_tuning_params}
-#| layout-ncol: 2
-for (i in seq_along(glmnet_params)) {
-  print(plot_parameter_tuning(glmnet_low$tuning_history, glmnet_params[i], i == 1))
+load_resolution_data <- function(resolution_hash) {
+  base_path <- sprintf(
+    "../models/classifier/lightgbm/final_models/lightgbm_%sres_%s",
+    names(resolutions)[which(sapply(resolutions, `[[`, "hash") == resolution_hash)],
+    resolution_hash
+  )
+  
+  list(
+    eval = readRDS(sprintf("%s_evaluation.rds", base_path)),
+    settings = readRDS(sprintf("%s_settings.rds", base_path)),
+    tuning = readRDS(sprintf("%s_tuning_history.rds", base_path))
+  )
+}
+
+extract_chosen_params <- function(settings) {
+  c(
+    tree_depth = settings$tree_depth,
+    trees = settings$trees,
+    learn_rate = settings$learn_rate,
+    mtry = settings$mtry,
+    min_n = settings$min_n,
+    target_ratio = settings$target_ratio
+  )
 }
 ```
-:::
 
-### Evaluation on test set
+# Final GBM Classifier Results
 
-**`r get_metrics_description(glmnet_low$evaluation$metrics_test)`**
+```{r results, results='asis'}
+for (res_name in names(resolutions)) {
+  res_config <- resolutions[[res_name]]
+  
+  cat(sprintf("\n## %s supergenre labels\n\n", res_config$title))
+  
+  data <- load_resolution_data(res_config$hash)
+  chosen <- extract_chosen_params(data$settings)
+  topmodels <- prepare_tuning_topmodels(data$tuning, chosen, top_n)
+  
+  cat("### Tuning\n\n")
+  cat("#### Model Selection\n\n")
+  
+  print(plot_tuning_model_selection(topmodels, top_n))
+  
+  table <- create_lgbm_top_table(topmodels, param_names = params)
+  print(render_tuning_top_table(table))
+  
+  cat("\n#### Parameter Exploration\n\n")
+  cat(":::{.column-screen-inset-right}\n")
+  for (i in seq_along(params)) {
+    print(plot_parameter_tuning(data$tuning, params[i], i == 1))
+  }
+  cat(":::\n\n")
+  
+  cat("### Evaluation on test set\n\n")
+  
+  cat(sprintf("**%s**\n\n", get_metrics_description(data$eval$metrics_test)))
+  
+  f1_scores <- calculate_class_f1_scores_from_confusion_df(data$eval$confusion_test)
+  correlation <- round(cor(res_config$certainty$certainty, f1_scores), 3)
+  cat(sprintf(
+    "**Correlation between metagenre uncertainty and per-class F1 scores on test set: %s**\n\n",
+    correlation
+  ))
+  
+  cm_plot <- plot_cm(data$eval, res_config$certainty, "test")
+  
+  ggplot2::ggsave(
+    cm_plot,
+    filename = sprintf("../reports/paper_v1/figures/lightgbm_%sres_cm.png", res_name),
+    width = 180,
+    height = 100,
+    units = "mm",
+    dpi = 300
+  )
+  
+  print(cm_plot)
 
-**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(lowres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(glmnet_low$evaluation$confusion_test)),3)`**
 
-```{r glmnet_low_cm, fig.width=9, fig.height=6}
-#| column: page-inset-right
-plot_cm(glmnet_low$evaluation, lowres_certainty, "test")
-```
-### Most important variables per metagenre
-
-```{r glmnet_low_varimp}
-render_glmnet_varimp_table(
-  glmnet_low$model, n_glmnet_varimp,
-  "Top 5 most important features per metagenre according to the GLMNET classifier for low-detailed metagenre labels."
-)
-```
-
-## High-detailed metagenre labels
-
-### Tuning
-
-#### Model Selection
-
-```{r glmnet_high_load}
-glmnet_high <- load_classification_model("../models/classifier/glmnet", "glmnet_highres")
-
-glmnet_high_chosen <- c(
-  penalty = glmnet_high$settings$penalty#,
-  # under_ratio = glmnet_high$settings$under_ratio,
-  # over_ratio = glmnet_high$settings$over_ratio
-)
-
-glmnet_high_topmodels <- prepare_tuning_topmodels(
-  glmnet_high$tuning_history, glmnet_high_chosen, top_n
-)
-```
-
-```{r glmnet_high_tuning_graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **GLMNET classifier for high-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
-plot_tuning_model_selection(glmnet_high_topmodels, top_n)
-```
-
-```{r glmnet_high_tuning_table}
-glmnet_high_table <- create_glmnet_top_table(glmnet_high_topmodels)
-render_tuning_top_table(glmnet_high_table, glmnet_col_names)
-```
-
-#### Parameter Exploration
-
-:::{.column-screen-inset-right}
-```{r glmnet_high_tuning_params}
-#| layout-ncol: 2
-for (i in seq_along(glmnet_params)) {
-  print(plot_parameter_tuning(glmnet_high$tuning_history, glmnet_params[i], i == 1))
+  cat("\n#### Feature Importance\n\n")
+  varimp_plot <- plot_gbm_varimp(
+    data$eval$varimp,
+    n_top = n_top_varimp
+  )
+  ggplot2::ggsave(
+    varimp_plot,
+    filename = sprintf("../reports/paper_v1/figures/lightgbm_%sres_varimp.png", res_name),
+    width = 180,
+    height = 150,
+    units = "mm",
+    dpi = 300
+  )
+  print(varimp_plot)
 }
-```
-:::
-
-### Evaluation on test set
-
-**`r get_metrics_description(glmnet_high$evaluation$metrics_test)`**
-
-**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(highres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(glmnet_high$evaluation$confusion_test)), 3)`**
-
-```{r glmnet_high_cm, fig.width=11.5, fig.height=8.3}
-#| column: screen-inset-right
-plot_cm(glmnet_high$evaluation, highres_certainty, "test")
-```
-
-### Most important variables per metagenre
-
-```{r glmnet_high_varimp}
-render_glmnet_varimp_table(
-  glmnet_high$model, n_glmnet_varimp,
-  "Most important features per metagenre according to the GLMNET classifier for high-detailed metagenre labels."
-)
-```
-
-# Random Forest Classifier
-
-## Low-detailed metagenre labels
-
-### Tuning
-
-#### Model Selection
-
-```{r rf_low_load}
-rf_low <- load_classification_model("../models/classifier/rf", "rf_lowres")
-
-rf_low_chosen <- c(
-  max.depth = rf_low$settings$max.depth,
-  min_n = rf_low$settings$min_n,
-  mtry = rf_low$settings$mtry#,
-  # under_ratio = rf_low$settings$under_ratio,
-  # over_ratio = rf_low$settings$over_ratio
-)
-
-rf_low_topmodels <- prepare_tuning_topmodels(
-  rf_low$tuning_history, rf_low_chosen, top_n
-)
-```
-
-```{r rf_low_tuning_graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for low-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
-plot_tuning_model_selection(rf_low_topmodels, top_n)
-```
-
-```{r rf_low_tuning_table}
-rf_low_table <- create_rf_top_table(rf_low_topmodels)
-render_tuning_top_table(rf_low_table, rf_col_names)
-```
-
-#### Parameter Exploration
-
-:::{.column-screen-inset-right}
-```{r rf_low_tuning_params}
-#| layout-ncol: 2
-for (i in seq_along(rf_params)) {
-  print(plot_parameter_tuning(rf_low$tuning_history, rf_params[i], i == 1))
-}
-```
-:::
-
-### Evaluation on test set
-
-**`r get_metrics_description(rf_low$evaluation$metrics_test)`**
-
-**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(lowres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(rf_low$evaluation$confusion_test)),3)`**
-```{r rf_low_cm, fig.width=9, fig.height=6}
-#| column: page-inset-right
-plot_cm(rf_low$evaluation, lowres_certainty, "test")
-```
-
-### Most important variables per metagenre
-
-```{r rf_low_varimp}
-plot_varimp_bar(rf_low$evaluation$varimp, n_rf_varimp)
-```
-
-## High-detailed metagenre labels
-
-### Tuning
-
-#### Model Selection
-
-```{r rf_high_load}
-rf_high <- load_classification_model("../models/classifier/rf", "rf_highres")
-
-rf_high_chosen <- c(
-  max.depth = rf_high$settings$max.depth,
-  min_n = rf_high$settings$min_n,
-  mtry = rf_high$settings$mtry#,
-  # under_ratio = rf_high$settings$under_ratio,
-  # over_ratio = rf_high$settings$over_ratio
-)
-
-rf_high_topmodels <- prepare_tuning_topmodels(
-  rf_high$tuning_history, rf_high_chosen, top_n
-)
-```
-
-```{r rf_high_tuning_graph}
-#| fig-cap: "**Best hyperparameter configurations** from tuning of the **Random Forest classifier for high-detailed** metagenre labels. The chosen hyperparameter configuration is highlighted in green, other **models within one standard error of the numerically best model** are shown in dark grey."
-plot_tuning_model_selection(rf_high_topmodels, top_n)
-```
-
-```{r rf_high_tuning_table}
-rf_high_table <- create_rf_top_table(rf_high_topmodels)
-render_tuning_top_table(rf_high_table, rf_col_names)
-```
-
-#### Parameter Exploration
-
-:::{.column-screen-inset-right}
-```{r rf_high_tuning_params}
-#| layout-ncol: 2
-for (i in seq_along(rf_params)) {
-  print(plot_parameter_tuning(rf_high$tuning_history, rf_params[i], i == 1))
-}
-```
-:::
-
-### Evaluation on test set
-
-**`r get_metrics_description(rf_high$evaluation$metrics_test)`**
-
-**Correlation between metagenre uncertainty and per-class F1 scores on test set: `r round(cor(highres_certainty$certainty, calculate_class_f1_scores_from_confusion_df(rf_high$evaluation$confusion_test)),3)`**
-
-
-```{r rf_high_cm, fig.width=11, fig.height=8.3}
-#| column: screen-inset-right
-plot_cm(rf_high$evaluation, highres_certainty, "test")
-```
-
-
-### Most important variables per metagenre
-
-```{r rf_high_varimp}
-plot_varimp_bar(rf_high$evaluation$varimp, n_rf_varimp)
 ```

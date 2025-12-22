@@ -184,14 +184,14 @@ The initial POPTRAG genre co-occurrence network contains 234 genre nodes. The ne
 
 The goal of this next step was to fold COMGET to a scalable number of supergenres suitable for a variety of research questions and statistical applications. The result should meet three requirements: First, like the original tree, the folded tree should be well-balanced. Second, the tree should comprise as many super genres as desired (e.g., a specific application could ask for 10 to 15 genres and the algorithm should select a solution with a suitable number). Third, each genre should have a sufficient amount of tracks associated with it to allow for machine learning tasks as robust statistics. We designed a simple greedy algorithm that can be applied to COMGET and ensures that all three requirements are met: The algorithm iteratively merges the least populous genres that are furthest from the root with their parent genres until all genres meet the minimum song count requirement. That means that subgenres that do not meet a minimum song count requirement are folded into their supergenres, while making sure that all supergenres in the tree also meet the minimum song count. Again, as a probabilistic song count we employed the sum of assignment probabilities over all tracks. 
 
-We evaluated different minimum song counts using a grid search approach to find the optimal configuration that maximizes distribution uniformity within hierarchy levels, measured by the weighted within-level Gini coefficient. We calculated the algorithm for all possible solutions that branch at least once, starting with a minimum n of 1000. Given a range for the desired number of supergenres, a folding solution can be selected by taking the solution that corresponds to the local minimum of the weighted Gini within the given range. Additionally, local minima of the Gini over the number of supergenres function suggest the statistically best solutions the tree folding has to offer. For checking basic external validity of the solution, we build a contingency table comparing genre assignments on the Discogs folksonomy to a similar-sized solution of the COMGET folding. To facilitate this, we require songs in POPTRAG to have a single label. To assign single labels to the tracks from COMGET we employ a majority voting strategy: First we map every valid Musicbrainz genre tag that was assigned to a song to its supergenre in the folded COMGET. Then the track is assigned the supergenre tag with the highest number of summed votes. As a tie breaker, we choose the genre that has the lower sum of probabilities in the complete data set to promote a more more detailed genre assignments.
+We evaluated different minimum song counts using a grid search approach to find the optimal configuration that maximizes distribution uniformity within hierarchy levels, measured by the weighted within-level Gini coefficient. We calculated the algorithm for all possible solutions from n = 1,000 to n = 15,000 in steps of 5. Given a range for the desired number of supergenres, a folding solution can be selected by taking the solution that corresponds to the local minimum of the weighted Gini within the given range. Additionally, local minima of the Gini over the number of supergenres function suggest the statistically best solutions the tree folding has to offer. For checking basic external validity of the solution, we build a contingency table comparing genre assignments on the Discogs folksonomy to a similar-sized solution of the COMGET folding. To facilitate this, we require songs in POPTRAG to have a single label. To assign single labels to the tracks from COMGET we employ a majority voting strategy: First we map every valid Musicbrainz genre tag that was assigned to a song to its supergenre in the folded COMGET. Then the track is assigned the supergenre tag with the highest number of summed votes. As a tie breaker, we choose the genre that has the lower sum of probabilities in the complete data set to promote a more more detailed genre assignments.
 
 \subsection{Results: Germany's Popular Music Supergenres}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{figures/folding_gini_trajectory.png}
-  \caption{Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding COMGET.}
+  \caption{Within-hierarchy-level uniformity of distribution (weighted Gini coefficient, [0-1]) for different minimum song per genre counts when folding COMGET (searched in steps of 5 from 1,000 to 15,000).}
 \label{fig:rq2_gini_trajectory}
 \end{figure}
 
@@ -241,9 +241,14 @@ We used a Bayesian optimization approach ~\citep{snoekPracticalBayesianOptimizat
 \label{fig:rq3_proto}
 \end{figure}
 
-Model comparison (see fig x) shows that all four learners (GLMNET, RDA, RF, GBM) perform nearly equally well in terms of macro F1 on 20\% of the data set. That is why we chose GLMNET to train models on the full data set due to its high interpretability, computational efficiency, and parsimontiy. 
+Model comparison (see fig \ref{fig:rq3_proto}) shows that all four learners (GLMNET, RDA, RF, GBM) perform nearly equally well in terms of macro F1 on 20\% of the data set. That is why we chose GLMNET to train models on the full data set due to its high interpretability, computational efficiency, and parsimontiy. 
 
-TODO: 3x CF GRAPHS
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/lightgbm_lowres_cm.png}
+  \caption{Confusion matrix for the final GBM model on the hold-out set for COMGET-5; grading shows $P(\text{Predicted}|\text{Actual})$; certainty is mean relative frequency of assignments within tracks that were assigned to the genre.}
+\label{fig:rq3_cm_low}
+\end{figure}
 
 TODO: The final models on the full data set showed some underfitting. For classifier for the 5 genre solution yielded a mean $\text{F1}_{\text{macro}}$ of XX on the CV folds and $\text{F1}_{\text{macro}}$ of XX on the hold-out set; $F1$ per class highly positively correlated with XX with the assignment certainty within the community (= mean assignment probability for the class across tags). In the light of the mean assignment probability of XX, we can consider the classifier as very satisfactory. TODO: Description of the confusion matrix.
 
@@ -252,7 +257,12 @@ TODO: The classifier for the 12 genre solution also shows a little underfitting 
 
 Finally, the classifier for the 31 genre solution again showed a degradation in performance with mean $\text{F1}_{\text{macro}}$ of XX on CV folds and $\text{F1}_{\text{macro}}$ of X on the hold-out set, matching a degradation in class assignment certainty within the community (XX\%). Correlation of per class assignment certainty and  is a little lower than it was for the other two levels of detail (XX). 
 
-TODO: Variable Importance Plot
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/lightgbm_lowres_varimp.png}
+  \caption{Top 20 most important features for automated classification of COMGET-5 with final LightGBM learner.}
+\label{fig:rq3_varimp}
+\end{figure}
 
 TODO: A highly detailed discussion of the models coefficients/variable importance is not in the scope of this article (please refer to the digital appendix for a complete list of model coefficients/variable importance). Generally, it seems that artist features play a very important role in assigning genres from the listeners' perspective. For many genres, the marketing genres derived from the Spotify artist genres show to be most important, even if genre boundaries do not always align with the COMGET genre boundaries (e.g., the distribution genre \textit{blues rock} was indicative for both \textit{hard rock} and \textit{rock} in the 12-genres-classifier). Among the audio features, \textit{Spotify's} echo nest features TODO SOURCE prove to be most helpful for the classifier. Apart from the tracks language, the lyrics features that were used were not very important to the model. 
 

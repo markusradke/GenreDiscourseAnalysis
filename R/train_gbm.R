@@ -332,12 +332,14 @@ extract_lightgbm_model_settings <- function(
 evaluate_lightgbm_model <- function(fitted_model, train_df, test_df) {
   train_eval <- compute_lightgbm_predictions(fitted_model, train_df)
   test_eval <- compute_lightgbm_predictions(fitted_model, test_df)
+  varimp <- extract_variable_importance(fitted_model)
 
   list(
     confusion_train = train_eval$cm,
     metrics_train = train_eval$metrics,
     confusion_test = test_eval$cm,
-    metrics_test = test_eval$metrics
+    metrics_test = test_eval$metrics,
+    varimp = varimp
   )
 }
 
@@ -350,4 +352,10 @@ compute_lightgbm_predictions <- function(fitted_model, df) {
     predicted_labels = pred_class,
     predicted_probs = pred_prob
   )
+}
+
+extract_variable_importance <- function(model) {
+  lgb_booster <- model$fit$fit$fit
+  lightgbm::lgb.importance(lgb_booster) |>
+    dplyr::arrange(dplyr::desc(Gain))
 }

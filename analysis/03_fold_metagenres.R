@@ -29,7 +29,6 @@ tune_s <- tune_tree_folding(
 )
 save_tuning(tune_s, "s")
 generate_report("03_metagenres")
-beepr::beep()
 
 # get static metagenre graph for paper
 mb_res <- readRDS("models/metagenres/tune_mb_metagenres.rds")

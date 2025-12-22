@@ -1034,6 +1034,16 @@ INPUT ./figures/learner_comparison.png
 INPUT figures/learner_comparison.png
 INPUT ./figures/learner_comparison.png
 INPUT ./figures/learner_comparison.png
+INPUT ./figures/lightgbm_lowres_cm.png
+INPUT ./figures/lightgbm_lowres_cm.png
+INPUT figures/lightgbm_lowres_cm.png
+INPUT ./figures/lightgbm_lowres_cm.png
+INPUT ./figures/lightgbm_lowres_cm.png
+INPUT ./figures/lightgbm_lowres_varimp.png
+INPUT ./figures/lightgbm_lowres_varimp.png
+INPUT figures/lightgbm_lowres_varimp.png
+INPUT ./figures/lightgbm_lowres_varimp.png
+INPUT ./figures/lightgbm_lowres_varimp.png
 INPUT ./PowerToThePeople_v1.bbl
 INPUT PowerToThePeople_v1.bbl
 INPUT ./PowerToThePeople_v1.bbl

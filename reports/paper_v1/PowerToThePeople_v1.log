@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  21 DEC 2025 11:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  21 DEC 2025 19:45
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -750,18 +750,26 @@ File: figures/learner_comparison.png Graphic file (type png)
 <use figures/learner_comparison.png>
 Package pdftex.def Info: figures/learner_comparison.png  used on input line 239.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+<figures/lightgbm_lowres_cm.png, id=291, 511.9125pt x 284.5029pt>
+File: figures/lightgbm_lowres_cm.png Graphic file (type png)
+<use figures/lightgbm_lowres_cm.png>
+Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 248.
+(pdftex.def)             Requested size: 237.5805pt x 132.03635pt.
  [7 <./figures/learner_comparison.png>]
-Underfull \vbox (badness 3068) has occurred while \output is active []
+<figures/lightgbm_lowres_varimp.png, id=308, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
+<use figures/lightgbm_lowres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 262.
+(pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
+ [8 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_lowres_varimp.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [8]
-Underfull \vbox (badness 6016) has occurred while \output is active []
 
-
-Underfull \hbox (badness 1231) in paragraph at lines 278--279
+Underfull \hbox (badness 1231) in paragraph at lines 288--289
 \T1/bch/m/n/10 opaque ($\FMS/futm/m/n/10 ^^Y$\T1/bch/m/n/10 1.2 mil-lion anony-mous ed-i-tor ac-counts,
  []
 
-(./PowerToThePeople_v1.bbl [9]
+[9] (./PowerToThePeople_v1.bbl
 Underfull \hbox (badness 2229) in paragraph at lines 44--51
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., Pérez-Molina, L., and
  []
@@ -811,12 +819,12 @@ Underfull \hbox (badness 2181) in paragraph at lines 132--138
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-
+[10]
 Underfull \hbox (badness 1303) in paragraph at lines 217--221
 \T1/bch/m/it/10 ume 2\T1/bch/m/n/10 , Guide Pro-ceed-ings, pages 1238--1245.
  []
 
-[10]
+
 Underfull \hbox (badness 1043) in paragraph at lines 273--277
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
@@ -829,18 +837,18 @@ Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B94A96768B6394A08E85664324354E0D;3888.
  ) 
 Here is how much of TeX's memory you used:
- 14699 strings out of 476091
- 247488 string characters out of 5795540
- 1887324 words of memory out of 5000000
- 34707 multiletter control sequences out of 15000+600000
+ 14717 strings out of 476091
+ 248046 string characters out of 5795540
+ 1885324 words of memory out of 5000000
+ 34721 multiletter control sequences out of 15000+600000
  690568 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2260b,655s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,2260b,633s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (11 pages, 926526 bytes).
+Output written on PowerToThePeople_v1.pdf (11 pages, 1268843 bytes).
 PDF statistics:
- 436 PDF objects out of 1000 (max. 8388607)
- 391 compressed objects within 4 object streams
- 87 named destinations out of 1000 (max. 500000)
- 167 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 441 PDF objects out of 1000 (max. 8388607)
+ 394 compressed objects within 4 object streams
+ 89 named destinations out of 1000 (max. 500000)
+ 177 words of extra memory for PDF output out of 10000 (max. 10000000)
 
