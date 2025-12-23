@@ -457,11 +457,15 @@ plot_gbm_varimp <- function(varimp, n_top) {
     track = "#3e578eff"
   )
   all_levels <- names(level_colors)
+  feature_translations <- read.csv2("../data-raw/features.csv")
+  lookup <- setNames(
+    feature_translations$print,
+    feature_translations$intern
+  )
 
   prep <- varimp |>
     head(n_top) |>
     dplyr::mutate(
-      Feature = forcats::fct_inorder(Feature) |> forcats::fct_rev(),
       level = dplyr::case_when(
         grepl("artist", Feature) ~ "artist",
         grepl("dtb", Feature) ~ "artist",
@@ -470,7 +474,9 @@ plot_gbm_varimp <- function(varimp, n_top) {
         grepl("track", Feature) ~ "track",
         grepl("lyrics", Feature) ~ "track"
       ),
-      level = factor(level, levels = all_levels)
+      level = factor(level, levels = all_levels),
+      Feature = lookup[Feature],
+      Feature = forcats::fct_inorder(Feature) |> forcats::fct_rev(),
     )
 
   dummy_data <- data.frame(
@@ -503,8 +509,8 @@ plot_gbm_varimp <- function(varimp, n_top) {
     ggplot2::theme(
       legend.position = "top",
       legend.direction = "horizontal",
-      legend.justification = "left",
-      legend.box.just = "left",
+      legend.justification = "right",
+      legend.box.just = "right",
       legend.text = ggplot2::element_text(
         size = 18,
         color = "grey45"

@@ -1,0 +1,226 @@
+intern;print
+artist.s.popularity;Artist Spotify Popularity
+artist.s.followers;Artist Spotify Follower
+album.s.totaltracks;# Tracks on Album
+album.s.releaseyear;Album Releaseyear
+album.s.popularity;Album Spotify Popularity
+track.s.danceability;Danceability (Echo Nest)
+track.s.energy;Energy (Echo Nest)
+track.s.loudness;Loudness (Echo Nest)
+track.s.speechiness;Speechiness (Echo Nest)
+track.s.acousticness;Acousticness (Echo Nest)
+track.s.instrumentalness;Instrumentalness (Echo Nest)
+track.s.liveness;Liveneses (Echo Nest)
+track.s.valence;Valence (Echo Nest)
+track.s.tempo;Tempo (Echo Nest)
+track.s.popularity;Track Spotify Popularity
+track.s.duration;Track Duration
+artist.mb.birthyear;Age of Artist
+track.ab.p.danceable;Danceability (ESSENTIA)
+track.ab.p.female;Female Voice (ESSENTIA)
+track.ab.p.acoustic;Mood Acoustic (ESSENTIA)
+track.ab.p.aggressive;Mood Agressive (ESSENTIA)
+track.ab.p.electronic;Mood Electronic (ESSENTIA)
+track.ab.p.happy;Mood Happy (ESSENTIA)
+track.ab.p.party;Mood Party (ESSENTIA)
+track.ab.p.relaxed;Mood Relaxed (ESSENTIA)
+track.ab.p.sad;Mood Sad (ESSENTIA)
+track.ab.p.bright;Brightness (ESSENTIA)
+track.ab.p.tonal;Tonal? (ESSENTIA)
+track.ab.p.voice;Voice Present? (ESSENTIA)
+track.ab.rhythm.tempo;Tempo (ESSENTIA)
+track.ab.rhythm.danceability;Rhythm Danceability (ESSENTIA)
+track.ab.rhythm.onsetrate;Onsetrate (ESSENTIA)
+track.ab.low.loudness;Loudness (ESSENTIA)
+track.ab.low.dynamiccomplexity;Dynamic Complexity (ESSENTIA)
+track.ab.tonal.chordchangerate;Chord Change Rate (ESSENTIA)
+track.ab.tonal.chordsnumberrate;Chord Number Rate (ESSENTIA)
+track.ab.tonal.keystrength;Keystrength (ESSENTIA)
+track.ab.p.drtmd.alternative;Dortmund Alternative (ESSENTIA)
+track.ab.p.drtmd.blues;Dortmund Blues (ESSENTIA)
+track.ab.p.drtmd.electronic;Dortmund Electronic (ESSENTIA)
+track.ab.p.drtmd.folk.country;Dortmund Folk / Country (ESSENTIA)
+track.ab.p.drtmd.funk.soul.rnb;Dortmund Funk / Soul / RnB (ESSENTIA)
+track.ab.p.drtmd.jazz;Dortmund Jazz (ESSENTIA)
+track.ab.p.drtmd.pop;Dortmund Pop (ESSENTIA)
+track.ab.p.drtmd.rap.hiphop;Dortmund Rap / Hip Hop (ESSENTIA)
+track.ab.p.drtmd.rock;Dortmund Rock (ESSENTIA)
+track.ab.p.eltrc.ambient;Electronic Ambient (ESSENTIA)
+track.ab.p.eltrc.drumandbass;Electronic Drum and Bass (ESSENTIA)
+track.ab.p.eltrc.house;Electronic House (ESSENTIA)
+track.ab.p.eltrc.techno;Electronic Techno (ESSENTIA)
+track.ab.p.eltrc.trance;Electronic Trance (ESSENTIA)
+track.ab.p.rosa.classical;Rosamerica Classical (ESSENTIA)
+track.ab.p.rosa.dance;Rosamerica Dance (ESSENTIA)
+track.ab.p.rosa.hiphop;Rosamerica Hip Hop (ESSENTIA)
+track.ab.p.rosa.jazz;Rosamerica Jazz (ESSENTIA)
+track.ab.p.rosa.pop;Rosamerica Pop (ESSENTIA)
+track.ab.p.rosa.rhythmandblues;Rosamerica RnB (ESSENTIA)
+track.ab.p.rosa.rock;Rosamerica Rock (ESSENTIA)
+track.ab.p.rosa.speech;Rosamerica Speech (ESSENTIA)
+track.ab.p.tzntk.blues;Tzanetakis Blues (ESSENTIA)
+track.ab.p.tzntk.classical;Tzanetakis Classical (ESSENTIA)
+track.ab.p.tzntk.country;Tzanetakis Country (ESSENTIA)
+track.ab.p.tzntk.disco;Tzanetakis Disco (ESSENTIA)
+track.ab.p.tzntk.hiphop;Tzanetakis Hip Hop (ESSENTIA)
+track.ab.p.tzntk.jazz;Tzanetakis Jazz (ESSENTIA)
+track.ab.p.tzntk.metal;Tzanetakis Metal (ESSENTIA)
+track.ab.p.tzntk.pop;Tzanetakis Pop (ESSENTIA)
+track.ab.p.tzntk.reggae;Tzanetakis Reggea (ESSENTIA)
+track.ab.p.tzntk.rock;Tzanetakis Rock (ESSENTIA)
+track.ab.p.ismir.chachacha;ISMIR Cha Cha Cha (ESSENTIA)
+track.ab.p.ismir.jive;ISMIR Jive (ESSENTIA)
+track.ab.p.ismir.quickstep;ISMIR Quickstep (ESSENTIA)
+track.ab.p.ismir.rumbaamerican;ISMIR Rumba American (ESSENTIA)
+track.ab.p.ismir.rumbainternational;ISMIR Rumba Intern. (ESSENTIA)
+track.ab.p.ismir.rumbamisc;ISMIR Rumba Misc. (ESSENTIA)
+track.ab.p.ismir.samba;ISMR Samba (ESSENTIA)
+track.ab.p.ismir.tango;ISMR Tango (ESSENTIA)
+track.ab.p.ismir.viennesewaltz;ISMIR Viennese Waltz (ESSENTIA)
+track.ab.p.ismir.waltz;ISMIR Waltz (ESSENTIA)
+track.ab.p.mirex.aggressive;Mirex Aggressive (ESSENTIA)
+track.ab.p.mirex.humorous;Mirex Humorous (ESSENTIA)
+track.ab.p.mirex.literate;Mirex Literate (ESSENTIA)
+track.ab.p.mirex.passionate;Mirex Passionate (ESSENTIA)
+track.ab.p.mirex.rollicking;Mirex Rollicking (ESSENTIA)
+track.dz.rank;Track Rank Deezer
+track.dz.tempo;Tempo Deezer
+track.dz.loudness;Loudness Deezer
+track.dz.firstartist.followers;Deezer Artist Follower
+track.dz.firstartist.nalbums;# Artist Albums 
+track.dz.album.duration;Album Duration
+track.dz.album.followers;Album Followers Deezer
+label.med.artist.popularity;Label Artist Popularity
+label.med.album.popularity;Label Album Popularity
+label.med.track.popularity;Label Track Popularity
+lyrics.distinct_words_ratio;Distinc Words Ratio Lyrics
+lyrics.repeated_lines_ratio;Repeated Lines Ratio Lyrics
+lyrics.sentiment;SentimentR Score Lyrics
+lyrics.nrc_anger;NRC Anger Lyrics
+lyrics.nrc_anticipation;NRC Anticipation Lyrics
+lyrics.nrc_disgust;NRC Disgust Lyrics
+lyrics.nrc_fear;NRC Fear Lyrics
+lyrics.nrc_joy;NRC Joy Lyrics
+lyrics.nrc_sadness;NRC Sadness Lyrics
+lyrics.nrc_surprise;NRC Suprise Lyrics
+lyrics.nrc_trust;NRC Trust Lyrics
+lyrics.nrc_negative;NRC Negatice Lyrics
+lyrics.nrc_positive;NRC Positive Lyrics
+dtb.electronica_TRUE.;Artist Distribution Electronica
+dtb.german.techno_TRUE.;Artist Distribution German Techno
+dtb.pop.dance_TRUE.;Artist Distribution Pop Dance
+dtb.edm_TRUE.;Artist Distribution EDM
+dtb.indietronica_TRUE.;Artist Distribution Indietronica
+dtb.german.hip.hop_TRUE.;Artist Distribution German Hip Hop
+dtb.alternative.rock_TRUE.;Artist Distribution Alternative Rock
+dtb.modern.rock_TRUE.;Artist Distribution Modern Rock
+dtb.indie.rock_TRUE.;Artist Distribution Indie Rock
+dtb.other_TRUE.;Artist Distribution Other
+dtb.r&b_TRUE.;Artist Distribution RnB
+dtb.latin.pop_TRUE.;Artist Distribution Latin Pop
+dtb.rap_TRUE.;Artist Distribution Rap
+dtb.pop_TRUE.;Artist Distribution Pop 
+dtb.dance.pop_TRUE.;Artist Distribution Dance Pop
+dtb.hip.hop_TRUE.;Artist Distribution Hip Hop
+dtb.new.romantic_TRUE.;Artist Distribution New Romantic
+dtb.new.wave_TRUE.;Artist Distribution New Wave
+dtb.new.wave.pop_TRUE.;Artist Distribution New Wave Pop
+dtb.german.pop_TRUE.;Artist Distribution German Pop
+dtb.neo.mellow_TRUE.;Artist Distribution Neo Mellow
+dtb.europop_TRUE.;Artist Distribution Europop
+dtb.singer.songwriter_TRUE.;Artist Distribution Singer Songwriter
+dtb.vocal.jazz_TRUE.;Artist Distribution Vocal Jazz
+dtb.industrial.metal_TRUE.;Artist Distribution Industrial Metal
+dtb.alternative.metal_TRUE.;Artist Distribution Alternative Metal
+dtb.nu.metal_TRUE.;Artist Distribution Nu Metal
+dtb.canadian.pop_TRUE.;Artist Distribution Canadian Pop
+dtb.post.grunge_TRUE.;Artist Distribution Post Grunge
+dtb.soft.rock_TRUE.;Artist Distribution Soft Rock
+dtb.progressive.rock_TRUE.;Artist Distribution Progressive Rock
+dtb.psychedelic.rock_TRUE.;Artist Distribution Psychedelic Rock
+dtb.rock_TRUE.;Artist Distribution Rock
+dtb.chamber.pop_TRUE.;Artist Distribution Chamber Pop
+dtb.classic.rock_TRUE.;Artist Distribution Classic Rock
+dtb.mellow.gold_TRUE.;Artist Distribution Mellow Gold
+dtb.album.rock_TRUE.;Artist Distribution Album Rock
+dtb.hard.rock_TRUE.;Artist Distribution Hard Rock
+dtb.eurodance_TRUE.;Artist Distribution Eurodance
+dtb.speed.metal_TRUE.;Artist Distribution Speed Metal
+dtb.metal_TRUE.;Artist Distribution Metal
+dtb.permanent.wave_TRUE.;Artist Distribution Permanent Wave
+dtb.liedermacher_TRUE.;Artist Distribution Liedermacher
+dtb.german.indie_TRUE.;Artist Distribution German Indie
+dtb.blues.rock_TRUE.;Artist Distribution Blues Rock
+dtb.progressive.metal_TRUE.;Artist Distribution Progressive Metal
+dtb.synthpop_TRUE.;Artist Distribution Synthpop
+dtb.german.rock_TRUE.;Artist Distribution German Rock
+dtb.punk_TRUE.;Artist Distribution Punk
+dtb.death.metal_TRUE.;Artist Distribution Death Metal
+dtb.classic.schlager_TRUE.;Artist Distribution Classic Schlager
+dtb.gothic.metal_TRUE.;Artist Distribution Gothic Metal
+dtb.symphonic.metal_TRUE.;Artist Distribution Symphonic Metal
+dtb.glam.metal_TRUE.;Artist Distribution Glam Metal
+dtb.german.metal_TRUE.;Artist Distribution German Metal
+dtb.power.metal_TRUE.;Artist Distribution Power Metal
+dtb.neue.deutsche.harte_TRUE.;Artist Distribution Neue Deutsche Haerte
+dtb.medieval.rock_TRUE.;Artist Distribution Medieval Rock
+track.s.key_A;A Key (Ref G, Spotify)
+track.s.key_B;B Key (Ref G, Spotify)
+track.s.key_Bb;Bb Key (Ref G, Spotify)
+track.s.key_C;C Key (Ref G, Spotify)
+track.s.key_C.;C# Key (Ref G, Spotify)
+track.s.key_D;D Key (Ref G, Spotify)
+track.s.key_E;E Key (Ref G, Spotify)
+track.s.key_Eb;Eb Key (Ref G, Spotify)
+track.s.key_F;F Key (Ref G, Spotify)
+track.s.key_F.;F# Key (Ref G, Spotify)
+track.s.key_G.;G# Key (Ref G, Spotify)
+track.s.mode_minor;Minor Mode (Ref Major, Spotify)
+track.s.timesignature_X3.4;Three Quarter Time (Ref Four)
+track.s.timesignature_X5.4;Five Quarter Time (Ref Four)
+track.s.timesignature_other;Other Time (Ref Four Quarter Time)
+track.s.explicitlyrics_TRUE.;Are Lyrics Explicit?
+artist.mb.type_other;Is Single Artist? 
+artist.mb.gender_other;Is Artist Non-Male? 
+artist.mb.area_AU;Artist Area AU (Ref US)
+artist.mb.area_CA;Artist Area CA (Ref US)
+artist.mb.area_DE;Artist Area DE (Ref US)
+artist.mb.area_FI;Artist Area FI (Ref US)
+artist.mb.area_FR;Artist Area FR (Ref US)
+artist.mb.area_GB;Artist Area GB (Ref US)
+artist.mb.area_IE;Artist Area IE (Ref US)
+artist.mb.area_NO;Artist Area NO (Ref US)
+artist.mb.area_SE;Artist Area SE (Ref US)
+artist.mb.area_other;Artist Area Other (Ref US)
+artist.mb.dead_TRUE.;Is Artist Dead? 
+artist.mb.origin_Australia;Artist Origin AU (Ref US)
+artist.mb.origin_Canada;Artist Origin CA (Ref US)
+artist.mb.origin_Finland;Artist Origin FI (Ref US)
+artist.mb.origin_France;Artist Origin FR (Ref US)
+artist.mb.origin_Germany;Artist Origin DE (Ref US)
+artist.mb.origin_Ireland;Artist Origin IE (Ref US)
+artist.mb.origin_Italy;Artist Origin IT (Ref US)
+artist.mb.origin_Norway;Artist Origin NO (Ref US)
+artist.mb.origin_Sweden;Artist Origin SE (Ref US)
+artist.mb.origin_United.Kingdom;Artist Origin GB (Ref US)
+artist.mb.origin_other;Arist Origin Other (Ref US)
+track.ab.tonal.key_A;A Key (Ref F, ESSENTIA)
+track.ab.tonal.key_A.;Bb Key (Ref F, ESSENTIA)
+track.ab.tonal.key_B;B Key (Ref F, ESSENTIA)
+track.ab.tonal.key_C;C Key (Ref F, ESSENTIA)
+track.ab.tonal.key_C.;C# Key (Ref F, ESSENTIA)
+track.ab.tonal.key_D;D Key (Ref F, ESSENTIA)
+track.ab.tonal.key_D.;Eb Key (Ref F, ESSENTIA)
+track.ab.tonal.key_E;E Key (Ref F, ESSENTIA)
+track.ab.tonal.key_F.;F# Key (Ref F, ESSENTIA)
+track.ab.tonal.key_G;G Key (Ref F, ESSENTIA)
+track.ab.tonal.key_G.;G# Key (Ref F, ESSENTIA)
+track.ab.tonal.mode_minor;Minor Mode (Ref Major, ESSENTIA)
+track.dz.album.explicitlyrics_TRUE.;Album Contains Explicit Lyrics? 
+track.language_German;Track Language German (Ref English)
+track.language_Instrumental;Track Language Instrumental (Ref English)
+track.language_Spanish..Castilian;Track language Spanish (Ref English)
+track.language_other;Track language Other (Ref English)
+track.is.instrumental_TRUE.;Is Track Instrumental?
+track.is.dach_TRUE.;Is Track From D-A-CH? 
+is.major.label_FALSE.;Independent Label? (Ref Major Label)
