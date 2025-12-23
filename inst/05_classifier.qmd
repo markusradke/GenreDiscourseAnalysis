@@ -322,6 +322,11 @@ resolutions <- list(
     hash = "de549d7b",
     certainty = highres_certainty,
     title = "High-detailed"
+  ),
+  veryhigh = list(
+    hash = "8b88c70b",
+    certainty = veryhighres_certainty,
+    title = "Very high-detailed"
   )
 )
 

@@ -999,6 +999,8 @@ INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/futri8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/public/fourier/futsy.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-ms.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-mcl.tfm
+INPUT c:/texlive/2022/texmf-dist/fonts/vf/public/fourier/futr8t.vf
+INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-alt.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchr8t.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchri8t.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchri8t.tfm
@@ -1015,8 +1017,6 @@ INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/futri8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/public/fourier/futsy.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-ms.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-mcl.tfm
-INPUT c:/texlive/2022/texmf-dist/fonts/vf/public/fourier/futr8t.vf
-INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-alt.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/public/fourier/futmii.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-mlit.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/public/fourier/fourier-ml.tfm
@@ -1063,6 +1063,10 @@ INPUT ./figures/lightgbm_highres_cm.png
 INPUT figures/lightgbm_highres_cm.png
 INPUT ./figures/lightgbm_highres_cm.png
 INPUT ./figures/lightgbm_highres_cm.png
+INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchb8t.vf
+INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchb8r.tfm
+INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchr8t.vf
+INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchr8r.tfm
 INPUT ./figures/lightgbm_lowres_varimp.png
 INPUT ./figures/lightgbm_lowres_varimp.png
 INPUT figures/lightgbm_lowres_varimp.png
@@ -1078,10 +1082,6 @@ INPUT ./figures/lightgbm_highres_varimp.png
 INPUT figures/lightgbm_highres_varimp.png
 INPUT ./figures/lightgbm_highres_varimp.png
 INPUT ./figures/lightgbm_highres_varimp.png
-INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchb8t.vf
-INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchb8r.tfm
-INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchr8t.vf
-INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchr8r.tfm
 INPUT ./PowerToThePeople_v1.bbl
 INPUT PowerToThePeople_v1.bbl
 INPUT ./PowerToThePeople_v1.bbl

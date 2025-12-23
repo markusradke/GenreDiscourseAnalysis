@@ -901,35 +901,40 @@ Note
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">hash =</span> <span class="st">"de549d7b"</span>,</span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">certainty =</span> highres_certainty,</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"High-detailed"</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tree_depth"</span>, <span class="st">"trees"</span>, <span class="st">"learn_rate"</span>, <span class="st">"mtry"</span>, <span class="st">"min_n"</span>, <span class="st">"target_ratio"</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>load_resolution_data <span class="ot">&lt;-</span> <span class="cf">function</span>(resolution_hash) {</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  base_path <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../models/classifier/lightgbm/final_models/lightgbm_%sres_%s"</span>,</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(resolutions)[<span class="fu">which</span>(<span class="fu">sapply</span>(resolutions, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="st">"hash"</span>) <span class="sc">==</span> resolution_hash)],</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    resolution_hash</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">eval =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_evaluation.rds"</span>, base_path)),</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">settings =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_settings.rds"</span>, base_path)),</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">tuning =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_tuning_history.rds"</span>, base_path))</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>extract_chosen_params <span class="ot">&lt;-</span> <span class="cf">function</span>(settings) {</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">tree_depth =</span> settings<span class="sc">$</span>tree_depth,</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">trees =</span> settings<span class="sc">$</span>trees,</span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">learn_rate =</span> settings<span class="sc">$</span>learn_rate,</span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">mtry =</span> settings<span class="sc">$</span>mtry,</span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> settings<span class="sc">$</span>min_n,</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">target_ratio =</span> settings<span class="sc">$</span>target_ratio</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">veryhigh =</span> <span class="fu">list</span>(</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">hash =</span> <span class="st">"8b88c70b"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">certainty =</span> veryhighres_certainty,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Very high-detailed"</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"tree_depth"</span>, <span class="st">"trees"</span>, <span class="st">"learn_rate"</span>, <span class="st">"mtry"</span>, <span class="st">"min_n"</span>, <span class="st">"target_ratio"</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>load_resolution_data <span class="ot">&lt;-</span> <span class="cf">function</span>(resolution_hash) {</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  base_path <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"../models/classifier/lightgbm/final_models/lightgbm_%sres_%s"</span>,</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(resolutions)[<span class="fu">which</span>(<span class="fu">sapply</span>(resolutions, <span class="st">`</span><span class="at">[[</span><span class="st">`</span>, <span class="st">"hash"</span>) <span class="sc">==</span> resolution_hash)],</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    resolution_hash</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">eval =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_evaluation.rds"</span>, base_path)),</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">settings =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_settings.rds"</span>, base_path)),</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">tuning =</span> <span class="fu">readRDS</span>(<span class="fu">sprintf</span>(<span class="st">"%s_tuning_history.rds"</span>, base_path))</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>extract_chosen_params <span class="ot">&lt;-</span> <span class="cf">function</span>(settings) {</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">tree_depth =</span> settings<span class="sc">$</span>tree_depth,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">trees =</span> settings<span class="sc">$</span>trees,</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">learn_rate =</span> settings<span class="sc">$</span>learn_rate,</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">mtry =</span> settings<span class="sc">$</span>mtry,</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> settings<span class="sc">$</span>min_n,</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">target_ratio =</span> settings<span class="sc">$</span>target_ratio</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -5375,7 +5380,1218 @@ Accuracy (mean ± se)
 <p><strong>F1-macro: 0.425 Kappa: 0.469 Acc (unbalanced): 0.513</strong></p>
 <p><strong>Correlation between metagenre uncertainty and per-class F1 scores on test set: 0.727</strong></p>
 <p><img src="05_classifier_files/figure-html/results-25.png" class="img-fluid" width="672"> #### Feature Importance</p>
-<p><img src="05_classifier_files/figure-html/results-26.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-27.png" class="img-fluid" width="672"></p>
+<p><img src="05_classifier_files/figure-html/results-26.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-27.png" class="img-fluid" width="672"> ## Very high-detailed supergenre labels</p>
+</section>
+</section>
+<section id="tuning-3" class="level3" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="tuning-3"><span class="header-section-number">7.1.4</span> Tuning</h3>
+<section id="model-selection-3" class="level4" data-number="7.1.4.1">
+<h4 data-number="7.1.4.1" class="anchored" data-anchor-id="model-selection-3"><span class="header-section-number">7.1.4.1</span> Model Selection</h4>
+<img src="05_classifier_files/figure-html/results-28.png" class="img-fluid" width="672">
+<table class="table" style="width: auto !important; ">
+<thead>
+<tr>
+<th style="text-align:right;">
+Rank
+</th>
+<th style="text-align:right;">
+Iteration
+</th>
+<th style="text-align:right;">
+tree_depth
+</th>
+<th style="text-align:right;">
+trees
+</th>
+<th style="text-align:right;">
+learn_rate
+</th>
+<th style="text-align:right;">
+mtry
+</th>
+<th style="text-align:right;">
+min_n
+</th>
+<th style="text-align:right;">
+target_ratio
+</th>
+<th style="text-align:left;">
+F1 Macro (mean ± se)
+</th>
+<th style="text-align:left;">
+Kappa (mean ± se)
+</th>
+<th style="text-align:left;">
+Accuracy (mean ± se)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+1
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+3
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+13
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+969
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+0.0077645
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+81
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+96
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+3.412284
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.402 ± 0.005
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.473 ± 0.005
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.512 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+2
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+7
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+15
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+997
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+0.0073207
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+100
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+33
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+1.876176
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.401 ± 0.004
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.501 ± 0.004
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.545 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+3
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+12
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+5
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+563
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+0.0252799
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+73
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+53
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+2.246852
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.400 ± 0.004
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.485 ± 0.006
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.526 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+4
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+0
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+4
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+854
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+0.0488155
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+83
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+98
+</td>
+<td style="text-align:right;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+2.462467
+</td>
+<td style="text-align:left;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+0.400 ± 0.003
+</td>
+<td style="text-align:left;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+0.477 ± 0.005
+</td>
+<td style="text-align:left;font-weight: bold;background-color: rgba(35, 207, 0, 255) !important;">
+0.519 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+5
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+6
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+6
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+999
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+0.0146828
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+118
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+81
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+2.169483
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.399 ± 0.003
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.490 ± 0.004
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.533 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+6
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+4
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+13
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+397
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+0.0263490
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+73
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+32
+</td>
+<td style="text-align:right;background-color: rgba(229, 229, 229, 255) !important;">
+5.460838
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.397 ± 0.004
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.450 ± 0.006
+</td>
+<td style="text-align:left;background-color: rgba(229, 229, 229, 255) !important;">
+0.488 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+14
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+700
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0254965
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+63
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+26
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7.144787
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.395 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.434 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.471 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+8
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+976
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0275140
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+72
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+2
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6.125166
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.394 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.442 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.479 ± 0.007
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+9
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+1
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+979
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0289339
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+63
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+65
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+4.986936
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.394 ± 0.003
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.448 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.486 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+10
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+2
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+716
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0440407
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+85
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+30
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+4.839960
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.393 ± 0.003
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.449 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.488 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+10
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+867
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0013743
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+78
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+67
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+3.180216
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.385 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.451 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.487 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+12
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+10
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+15
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+747
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0918918
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+91
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+15
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6.436153
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.375 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.419 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.452 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+977
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0029580
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+123
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+75
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+8.794322
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.371 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.401 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.432 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+14
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+5
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+5
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+998
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0022786
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+147
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+42
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+5.610563
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.369 ± 0.008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.410 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.441 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+15
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+12
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+437
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0075061
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+109
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+52
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+32.411150
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.363 ± 0.009
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.529 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.587 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+16
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+4
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+246
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0125592
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+202
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+56
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+35.349486
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.363 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.515 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.573 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+17
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+8
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+348
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0219005
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+176
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+29
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+23.042415
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.355 ± 0.010
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.522 ± 0.002
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.581 ± 0.003
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+18
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+252
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0178755
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+203
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+21
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+22.434849
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.354 ± 0.008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.517 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.575 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+19
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+45
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0060100
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+97
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+38
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6.309084
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.352 ± 0.008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.391 ± 0.010
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.420 ± 0.010
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+20
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+9
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+453
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0570447
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+152
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+89
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+14.729467
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.351 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.519 ± 0.003
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.579 ± 0.003
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+21
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+5
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+545
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0036002
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+187
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+26.550547
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.350 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.506 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.566 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+22
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+14
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+122
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0011133
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+51
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+94
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+3.179615
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.349 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.439 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.476 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+23
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+4
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+590
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0024351
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+216
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+82
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+29.999503
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.344 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.494 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.556 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+24
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+632
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0019917
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+132
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+46
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+19.801580
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.341 ± 0.008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.514 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.575 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+25
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+10
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+818
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0721853
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+37
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+79
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+29.598786
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.340 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.516 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.577 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+26
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+12
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+388
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0364473
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+42
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+33.698234
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.338 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.519 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.580 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+27
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+935
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0012930
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+137
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+65
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+15.642314
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.338 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.511 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.572 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+28
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+10
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+80
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0132645
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+160
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+32
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+24.892008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.333 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.503 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.566 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+29
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+797
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0099754
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+6
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+67
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13.358482
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.332 ± 0.009
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.512 ± 0.006
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.574 ± 0.006
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+30
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+9
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+879
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0041561
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+2
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+44
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+7.432840
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.309 ± 0.005
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.347 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.375 ± 0.004
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+31
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+156
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0047904
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+25
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+4
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+11.653266
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.262 ± 0.008
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.474 ± 0.004
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.548 ± 0.005
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+32
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+8
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+15
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+490
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0073088
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+1
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+54
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+21.720552
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.207 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.433 ± 0.007
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.513 ± 0.008
+</td>
+</tr>
+<tr>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+33
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+715
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+0.0946755
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+72
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+13
+</td>
+<td style="text-align:right;color: rgba(89, 89, 89, 255) !important;">
+18.121784
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.180 ± 0.074
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.263 ± 0.101
+</td>
+<td style="text-align:left;color: rgba(89, 89, 89, 255) !important;">
+0.343 ± 0.095
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="parameter-exploration-3" class="level4" data-number="7.1.4.2">
+<h4 data-number="7.1.4.2" class="anchored" data-anchor-id="parameter-exploration-3"><span class="header-section-number">7.1.4.2</span> Parameter Exploration</h4>
+<p><img src="05_classifier_files/figure-html/results-29.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-30.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-31.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-32.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-33.png" class="img-fluid" width="672">### Evaluation on test set</p>
+<p><strong>F1-macro: 0.403 Kappa: 0.486 Acc (unbalanced): 0.526</strong></p>
+<p><strong>Correlation between metagenre uncertainty and per-class F1 scores on test set: 0.812</strong></p>
+<p><img src="05_classifier_files/figure-html/results-34.png" class="img-fluid" width="672"> #### Feature Importance</p>
+<p><img src="05_classifier_files/figure-html/results-35.png" class="img-fluid" width="672"><img src="05_classifier_files/figure-html/results-36.png" class="img-fluid" width="672"></p>
 </section>
 </section>
 </section>
