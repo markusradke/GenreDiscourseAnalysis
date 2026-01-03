@@ -139,3 +139,25 @@ add_max_prob_cols <- function(df) {
   )
   df
 }
+
+
+map_genres_solution_range <- function(
+  long,
+  tune,
+  n_range,
+  min_votes = 1,
+  min_prop = 0.
+) {
+  if (length(n_range) == 1) {
+    n_range <- c(n_range, n_range)
+  }
+  suggested_min_n <- tune$ginis |>
+    dplyr::filter(n_metagenres >= n_range[1], n_metagenres <= n_range[2]) |>
+    dplyr::arrange(weighted_gini, dplyr::desc(min_n)) |>
+    dplyr::slice(1) |>
+    dplyr::pull(min_n)
+  suggested <- tune$solutions[[as.character(suggested_min_n)]]
+  map_metagenres(long, suggested$mapping) |>
+    dplyr::filter(n_max >= min_votes) |>
+    dplyr::filter(p_max >= min_prop)
+}
