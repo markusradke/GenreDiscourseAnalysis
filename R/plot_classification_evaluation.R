@@ -207,7 +207,7 @@ plot_tuning_model_selection <- function(topmodels, top_n) {
       ),
       width = 0.2
     ) +
-    ggplot2::labs(x = "Rank", y = "F1 Macro (mean ± se)") +
+    ggplot2::labs(x = "Rank", y = "F1 Macro (mean \u00B1 se)") +
     ggplot2::scale_color_manual(values = c("#23cf00ff", "grey25", "grey75")) +
     ggplot2::scale_x_discrete(
       position = "top",
@@ -286,14 +286,18 @@ plot_parameter_tuning <- function(
 create_lgbm_top_table <- function(topmodels, param_names) {
   topmodels |>
     dplyr::mutate(
-      `F1 Macro (mean ± se)` = sprintf(
-        "%.3f ± %.3f",
+      `F1 Macro (mean with se)` = sprintf(
+        "%.3f \u00B1 %.3f",
         macro_f1_with_zeros_mean,
         macro_f1_with_zeros_std_err
       ),
-      `Kappa (mean ± se)` = sprintf("%.3f ± %.3f", kap_mean, kap_std_err),
-      `Accuracy (mean ± se)` = sprintf(
-        "%.3f ± %.3f",
+      `Kappa (mean with se)` = sprintf(
+        "%.3f \u00B1 %.3f",
+        kap_mean,
+        kap_std_err
+      ),
+      `Accuracy (mean with se)` = sprintf(
+        "%.3f \u00B1 %.3f",
         accuracy_mean,
         accuracy_std_err
       )
@@ -302,9 +306,9 @@ create_lgbm_top_table <- function(topmodels, param_names) {
       Rank = rank,
       Iteration = .iter,
       dplyr::all_of(param_names),
-      `F1 Macro (mean ± se)`,
-      `Kappa (mean ± se)`,
-      `Accuracy (mean ± se)`,
+      `F1 Macro (mean with se)`,
+      `Kappa (mean with se)`,
+      `Accuracy (mean with se)`,
       modelgroup
     )
 }
@@ -429,7 +433,7 @@ plot_learner_comparison <- function(chosen_models) {
         labels = c("5 supergenres", "12 supergenres"),
         position = "bottom"
       ) +
-      ggplot2::labs(x = "", y = "F1 macro") +
+      ggplot2::labs(x = "", y = "F1 macro \u00B1 std. error") +
       ggplot2::theme_minimal() +
       ggplot2::theme(
         legend.position = "none",

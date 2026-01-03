@@ -14,7 +14,7 @@ train_imputer <- function(
   complete_enough <- missing_prop <= max_missing_prop
 
   message(sprintf(
-    "Rows with ≤%.0f%% missing: %d / %d",
+    "Rows with less or equal %.0f%% missing: %d / %d",
     max_missing_prop * 100,
     sum(complete_enough),
     nrow(features)

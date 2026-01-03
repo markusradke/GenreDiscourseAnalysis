@@ -358,7 +358,6 @@ extract_chosen_params <- function(settings) {
 }
 ```
 
-# Final GBM Classifier Results
 
 :::{.column-screen-inset-right}
 ```{r results, results='asis'}
