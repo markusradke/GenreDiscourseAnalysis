@@ -24,14 +24,20 @@ format:
 ```{r load poptrag, message=FALSE, warning=FALSE}
 devtools::load_all()
 poptrag <- readRDS("../data/poptrag_selected.rds")
-mb_10_15 <- read_feather_with_lists("../models/metagenres/mb_metagenres_10_15.feather")
-mb_25_30 <- read_feather_with_lists("../models/metagenres/mb_metagenres_25_30.feather")
-s_10_15 <- read_feather_with_lists("../models/metagenres/s_metagenres_10_15.feather")
-s_25_30 <- read_feather_with_lists("../models/metagenres/s_metagenres_25_30.feather")
+
+mb_low <- read_feather_with_lists("../models/metagenres/mb_metagenres_low.feather")
+mb_medium <- read_feather_with_lists("../models/metagenres/mb_metagenres_medium.feather")
+mb_high <- read_feather_with_lists("../models/metagenres/mb_metagenres_high.feather")
+mb_very_high <- read_feather_with_lists("../models/metagenres/mb_metagenres_very_high.feather")
+
+s_low <- read_feather_with_lists("../models/metagenres/s_metagenres_low.feather")
+s_medium <- read_feather_with_lists("../models/metagenres/s_metagenres_medium.feather")
+s_high <- read_feather_with_lists("../models/metagenres/s_metagenres_high.feather")
+s_very_high <- read_feather_with_lists("../models/metagenres/s_metagenres_very_high.feather")
 ```
 
 Once an optimal metagenre configuration has been selected based on the tuning results, we can assign metagenres to our songs. For the assignment, all tags that were assigned to a track by platform users were mapped to their corresponding metagenres using the selected solution's mapping table. If a track had multiple tags that mapped to different metagenres, we employed a majority voting approach to determine the final metagenre assignment. As a tie breaker, we selected the metagenre with fewest overall votes assigned to it in the dataset, promoting a more balanced distribution across metagenres.
-For our proof of concept random forest classifier, we chose two solutions per platfrom in the range of 10-15 and 25-30 metagenres (local minimum of Gini). Please find below the distribution of metagenres in the assigned datasets as well as the median relative probabilities for the assigned metagenres based on the majority votes.
+Please find below the distribution of metagenres in the assigned datasets as well as the median relative probabilities for the assigned metagenres based on the majority votes.
 
 ```{r metagenenre descriptives preparement}	
 plot_metagenre_prevs <- function(mapping){
@@ -44,7 +50,7 @@ plot_metagenre_prevs <- function(mapping){
     ggplot2::geom_bar(stat = "identity", fill = "grey45") +
     ggplot2::geom_text(ggplot2::aes(label = sprintf("%s", format(n, big.mark = ","))), 
                      hjust = -0.1, size = 4) +
-    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.1))) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.2))) +
     ggplot2::labs(y = "",
                   x = "Relative Frequency (%)") +
     ggplot2::theme_minimal() + 
@@ -95,19 +101,35 @@ plot_metagenre_assignement_certainty <- function(mapping){
 ```
 
 ## MusicBrainz Metagenre Assignment
-### MusicBrainz `r mb_10_15$metagenre |> unique() |> length()` Metagenres
-```{r mb 1015 prev}
+### MusicBrainz `r mb_low$metagenre |> unique() |> length()` Metagenres
+```{r mb low prev}
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
-plot_metagenre_prevs(mb_10_15)
+plot_metagenre_prevs(mb_low)
 ```	
-```{r mb 1015 certainty}
+```{r mb low certainty}
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
-plot_metagenre_assignement_certainty(mb_10_15)
+plot_metagenre_assignement_certainty(mb_low)
 ```
 :::{.column-page-inset-right}
-```{r mb 1015 contingency, fig.height=6, fig.width=10}
+```{r mb low contingency, fig.height=6, fig.width=10}
 # | fig-cap: "Contingency table of metagenre assignments between MusicBrainz and Discogs (first mentioned genre) for the 10-15 metagenre solution for external validation"
-plot <- plot_dc_contingency(mb_10_15, poptrag)
+plot_dc_contingency(mb_low, poptrag)
+```
+:::
+### MusicBrainz `r mb_medium$metagenre |> unique() |> length()` Metagenres
+```{r mb medium prev}	
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(mb_medium)
+```
+
+```{r mb medium certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(mb_medium)
+```
+:::{.column-page-inset-right}
+```{r mb medium contingency,  fig.width=10, fig.height=8.6}
+# | fig-cap: "Contingency table of metagenre assignments between MusicBrainz and Discogs (first mentioned genre) for the 25-30 metagenre solution for external validation"
+plot <- plot_dc_contingency(mb_medium, poptrag)
 ggplot2::ggsave(
   "../reports/paper_v1/figures/dc_contingency.png", 
   plot, 
@@ -115,55 +137,86 @@ ggplot2::ggsave(
   height = 160,
   units = "mm"
 )
+plot
 ```
 :::
-### MusicBrainz `r mb_25_30$metagenre |> unique() |> length()` Metagenres
-```{r mb 2530 prev}	
+
+### MusicBrainz `r mb_high$metagenre |> unique() |> length()` Metagenres
+```{r mb high prev}	
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
-plot_metagenre_prevs(mb_25_30)
+plot_metagenre_prevs(mb_high)
 ```
 
-```{r mb 2530 certainty}
+```{r mb high certainty}
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
-plot_metagenre_assignement_certainty(mb_25_30)
+plot_metagenre_assignement_certainty(mb_high)
 ```
-:::{.column-page-inset-right}
-```{r mb 2530 contingency,  fig.width=10, fig.height=8.6}
-# | fig-cap: "Contingency table of metagenre assignments between MusicBrainz and Discogs (first mentioned genre) for the 25-30 metagenre solution for external validation"
-plot_dc_contingency(mb_25_30, poptrag)
+
+### MusicBrainz `r mb_very_high$metagenre |> unique() |> length()` Metagenres
+```{r mb very high prev}	
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(mb_very_high)
 ```
-:::
+
+```{r mb very high certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(mb_very_high)
+```
+
+
+
 ## Spotify Metagenre Assignment
-### Spotify `r s_10_15$metagenre |> unique() |> length()` Metagenres
-```{r s 1015 prev}
+### Spotify `r s_low$metagenre |> unique() |> length()` Metagenres
+```{r s low prev}
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
-plot_metagenre_prevs(s_10_15)
+plot_metagenre_prevs(s_low)
 ```
-```{r s 1015 certainty}
+```{r s low certainty}
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
-plot_metagenre_assignement_certainty(s_10_15)
+plot_metagenre_assignement_certainty(s_low)
 ```
 :::{.column-page-inset-right}
-```{r s 1015 contingency, fig.height=6, fig.width=10}
+```{r s low contingency, fig.height=6, fig.width=10}
 # | fig-cap: "Contingency table of metagenre assignments between Spotify and Discogs (first mentioned genre) for the 10-15 metagenre solution for external validation"
-plot_dc_contingency(s_10_15, poptrag, "Spotify")
+plot_dc_contingency(s_low, poptrag, "Spotify")
 ```
 :::
-### Spotify `r s_25_30$metagenre |> unique() |> length()` Metagenres
-```{r s 2530 prev}
+### Spotify `r s_medium$metagenre |> unique() |> length()` Metagenres
+```{r s medium prev}
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
-plot_metagenre_prevs(s_25_30)
+plot_metagenre_prevs(s_medium)
 ```
-```{r s 2530 certainty}
+```{r s medium certainty}
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
-plot_metagenre_assignement_certainty(s_25_30)
+plot_metagenre_assignement_certainty(s_medium)
 ```
 :::{.column-page-inset-right}
-```{r s 2530 contingency, fig.width=10, fig.height=8.6}
+```{r s medium contingency, fig.width=10, fig.height=8.6}
 # | fig-cap: "Contingency table of metagenre assignments between Spotify and Discogs (first mentioned genre) for the 25-30 metagenre solution for external validation"
-plot_dc_contingency(s_25_30, poptrag, "Spotify")
+plot_dc_contingency(s_medium, poptrag, "Spotify")
 ```
 :::
+
+### Spotify `r s_high$metagenre |> unique() |> length()` Metagenres
+```{r s high prev}
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(s_high)
+```
+```{r s high certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(s_high)
+```
+
+### Spotify `r s_very_high$metagenre |> unique() |> length()` Metagenres
+```{r s very high prev}
+#| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
+plot_metagenre_prevs(s_very_high)
+```
+```{r s very high certainty}
+# | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
+plot_metagenre_assignement_certainty(s_very_high)
+```
+
 # Metagenre Examples
 
 ```{r examples_functions}
@@ -309,26 +362,50 @@ render_all_tables <- function(examples, top_n) {
 }
 ```
 
-## MusicBrainz 10-15 Metagenres Examples
-```{r mb1015 examples, results='asis'}	
-examples <- build_examples(poptrag, mb_10_15, top_n)
+## MusicBrainz Low-Detailed Metagenres Examples
+```{r mb low examples, results='asis'}	
+examples <- build_examples(poptrag, mb_low, top_n)
 render_all_tables(examples, top_n)
 ```
 
-## MusicBrainz 25-30 Metagenres Examples
-```{r mb2530 examples, results='asis'}
-examples <- build_examples(poptrag, mb_25_30, top_n)
+## MusicBrainz Medium-Detailed Metagenres Examples
+```{r mb medium examples, results='asis'}
+examples <- build_examples(poptrag, mb_medium, top_n)
 render_all_tables(examples, top_n)
 ```
 
-## Spotify 10-15 Metagenres Examples
-```{r s1015 examples, results='asis'}
-examples <- build_examples(poptrag, s_10_15, top_n)
+## MusicBrainz High-Detailed Metagenres Examples
+```{r mb high examples, results='asis'}
+examples <- build_examples(poptrag, mb_high, top_n)
 render_all_tables(examples, top_n)
 ```
 
-## Spotify 25-30 Metagenres Examples
-```{r s2530 examples, results='asis'}
-examples <- build_examples(poptrag, s_25_30, top_n)
+## MusicBrainz Very High-Detailed Metagenres Examples
+```{r mb very high examples, results='asis'}
+examples <- build_examples(poptrag, mb_very_high, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify Low-Detailed Metagenres Examples
+```{r s low examples, results='asis'}
+examples <- build_examples(poptrag, s_low, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify Medium-Detailed Metagenres Examples
+```{r s medium examples, results='asis'}
+examples <- build_examples(poptrag, s_medium, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify High-Detailed Metagenres Examples
+```{r s high examples, results='asis'}
+examples <- build_examples(poptrag, s_high, top_n)
+render_all_tables(examples, top_n)
+```
+
+## Spotify Very High-Detailed Metagenres Examples
+```{r s very high examples, results='asis'}
+examples <- build_examples(poptrag, s_very_high, top_n)
 render_all_tables(examples, top_n)
 ```
