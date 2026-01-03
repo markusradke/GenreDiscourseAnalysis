@@ -1,5 +1,9 @@
 .Rproj.user
+.Rprofile
 .vscode
 air.toml
 /.quarto/
 notebooks
+data
+data-raw/*.rds
+models

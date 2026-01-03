@@ -65,7 +65,12 @@ test_that("columns that end up with only 'other' are removed", {
   cv_splits <- rsample::vfold_cv(train, v = 2)
 
   # Set threshold above any per-partition counts so all factor levels map to 'other'
-  out <- clean_factor_levels(cv_splits, train, test, min_n = 2)
+  out <- suppressWarnings(clean_factor_levels(
+    cv_splits,
+    train,
+    test,
+    min_n = 2
+  ))
 
   # f1 should be removed (only 'other' would remain), f2 kept
   expect_false("f1" %in% names(out$train_data))
