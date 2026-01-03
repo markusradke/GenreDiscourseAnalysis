@@ -6,4 +6,7 @@ air.toml
 notebooks
 data
 data-raw/*.rds
+!data-raw/artist_origin_lookup.rds
+!data-raw/classification_prep_features.rds
+!data-raw/musicbrainz_genre_whitelist_20250616.rds
 models
