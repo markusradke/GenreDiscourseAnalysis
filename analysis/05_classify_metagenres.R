@@ -1,7 +1,12 @@
 # prototype learners ----
 rm(list = ls())
 devtools::load_all()
-# corrected settings list
+n_folds <- 5
+
+# prepare data ----
+prepare_full_classification_data_all_levels(n_folds)
+
+# train prototype models on subsample ----
 settings <- list(
   run_data_pre = TRUE,
   subsample_prop = 0.2,
@@ -11,7 +16,7 @@ settings <- list(
   run_lightgbm = TRUE,
   max_cores = 64,
   reserve_cores = 4,
-  n_folds = 5,
+  n_folds = n_folds,
   n_initial_grid = 10,
   n_bayes_iter = 15,
   process_low = TRUE,
@@ -33,7 +38,7 @@ settings <- list(
   run_lightgbm = TRUE,
   max_cores = 64,
   reserve_cores = 4,
-  n_folds = 5,
+  n_folds = n_folds,
   n_initial_grid = 20,
   n_bayes_iter = 50,
   process_low = TRUE,

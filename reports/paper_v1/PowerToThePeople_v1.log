@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  4 JAN 2026 17:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  4 JAN 2026 17:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -507,8 +507,7 @@ Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
 LaTeX Font Info:    Trying to load font information for T1+bch on input line 62.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
-)
-No file PowerToThePeople_v1.aux.
+) (./PowerToThePeople_v1.aux)
 \openout1 = `PowerToThePeople_v1.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
@@ -527,7 +526,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
 LaTeX Font Info:    ... okay on input line 62.
 LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 62.
 LaTeX Font Info:    Trying to load font information for FML+futm on input line 62.
-(c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
+ (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
 LaTeX Font Info:    ... okay on input line 62.
@@ -556,27 +555,415 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring OFF on input line 62.
+ (./PowerToThePeople_v1.out) (./PowerToThePeople_v1.out)
 \@outlinefile=\write4
 \openout4 = `PowerToThePeople_v1.out'.
 
+ (c:/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count311
+\scratchdimen=\dimen191
+\scratchbox=\box57
+\nofMPsegments=\count312
+\nofMParguments=\count313
+\everyMPshowfont=\toks30
+\MPscratchCnt=\count314
+\MPscratchDim=\dimen192
+\MPnumerator=\count315
+\makeMPintoPDFobject=\count316
+\everyMPtoPDFconversion=\toks31
+) (c:/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
+ (c:/texlive/2022/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
+))
+LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 79.
+ (c:/texlive/2022/texmf-dist/tex/latex/quattrocento/T1QuattroSans-LF.fd
+File: T1QuattroSans-LF.fd 2020/07/28 (autoinst) Font definitions for T1/QuattroSans-LF.
+)
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 10.0pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
+(Font)              scaled to size 10.0pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
+(Font)              scaled to size 12.0pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
+(Font)              scaled to size 20.74pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 14.4pt on input line 79.
+LaTeX Font Info:    Trying to load font information for FML+futmi on input line 79.
+ (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutmi.fd
+File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
+)
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 13.24796pt on input line 79.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 9.19998pt on input line 79.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 7.35999pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 13.24796pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 9.19998pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 7.35999pt on input line 79.
+LaTeX Font Info:    Trying to load font information for TS1+bch on input line 79.
+ (c:/texlive/2022/texmf-dist/tex/latex/psnfss/ts1bch.fd
+File: ts1bch.fd 2004/10/18 font definitions for TS1/bch.
+)
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 6.25598pt on input line 79.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 5.51999pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 6.25598pt on input line 79.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 5.51999pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 12.0pt on input line 79.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 80.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 8.0pt on input line 80.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 86.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 6.0pt on input line 86.
 
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:62: I can't write on file `PowerToThePeople_v1.pdf'.
-(Press Enter to retry, or Control-Z to exit; default file extension is `.pdf')
-Please type another file name for output
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:62: Emergency stop.
-<to be read again> 
-                   \edef 
-l.62 \begin{document}
-                     
-*** (job aborted, file error in nonstop mode)
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- 
+<tismir.png, id=102, 534.99875pt x 134.5025pt>
+File: tismir.png Graphic file (type png)
+<use tismir.png>
+Package pdftex.def Info: tismir.png  used on input line 91.
+(pdftex.def)             Requested size: 145.59631pt x 36.60347pt.
+LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
+(Font)              scaled to size 6.99199pt on input line 91.
+LaTeX Font Info:    Font shape `U/futm/m/n' will be
+(Font)              scaled to size 6.99199pt on input line 91.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 91.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
+(Font)              scaled to size 9.0pt on input line 91.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 91.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
+(Font)              scaled to size 9.0pt on input line 91.
+
+
+Package fancyhdr Warning: \headheight is too small (40.0pt): 
+(fancyhdr)                Make it at least 44.27899pt, for example:
+(fancyhdr)                \setlength{\headheight}{44.27899pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-4.27899pt}.
+
+[1{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+
+ <./tismir.png>]
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+
+Underfull \vbox (badness 3068) has occurred while \output is active []
+
+ [2]
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+
+Underfull \hbox (badness 2229) in paragraph at lines 112--113
+[]\T1/bch/b/n/10 RQ1 \T1/bch/m/n/10 How can we con-struct an em-pir-i-cally
+ []
+
+[3]
+<figures/balancing_gini_trajectory.png, id=245, 511.9125pt x 327.1422pt>
+File: figures/balancing_gini_trajectory.png Graphic file (type png)
+<use figures/balancing_gini_trajectory.png>
+Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 156.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+ [4 <./figures/balancing_gini_trajectory.png>]
+<figures/folding_gini_trajectory.png, id=261, 511.9125pt x 327.1422pt>
+File: figures/folding_gini_trajectory.png Graphic file (type png)
+<use figures/folding_gini_trajectory.png>
+Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 200.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+
+Underfull \hbox (badness 5985) in paragraph at lines 201--201
+[] []|\T1/bch/m/n/10 Weighted Gini co-ef-fi-cient (0--1) across
+ []
+
+<figures/supergenre_hierarchy.png, id=264, 746.03719pt x 840.89156pt>
+File: figures/supergenre_hierarchy.png Graphic file (type png)
+<use figures/supergenre_hierarchy.png>
+Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 210.
+(pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
+
+Underfull \hbox (badness 1242) in paragraph at lines 217--218
+[]\T1/bch/m/n/10 COMGET-25G in-tro-duces fur-ther \T1/bch/m/it/10 rock sub-gen-res
+ []
+
+[5 <./figures/folding_gini_trajectory.png>]
+<figures/dc_contingency.png, id=271, 511.9125pt x 455.0601pt>
+File: figures/dc_contingency.png Graphic file (type png)
+<use figures/dc_contingency.png>
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 221.
+(pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
+
+Underfull \hbox (badness 2478) in paragraph at lines 222--222
+\T1/bch/m/n/10 and \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 genre as-sign-ments; val-ues show
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--227
+[]\T1/bch/m/it/10 Discogs' \T1/bch/m/n/10 15-genre tax-on-omy ap-prox-i-mates
+ []
+
+
+Underfull \hbox (badness 1715) in paragraph at lines 226--227
+\T1/bch/m/n/10 COMGET-12 in scale. For ap-prox-i-mately 5% of
+ []
+
+
+Underfull \hbox (badness 2221) in paragraph at lines 226--227
+\T1/bch/m/n/10 tracks with COMGET as-sign-ments, we found no
+ []
+
+
+Underfull \hbox (badness 1997) in paragraph at lines 226--227
+\T1/bch/m/it/10 Chil-dren's\T1/bch/m/n/10 , \T1/bch/m/it/10 Non-music\T1/bch/m/n/10 , and \T1/bch/m/it/10 Stage & Screen\T1/bch/m/n/10 ^^Vshow
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6 <./figures/supergenre_hierarchy.png> <./figures/dc_contingency.png>]
+Underfull \hbox (badness 1418) in paragraph at lines 252--253
+[]\T1/bch/m/n/10 For iden-ti-fy-ing best hyper-parameters, we em-
+ []
+
+<figures/learner_comparison.png, id=293, 511.9125pt x 327.1422pt>
+File: figures/learner_comparison.png Graphic file (type png)
+<use figures/learner_comparison.png>
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 257.
+(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
+<figures/lightgbm_lowres_cm.png, id=295, 511.9125pt x 284.5029pt>
+File: figures/lightgbm_lowres_cm.png Graphic file (type png)
+<use figures/lightgbm_lowres_cm.png>
+Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 266.
+(pdftex.def)             Requested size: 237.5805pt x 132.03635pt.
+<figures/lightgbm_mediumres_cm.png, id=296, 682.7106pt x 426.6339pt>
+File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
+<use figures/lightgbm_mediumres_cm.png>
+Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 275.
+(pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
+<figures/lightgbm_highres_cm.png, id=297, 910.3611pt x 569.0058pt>
+File: figures/lightgbm_highres_cm.png Graphic file (type png)
+<use figures/lightgbm_highres_cm.png>
+Package pdftex.def Info: figures/lightgbm_highres_cm.png  used on input line 283.
+(pdftex.def)             Requested size: 489.38739pt x 305.88675pt.
+
+Underfull \vbox (badness 2538) has occurred while \output is active []
+
+ [7]
+Underfull \hbox (badness 10000) in paragraph at lines 308--309
+[]\T1/bch/m/n/10 COMGET-12G per-for-mance de-graded to
+ []
+
+
+Underfull \hbox (badness 1675) in paragraph at lines 308--309
+\T1/bch/m/n/10 The con-fu-sion ma-trix (Fig-ure []7a[]) shows pri-mary
+ []
+
+
+Underfull \hbox (badness 1533) in paragraph at lines 308--309
+\T1/bch/m/n/10 am-bigu-ous char-ac-ter-is-tics with both. Con-versely,
+ []
+
+
+Underfull \hbox (badness 6173) in paragraph at lines 310--311
+[]\T1/bch/m/n/10 COMGET-25G showed fur-ther loss in clas-si-
+ []
+
+
+Underfull \hbox (badness 6961) in paragraph at lines 310--311
+\T1/bch/m/n/10 fi-ca-tion per-for-mance ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 419 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 005$\T1/bch/m/n/10 ;
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [8 <./figures/learner_comparison.png> <./figures/lightgbm_lowres_cm.png>] [9 <./figures/lightgbm_mediumres_cm.png> <./figures/lightgbm_highres_cm.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 312--313
+[]\T1/bch/m/n/10 COMGET-32G yielded a fur-ther degra-da-
+ []
+
+
+Underfull \hbox (badness 6825) in paragraph at lines 312--313
+\T1/bch/m/n/10 tion in bench-marks ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 400 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 003$\T1/bch/m/n/10 ;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 312--313
+[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 403$\T1/bch/m/n/10 ; $\FML/futmi/m/it/10 ^^T[] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 477 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 005$\T1/bch/m/n/10 ;
+ []
+
+
+Underfull \hbox (badness 2035) in paragraph at lines 312--313
+\FML/futmi/m/it/10 ^^T[] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 486$\T1/bch/m/n/10 ) with de-creased \T1/bch/m/it/10 cer-tainty \T1/bch/m/n/10 (54%).
+ []
+
+<figures/lightgbm_lowres_varimp.png, id=332, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
+<use figures/lightgbm_lowres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 319.
+(pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
+<figures/lightgbm_mediumres_varimp.png, id=333, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
+<use figures/lightgbm_mediumres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 327.
+(pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
+<figures/lightgbm_highres_varimp.png, id=335, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_highres_varimp.png Graphic file (type png)
+<use figures/lightgbm_highres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_highres_varimp.png  used on input line 335.
+(pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
+
+Underfull \hbox (badness 1472) in paragraph at lines 344--345
+\T1/bch/m/n/10 tures for au-to-mated clas-si-fi-ca-tion of COMGET-5G,
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 349--350
+\T1/bch/m/n/10 cat-e-gory ass-ing-ments from listener-community dis-
+ []
+
+
+Underfull \hbox (badness 1748) in paragraph at lines 349--350
+\T1/bch/m/n/10 course con-tained in folk-sonomies on open mu-sic
+ []
+
+
+Underfull \vbox (badness 1448) has occurred while \output is active []
+
+ [10 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_highres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
+Underfull \hbox (badness 2573) in paragraph at lines 353--354
+\T1/bch/m/n/10 While our ap-proach shares some sim-i-lar-ity with
+ []
+
+
+Underfull \hbox (badness 1168) in paragraph at lines 355--356
+[]\T1/bch/m/n/10 Furthermore, our ap-proach ad-heres di-rectly to
+ []
+
+
+Underfull \vbox (badness 2538) has occurred while \output is active []
+
+ [11] (./PowerToThePeople_v1.bbl
+Underfull \hbox (badness 2229) in paragraph at lines 46--52
+[]\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., PÈrez-Molina, L., and
+ []
+
+
+Underfull \hbox (badness 5231) in paragraph at lines 46--52
+\T1/bch/m/n/10 sic tax-on-omy.  \T1/bch/m/it/10 Jour-nal of New Mu-sic Re-
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 54--60
+\T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--72
+[]\T1/bch/m/n/10 Discogs (2024).  Database guide-lines.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--72
+\T1/bch/m/n/10 9. gen-res and styles.  []$https : / /
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--72
+\T1/bch/m/n/10 support . discogs . com / hc / en-[]us / articles /
+ []
+
+
+Overfull \hbox (15.3492pt too wide) in paragraph at lines 68--72
+\T1/bch/m/n/10 360005055213-[]Database-[]Guidelines-[]9-[]Genres-[]Styles$[]. 
+ []
+
+
+Underfull \hbox (badness 1038) in paragraph at lines 87--93
+\T1/bch/m/n/10 (2018).  Hub-ness as a Case of Tech-ni-cal Al-
+ []
+
+
+Underfull \hbox (badness 1742) in paragraph at lines 95--100
+\T1/bch/m/n/10 251.  []$https : / / doi . org / 10 . 1080 / 09298215 . 2016 .
+ []
+
+
+Underfull \hbox (badness 2181) in paragraph at lines 141--148
+[]\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
+ []
+
+[12]
+Underfull \hbox (badness 2608) in paragraph at lines 229--234
+[]\T1/bch/m/n/10 Merlini, M. (2020).  A crit-i-cal (and in-ter-dis-ci-
+ []
+
+
+Underfull \hbox (badness 1616) in paragraph at lines 229--234
+\T1/bch/m/n/10 plinary) sur-vey of pop-u-lar mu-sic genre the-o-
+ []
+
+
+Underfull \hbox (badness 4913) in paragraph at lines 236--239
+[]\T1/bch/m/n/10 MusicBrainz (n.d.).  Database statis-tics.  Re-
+ []
+
+[13]
+Underfull \hbox (badness 1043) in paragraph at lines 324--328
+[]\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
+ []
+
+
+Underfull \hbox (badness 3547) in paragraph at lines 324--328
+\T1/bch/m/n/10 Genre Com-plexes in Pop-u-lar Mu-sic.  \T1/bch/m/it/10 PLOS
+ []
+
+) [14
+
+] (./PowerToThePeople_v1.aux)
+Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
+(rerunfilecheck)             Checksum: 5EDBB6F441F8EF84DECADB8B22E70EE8;4369.
+ ) 
 Here is how much of TeX's memory you used:
- 13820 strings out of 476091
- 228544 string characters out of 5795540
- 1849324 words of memory out of 5000000
- 34002 multiletter control sequences out of 15000+600000
- 518194 words of font info for 34 fonts, out of 8000000 for 9000
+ 14903 strings out of 476091
+ 252379 string characters out of 5795540
+ 1894324 words of memory out of 5000000
+ 34888 multiletter control sequences out of 15000+600000
+ 696497 words of font info for 128 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,1n,131p,360b,150s stack positions out of 10000i,1000n,20000p,200000b,200000s
-n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex:62:  ==> Fatal error occurred, no output PDF file produced!
+ 84i,17n,131p,1958b,677s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on PowerToThePeople_v1.pdf (14 pages, 3059222 bytes).
+PDF statistics:
+ 585 PDF objects out of 1000 (max. 8388607)
+ 525 compressed objects within 6 object streams
+ 100 named destinations out of 1000 (max. 500000)
+ 209 words of extra memory for PDF output out of 10000 (max. 10000000)
+

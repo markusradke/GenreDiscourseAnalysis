@@ -1,3 +1,74 @@
+prepare_full_classification_data_all_levels <- function(n_folds) {
+  poptrag <- readRDS("data-raw/poptrag.rds")
+  s_genremapping <- readRDS(
+    "models/metagenres/tune_s_metagenres.rds"
+  )$solutions[[
+    "1050"
+  ]]$mapping
+  cv_folds <- n_folds
+  cv_repeats <- 1
+  max_tracks_per_artist_cv <- 10000
+
+  # # Prepare data sets for modeling ----
+  settings <- list(
+    seed = 42,
+    subsample_prop = 1.0,
+    casewise_threshold = 0.4,
+    artist_initial_split = 0.8,
+    drop_POPULARMUSIC = TRUE,
+    cv_folds = cv_folds,
+    cv_repeats = cv_repeats,
+    max_tracks_per_artist_cv = max_tracks_per_artist_cv,
+    s_genremapping = s_genremapping,
+    min_n_factor_level = 100
+  )
+  saveRDS(settings, "models/classifier/data_settings.rds")
+
+  data_low <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists("models/metagenres/mb_metagenres_low.feather")
+  )
+  saveRDS(data_low$train, "models/classifier/train_low.rds")
+  saveRDS(data_low$test, "models/classifier/test_low.rds")
+  saveRDS(data_low$cv_splits, "models/classifier/cv_splits_low.rds")
+
+  data_medium <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists(
+      "models/metagenres/mb_metagenres_medium.feather"
+    )
+  )
+  saveRDS(data_medium$train, "models/classifier/train_medium.rds")
+  saveRDS(data_medium$test, "models/classifier/test_medium.rds")
+  saveRDS(data_medium$cv_splits, "models/classifier/cv_splits_medium.rds")
+
+  data_high <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists("models/metagenres/mb_metagenres_high.feather")
+  )
+  saveRDS(data_high$train, "models/classifier/train_high.rds")
+  saveRDS(data_high$test, "models/classifier/test_high.rds")
+  saveRDS(data_high$cv_splits, "models/classifier/cv_splits_high.rds")
+
+  data_very_high <- prepare_classification_data(
+    settings,
+    poptrag,
+    read_feather_with_lists(
+      "models/metagenres/mb_metagenres_very_high.feather"
+    )
+  )
+  saveRDS(data_very_high$train, "models/classifier/train_very_high.rds")
+  saveRDS(data_very_high$test, "models/classifier/test_very_high.rds")
+  saveRDS(
+    data_very_high$cv_splits,
+    "models/classifier/cv_splits_very_high.rds"
+  )
+}
+
+
 #' Prepare data for the classification model training (including optional imputation)
 #'
 #' Runs the full data preparation pipeline up to and including optional
@@ -264,6 +335,7 @@ join_target <- function(casewise, metagenres, drop_POPULARMUSIC) {
 }
 
 draw_prototype_sample <- function(df, prop = 0.12) {
+  set.seed(42)
   rsample::initial_split(df, prop = prop, strata = metagenre) |>
     rsample::training()
 }

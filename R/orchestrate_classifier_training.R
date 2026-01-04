@@ -20,114 +20,8 @@ orchestrate_classifier_training <- function(settings) {
   process_high <- settings$process_high
   process_very_high <- settings$process_very_high
 
-  if (isTRUE(run_data_pre)) {
-    poptrag <- readRDS("data-raw/poptrag.rds")
-    s_genremapping <- readRDS(
-      "models/metagenres/tune_s_metagenres.rds"
-    )$solutions[[
-      "1050"
-    ]]$mapping
-    cv_folds <- n_folds
-    cv_repeats <- 1
-    max_tracks_per_artist_cv <- 10000
-
-    # # Prepare data sets for modeling ----
-    settings <- list(
-      seed = 42,
-      subsample_prop = subsample_prop,
-      casewise_threshold = 0.4,
-      artist_initial_split = 0.8,
-      drop_POPULARMUSIC = TRUE,
-      cv_folds = cv_folds,
-      cv_repeats = cv_repeats,
-      max_tracks_per_artist_cv = max_tracks_per_artist_cv,
-      s_genremapping = s_genremapping,
-      min_n_factor_level = 100
-    )
-    saveRDS(settings, "models/classifier/data_settings.rds")
-
-    if (isTRUE(process_low)) {
-      data_low <- prepare_classification_data(
-        settings,
-        poptrag,
-        read_feather_with_lists("models/metagenres/mb_metagenres_low.feather")
-      )
-      saveRDS(data_low$train, "models/classifier/train_low.rds")
-      saveRDS(data_low$test, "models/classifier/test_low.rds")
-      saveRDS(data_low$cv_splits, "models/classifier/cv_splits_low.rds")
-    }
-
-    if (isTRUE(process_medium)) {
-      data_medium <- prepare_classification_data(
-        settings,
-        poptrag,
-        read_feather_with_lists(
-          "models/metagenres/mb_metagenres_medium.feather"
-        )
-      )
-      saveRDS(data_medium$train, "models/classifier/train_medium.rds")
-      saveRDS(data_medium$test, "models/classifier/test_medium.rds")
-      saveRDS(data_medium$cv_splits, "models/classifier/cv_splits_medium.rds")
-    }
-
-    if (isTRUE(process_high)) {
-      data_high <- prepare_classification_data(
-        settings,
-        poptrag,
-        read_feather_with_lists("models/metagenres/mb_metagenres_high.feather")
-      )
-      saveRDS(data_high$train, "models/classifier/train_high.rds")
-      saveRDS(data_high$test, "models/classifier/test_high.rds")
-      saveRDS(data_high$cv_splits, "models/classifier/cv_splits_high.rds")
-    }
-
-    if (isTRUE(process_very_high)) {
-      data_very_high <- prepare_classification_data(
-        settings,
-        poptrag,
-        read_feather_with_lists(
-          "models/metagenres/mb_metagenres_very_high.feather"
-        )
-      )
-      saveRDS(data_very_high$train, "models/classifier/train_very_high.rds")
-      saveRDS(data_very_high$test, "models/classifier/test_very_high.rds")
-      saveRDS(
-        data_very_high$cv_splits,
-        "models/classifier/cv_splits_very_high.rds"
-      )
-    }
-  }
-
-  # read in data
-  rm(
-    list = ls()[
-      !ls() %in%
-        c(
-          "run_baseline",
-          "run_glmnet",
-          "run_rda",
-          "reserve_cores",
-          "n_initial_grid",
-          "n_bayes_iter",
-          "run_rf",
-          "run_lightgbm",
-          "checkpoint_chunk_size",
-          "max_cores",
-          "max_cores_tuning",
-          "n_folds",
-          "enable_grid_checkpoints",
-          "enable_bayes_checkpoints",
-          "process_low",
-          "process_medium",
-          "process_high",
-          "process_very_high"
-        )
-    ]
-  )
-  gc()
   message("Reading training and test data...")
 
-  # complete data
   if (isTRUE(process_low)) {
     cv_splits_low <- readRDS("models/classifier/cv_splits_low.rds")
     train_low <- readRDS("models/classifier/train_low.rds")
@@ -154,6 +48,62 @@ orchestrate_classifier_training <- function(settings) {
     train_very_high <- readRDS("models/classifier/train_very_high.rds")
     test_very_high <- readRDS("models/classifier/test_very_high.rds")
     featureset <- colnames(train_very_high)
+  }
+
+  if (subsample_prop < 1) {
+    message(
+      "Subsampling full train data and generating new cv_splits for prototyping..."
+    )
+    subsample_full_data_for_prototyping <- function(train, subsample_prop) {
+      train_subsampled <- draw_prototype_sample(train, subsample_prop)
+      splits_subsampled <- create_artist_cv_splits(
+        train_data = train_subsampled,
+        n_folds = n_folds,
+        max_tracks_per_artist = 2000
+      )
+      list(
+        train = train_subsampled,
+        cv_splits = splits_subsampled
+      )
+    }
+
+    if (isTRUE(process_low)) {
+      low_list <- subsample_full_data_for_prototyping(
+        train_low,
+        subsample_prop
+      )
+      train_low <- low_list$train
+      cv_splits_low <- low_list$cv_splits
+      rm(low_list)
+    }
+    if (isTRUE(process_medium)) {
+      medium_list <- subsample_full_data_for_prototyping(
+        train_medium,
+        subsample_prop
+      )
+      train_medium <- medium_list$train
+      cv_splits_medium <- medium_list$cv_splits
+      rm(medium_list)
+    }
+    if (isTRUE(process_high)) {
+      high_list <- subsample_full_data_for_prototyping(
+        train_high,
+        subsample_prop
+      )
+      train_high <- high_list$train
+      cv_splits_high <- high_list$cv_splits
+      rm(high_list)
+    }
+    if (isTRUE(process_very_high)) {
+      very_high_list <- subsample_full_data_for_prototyping(
+        train_very_high,
+        subsample_prop
+      )
+      train_very_high <- very_high_list$train
+      cv_splits_very_high <- very_high_list$cv_splits
+      rm(very_high_list)
+    }
+    gc()
   }
 
   # Determine model features ----

@@ -1,0 +1,382 @@
+\begin{thebibliography}{}
+
+\bibitem[Airoldi et~al., 2016]{airoldiFollowAlgorithmExploratory2016}
+Airoldi, M., Beraldo, D., and Gandini, A. (2016).
+\newblock Follow the algorithm: {An} exploratory investigation of music on
+  {YouTube}.
+\newblock {\em Poetics}, 57:1--13.
+\newblock \url{https://doi.org/10.1016/j.poetic.2016.05.001}.
+
+\bibitem[Bogdanov et~al., 2019]{bogdanovAcousticbrainzGenreDataset2019}
+Bogdanov, D., Porter, A., Schreiber, H., Urbano, J., and Oramas, S. (2019).
+\newblock The {Acousticbrainz} {Genre} {Dataset}: {Multi}-{Source}
+  {Multi}-{Level}, {Multi}-{Label}, and {Large}-{Scale}.
+\newblock In {\em 20th International Society for Music Information Retrieval
+  Conference}, Delft.
+
+\bibitem[Bogdanov et~al., 2013]{bogdanovESSENTIAOpensourceLibrary2013}
+Bogdanov, D., Wack, N., Gómez, E., Gulati, S., Herrera, P., Mayor, O., Roma,
+  G., Salamon, J., Zapata, J., and Serra, X. (2013).
+\newblock {ESSENTIA}: an open-source library for sound and music analysis.
+\newblock In {\em Proceedings of the 21st {ACM} international conference on
+  {Multimedia}}, pages 855--858, New York. Association for Computing Machinery.
+
+\bibitem[Bonini and Magaudda, 2024]{boniniPlatformedHowStreaming2024}
+Bonini, T. and Magaudda, P. (2024).
+\newblock {\em Platformed! {How} {Streaming}, {Algorithms} and {Artificial}
+  {Intelligence} are {Shaping} {Music} {Cultures}}.
+\newblock Springer Nature Switzerland.
+\newblock \url{https://10.1007/978-3-031-43965-0}.
+
+\bibitem[Brackett, 2016]{brackettCategorizingSoundGenre2016}
+Brackett, D. (2016).
+\newblock {\em Categorizing {Sound}: {Genre} and {Twentieth}-{Century}
+  {Popular} {Music}}.
+\newblock University of California Press.
+\newblock \url{https://doi.org/10.1525/california/9780520248717.001.0001}.
+
+\bibitem[Brand et~al., 2019]{brandCulturalEvolutionEmotional2019}
+Brand, C.~O., Acerbi, A., and Mesoudi, A. (2019).
+\newblock Cultural evolution of emotional expression in 50 years of song
+  lyrics.
+\newblock {\em Evolutionary Human Sciences}, 1:e11.
+\newblock \url{https://doi.org/10.1017/ehs.2019.11}.
+
+\bibitem[Caparrini et~al., 2020]{caparriniAutomaticSubgenreClassification2020}
+Caparrini, A., Arroyo, J., Pérez-Molina, L., and Sánchez-Hernández, J.
+  (2020).
+\newblock Automatic subgenre classification in an electronic dance music
+  taxonomy.
+\newblock {\em Journal of New Music Research}, 49(3):269--284.
+\newblock \url{https://doi.org/10.1080/09298215.2020.1761399}.
+
+\bibitem[Carbone et~al., 2024]{carboneStatusMarkersPopular2024}
+Carbone, L., Alvarez-Cueva, P., and Vandenbosch, L. (2024).
+\newblock Status {Markers} in {Popular} {Music} {Across} {Six}
+  {Countries}: {A} {Content} {Analysis} of {Gender}, {Race}/{Ethnicity},
+  {Genre}, and {Capital} in {Music} {Lyrics}.
+\newblock {\em Sex Roles}, 90(7):891--909.
+\newblock \url{https://doi.org/10.1007/s11199-024-01483-0}.
+
+\bibitem[DiMaggio, 1987]{dimaggioClassificationArt1987}
+DiMaggio, P. (1987).
+\newblock Classification in {Art}.
+\newblock {\em American Sociological Review}, 52(4):440.
+\newblock \url{https://doi.org/10.2307/2095290}.
+
+\bibitem[Discogs, 2024]{Discogs2024}
+Discogs (2024).
+\newblock Database guidelines. 9. genres and styles.
+\newblock
+  \url{https://support.discogs.com/hc/en-us/articles/360005055213-Database-Guidelines-9-Genres-Styles}.
+
+\bibitem[du~Gay et~al., 2013]{dugayDoingCulturalStudies2013}
+du~Gay, P., Hall, S., Janes, L., Madsen, A.~K., Mackay, H., and Negus, K.
+  (2013).
+\newblock {\em Doing {Cultural} {Studies}: {The} {Story} of the {Sony}
+  {Walkman}}.
+\newblock SAGE.
+
+\bibitem[Fabbri, 1982]{fabbriTheoryMusicalGenres1982}
+Fabbri, F. (1982).
+\newblock A {Theory} of {Musical} {Genres}: {Two} {Applications}.
+\newblock In Horn, D. and Tagg, P., editors, {\em Popular {Music}
+  {Perspectives}}, pages 52--81. IASPM.
+
+\bibitem[Flexer et~al., 2018]{flexerHubnessCaseTechnical2018}
+Flexer, A., Dörfler, M., Schlüter, J., and Grill, T. (2018).
+\newblock Hubness as a {Case} of {Technical} {Algorithmic} {Bias} in {Music}
+  {Recommendation}.
+\newblock In {\em 2018 {IEEE} {International} {Conference} on {Data} {Mining}
+  {Workshops} ({ICDMW})}.
+\newblock \url{https://doi.org/10.1109/ICDMW.2018.00154}.
+
+\bibitem[Flexer and Grill, 2016]{flexerProblemLimitedInterrater2016}
+Flexer, A. and Grill, T. (2016).
+\newblock The {Problem} of {Limited} {Inter}-rater {Agreement} in {Modelling}
+  {Music} {Similarity}.
+\newblock {\em Journal of New Music Research}, 45(3):239--251.
+\newblock \url{https://doi.org/10.1080/09298215.2016.1200631}.
+
+\bibitem[Flexer and Schnitzer, 2010]{flexerEffectsAlbumArtist2010}
+Flexer, A. and Schnitzer, D. (2010).
+\newblock Effects of {Album} and {Artist} {Filters} in {Audio} {Similarity}
+  {Computed} for {Very} {Large} {Music} {Databases}.
+\newblock {\em Computer Music Journal}, 34(3):20--28.
+\newblock \url{https://www.jstor.org/stable/40963029}.
+
+\bibitem[Foucault, 2013]{foucaultArchaeologyKnowledge2013}
+Foucault, M. (2013).
+\newblock {\em Archaeology of {Knowledge}}.
+\newblock Routledge, London, 2 edition.
+\newblock \url{https://doi.org/10.4324/9780203604168}.
+
+\bibitem[Frith, 1996]{frithPerformingRitesValue1996}
+Frith, S. (1996).
+\newblock {\em Performing {Rites}: {On} the {Value} of {Popular} {Music}}.
+\newblock Harvard University Press.
+
+\bibitem[Genussov and Cohen, 2010]{genussovMusicalGenreClassification2010}
+Genussov, M. and Cohen, I. (2010).
+\newblock Musical genre classification of audio signals using geometric
+  methods.
+\newblock In {\em 18th {European} {Signal} {Processing} {Conference}}, pages
+  497--501.
+\newblock \url{https://ieeexplore.ieee.org/document/7096332}.
+
+\bibitem[Gracyk, 2016]{gracykHeavyMetalGenre2016}
+Gracyk, T. (2016).
+\newblock Heavy metal: {Genre}? {Style}? {Subculture}?
+\newblock {\em Philosophy Compass}, 11(12):775--785.
+\newblock \url{https://doi.org/10.1111/phc3.12386}.
+
+\bibitem[Green et~al., 2024]{greenCriticalSurveyResearch2024}
+Green, O., Sturm, B.~L., Born, G., and Wald-Fuhrmann, M. (2024).
+\newblock A critical survey of research in music genre recognition.
+\newblock In {\em 25th International Society for Music Information Retrieval
+  Conference}, San Francisco.
+\newblock \url{https://ismir2024program.ismir.net/poster_149.html}.
+
+\bibitem[Han et~al., 2005]{hanBorderlineSMOTENewOverSampling2005}
+Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
+\newblock Borderline-{SMOTE}: {A} {New} {Over}-{Sampling} {Method} in
+  {Imbalanced} {Data} {Sets} {Learning}.
+\newblock In Huang, D.-S., Zhang, X.-P., and Huang, G.-B., editors, {\em
+  Advances in {Intelligent} {Computing}}, pages 878--887, Berlin, Heidelberg.
+  Springer.
+\newblock \url{https://doi.org/10.1007/11538059_91}.
+
+\bibitem[Hastie et~al., 2009]{hastieModelAssessmentSelection2009}
+Hastie, T., Tibshirani, R., and Friedman, J. (2009).
+\newblock Model {Assessment} and {Selection}.
+\newblock In Hastie, T., Tibshirani, R., and Friedman, J., editors, {\em The
+  {Elements} of {Statistical} {Learning}: {Data} {Mining}, {Inference}, and
+  {Prediction}}, pages 219--259. Springer, New York.
+\newblock \url{https://doi.org/10.1007/978-0-387-84858-7_7}.
+
+\bibitem[Hildebrandt et~al., 2015]{hildebrandtInhaltsanalyse2015}
+Hildebrandt, A., Jäckle, S., Wolf, F., and Heindl, A. (2015).
+\newblock Inhaltsanalyse.
+\newblock In {\em Methodologie, Methoden, Forschungsdesign}, pages 299--333.
+  Springer Fachmedien Wiesbaden, Wiesbaden.
+\newblock \url{https://doi.org/10.1007/978-3-531-18993-2_12}.
+
+\bibitem[Holt, 2007]{holtGenrePopularMusic2007}
+Holt, F. (2007).
+\newblock Genre in {Popular} {Music}.
+\newblock In {\em Genre in {Popular} {Music}}. University of Chicago Press.
+\newblock \url{https://doi.org/10.7208/9780226350400}.
+
+\bibitem[Husslage et~al., 2011]{husslageSpacefillingLatinHypercube2011}
+Husslage, B. G.~M., Rennen, G., van Dam, E.~R., and den Hertog, D. (2011).
+\newblock Space-filling {Latin} hypercube designs for computer experiments.
+\newblock {\em Optimization and Engineering}, 12(4):611--630.
+\newblock \url{https://doi.org/10.1007/s11081-010-9129-8}.
+
+\bibitem[Japkowicz and Stephen, 2002]{japkowiczClassImbalanceProblem2002}
+Japkowicz, N. and Stephen, S. (2002).
+\newblock The class imbalance problem: {A} systematic study.
+\newblock {\em Intelligent Data Analysis}, 6(5):429--449.
+
+\bibitem[Jiang et~al., 2024]{jiangGenreBasedAnalysisNew2024}
+Jiang, J., Ponnada, A., Li, A., Lacker, B., and Way, S.~F. (2024).
+\newblock A {Genre}-{Based} {Analysis} of {New} {Music} {Streaming} at {Scale}.
+\newblock In {\em Proceedings of the 16th {ACM} {Web} {Science} {Conference}},
+  pages 191--201, New York. Association for Computing Machinery.
+\newblock \url{https://dl.acm.org/doi/10.1145/3614419.3644002}.
+
+\bibitem[Lange et~al., 2025]{langeCategorizingMusicGenres2025}
+Lange, E.~B., Gernandt, E., and Merrill, J. (2025).
+\newblock Categorizing music by genres.
+\newblock {\em Annals of the New York Academy of Sciences}, page nyas.15404.
+\newblock \url{https://doi.org/10.1111/nyas.15404}.
+
+\bibitem[Lena and Peterson, 2008]{lenaClassificationCultureTypes2008}
+Lena, J.~C. and Peterson, R.~A. (2008).
+\newblock Classification as {Culture}: {Types} and {Trajectories} of {Music}
+  {Genres}.
+\newblock {\em American Sociological Review}, 73(5):697--718.
+\newblock \url{https://doi.org/10.1177/000312240807300501}.
+
+\bibitem[Lepa et~al., 2020]{lepaPopularMusicEntertainment2020}
+Lepa, S., Steffens, J., Herzog, M., and Egermann, H. (2020).
+\newblock Popular {Music} as {Entertainment} {Communication}: {How} {Perceived}
+  {Semantic} {Expression} {Explains} {Liking} of {Previously} {Unknown}
+  {Music}.
+\newblock {\em Media and Communication}, 8(3):191--204.
+\newblock \url{https://doi.org/10.17645/mac.v8i3.3153}.
+
+\bibitem[Lonsdale, 2021]{lonsdaleMusicalTasteIngroup2021}
+Lonsdale, A.~J. (2021).
+\newblock Musical taste, in-group favoritism, and social identity theory:
+  {Re}-testing the predictions of the self-esteem hypothesis.
+\newblock {\em Psychology of Music}, 49(4):817--827.
+\newblock \url{https://doi.org/10.1177/0305735619899158}.
+
+\bibitem[Mayer et~al., 2008]{mayerRhymeStyleFeatures2008}
+Mayer, R., Neumayer, R., and Rauber, A. (2008).
+\newblock Rhyme and {Style} {Features} for {Musical} {Genre} {Classification}
+  by {Song} {Lyrics}.
+\newblock In {\em 9th {International} {Society} for {Music} {Information}
+  {Retrieval} {Conference}}, pages 337--342, Philadelphia.
+
+\bibitem[McDonald, nd]{mcdonaldEveryNoiseOnce_nodate}
+McDonald, G. (n.d.).
+\newblock Every noise at once.
+\newblock Retrieved 2024-04-23 from \url{https://everynoise.com/}.
+
+\bibitem[Merlini, 2020]{merliniCriticalInterdisciplinarySurvey2020}
+Merlini, M. (2020).
+\newblock A critical (and interdisciplinary) survey of popular music genre
+  theories.
+\newblock {\em Interdisciplinary Studies in Musicology}, 20:79--94.
+\newblock \url{https://www.ceeol.com/search/article-detail?id=1105289}.
+
+\bibitem[MusicBrainz, nd]{MusicBrainz_nodate}
+MusicBrainz (n.d.).
+\newblock Database statistics.
+\newblock Retrieved 2025-12-12 from \url{https://musicbrainz.org/statistics/}.
+
+\bibitem[Neale, 1980]{nealeGenre1980}
+Neale, S. (1980).
+\newblock {\em Genre}.
+\newblock British Film Institute.
+
+\bibitem[Negus, 1999]{negusMusicGenresCorporate1999}
+Negus, K. (1999).
+\newblock {\em Music {Genres} and {Corporate} {Cultures}}.
+\newblock Routledge, London.
+\newblock \url{https://doi.org/10.4324/9780203169469}.
+
+\bibitem[Nie, 2022]{nieInaccuratePredictionGenre2022}
+Nie, K. (2022).
+\newblock Inaccurate {Prediction} or {Genre} {Evolution}? {Rethinking} {Genre}
+  {Classification}.
+\newblock {\em Zenodo}.
+\newblock \url{https://doi.org/10.5281/zenodo.7316661}.
+
+\bibitem[Pachet and Cazaly, 2000]{pachetTaxonomyMusicalGenres2000}
+Pachet, F. and Cazaly, D. (2000).
+\newblock A taxonomy of musical genres.
+\newblock In {\em Content-{Based} {Multimedia} {Information} {Access} -
+  {Volume} 2}, RIAO '00, pages 1238--1245, Paris, FRA.
+\newblock \url{https://dl.acm.org/doi/10.5555/2856151.2856177}.
+
+\bibitem[P'{a}lmason et~al., 2018]{palmasonMusicGenreClassification2018}
+P'{a}lmason, H., J'{o}nsson, B.~{\TH}., Schedl, M., and Knees, P. (2018).
+\newblock Music {Genre} {Classification} {Revisited}: {An} {In}-{Depth}
+  {Examination} {Guided} by {Music} {Experts}.
+\newblock In Aramaki, M., Davies, M. E.~P., Kronland-Martinet, R., and Ystad,
+  S., editors, {\em Music {Technology} with {Swing}}, pages 49--62, Cham.
+  Springer International Publishing.
+\newblock \url{https://doi.org/10.1007/978-3-030-01692-0_4}.
+
+\bibitem[Pichl et~al., 2017]{pichlMiningCultureSpecificMusic2017}
+Pichl, M., Zangerle, E., Specht, G., and Schedl, M. (2017).
+\newblock Mining {Culture}-{Specific} {Music} {Listening} {Behavior} from
+  {Social} {Media} {Data}.
+\newblock In {\em {IEEE} {International} {Symposium} on {Multimedia} ({ISM})},
+  pages 208--215.
+
+\bibitem[Porcaro et~al., 2024]{porcaroAssessingImpactMusic2024}
+Porcaro, L., Gómez, E., and Castillo, C. (2024).
+\newblock Assessing the {Impact} of {Music} {Recommendation} {Diversity} on
+  {Listeners}: {A} {Longitudinal} {Study}.
+\newblock {\em ACM Trans. Recomm. Syst.}, 2(1):3:1--3:47.
+\newblock \url{https://doi.org/10.1145/3608487}.
+
+\bibitem[Prevedello et~al., 2024]{prevedelloLyricsSuccessEmbedding2024}
+Prevedello, G., Blin, I., Monechi, B., and Ubaldi, E. (2024).
+\newblock Lyrics for {Success}: {Embedding} {Features} for {Song} {Popularity}
+  {Prediction}.
+\newblock In Kruspe, A., Oramas, S., Epure, E.~V., Sordo, M., Weck, B., Doh,
+  S., Won, M., Manco, I., and Meseguer-Brocal, G., editors, {\em Proceedings of
+  the 3rd {Workshop} on {NLP} for {Music} and {Audio} ({NLP4MusA})}, pages
+  75--80, Oakland. Association for Computational Lingustics.
+\newblock \url{https://aclanthology.org/2024.nlp4musa-1.13/}.
+
+\bibitem[RateYourMusic, nd]{RateYourMusic_nodate}
+RateYourMusic (n.d.).
+\newblock All genres.
+\newblock Retrieved 2025-12-12 from \url{https://rateyourmusic.com/genres/}.
+
+\bibitem[Rentfrow et~al., 2011]{rentfrowStructureMusicalPreferences2011}
+Rentfrow, P.~J., Goldberg, L.~R., and Levitin, D.~J. (2011).
+\newblock The structure of musical preferences: {A} five-factor model.
+\newblock {\em Journal of Personality and Social Psychology},
+  100(6):1139--1157.
+\newblock \url{https://doi.org/10.1037/a0022406}.
+
+\bibitem[Schreiber, 2015]{schreiberImprovingGenreAnnotations2015}
+Schreiber, H. (2015).
+\newblock Improving {Genre} {Annotations} for the {Million} {Song} {Dataset}.
+\newblock In {\em 16th {International} {Society} for {Music} {Information}
+  {Retrieval} {Conference}}.
+
+\bibitem[Schreiber, 2016]{schreiberGenreOntologyLearning2016}
+Schreiber, H. (2016).
+\newblock Genre {Ontology} {Learning}: {Comparing} {Curated} with
+  {Crowd}-{Sourced} {Ontologies}.
+\newblock In {\em 17th {International} {Society} for {Music} {Information}
+  {Retrieval} {Conference}}, New York.
+
+\bibitem[Silver et~al., 2016]{silverGenreComplexesPopular2016}
+Silver, D., Lee, M., and Childress, C.~C. (2016).
+\newblock Genre {Complexes} in {Popular} {Music}.
+\newblock {\em PLOS ONE}, 11(5):e0155471.
+\newblock \url{https://doi.org/10.1371/journal.pone.0155471}.
+
+\bibitem[Snoek et~al., 2012]{snoekPracticalBayesianOptimization2012a}
+Snoek, J., Larochelle, H., and Adams, R.~P. (2012).
+\newblock Practical {Bayesian} {Optimization} of {Machine} {Learning}
+  {Algorithms}.
+\newblock In {\em Advances in {Neural} {Information} {Processing} {Systems}},
+  volume~25. Curran Associates, Inc.
+
+\bibitem[Sordo, 2008]{sordoQuestMusicalGenres2008}
+Sordo, M. (2008).
+\newblock The quest for musical genres: {Do} the experts and the wisdom of
+  crowds agree?
+\newblock In {\em 9th {International} {Society} for {Music} {Information}
+  {Retrieval} {Conference}}, Philadelphia.
+
+\bibitem[Sturm and Flexer, 2023]{sturmReviewValidityIts2023}
+Sturm, B. L.~T. and Flexer, A. (2023).
+\newblock A {Review} of {Validity} and {Its} {Relationship} to {Music}
+  {Information} {Research}.
+\newblock In {\em 24th International Society for Music Information Retrieval
+  Conference}, Milan.
+\newblock \url{https://doi.org/10.5281/ZENODO.10265219}.
+
+\bibitem[Tzanetakis and Cook, 2002]{tzanetakisMusicalGenreClassification2002}
+Tzanetakis, G. and Cook, P. (2002).
+\newblock Musical genre classification of audio signals.
+\newblock {\em IEEE Transactions on Speech and Audio Processing},
+  10(5):293--302.
+\newblock \url{https://doi.org/10.1109/TSA.2002.800560}.
+
+\bibitem[Valverde, 2025]{valverdeInequityDesignMusic2025}
+Valverde, R.~C. (2025).
+\newblock Inequity by design: Music streaming taxonomies as ruinous
+  infrastructure.
+\newblock In Hesmondhalgh, D., editor, {\em Music Streaming around the World},
+  pages 191--210. University of California Press, 1 edition.
+\newblock \url{https://doi.org/10.2307/jj.33903674.16}.
+
+\bibitem[van Venrooij and Schmutz,
+  2018]{vanvenrooijCategoricalAmbiguityCultural2018}
+van Venrooij, A. and Schmutz, V. (2018).
+\newblock Categorical ambiguity in cultural fields: {The} effects of genre
+  fuzziness in popular music.
+\newblock {\em Poetics}, 66:1--18.
+\newblock \url{https://doi.org/10.1016/j.poetic.2018.02.001}.
+
+\bibitem[Zhang and Mani, 2003]{zhangKNNApproachUnbalanced2003}
+Zhang, J. and Mani, I. (2003).
+\newblock {kNN} {Approach} to {Unbalanced} {Data} {Distributions}: {A} {Case}
+  {Study} involving {Information} {Extraction}.
+\newblock In {\em Proceedings of workshop on learning from imbalanced
+  datasets}, pages 1--7, Ottawa. ICML.
+\newblock \url{https://www.site.uottawa.ca/~nat/Workshop2003/jzhang.pdf}.
+
+\end{thebibliography}
