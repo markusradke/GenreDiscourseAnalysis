@@ -10,3 +10,4 @@ data-raw/*.rds
 !data-raw/classification_prep_features.rds
 !data-raw/musicbrainz_genre_whitelist_20250616.rds
 models
+scripts/sync_overleaf_from_desktop.sh

@@ -388,7 +388,14 @@ for (res_name in names(resolutions)) {
   cat(sprintf("**%s**\n\n", get_metrics_description(data$eval$metrics_test)))
   
   f1_scores <- calculate_class_f1_scores_from_confusion_df(data$eval$confusion_test)
-  correlation <- round(cor(res_config$certainty$certainty, f1_scores), 3)
+  correlation <- round(
+    cor(
+      res_config$certainty$certainty,
+      f1_scores,
+      method = "kendall"
+    ),
+    3
+  )
   cat(sprintf(
     "**Correlation between metagenre uncertainty and per-class F1 scores on test set: %s**\n\n",
     correlation

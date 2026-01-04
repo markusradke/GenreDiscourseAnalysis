@@ -29,12 +29,12 @@ plot_cm <- function(evaluation, certainty, set = "test") {
   cor_f1_certain <- cor(
     f1_scores[names(certainty_vec)],
     certainty_vec,
-    method = "spearman"
+    method = "kendall"
   )
   metrics_label <- sprintf(
     "F1<sub>macro</sub>: %.3f<br>
 Mean Community Certainty: %.0f%%<br>
-Cor<sub>Spearman</sub>(F1, Certainty): %.3f",
+Cor<sub>Kendall</sub>(F1, Certainty): %.3f",
     f1_macro,
     mean_certainty * 100,
     cor_f1_certain
