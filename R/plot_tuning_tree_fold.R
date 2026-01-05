@@ -36,7 +36,7 @@ plot_tuning_results_tree <- function(
     ggplot2::scale_x_continuous(
       breaks = pretty(seq(xlimits[1], xlimits[2]), n = 10),
       limits = xlimits,
-      name = '# of Supergenres',
+      name = '# of Genre Categories',
       position = 'top'
     ) +
     ggplot2::scale_size(range = c(1, 4), name = 'Minimum n') +
