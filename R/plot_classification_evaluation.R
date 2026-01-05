@@ -430,7 +430,7 @@ plot_learner_comparison <- function(chosen_models) {
       ) +
       ggplot2::scale_x_discrete(
         breaks = c("lowres", "mediumres"),
-        labels = c("5 supergenres", "12 supergenres"),
+        labels = c("COMGET-G5", "COMGET-G12"),
         position = "bottom"
       ) +
       ggplot2::labs(x = "", y = "F1 macro \u00B1 std. error") +

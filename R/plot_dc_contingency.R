@@ -9,7 +9,7 @@
 #'   `album.dc.firstgenre`.
 #' @return A ggplot2 object (tile plot).
 #' @export
-plot_dc_contingency <- function(mb_meta, dc_genres, name = "COMGET") {
+plot_dc_contingency <- function(mb_meta, dc_genres, name = "COMGET-G") {
   no_metagenres <- mb_meta$metagenre |> unique() |> length()
   comb <- join_and_filter(mb_meta, dc_genres)
   relfreqs <- compute_relfreqs(comb)
@@ -55,7 +55,11 @@ compute_relfreqs <- function(comb) {
     )
 }
 
-build_plot_dc_contingency <- function(padded, no_metagenres, name = "COMGET") {
+build_plot_dc_contingency <- function(
+  padded,
+  no_metagenres,
+  name = "COMGET-G"
+) {
   p <- ggplot2::ggplot(
     padded,
     ggplot2::aes(
@@ -80,7 +84,7 @@ build_plot_dc_contingency <- function(padded, no_metagenres, name = "COMGET") {
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::labs(
       x = "Discogs",
-      y = sprintf("%s-%d", name, no_metagenres)
+      y = sprintf("%s%d", name, no_metagenres)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(

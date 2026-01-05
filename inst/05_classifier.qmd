@@ -270,9 +270,9 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
 
 model_configs <- tibble::tribble(
   ~learner, ~resolution, ~hash, ~model_dir, ~param_names,
-  "GLMNET", "lowres", "436e205a", "glmnet", 
+  "GLMNET", "lowres", "a2db599e", "glmnet", 
     list(c("penalty", "alpha", "target_ratio")),
-  "GLMNET", "mediumres", "01f3f5dd", "glmnet", 
+  "GLMNET", "mediumres", "97dd1fb2", "glmnet", 
     list(c("penalty", "alpha", "target_ratio")),
   "RDA", "lowres", "d07f8bb4", "rda", 
     list(c("gamma", "lambda", "target_ratio")),

@@ -320,6 +320,12 @@ Schreiber, H. (2016).
 \newblock In {\em 17th {International} {Society} for {Music} {Information}
   {Retrieval} {Conference}}, New York.
 
+\bibitem[Shi et~al., 2025]{shietalLightgbm2025}
+Shi, Y., Ke, G., Soukhavong, D., Lamb, J., Meng, Q., Finley, T., Wang, T.,
+  Chen, W., Ma, W., Ye, Q., Liu, T.-Y., Titov, N., and Cortes, D. (2025).
+\newblock {\em lightgbm: Light Gradient Boosting Machine}.
+\newblock R package version 4.6.0.99.
+
 \bibitem[Silver et~al., 2016]{silverGenreComplexesPopular2016}
 Silver, D., Lee, M., and Childress, C.~C. (2016).
 \newblock Genre {Complexes} in {Popular} {Music}.
@@ -348,6 +354,11 @@ Sturm, B. L.~T. and Flexer, A. (2023).
   Conference}, Milan.
 \newblock \url{https://doi.org/10.5281/ZENODO.10265219}.
 
+\bibitem[Tay et~al., 2023]{tayetalElasticNet2023}
+Tay, J.~K., Narasimhan, B., and Hastie, T. (2023).
+\newblock Elastic net regularization paths for all generalized linear models.
+\newblock {\em Journal of Statistical Software}, 106(1):1--31.
+
 \bibitem[Tzanetakis and Cook, 2002]{tzanetakisMusicalGenreClassification2002}
 Tzanetakis, G. and Cook, P. (2002).
 \newblock Musical genre classification of audio signals.
@@ -370,6 +381,18 @@ van Venrooij, A. and Schmutz, V. (2018).
   fuzziness in popular music.
 \newblock {\em Poetics}, 66:1--18.
 \newblock \url{https://doi.org/10.1016/j.poetic.2018.02.001}.
+
+\bibitem[Weihs et~al., 2005]{weihsetalKlaR2005}
+Weihs, C., Ligges, U., Luebke, K., and Raabe, N. (2005).
+\newblock klar analyzing german business cycles.
+\newblock In Baier, D., Decker, R., and Schmidt-Thieme, L., editors, {\em Data
+  Analysis and Decision Support}, pages 335--343, Berlin. Springer-Verlag.
+
+\bibitem[Wright and Ziegler, 2017]{wrightetalRanger2017}
+Wright, M.~N. and Ziegler, A. (2017).
+\newblock {ranger}: A fast implementation of random forests for high
+  dimensional data in {C++} and {R}.
+\newblock {\em Journal of Statistical Software}, 77(1):1--17.
 
 \bibitem[Zhang and Mani, 2003]{zhangKNNApproachUnbalanced2003}
 Zhang, J. and Mani, I. (2003).
