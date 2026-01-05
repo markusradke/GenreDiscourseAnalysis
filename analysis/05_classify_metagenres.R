@@ -4,16 +4,15 @@ devtools::load_all()
 n_folds <- 5
 
 # prepare data ----
-prepare_full_classification_data_all_levels(n_folds)
+# prepare_full_classification_data_all_levels(n_folds)
 
 # train prototype models on subsample ----
 settings <- list(
-  run_data_pre = TRUE,
   train_subsample_prop = 0.2,
-  run_glmnet = TRUE,
+  run_glmnet = FALSE,
   run_rda = TRUE,
-  run_rf = TRUE,
-  run_lightgbm = TRUE,
+  run_rf = FALSE,
+  run_lightgbm = FALSE,
   max_cores = 64,
   reserve_cores = 4,
   n_folds = n_folds,
@@ -28,9 +27,8 @@ settings <- list(
 orchestrate_classifier_training(settings)
 
 # train final models ----
-rm(list = ls())
+rm(list = ls()[ls() != "n_folds"])
 settings <- list(
-  run_data_pre = TRUE,
   train_subsample_prop = 1,
   run_glmnet = FALSE,
   run_rda = FALSE,

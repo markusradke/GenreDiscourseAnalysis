@@ -72,7 +72,6 @@ train_rda <- function(train, test, cv_splits, settings) {
   }
 
   start_time <- Sys.time()
-
   if (any_tuning && !is.null(cv_splits)) {
     message("Starting Bayesian hyperparameter tuning for RDA...")
     rda_params <- create_rda_params(workflow, train, settings)
@@ -162,23 +161,28 @@ any_rda_hyperparameter_tuned <- function(settings) {
 
 create_rda_model_spec <- function(settings) {
   if (isTRUE(settings$tune_gamma) && isTRUE(settings$tune_lambda)) {
-    frac_common_cov <- tune::tune()
-    frac_identity <- tune::tune()
+    spec <- parsnip::discrim_regularized(
+      frac_common_cov = tune::tune(),
+      frac_identity = tune::tune()
+    )
   } else if (isTRUE(settings$tune_gamma)) {
-    frac_common_cov <- tune::tune()
-    frac_identity <- settings$lambda_fix
+    spec <- parsnip::discrim_regularized(
+      frac_common_cov = tune::tune(),
+      frac_identity = settings$lambda_fix
+    )
   } else if (isTRUE(settings$tune_lambda)) {
-    frac_common_cov <- settings$gamma_fix
-    frac_identity <- tune::tune()
+    spec <- parsnip::discrim_regularized(
+      frac_common_cov = settings$gamma_fix,
+      frac_identity = tune::tune()
+    )
   } else {
-    frac_common_cov <- settings$gamma_fix
-    frac_identity <- settings$lambda_fix
+    spec <- parsnip::discrim_regularized(
+      frac_common_cov = settings$gamma_fix,
+      frac_identity = settings$lambda_fix
+    )
   }
 
-  parsnip::discrim_regularized(
-    frac_common_cov = frac_common_cov,
-    frac_identity = frac_identity
-  ) |>
+  spec |>
     parsnip::set_engine("klaR") |>
     parsnip::set_mode("classification")
 }

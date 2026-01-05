@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  5 JAN 2026 17:50
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  5 JAN 2026 18:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -793,23 +793,8 @@ Underfull \hbox (badness 6961) in paragraph at lines 303--304
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 305--306
-[]\T1/bch/m/n/10 COMGET-G32 yielded a fur-ther degra-da-
- []
-
-
-Underfull \hbox (badness 6825) in paragraph at lines 305--306
-\T1/bch/m/n/10 tion in bench-marks ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 400 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 003$\T1/bch/m/n/10 ;
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 305--306
-[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 403$\T1/bch/m/n/10 ; $\FML/futmi/m/it/10 ^^T[] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 477 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 005$\T1/bch/m/n/10 ;
- []
-
-
-Underfull \hbox (badness 2035) in paragraph at lines 305--306
-\FML/futmi/m/it/10 ^^T[] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 486$\T1/bch/m/n/10 ) with de-creased \T1/bch/m/it/10 cer-tainty \T1/bch/m/n/10 (54%).
+Underfull \hbox (badness 1270) in paragraph at lines 305--306
+[]\T1/bch/m/n/10 Consistent with de-creased com-mu-nity cer-tainty
  []
 
 <figures/lightgbm_lowres_varimp.png, id=332, 511.9125pt x 426.6339pt>
@@ -938,7 +923,7 @@ Here is how much of TeX's memory you used:
  1141 hyphenation exceptions out of 8191
  84i,17n,131p,1840b,685s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_mntdbg.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-BoldItalic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (14 pages, 2002169 bytes).
+Output written on PowerToThePeople_v1.pdf (14 pages, 1996543 bytes).
 PDF statistics:
  605 PDF objects out of 1000 (max. 8388607)
  546 compressed objects within 6 object streams
