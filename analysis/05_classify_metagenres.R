@@ -9,7 +9,7 @@ prepare_full_classification_data_all_levels(n_folds)
 # train prototype models on subsample ----
 settings <- list(
   run_data_pre = TRUE,
-  subsample_prop = 0.2,
+  train_subsample_prop = 0.2,
   run_glmnet = TRUE,
   run_rda = TRUE,
   run_rf = TRUE,
@@ -31,7 +31,7 @@ orchestrate_classifier_training(settings)
 rm(list = ls())
 settings <- list(
   run_data_pre = TRUE,
-  subsample_prop = 1,
+  train_subsample_prop = 1,
   run_glmnet = FALSE,
   run_rda = FALSE,
   run_rf = FALSE,
@@ -48,6 +48,5 @@ settings <- list(
 )
 orchestrate_classifier_training(settings)
 
-
 # Generate resport ----
-generate_report("05_classify_metagenres")
+generate_report("05_classifier")

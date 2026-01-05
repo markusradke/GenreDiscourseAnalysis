@@ -5,7 +5,7 @@ orchestrate_classifier_training <- function(settings) {
 
   # extract settings ----
   run_data_pre <- settings$run_data_pre
-  subsample_prop <- settings$subsample_prop
+  subsample_prop <- settings$train_subsample_prop
   run_glmnet <- settings$run_glmnet
   run_rda <- settings$run_rda
   run_rf <- settings$run_rf
@@ -59,7 +59,7 @@ orchestrate_classifier_training <- function(settings) {
       splits_subsampled <- create_artist_cv_splits(
         train_data = train_subsampled,
         n_folds = n_folds,
-        max_tracks_per_artist = 2000
+        max_tracks_per_artist = 2000 # 10k * 0.2
       )
       list(
         train = train_subsampled,

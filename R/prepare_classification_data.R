@@ -12,7 +12,7 @@ prepare_full_classification_data_all_levels <- function(n_folds) {
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 1.0,
+    subsample_prop = 0.2, #1.0,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,
@@ -151,9 +151,16 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
   train <- train |> dplyr::select(-p_max)
   test <- test |> dplyr::select(-p_max)
 
-  message("---CREATING ARTIST-BASED CV FOLDS TO CHECK FACTOR LEVELS---")
-  cv_splits <- create_artist_cv_splits(
+  message(
+    "---CREATING 20% SUBSMAPLE ARTIST-BASED CV FOLDS TO CHECK FACTOR LEVELS---"
+  )
+  set.seed(settings$seed)
+  subsampled <- draw_prototype_sample(
     train,
+    prop = 0.2
+  )
+  cv_splits <- create_artist_cv_splits(
+    subsampled,
     n_folds = settings$cv_folds,
     repeats = settings$cv_repeats,
     max_tracks_per_artist = settings$max_tracks_per_artist_cv,
@@ -161,14 +168,18 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
   )
   cleaned <- clean_factor_levels(
     cv_splits,
-    train,
+    subsampled,
     test,
     settings$min_n_factor_level
   )
-  data_clean <- dplyr::bind_rows(
-    cleaned$train_data,
-    cleaned$test_data
-  )
+
+  viable_structure <- extract_viable_factor_structure(cleaned$train_data)
+
+  train_filtered <- apply_factor_structure(train, viable_structure)
+  test_filtered <- apply_factor_structure(test, viable_structure)
+
+  data_clean <- dplyr::bind_rows(train_filtered, test_filtered)
+
   dummy <- dummy_code_factors(data_clean)
 
   message("---CREATING FINAL SPLITS AND FOLDS---")

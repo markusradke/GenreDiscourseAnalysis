@@ -161,33 +161,26 @@ any_rda_hyperparameter_tuned <- function(settings) {
 }
 
 create_rda_model_spec <- function(settings) {
-  # Use parsnip discriminant model and klaR engine if available.
-  # We set default gamma/lambda from settings and mark tunable args.
-  spec <- parsnip::discrim_regularized(
-    frac_common = 1 # placeholder; gamma/lambda will be set via args
+  if (isTRUE(settings$tune_gamma) && isTRUE(settings$tune_lambda)) {
+    frac_common_cov <- tune::tune()
+    frac_identity <- tune::tune()
+  } else if (isTRUE(settings$tune_gamma)) {
+    frac_common_cov <- tune::tune()
+    frac_identity <- settings$lambda_fix
+  } else if (isTRUE(settings$tune_lambda)) {
+    frac_common_cov <- settings$gamma_fix
+    frac_identity <- tune::tune()
+  } else {
+    frac_common_cov <- settings$gamma_fix
+    frac_identity <- settings$lambda_fix
+  }
+
+  parsnip::discrim_regularized(
+    frac_common_cov = frac_common_cov,
+    frac_identity = frac_identity
   ) |>
     parsnip::set_engine("klaR") |>
     parsnip::set_mode("classification")
-
-  spec <- add_tunable_rda_params(spec, settings)
-  spec
-}
-
-add_tunable_rda_params <- function(spec, settings) {
-  # set_args accepts tunable parameters if requested
-  if (isTRUE(settings$tune_gamma)) {
-    spec <- parsnip::set_args(spec, gamma = tune::tune())
-  } else {
-    spec <- parsnip::set_args(spec, gamma = settings$gamma_fix)
-  }
-
-  if (isTRUE(settings$tune_lambda)) {
-    spec <- parsnip::set_args(spec, lambda = tune::tune())
-  } else {
-    spec <- parsnip::set_args(spec, lambda = settings$lambda_fix)
-  }
-
-  spec
 }
 
 #' Create RDA parameter definitions for tuning
@@ -197,15 +190,30 @@ add_tunable_rda_params <- function(spec, settings) {
 #' @return dials parameter set
 create_rda_params <- function(workflow, train_df, settings) {
   sampling_params <- create_sampling_params(train_df)
-
   params <- workflow |> hardhat::extract_parameter_set_dials()
 
   if (isTRUE(settings$tune_gamma)) {
-    params <- params |> update(gamma = dials::regularization_factor()) # numeric 0-1
+    params <- params |>
+      update(
+        frac_common_cov = dials::new_quant_param(
+          type = "double",
+          range = c(0, 1),
+          inclusive = c(TRUE, TRUE),
+          label = c(frac_common_cov = "Fraction Common Covariance")
+        )
+      )
   }
 
   if (isTRUE(settings$tune_lambda)) {
-    params <- params |> update(lambda = dials::regularization_factor()) # numeric 0-1
+    params <- params |>
+      update(
+        frac_identity = dials::new_quant_param(
+          type = "double",
+          range = c(0, 1),
+          inclusive = c(TRUE, TRUE),
+          label = c(frac_identity = "Fraction Identity")
+        )
+      )
   }
 
   if (isTRUE(settings$tune_sampling) && "target_ratio" %in% params$id) {
@@ -216,13 +224,14 @@ create_rda_params <- function(workflow, train_df, settings) {
 }
 
 finalize_and_fit_rda <- function(workflow, train_df, best_params, settings) {
-  best_gamma <- best_params$gamma %||% settings$gamma_fix
-  best_lambda <- best_params$lambda %||% settings$lambda_fix
+  best_gamma <- best_params$frac_common_cov %||% settings$gamma_fix
+  best_lambda <- best_params$frac_identity %||% settings$lambda_fix
 
   final_spec <- parsnip::discrim_regularized(
-    frac_common = 1
+    frac_common_cov = best_gamma,
+    frac_identity = best_lambda
   ) |>
-    parsnip::set_engine("klaR", gamma = best_gamma, lambda = best_lambda) |>
+    parsnip::set_engine("klaR") |>
     parsnip::set_mode("classification")
 
   finalize_and_fit(
@@ -243,8 +252,8 @@ extract_rda_model_settings <- function(
     seed = settings$seed,
     model_type = "rda_klar",
     features = settings$model_features,
-    gamma = best_params$gamma %||% settings$gamma_fix,
-    lambda = best_params$lambda %||% settings$lambda_fix,
+    frac_common_cov = best_params$frac_common_cov %||% settings$gamma_fix,
+    frac_identity = best_params$frac_identity %||% settings$lambda_fix,
     target_ratio = best_params$target_ratio %||% settings$target_ratio_fix,
     model_hash = model_hash
   )

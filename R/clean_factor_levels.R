@@ -269,3 +269,53 @@ log_single_level_removals <- function(factor_names) {
 remove_columns <- function(data, cols) {
   data |> dplyr::select(-dplyr::all_of(cols))
 }
+
+
+extract_viable_factor_structure <- function(df) {
+  factor_cols <- names(df)[vapply(df, is.factor, logical(1))]
+  factor_cols <- setdiff(factor_cols, "metagenre")
+
+  structure <- list(
+    keep_cols = names(df),
+    factor_levels = lapply(
+      stats::setNames(factor_cols, factor_cols),
+      function(col) levels(df[[col]])
+    )
+  )
+
+  structure
+}
+
+apply_factor_structure <- function(df, structure) {
+  if (!"case_wts" %in% names(df)) {
+    structure$keep_cols <- setdiff(structure$keep_cols, "case_wts")
+  }
+  df_filtered <- df |> dplyr::select(dplyr::all_of(structure$keep_cols))
+
+  for (col in names(structure$factor_levels)) {
+    if (!col %in% names(df_filtered)) {
+      next
+    }
+
+    valid_levels <- structure$factor_levels[[col]]
+    df_filtered[[col]] <- factor(
+      df_filtered[[col]],
+      levels = valid_levels
+    )
+
+    invalid_mask <- is.na(df_filtered[[col]])
+    if (any(invalid_mask)) {
+      if ("other" %in% valid_levels) {
+        df_filtered[[col]][invalid_mask] <- "other"
+      } else {
+        warning(sprintf(
+          "Column '%s': %d obs have invalid levels or are NA, setting to NA",
+          col,
+          sum(invalid_mask)
+        ))
+      }
+    }
+  }
+
+  df_filtered
+}
