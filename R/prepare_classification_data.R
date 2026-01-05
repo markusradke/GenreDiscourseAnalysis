@@ -12,7 +12,7 @@ prepare_full_classification_data_all_levels <- function(n_folds) {
   # # Prepare data sets for modeling ----
   settings <- list(
     seed = 42,
-    subsample_prop = 0.2, #1.0,
+    subsample_prop = 1.0,
     casewise_threshold = 0.4,
     artist_initial_split = 0.8,
     drop_POPULARMUSIC = TRUE,

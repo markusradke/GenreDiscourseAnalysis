@@ -334,7 +334,7 @@ params <- c("tree_depth", "trees", "learn_rate", "mtry", "min_n", "target_ratio"
 
 load_resolution_data <- function(resolution_hash) {
   base_path <- sprintf(
-    "../models/classifier/lightgbm/final_models/lightgbm_%sres_%s",
+    "../models/classifier/lightgbm/lightgbm_%sres_%s",
     names(resolutions)[which(sapply(resolutions, `[[`, "hash") == resolution_hash)],
     resolution_hash
   )
