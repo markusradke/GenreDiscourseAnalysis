@@ -55,11 +55,12 @@ orchestrate_classifier_training <- function(settings) {
       "Subsampling full train data and generating new cv_splits for prototyping..."
     )
     subsample_full_data_for_prototyping <- function(train, subsample_prop) {
-      train_subsampled <- draw_prototype_sample(train, subsample_prop)
+      train_subsampled <- draw_prototype_sample(train, subsample_prop, 42)
       splits_subsampled <- create_artist_cv_splits(
         train_data = train_subsampled,
         n_folds = n_folds,
-        max_tracks_per_artist = 2000 # 10k * 0.2
+        max_tracks_per_artist = 2000, # 10k * 0.2,
+        seed = 42
       )
       list(
         train = train_subsampled,

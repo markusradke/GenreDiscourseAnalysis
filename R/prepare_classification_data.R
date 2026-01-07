@@ -129,10 +129,10 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
   if (settings$subsample_prop == 1) {
     sampled <- joined
   } else {
-    set.seed(settings$seed)
     sampled <- draw_prototype_sample(
       joined,
-      prop = settings$subsample_prop
+      prop = settings$subsample_prop,
+      settings$seed
     )
   }
 
@@ -154,10 +154,10 @@ prepare_classification_data <- function(settings, poptrag, metagenres) {
   message(
     "---CREATING 20% SUBSMAPLE ARTIST-BASED CV FOLDS TO CHECK FACTOR LEVELS---"
   )
-  set.seed(settings$seed)
   subsampled <- draw_prototype_sample(
     train,
-    prop = 0.2
+    prop = 0.2,
+    settings$seed
   )
   cv_splits <- create_artist_cv_splits(
     subsampled,
@@ -345,8 +345,8 @@ join_target <- function(casewise, metagenres, drop_POPULARMUSIC) {
   joined
 }
 
-draw_prototype_sample <- function(df, prop = 0.12) {
-  set.seed(42)
+draw_prototype_sample <- function(df, prop = 0.12, seed = 42) {
+  set.seed(seed)
   rsample::initial_split(df, prop = prop, strata = metagenre) |>
     rsample::training()
 }

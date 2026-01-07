@@ -64,7 +64,7 @@ train_random_forest <- function(train, test, cv_splits, settings) {
   rf_model <- extract_ranger_model(fitted_workflow)
   model_settings <- extract_model_settings(
     rf_model,
-    tuning_fit_result$tuning_results,
+    tuning_fit_result$best_params,
     settings$target_ratio_fix,
     tuning_fit_result$model_hash
   )
@@ -243,6 +243,7 @@ tune_and_fit_workflow <- function(
   list(
     fitted_workflow = fitted_workflow,
     tuning_results = tune_result$tuning_results,
+    best_params = best_params,
     model_hash = tune_result$model_hash
   )
 }
@@ -319,6 +320,7 @@ fit_workflow <- function(workflow, train_df, n_cores, cv_splits, settings) {
   list(
     fitted_workflow = fitted_workflow,
     tuning_results = NULL,
+    best_params = list(),
     model_hash = model_hash
   )
 }
@@ -341,25 +343,16 @@ extract_ranger_model <- function(fitted_workflow) {
 
 extract_model_settings <- function(
   ranger_model,
-  tuning_results,
+  best_params,
   target_ratio_fix,
   model_hash = NULL
 ) {
-  if (!is.null(tuning_results)) {
-    bayes_iterations <- max(tuning_results$.iter)
-    best_params <- tune::select_best(
-      tuning_results,
-      metric = "macro_f1_with_zeros"
-    )
-    best_target_ratio <- best_params$target_ratio %||% target_ratio_fix
-  } else {
-    bayes_iterations <- NULL
-  }
+  bayes_iterations <- NULL
 
   list(
     ntrees = ranger_model$num.trees,
     mtry = ranger_model$mtry,
-    target_ratio = best_target_ratio %||% target_ratio_fix,
+    target_ratio = best_params$target_ratio %||% target_ratio_fix,
     bayes_iterations = bayes_iterations,
     max_depth = ranger_model$max.depth,
     min_n = ranger_model$min.node.size,

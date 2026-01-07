@@ -361,7 +361,7 @@ tune_bayes_workflow <- function(
 
   n_folds <- length(cv_splits$splits)
   metric_set <- create_tuning_metrics()
-
+  set.seed(seed)
   initial_grid <- dials::grid_space_filling(
     params,
     size = initial_grid_size,

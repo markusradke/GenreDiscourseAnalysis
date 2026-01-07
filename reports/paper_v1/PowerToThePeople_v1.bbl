@@ -213,13 +213,6 @@ Lonsdale, A.~J. (2021).
 \newblock {\em Psychology of Music}, 49(4):817--827.
 \newblock \url{https://doi.org/10.1177/0305735619899158}.
 
-\bibitem[Mayer et~al., 2008]{mayerRhymeStyleFeatures2008}
-Mayer, R., Neumayer, R., and Rauber, A. (2008).
-\newblock Rhyme and {Style} {Features} for {Musical} {Genre} {Classification}
-  by {Song} {Lyrics}.
-\newblock In {\em 9th {International} {Society} for {Music} {Information}
-  {Retrieval} {Conference}}, pages 337--342, Philadelphia.
-
 \bibitem[McDonald, nd]{mcdonaldEveryNoiseOnce_nodate}
 McDonald, G. (n.d.).
 \newblock Every noise at once.
@@ -261,15 +254,6 @@ Pachet, F. and Cazaly, D. (2000).
 \newblock In {\em Content-{Based} {Multimedia} {Information} {Access} -
   {Volume} 2}, RIAO '00, pages 1238--1245, Paris, FRA.
 \newblock \url{https://dl.acm.org/doi/10.5555/2856151.2856177}.
-
-\bibitem[P'{a}lmason et~al., 2018]{palmasonMusicGenreClassification2018}
-P'{a}lmason, H., J'{o}nsson, B.~{\TH}., Schedl, M., and Knees, P. (2018).
-\newblock Music {Genre} {Classification} {Revisited}: {An} {In}-{Depth}
-  {Examination} {Guided} by {Music} {Experts}.
-\newblock In Aramaki, M., Davies, M. E.~P., Kronland-Martinet, R., and Ystad,
-  S., editors, {\em Music {Technology} with {Swing}}, pages 49--62, Cham.
-  Springer International Publishing.
-\newblock \url{https://doi.org/10.1007/978-3-030-01692-0_4}.
 
 \bibitem[Pichl et~al., 2017]{pichlMiningCultureSpecificMusic2017}
 Pichl, M., Zangerle, E., Specht, G., and Schedl, M. (2017).

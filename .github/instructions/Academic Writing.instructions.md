@@ -22,7 +22,7 @@ Please follow these guidelines when helping me with that. My main goal is to wri
 - Always use past-tense when describing methods (What has been done?)
 - Use present-tense when describing results (What is the case?)
 - When writing in English, please prefer American spellings and grammar.
-- do not use too many em dashes — like this; try to avoid them 
+- Please avoid em dashes and en dashes whenever possible.
 
 #  TISMIR Style Guidelines
 This is a TISMIR publication; please follow these guidlines: 

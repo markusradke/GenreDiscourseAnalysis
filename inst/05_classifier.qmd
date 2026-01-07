@@ -258,8 +258,10 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
   if (learner == "GLMNET"){
     names(chosen_params) <- gsub("alpha", "mixture", names(chosen_params))
   }
-   
-  prepare_tuning_topmodels(tuning, chosen_params, top_n = 100) |>
+  if (learner == "RF"){
+    names(chosen_params) <- gsub("max_depth", "max.depth", names(chosen_params))
+  }
+  prepare_tuning_topmodels(tuning, chosen_params, top_n = 100) |> 
     dplyr::filter(is_chosen) |>
     dplyr::select(
       macro_f1_with_zeros_mean,
@@ -270,24 +272,24 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
 
 model_configs <- tibble::tribble(
   ~learner, ~resolution, ~hash, ~model_dir, ~param_names,
-  "GLMNET", "lowres", "a2db599e", "glmnet", 
-    list(c("penalty", "alpha", "target_ratio")),
-  "GLMNET", "mediumres", "97dd1fb2", "glmnet", 
-    list(c("penalty", "alpha", "target_ratio")),
-  "RDA", "lowres", "d07f8bb4", "rda", 
-    list(c("gamma", "lambda", "target_ratio")),
-  "RDA", "mediumres", "4d480cd8", "rda", 
-    list(c("gamma", "lambda", "target_ratio")),
-  "RF", "lowres", "759e2621", "rf", 
-    list(c("mtry", "min_n", "max.depth", "target_ratio")),
-  "RF", "mediumres", "2cc36c89", "rf", 
-    list(c("mtry", "min_n", "max.depth", "target_ratio")),
-  "LightGBM", "lowres", "1776db28", "lightgbm", 
-    list(c("tree_depth", "trees", "learn_rate", "mtry", 
-           "min_n", "target_ratio")),
-  "LightGBM", "mediumres", "b8c05240", "lightgbm", 
-    list(c("tree_depth", "trees", "learn_rate", "mtry", 
-           "min_n", "target_ratio"))
+  # "GLMNET", "lowres", "8b551f9f", "glmnet", 
+  #   list(c("penalty", "alpha", "target_ratio")),
+  # "GLMNET", "mediumres", "42e4f387", "glmnet", 
+  #   list(c("penalty", "alpha", "target_ratio")),
+  # "RDA", "lowres", "e3963f9f", "rda", 
+  #   list(c("frac_common_cov", "frac_identity", "target_ratio")),
+  # "RDA", "mediumres", "bd9381e4", "rda", 
+  #   list(c("frac_common_cov", "frac_identity", "target_ratio")),
+  "RF", "lowres", "b2c09957", "rf", 
+    list(c("mtry", "min_n", "max_depth", "target_ratio"))#,
+  # "RF", "mediumres", "2e542249", "rf", 
+  #   list(c("mtry", "min_n", "max_depth", "target_ratio")),
+  # "LightGBM", "lowres", "82228487", "lightgbm", 
+  #   list(c("tree_depth", "trees", "learn_rate", "mtry", 
+  #          "min_n", "target_ratio")),
+  # "LightGBM", "mediumres", "dc78b376", "lightgbm", 
+  #   list(c("tree_depth", "trees", "learn_rate", "mtry", 
+  #          "min_n", "target_ratio"))
 )
 
 chosen_models <- purrr::pmap_df(model_configs, load_learner_f1_cv)
@@ -306,7 +308,7 @@ learner_comp_plot
 
 
 # Final GBM Classifier Results
-```{r setup_resolutions}
+ ```{r setup_resolutions}
 resolutions <- list(
   low = list(
     hash = "dc8426d1",
@@ -355,7 +357,7 @@ extract_chosen_params <- function(settings) {
     min_n = settings$min_n,
     target_ratio = settings$target_ratio
   )
-}
+} 
 ```
 
 
