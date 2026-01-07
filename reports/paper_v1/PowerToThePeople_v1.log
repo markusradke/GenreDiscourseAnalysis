@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  7 JAN 2026 09:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  7 JAN 2026 11:36
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -806,13 +806,8 @@ File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
 Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 327.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
-Underfull \hbox (badness 1389) in paragraph at lines 341--342
-\T1/bch/m/n/10 key con-tri-bu-tions: (1) an al-go-rithm to con-struct
- []
-
-
-Underfull \hbox (badness 1024) in paragraph at lines 341--342
-\T1/bch/m/n/10 pa-ra-ble to ex-ist-ing folkoson-omy genre tax-onomies
+Underfull \hbox (badness 1092) in paragraph at lines 341--342
+\T1/bch/m/n/10 at user-specified gran-u-lar-i-ties from such trees; fi-
  []
 
 
@@ -832,7 +827,7 @@ Underfull \hbox (badness 2057) in paragraph at lines 348--349
 Underfull \vbox (badness 2538) has occurred while \output is active []
 
 
-Underfull \hbox (badness 4048) in paragraph at lines 357--358
+Underfull \hbox (badness 4048) in paragraph at lines 356--357
 \T1/bch/m/n/10 COMGET and FOLD-CAT con-se-quently im-ple-ment
  []
 
@@ -840,22 +835,7 @@ Underfull \hbox (badness 4048) in paragraph at lines 357--358
 Underfull \vbox (badness 2538) has occurred while \output is active []
 
  [11]
-Underfull \hbox (badness 2351) in paragraph at lines 374--375
-\T1/bch/m/n/10 G ag-gre-gates roughly 25 years of lis-tener votes
- []
-
-
-Underfull \hbox (badness 1297) in paragraph at lines 374--375
-\T1/bch/m/n/10 across a pe-riod when genre bound-aries and per-
- []
-
-
-Underfull \hbox (badness 2150) in paragraph at lines 377--378
-[]\T1/bch/m/n/10 Methodologically, collinear-ity among pre-dic-tors
- []
-
-
-Underfull \vbox (badness 1297) has occurred while \output is active []
+Underfull \vbox (badness 2538) has occurred while \output is active []
 
  (./PowerToThePeople_v1.bbl
 Underfull \hbox (badness 2229) in paragraph at lines 46--52
@@ -943,12 +923,12 @@ Here is how much of TeX's memory you used:
  34886 multiletter control sequences out of 15000+600000
  706654 words of font info for 130 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,1960b,663s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,1960b,659s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_mntdbg.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-BoldItalic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (14 pages, 1995490 bytes).
+Output written on PowerToThePeople_v1.pdf (14 pages, 1998930 bytes).
 PDF statistics:
- 595 PDF objects out of 1000 (max. 8388607)
- 536 compressed objects within 6 object streams
+ 600 PDF objects out of 1000 (max. 8388607)
+ 541 compressed objects within 6 object streams
  103 named destinations out of 1000 (max. 500000)
  209 words of extra memory for PDF output out of 10000 (max. 10000000)
 
