@@ -1,0 +1,142 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+% To remove the line numbers for the camera-ready version of your paper, remove
+% the `review` option from the tismir package
+\usepackage{tismir}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lipsum}
+\usepackage{subcaption} 
+\usepackage{tikz}
+\usepackage{float}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+
+
+\graphicspath{ {./figures/} }
+\urlstyle{same}
+\input{metadata}
+\fancyhead[L]{{}}
+\title{Appendix}
+
+\begin{document}
+\maketitle
+\appendix
+\renewcommand\thefigure{\thesection.\arabic{figure}}    
+\setcounter{figure}{0} 
+\section{Detailed FOLDCAT flowchart for folding COMGET to identify genre categories}
+\vspace{0.5cm}
+
+\noindent\makebox[\textwidth][l]{%
+  \hspace*{-0.9cm}%
+\begin{tikzpicture}[
+    node distance=6mm and 5mm,
+    terminator/.style = {rectangle, draw, align=flush left, text width = 4.5cm, rounded corners, minimum height=2em, font = \footnotesize},
+    process/.style = {rectangle, draw, align=flush left, text width = 4.5cm, minimum height=2em, font = \footnotesize},
+    decision/.style = {diamond, draw, aspect=2, text centered, inner sep=1pt, text width = 3 cm, minimum height=2em, font = \footnotesize},
+    >=Stealth]
+
+\node[terminator, text width = 6 cm, fill=red!60] (A) {
+  \textbf{Start from}\\
+    \begin{itemize}
+      \item COMGET hierarchy $t_{\text{full}}$ with 234 genres
+      \item probabilistic genre assignments from community votes for all tracks
+    \end{itemize}
+  };
+  \node[process, right=of A, text width = 6cm] (B) {Calculate genre sizes \\$\text{size(genre)}=\sum_{\text{tracks}} P(\text{genre}|\text{track})$};
+  \node[process, below left=10mm and -47.5mm of A, fill=blue!40] (C) {For mimium genre size $n_i$ in \{1000, 1005, ... 15000\}:};
+  \node[process, below=of C, fill=blue!40] (D) {Identify largest genre at deepest hierarchy level $g_{ij}$ in current tree  state $t_{ij}$};
+  \node[decision, below=of D] (E) {Is $\text{size}(g_{ij}) < n_i$?};
+  \node[process, right=10mm of E] (F) {Merge $g_{ij}$, its peers, and recursively all subgenres of $g_{ij}$ and its peers in $t_{\text{full}}$ into supergenre of $g_{ij}$ to form new tree state $t_{i(j+1)}$};
+  \node[decision, below=of E] (G) {Is supergenre of $g_{ij}$ root genre?};
+  \node[decision, right=of G] (H) {Is size of supergenre of $g_{ij}$ + size of its peers $\geq n_i$?};
+  \node[process, below=of G] (I) {Cut edge between $g_{ij}$ and supergenre to form new tree state $t_{i(j+1)}$, and identify genre label of $g_{ij}$ as new genre category};
+  \node[process, below right=5mm and 38 mm of I] (J) {Updated folded genres sizes in $t_{i(j+1)}$ and mark $g_{ij}$ and folded genres as processed};
+  \node[decision, text width = 2cm, right=5mm of J] (K) {Are there\\unprocessed\\genres\\in $t_{i(j+1)}$?};
+  \node[process, text width = 1cm, above=of K] (L) {$j = j + 1$};
+  \node[decision, below=of K] (M) {Can weighted Gini be calculated?};
+  \node[terminator, below=of M, fill=green!60] (N) {\textbf{End}: Stop search and store distinct solutions for genre categories alongside their corresponding weighted Gini scores}; 
+  \node[process, left=7.5mm of M] (O) {Calculate weighted Gini for final tree state $t_{i(j+1)}$ and save solution for minimum genre size $n_i$};  
+  \node[decision, left=of O] (P) {Are there more minimum genre sizes to process?};
+  \node[process, text width = 1cm, left=8mm of P] (Q) {$i = i + 1$};
+
+
+
+
+  %connectors
+  \draw[->] (A) -- (B);
+  \draw[->] (B) |- (C);
+  \draw[->] (C) -- (D);
+  \draw[->] (D) -- (E);
+  \draw[->] (E) -- node[anchor=north] {Yes} (F);
+  \draw[->] (E) -- node[anchor=west] {No} (G);
+  \draw[->] (G) -- node[anchor=north] {No} (H);
+  \draw[->] (H) -- node[anchor=west] {No} (F);
+  \draw[->] (H) |- node[anchor=west] {Yes} (I);
+  \draw[->] (G) -- node[anchor=east] {Yes} (I);
+  \draw[->] (I) |- (J);
+  \draw[->] (F) -| (J);
+  \draw[->] (J) -- (K);
+  \draw[->] (K) -- node[anchor=west] {Yes} (L);
+  \draw[->] (L) |- (D);
+  \draw[->] (K) -- node[anchor=west] {No} (M);
+  \draw[->] (M) -- node[anchor=west] {No} (N);
+  \draw[->] (M) -- node[anchor=south] {Yes} (O);
+  \draw[->] (O) -- (P);
+  \draw[->] (P) -- node[anchor=south] {Yes} (Q);
+  \draw [->] 
+    (Q.west) -- +(-1.25,0) |-  (C);
+  \draw[->] (P) |- node[anchor=east] {No} (N);
+\end{tikzpicture}
+}
+
+\newpage
+\section{Confusion Matrices and Variable Importances for COMGET-G25 and COMGET-G32}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_highres_cm.png}
+    \caption{COMGET-G25}
+  \end{subfigure}
+  \hfill
+  \vspace{0 cm}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_veryhighres_cm.png}
+    \caption{COMGET-G32}
+  \end{subfigure}
+  \caption{Confusion matrices for the final GBM models on the hold-out set. Values show $P(\text{Predicted}|\text{Actual})$; \textit{certainty} indicates the mean assignment probability for each \textit{genre category} across community votes.}
+\label{fig:rq3_appendix_confmat_high_veryhighres}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=0.6\linewidth]{figures/lightgbm_highres_varimp.png}
+    \caption{COMGET-G25}
+  \end{subfigure}
+  \hfill
+  \vspace{0.25 cm}
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=0.6\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_veryhighres_varimp.png}
+    \caption{COMGET-G32}
+  \end{subfigure}
+  \caption{Top 20 most important features for automated classification at high and very high granularity. Values show relative feature importance from the final LightGBM models.}
+\label{fig:rq3_appendix_varimp_highres_veryhighres}
+\end{figure}
+
+
+\section{Github Repository}
+Please find further details and the complete code for reproduction hosted at Github: %Link would show identify of authors.
+
+
+
+
+\end{document}

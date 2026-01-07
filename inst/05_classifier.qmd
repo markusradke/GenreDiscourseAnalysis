@@ -272,24 +272,24 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
 
 model_configs <- tibble::tribble(
   ~learner, ~resolution, ~hash, ~model_dir, ~param_names,
-  # "GLMNET", "lowres", "8b551f9f", "glmnet", 
-  #   list(c("penalty", "alpha", "target_ratio")),
-  # "GLMNET", "mediumres", "42e4f387", "glmnet", 
-  #   list(c("penalty", "alpha", "target_ratio")),
-  # "RDA", "lowres", "e3963f9f", "rda", 
-  #   list(c("frac_common_cov", "frac_identity", "target_ratio")),
-  # "RDA", "mediumres", "bd9381e4", "rda", 
-  #   list(c("frac_common_cov", "frac_identity", "target_ratio")),
-  "RF", "lowres", "b2c09957", "rf", 
-    list(c("mtry", "min_n", "max_depth", "target_ratio"))#,
-  # "RF", "mediumres", "2e542249", "rf", 
-  #   list(c("mtry", "min_n", "max_depth", "target_ratio")),
-  # "LightGBM", "lowres", "82228487", "lightgbm", 
-  #   list(c("tree_depth", "trees", "learn_rate", "mtry", 
-  #          "min_n", "target_ratio")),
-  # "LightGBM", "mediumres", "dc78b376", "lightgbm", 
-  #   list(c("tree_depth", "trees", "learn_rate", "mtry", 
-  #          "min_n", "target_ratio"))
+  "GLMNET", "lowres", "840327ea", "glmnet", 
+    list(c("penalty", "alpha", "target_ratio")),
+  "GLMNET", "mediumres", "cfa828c6", "glmnet", 
+    list(c("penalty", "alpha", "target_ratio")),
+  "RDA", "lowres", "1f3e03f2", "rda", 
+    list(c("frac_common_cov", "frac_identity", "target_ratio")),
+  "RDA", "mediumres", "8f46a926", "rda", 
+    list(c("frac_common_cov", "frac_identity", "target_ratio")),
+  "RF", "lowres", "06dd99f3", "rf", 
+    list(c("mtry", "min_n", "max_depth", "target_ratio")),
+  "RF", "mediumres", "7d30dfe4", "rf", 
+    list(c("mtry", "min_n", "max_depth", "target_ratio")),
+  "LightGBM", "lowres", "1de4a88a", "lightgbm", 
+    list(c("tree_depth", "trees", "learn_rate", "mtry", 
+           "min_n", "target_ratio")),
+  "LightGBM", "mediumres", "d56f9bfe", "lightgbm", 
+    list(c("tree_depth", "trees", "learn_rate", "mtry", 
+           "min_n", "target_ratio"))
 )
 
 chosen_models <- purrr::pmap_df(model_configs, load_learner_f1_cv)

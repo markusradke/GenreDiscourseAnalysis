@@ -22,38 +22,7 @@
 
 \graphicspath{ {./figures/} }
 \urlstyle{same}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title and Author information
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\title{Power to the People!  Assigning Popular Music Genres Based on Listeners' Perspective Using a Genre Tree Approach}
-%
-\author{%
-Markus Radke\thanks{Audio Communication Group, Technische Universität Berlin, Einsteinufer 17c, 10587 Berlin, Germany} %
-~and Steffen Lepa\protect\footnotemark[1]}
-
-\date{}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Additional Paper Information
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\type{research}
-
-% Citation in First Page
-\authorref{Radke,~M. and Lepa,~S.}
-%
-% (Optional)
-% \journalyear{2017}
-% \journalvolume{V}
-% \journalissue{N}
-% \journalpages{xx--xx}
-% \doi{xx.xxxx/xxxx.xx}
-
-% Remaining Pages (Optional)
-\authorshort{Radke, M. and Lepa, S.} 
-\titleshort{Power to the People! Assigning Popular Music Genres}
+\input{metadata}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Document Content
@@ -325,10 +294,10 @@ Consistent with decreased community certainty (54\%), the model for COMGET-G32 s
   \begin{subfigure}[b]{\columnwidth}
     \centering
     \includegraphics[width=\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_mediumres_varimp.png}
-    \caption{COMGET-G5}
+    \caption{COMGET-G12}
     \label{fig:rq3_varimp_medium}
   \end{subfigure}
-  \caption{Top 20 most important features for automated classification at three granularity levels. Values show relative feature importance from the final LightGBM models.}
+  \caption{Top 20 most important features for automated classification at low and medium granularity. Values show relative feature importance from the final LightGBM models.}
 \label{fig:rq3_varimp}
 \end{figure}
 

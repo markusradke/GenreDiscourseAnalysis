@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  7 JAN 2026 14:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  7 JAN 2026 18:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex
-(n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex
+**n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/appendix.tex
+(n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/appendix.tex
 LaTeX2e <2022-11-01> patch level 1
 L3 programming layer <2023-01-16> (c:/texlive/2022/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
@@ -503,432 +503,415 @@ Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
 Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
 \c@subfigure=\count307
 \c@subtable=\count308
+) (c:/texlive/2022/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty (c:/texlive/2022/texmf-dist/tex/latex/pgf/basiclayer/pgf.sty (c:/texlive/2022/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
+\pgfutil@everybye=\toks30
+\pgfutil@tempdima=\dimen191
+\pgfutil@tempdimb=\dimen192
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
+\pgfutil@abb=\box57
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex (c:/texlive/2022/texmf-dist/tex/generic/pgf/pgf.revision.tex)
+Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
+))
+Package: pgf 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/latex/pgf/basiclayer/pgfcore.sty (c:/texlive/2022/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks31
+\pgfkeys@temptoks=\toks32
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
+\pgfkeys@tmptoks=\toks33
+))
+\pgf@x=\dimen193
+\pgf@y=\dimen194
+\pgf@xa=\dimen195
+\pgf@ya=\dimen196
+\pgf@xb=\dimen197
+\pgf@yb=\dimen198
+\pgf@xc=\dimen199
+\pgf@yc=\dimen256
+\pgf@xd=\dimen257
+\pgf@yd=\dimen258
+\w@pgf@writea=\write4
+\r@pgf@reada=\read2
+\c@pgf@counta=\count309
+\c@pgf@countb=\count310
+\c@pgf@countc=\count311
+\c@pgf@countd=\count312
+\t@pgf@toka=\toks34
+\t@pgf@tokb=\toks35
+\t@pgf@tokc=\toks36
+\pgf@sys@id@count=\count313
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
+)
+Driver file for pgf: pgfsys-pdftex.def
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
+))) (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfsyssoftpath@smallbuffer@items=\count314
+\pgfsyssoftpath@bigbuffer@items=\count315
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)) (c:/texlive/2022/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
+ (c:/texlive/2022/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 227.
+ (c:/texlive/2022/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1353.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1357.
+Package xcolor Info: Model `RGB' extended on input line 1369.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1371.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1374.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1375.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1376.
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcore.code.tex
+Package: pgfcore 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
+\pgfmath@dimen=\dimen259
+\pgfmath@count=\count316
+\pgfmath@box=\box58
+\pgfmath@toks=\toks37
+\pgfmath@stack@operand=\toks38
+\pgfmath@stack@operation=\toks39
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.basic.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.trigonometric.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.random.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.comparison.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.base.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.round.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.misc.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integerarithmetics.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
+\c@pgfmathroundto@lastzeros=\count317
+)) (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfint.code.tex) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.code.tex
+File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@picminx=\dimen260
+\pgf@picmaxx=\dimen261
+\pgf@picminy=\dimen262
+\pgf@picmaxy=\dimen263
+\pgf@pathminx=\dimen264
+\pgf@pathmaxx=\dimen265
+\pgf@pathminy=\dimen266
+\pgf@pathmaxy=\dimen267
+\pgf@xx=\dimen268
+\pgf@xy=\dimen269
+\pgf@yx=\dimen270
+\pgf@yy=\dimen271
+\pgf@zx=\dimen272
+\pgf@zy=\dimen273
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@path@lastx=\dimen274
+\pgf@path@lasty=\dimen275
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage.code.tex
+File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@shorten@end@additional=\dimen276
+\pgf@shorten@start@additional=\dimen277
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.code.tex
+File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfpic=\box59
+\pgf@hbox=\box60
+\pgf@layerbox@main=\box61
+\pgf@picture@serial@count=\count318
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgflinewidth=\dimen278
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransformations.code.tex
+File: pgfcoretransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@pt@x=\dimen279
+\pgf@pt@y=\dimen280
+\pgf@pt@temp=\dimen281
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.code.tex
+File: pgfcorequick.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreobjects.code.tex
+File: pgfcoreobjects.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.code.tex
+File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowsep=\dimen282
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.code.tex
+File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@max=\dimen283
+\pgf@sys@shading@range@num=\count319
+\pgf@shadingcount=\count320
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.code.tex
+File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreexternal.code.tex
+File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfexternal@startupbox=\box62
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorelayers.code.tex
+File: pgfcorelayers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransparency.code.tex
+File: pgfcoretransparency.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepatterns.code.tex
+File: pgfcorepatterns.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/basiclayer/pgfcorerdf.code.tex
+File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))) (c:/texlive/2022/texmf-dist/tex/generic/pgf/modules/pgfmoduleshapes.code.tex
+File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfnodeparttextbox=\box63
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/modules/pgfmoduleplot.code.tex
+File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
+) (c:/texlive/2022/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-0-65.sty
+Package: pgfcomp-version-0-65 2023-01-15 v3.1.10 (3.1.10)
+\pgf@nodesepstart=\dimen284
+\pgf@nodesepend=\dimen285
+) (c:/texlive/2022/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version-1-18.sty
+Package: pgfcomp-version-1-18 2023-01-15 v3.1.10 (3.1.10)
+)) (c:/texlive/2022/texmf-dist/tex/latex/pgf/utilities/pgffor.sty (c:/texlive/2022/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)) (c:/texlive/2022/texmf-dist/tex/latex/pgf/math/pgfmath.sty (c:/texlive/2022/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)) (c:/texlive/2022/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
+Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
+\pgffor@iter=\dimen286
+\pgffor@skip=\dimen287
+\pgffor@stack=\toks40
+\pgffor@toks=\toks41
+)) (c:/texlive/2022/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+Package: tikz 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@plot@mark@count=\count321
+\pgfplotmarksize=\dimen288
+)
+\tikz@lastx=\dimen289
+\tikz@lasty=\dimen290
+\tikz@lastxsaved=\dimen291
+\tikz@lastysaved=\dimen292
+\tikz@lastmovetox=\dimen293
+\tikz@lastmovetoy=\dimen294
+\tikzleveldistance=\dimen295
+\tikzsiblingdistance=\dimen296
+\tikz@figbox=\box64
+\tikz@figbox@bg=\box65
+\tikz@tempbox=\box66
+\tikz@tempbox@bg=\box67
+\tikztreelevel=\count322
+\tikznumberofchildren=\count323
+\tikznumberofcurrentchild=\count324
+\tikz@fig@count=\count325
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfmatrixcurrentrow=\count326
+\pgfmatrixcurrentcolumn=\count327
+\pgf@matrix@numberofcolumns=\count328
+)
+\tikz@expandcount=\count329
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2023-01-15 v3.1.10 (3.1.10)
+))) (c:/texlive/2022/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count330
+\float@exts=\toks42
+\float@box=\box68
+\@float@everytoks=\toks43
+\@floatcapt=\box69
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+ (c:/texlive/2022/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibraryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)) (c:/texlive/2022/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowinset=\dimen297
+\pgfarrowlength=\dimen298
+\pgfarrowwidth=\dimen299
+\pgfarrowlinewidth=\dimen300
+) (c:/texlive/2022/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
 ) (./metadata.tex)
-LaTeX Font Info:    Trying to load font information for T1+bch on input line 31.
+LaTeX Font Info:    Trying to load font information for T1+bch on input line 25.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
-) (./PowerToThePeople_v1.aux)
-\openout1 = `PowerToThePeople_v1.aux'.
+) (./appendix.aux)
+\openout1 = `appendix.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 31.
-LaTeX Font Info:    Trying to load font information for FML+futm on input line 31.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 25.
+LaTeX Font Info:    Trying to load font information for FML+futm on input line 25.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 31.
-LaTeX Font Info:    Trying to load font information for FMS+futm on input line 31.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 25.
+LaTeX Font Info:    Trying to load font information for FMS+futm on input line 25.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmsfutm.fd
 File: fmsfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FMS/futm.
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 31.
-LaTeX Font Info:    Trying to load font information for FMX+futm on input line 31.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 25.
+LaTeX Font Info:    Trying to load font information for FMX+futm on input line 25.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmxfutm.fd
 File: fmxfutm.fd futm-extension
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
  (c:/texlive/2022/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
 )
-\c@mv@tabular=\count309
-\c@mv@boldtabular=\count310
+\c@mv@tabular=\count331
+\c@mv@boldtabular=\count332
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 31.
- (./PowerToThePeople_v1.out) (./PowerToThePeople_v1.out)
-\@outlinefile=\write4
-\openout4 = `PowerToThePeople_v1.out'.
+Package hyperref Info: Link coloring OFF on input line 25.
+ (./appendix.out) (./appendix.out)
+\@outlinefile=\write5
+\openout5 = `appendix.out'.
 
  (c:/texlive/2022/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count311
-\scratchdimen=\dimen191
-\scratchbox=\box57
-\nofMPsegments=\count312
-\nofMParguments=\count313
-\everyMPshowfont=\toks30
-\MPscratchCnt=\count314
-\MPscratchDim=\dimen192
-\MPnumerator=\count315
-\makeMPintoPDFobject=\count316
-\everyMPtoPDFconversion=\toks31
+\scratchcounter=\count333
+\scratchdimen=\dimen301
+\scratchbox=\box70
+\nofMPsegments=\count334
+\nofMParguments=\count335
+\everyMPshowfont=\toks44
+\MPscratchCnt=\count336
+\MPscratchDim=\dimen302
+\MPnumerator=\count337
+\makeMPintoPDFobject=\count338
+\everyMPtoPDFconversion=\toks45
 ) (c:/texlive/2022/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (c:/texlive/2022/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 48.
+LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 27.
  (c:/texlive/2022/texmf-dist/tex/latex/quattrocento/T1QuattroSans-LF.fd
 File: T1QuattroSans-LF.fd 2020/07/28 (autoinst) Font definitions for T1/QuattroSans-LF.
 )
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 10.0pt on input line 48.
+(Font)              scaled to size 10.0pt on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 10.0pt on input line 48.
+(Font)              scaled to size 10.0pt on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 12.0pt on input line 48.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 20.74pt on input line 48.
+(Font)              scaled to size 20.74pt on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 14.4pt on input line 48.
-LaTeX Font Info:    Trying to load font information for FML+futmi on input line 48.
+(Font)              scaled to size 14.4pt on input line 27.
+LaTeX Font Info:    Trying to load font information for FML+futmi on input line 27.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutmi.fd
 File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 48.
+(Font)              scaled to size 13.24796pt on input line 27.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 48.
+(Font)              scaled to size 9.19998pt on input line 27.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 48.
+(Font)              scaled to size 7.35999pt on input line 27.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 48.
+(Font)              scaled to size 13.24796pt on input line 27.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 48.
+(Font)              scaled to size 9.19998pt on input line 27.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 48.
-LaTeX Font Info:    Trying to load font information for TS1+bch on input line 48.
+(Font)              scaled to size 7.35999pt on input line 27.
+LaTeX Font Info:    Trying to load font information for TS1+bch on input line 27.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/ts1bch.fd
 File: ts1bch.fd 2004/10/18 font definitions for TS1/bch.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.25598pt on input line 48.
+(Font)              scaled to size 6.25598pt on input line 27.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 48.
+(Font)              scaled to size 5.51999pt on input line 27.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.25598pt on input line 48.
+(Font)              scaled to size 6.25598pt on input line 27.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 48.
+(Font)              scaled to size 5.51999pt on input line 27.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 30.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 12.0pt on input line 48.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 49.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 8.0pt on input line 49.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 55.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 6.0pt on input line 55.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-<tismir.png, id=100, 534.99875pt x 134.5025pt>
+(Font)              scaled to size 12.0pt on input line 30.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 30.
+LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
+(Font)              scaled to size 12.0pt on input line 30.
+<tismir.png, id=19, 534.99875pt x 134.5025pt>
 File: tismir.png Graphic file (type png)
 <use tismir.png>
-Package pdftex.def Info: tismir.png  used on input line 58.
+Package pdftex.def Info: tismir.png  used on input line 96.
 (pdftex.def)             Requested size: 145.59631pt x 36.60347pt.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 58.
+(Font)              scaled to size 6.99199pt on input line 96.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 58.
+(Font)              scaled to size 6.99199pt on input line 96.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 58.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 96.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 58.
+(Font)              scaled to size 9.0pt on input line 96.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
-(Font)              `T1/QuattroSans-LF/regular/it' on input line 58.
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 96.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
-(Font)              scaled to size 9.0pt on input line 58.
+(Font)              scaled to size 9.0pt on input line 96.
 
 
 Package fancyhdr Warning: \headheight is too small (40.0pt): 
-(fancyhdr)                Make it at least 44.27899pt, for example:
-(fancyhdr)                \setlength{\headheight}{44.27899pt}.
+(fancyhdr)                Make it at least 41.60347pt, for example:
+(fancyhdr)                \setlength{\headheight}{41.60347pt}.
 (fancyhdr)                You might also make \topmargin smaller to compensate:
-(fancyhdr)                \addtolength{\topmargin}{-4.27899pt}.
+(fancyhdr)                \addtolength{\topmargin}{-1.60347pt}.
 
 [1{c:/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
-
  <./tismir.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-Underfull \hbox (badness 2173) in paragraph at lines 66--67
-\T1/bch/m/n/10 si-fi-ca-tions of-ten di-verge from lis-tener com-mu-nity
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [2]
-Underfull \vbox (badness 1297) has occurred while \output is active []
-
-
-Underfull \hbox (badness 2229) in paragraph at lines 86--87
-[]\T1/bch/b/n/10 RQ1 \T1/bch/m/n/10 How can we con-struct an em-pir-i-cally
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 90--92
-[]\T1/bch/b/n/10 RQ3 \T1/bch/m/n/10 How valid and gen-er-al-iz-able are
- []
-
-[3] [4]
-<figures/balancing_gini_trajectory.png, id=258, 511.9125pt x 327.1422pt>
-File: figures/balancing_gini_trajectory.png Graphic file (type png)
-<use figures/balancing_gini_trajectory.png>
-Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 137.
-(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-<figures/folding_gini_trajectory.png, id=262, 511.9125pt x 327.1422pt>
-File: figures/folding_gini_trajectory.png Graphic file (type png)
-<use figures/folding_gini_trajectory.png>
-Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 175.
-(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-
-Underfull \hbox (badness 5985) in paragraph at lines 176--176
-[] []|\T1/bch/m/n/10 Weighted Gini co-ef-fi-cient (0--1) across
- []
-
-[5 <./figures/balancing_gini_trajectory.png>]
-<figures/supergenre_hierarchy.png, id=272, 746.03719pt x 840.89156pt>
-File: figures/supergenre_hierarchy.png Graphic file (type png)
-<use figures/supergenre_hierarchy.png>
-Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 185.
-(pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
- [6 <./figures/folding_gini_trajectory.png> <./figures/supergenre_hierarchy.png>]
-Underfull \hbox (badness 1540) in paragraph at lines 199--200
-\T1/bch/m/n/10 dict the COMGET-G \T1/bch/m/it/10 genre cat-e-gories \T1/bch/m/n/10 iden-ti-fied by
- []
-
-
-Underfull \vbox (badness 3068) has occurred while \output is active []
-
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/it' aliased to
-(Font)              `T1/QuattroSans-LF/bold/it' on input line 220.
-LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/it' will be
-(Font)              scaled to size 10.0pt on input line 220.
-<figures/dc_contingency.png, id=295, 511.9125pt x 455.0601pt>
-File: figures/dc_contingency.png Graphic file (type png)
-<use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 223.
-(pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
-
-Underfull \hbox (badness 2478) in paragraph at lines 224--224
-\T1/bch/m/n/10 and \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 genre as-sign-ments; val-ues show
- []
-
-
-Underfull \vbox (badness 1297) has occurred while \output is active []
-
- [7]
-<figures/learner_comparison.png, id=318, 511.9125pt x 327.1422pt>
-File: figures/learner_comparison.png Graphic file (type png)
-<use figures/learner_comparison.png>
-Package pdftex.def Info: figures/learner_comparison.png  used on input line 233.
-(pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-
-Underfull \hbox (badness 1527) in paragraph at lines 238--239
-\T1/bch/m/n/10 per-former at both gran-u-lar-i-ties (COMGET-G5 and
- []
-
-<figures/lightgbm_lowres_cm.png, id=320, 511.9125pt x 284.5029pt>
-File: figures/lightgbm_lowres_cm.png Graphic file (type png)
-<use figures/lightgbm_lowres_cm.png>
-Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 244.
-(pdftex.def)             Requested size: 278.95439pt x 155.03146pt.
-<figures/lightgbm_mediumres_cm.png, id=321, 682.7106pt x 426.6339pt>
-File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
-<use figures/lightgbm_mediumres_cm.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 252.
-(pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 277--278
-[]\T1/bch/m/n/10 COMGET-G12 per-for-mance de-graded to
- []
-
-
-Underfull \hbox (badness 1616) in paragraph at lines 277--278
-\T1/bch/m/n/10 The con-fu-sion ma-trix (Fig-ure []6b[]) shows pri-mary
- []
-
-
-Underfull \hbox (badness 1533) in paragraph at lines 277--278
-\T1/bch/m/n/10 am-bigu-ous char-ac-ter-is-tics with both. Con-versely,
- []
-
-
-Underfull \hbox (badness 6173) in paragraph at lines 279--280
-[]\T1/bch/m/n/10 COMGET-G25 showed fur-ther loss in clas-si-
- []
-
-
-Underfull \hbox (badness 6961) in paragraph at lines 279--280
-\T1/bch/m/n/10 fi-ca-tion per-for-mance ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 419 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 005$\T1/bch/m/n/10 ;
- []
-
-[8 <./figures/dc_contingency.png> <./figures/learner_comparison.png>] [9 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_mediumres_cm.png>]
-Underfull \hbox (badness 1270) in paragraph at lines 281--282
-[]\T1/bch/m/n/10 Consistent with de-creased com-mu-nity cer-tainty
- []
-
-<figures/lightgbm_lowres_varimp.png, id=343, 511.9125pt x 426.6339pt>
-File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
-<use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 288.
-(pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
-<figures/lightgbm_mediumres_varimp.png, id=344, 511.9125pt x 426.6339pt>
-File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
-<use figures/lightgbm_mediumres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 296.
-(pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
-
-Underfull \hbox (badness 1092) in paragraph at lines 310--311
-\T1/bch/m/n/10 at user-specified gran-u-lar-i-ties from such trees; fi-
- []
-
-
-Underfull \vbox (badness 1448) has occurred while \output is active []
-
- [10 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \hbox (badness 1968) in paragraph at lines 317--318
-\T1/bch/m/n/10 sures epis-temic con-sis-tency. Mixed-source meth-
- []
-
-
-Underfull \hbox (badness 2057) in paragraph at lines 317--318
-\T1/bch/m/n/10 tro-duc-ing un-con-trolled vari-ance ([]Schreiber[], []2015[];
- []
-
-
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
-
-Underfull \hbox (badness 4048) in paragraph at lines 325--326
-\T1/bch/m/n/10 COMGET and FOLD-CAT con-se-quently im-ple-ment
- []
-
-
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
- [11]
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
- (./PowerToThePeople_v1.bbl
-Underfull \hbox (badness 2229) in paragraph at lines 46--52
-[]\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., PÈrez-Molina, L., and
- []
-
-
-Underfull \hbox (badness 5231) in paragraph at lines 46--52
-\T1/bch/m/n/10 sic tax-on-omy.  \T1/bch/m/it/10 Jour-nal of New Mu-sic Re-
- []
-
-
-Underfull \hbox (badness 1253) in paragraph at lines 54--60
-\T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 68--72
-[]\T1/bch/m/n/10 Discogs (2024).  Database guide-lines.
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 68--72
-\T1/bch/m/n/10 9. gen-res and styles.  []$https : / /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 68--72
-\T1/bch/m/n/10 support . discogs . com / hc / en-[]us / articles /
- []
-
-
-Overfull \hbox (15.3492pt too wide) in paragraph at lines 68--72
-\T1/bch/m/n/10 360005055213-[]Database-[]Guidelines-[]9-[]Genres-[]Styles$[]. 
- []
-
-[12]
-Underfull \hbox (badness 1038) in paragraph at lines 87--93
-\T1/bch/m/n/10 (2018).  Hub-ness as a Case of Tech-ni-cal Al-
- []
-
-
-Underfull \hbox (badness 1742) in paragraph at lines 95--100
-\T1/bch/m/n/10 251.  []$https : / / doi . org / 10 . 1080 / 09298215 . 2016 .
- []
-
-
-Underfull \hbox (badness 2181) in paragraph at lines 141--148
-[]\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
- []
-
-
-Underfull \hbox (badness 2608) in paragraph at lines 222--227
-[]\T1/bch/m/n/10 Merlini, M. (2020).  A crit-i-cal (and in-ter-dis-ci-
- []
-
-
-Underfull \hbox (badness 1616) in paragraph at lines 222--227
-\T1/bch/m/n/10 plinary) sur-vey of pop-u-lar mu-sic genre the-o-
- []
-
-
-Underfull \hbox (badness 4913) in paragraph at lines 229--232
-[]\T1/bch/m/n/10 MusicBrainz (n.d.).  Database statis-tics.  Re-
- []
-
-[13]
-Underfull \hbox (badness 1043) in paragraph at lines 314--318
-[]\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
- []
-
-
-Underfull \hbox (badness 3547) in paragraph at lines 314--318
-\T1/bch/m/n/10 Genre Com-plexes in Pop-u-lar Mu-sic.  \T1/bch/m/it/10 PLOS
- []
-
-) [14] (./PowerToThePeople_v1.aux)
-Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
-(rerunfilecheck)             Checksum: 8FA57B2CEAB193F6C4EBFD46F2D0F997;5350.
+<figures/lightgbm_highres_cm.png, id=36, 910.3611pt x 569.0058pt>
+File: figures/lightgbm_highres_cm.png Graphic file (type png)
+<use figures/lightgbm_highres_cm.png>
+Package pdftex.def Info: figures/lightgbm_highres_cm.png  used on input line 103.
+(pdftex.def)             Requested size: 489.38739pt x 305.88675pt.
+<figures/lightgbm_veryhighres_cm.png, id=37, 1024.0659pt x 640.0713pt>
+File: figures/lightgbm_veryhighres_cm.png Graphic file (type png)
+<use figures/lightgbm_veryhighres_cm.png>
+Package pdftex.def Info: figures/lightgbm_veryhighres_cm.png  used on input line 110.
+(pdftex.def)             Requested size: 489.38739pt x 305.87315pt.
+<figures/lightgbm_highres_varimp.png, id=38, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_highres_varimp.png Graphic file (type png)
+<use figures/lightgbm_highres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_highres_varimp.png  used on input line 121.
+(pdftex.def)             Requested size: 293.6354pt x 244.72017pt.
+<figures/lightgbm_veryhighres_varimp.png, id=39, 511.9125pt x 426.6339pt>
+File: figures/lightgbm_veryhighres_varimp.png Graphic file (type png)
+<use figures/lightgbm_veryhighres_varimp.png>
+Package pdftex.def Info: figures/lightgbm_veryhighres_varimp.png  used on input line 128.
+(pdftex.def)             Requested size: 293.6354pt x 220.23914pt.
+ [2 <./figures/lightgbm_highres_cm.png> <./figures/lightgbm_veryhighres_cm.png>] [3 <./figures/lightgbm_veryhighres_varimp.png> <./figures/lightgbm_highres_varimp.png>] (./appendix.aux)
+Package rerunfilecheck Info: File `appendix.out' has not changed.
+(rerunfilecheck)             Checksum: 8595499C85769EBBD91B1C005C1F70BE;1006.
  ) 
 Here is how much of TeX's memory you used:
- 14910 strings out of 476091
- 252205 string characters out of 5795540
- 1894324 words of memory out of 5000000
- 34889 multiletter control sequences out of 15000+600000
- 706654 words of font info for 130 fonts, out of 8000000 for 9000
+ 26092 strings out of 476091
+ 491752 string characters out of 5795540
+ 1880324 words of memory out of 5000000
+ 45945 multiletter control sequences out of 15000+600000
+ 675169 words of font info for 126 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,1960b,659s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_mntdbg.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-BoldItalic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (14 pages, 1998940 bytes).
+ 84i,17n,131p,550b,812s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
+Output written on appendix.pdf (3 pages, 2489078 bytes).
 PDF statistics:
- 600 PDF objects out of 1000 (max. 8388607)
- 541 compressed objects within 6 object streams
- 103 named destinations out of 1000 (max. 500000)
- 209 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 103 PDF objects out of 1000 (max. 8388607)
+ 70 compressed objects within 1 object stream
+ 9 named destinations out of 1000 (max. 500000)
+ 68 words of extra memory for PDF output out of 10000 (max. 10000000)
 
