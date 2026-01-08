@@ -1020,8 +1020,6 @@ INPUT ./figures/dc_contingency.png
 INPUT figures/dc_contingency.png
 INPUT ./figures/dc_contingency.png
 INPUT ./figures/dc_contingency.png
-INPUT c:/texlive/2022/texmf-dist/fonts/vf/impallari/quattrocento/QuattroSans-BoldItalic-lf-t1.vf
-INPUT c:/texlive/2022/texmf-dist/fonts/tfm/impallari/quattrocento/QuattroSans-BoldItalic-lf-t1--base.tfm
 INPUT ./figures/learner_comparison.png
 INPUT ./figures/learner_comparison.png
 INPUT figures/learner_comparison.png
@@ -1039,6 +1037,8 @@ INPUT ./figures/lightgbm_mediumres_cm.png
 INPUT figures/lightgbm_mediumres_cm.png
 INPUT ./figures/lightgbm_mediumres_cm.png
 INPUT ./figures/lightgbm_mediumres_cm.png
+INPUT c:/texlive/2022/texmf-dist/fonts/vf/impallari/quattrocento/QuattroSans-BoldItalic-lf-t1.vf
+INPUT c:/texlive/2022/texmf-dist/fonts/tfm/impallari/quattrocento/QuattroSans-BoldItalic-lf-t1--base.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchb8t.vf
 INPUT c:/texlive/2022/texmf-dist/fonts/tfm/bitstrea/charter/bchb8r.tfm
 INPUT c:/texlive/2022/texmf-dist/fonts/vf/bitstrea/charter/bchr8t.vf
