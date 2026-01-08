@@ -16,6 +16,5 @@ create_pre_recipe <- function(
       seed = seed,
       skip = TRUE
     ) |>
-    recipes::step_zv(recipes::all_predictors()) |>
     recipes::step_normalize(recipes::all_numeric_predictors())
 }
