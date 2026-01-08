@@ -112,8 +112,16 @@ plot_metagenre_assignement_certainty(mb_low)
 ```
 :::{.column-page-inset-right}
 ```{r mb low contingency, fig.height=6, fig.width=10}
-# | fig-cap: "Contingency table of metagenre assignments between MusicBrainz and Discogs (first mentioned genre) for the 10-15 metagenre solution for external validation"
-plot_dc_contingency(mb_low, poptrag)
+# | fig-cap: "Contingency table of genre category assignments between GOMGET-G and predicted Rosamerica genres (Essentia) for the low-granularity solution for external validation"
+plot <- plot_external_contingency(mb_low, poptrag, "track.ab.genrerosamerica")
+ggplot2::ggsave(
+  "../reports/paper_v1/figures/rosa_contingency.png", 
+  plot, 
+  width = 180, 
+  height = 160,
+  units = "mm"
+)
+plot
 ```
 :::
 ### MusicBrainz `r mb_medium$metagenre |> unique() |> length()` Metagenres
@@ -128,8 +136,8 @@ plot_metagenre_assignement_certainty(mb_medium)
 ```
 :::{.column-page-inset-right}
 ```{r mb medium contingency,  fig.width=10, fig.height=8.6}
-# | fig-cap: "Contingency table of metagenre assignments between MusicBrainz and Discogs (first mentioned genre) for the 25-30 metagenre solution for external validation"
-plot <- plot_dc_contingency(mb_medium, poptrag)
+# | fig-cap: "Contingency table of genre category assignments between COMGET-G and Discogs (first mentioned genre) for medium granularity solution for external validation"
+plot <- plot_external_contingency(mb_medium, poptrag, "album.dc.firstgenre")
 ggplot2::ggsave(
   "../reports/paper_v1/figures/dc_contingency.png", 
   plot, 
@@ -146,7 +154,20 @@ plot
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
 plot_metagenre_prevs(mb_high)
 ```
-
+:::{.column-page-inset-right}
+```{r mb high contingency, fig.height=8, fig.width=11}
+# | fig-cap: "Contingency table of genre category assignments between COMGET-G and Deezer (first mentioned genre) for the high granularity solution for external validation"
+plot <- plot_external_contingency(mb_high, poptrag, "track.dz.album.firstgenre.name")
+ggplot2::ggsave(
+  "../reports/paper_v1/figures/dz_contingency.png", 
+  plot, 
+  width = 320, 
+  height = 220,
+  units = "mm"
+)
+plot
+```
+:::
 ```{r mb high certainty}
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
 plot_metagenre_assignement_certainty(mb_high)
@@ -177,8 +198,8 @@ plot_metagenre_assignement_certainty(s_low)
 ```
 :::{.column-page-inset-right}
 ```{r s low contingency, fig.height=6, fig.width=10}
-# | fig-cap: "Contingency table of metagenre assignments between Spotify and Discogs (first mentioned genre) for the 10-15 metagenre solution for external validation"
-plot_dc_contingency(s_low, poptrag, "Spotify")
+# | fig-cap: "Contingency table of genre category assignments between Spotify and predicted Rosamerica genres (Essentia) for the low-granularity solution for external validation"
+plot_external_contingency(s_low, poptrag, "track.ab.genrerosamerica", "Spotify")
 ```
 :::
 ### Spotify `r s_medium$metagenre |> unique() |> length()` Metagenres
@@ -192,8 +213,8 @@ plot_metagenre_assignement_certainty(s_medium)
 ```
 :::{.column-page-inset-right}
 ```{r s medium contingency, fig.width=10, fig.height=8.6}
-# | fig-cap: "Contingency table of metagenre assignments between Spotify and Discogs (first mentioned genre) for the 25-30 metagenre solution for external validation"
-plot_dc_contingency(s_medium, poptrag, "Spotify")
+# | fig-cap: "Contingency table of genre category assignments between Spotify and Discogs (first mentioned genre) for medium granularity solution for external validation"
+plot_external_contingency(s_medium, poptrag, "album.dc.firstgenre", "Spotify")
 ```
 :::
 
@@ -206,6 +227,14 @@ plot_metagenre_prevs(s_high)
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
 plot_metagenre_assignement_certainty(s_high)
 ```
+
+:::{.column-page-inset-right}
+```{r s high contingency, fig.width=10, fig.height=8.6}
+# | fig-cap: "Contingency table of genre category assignments between Spotify and Deezer (first mentioned genre) for the high granularity solution for external validation"
+plot_external_contingency(s_high, poptrag, "track.dz.album.firstgenre.name", "Spotify")
+```
+:::
+
 
 ### Spotify `r s_very_high$metagenre |> unique() |> length()` Metagenres
 ```{r s very high prev}

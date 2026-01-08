@@ -19,6 +19,8 @@ poptrag_selected <- poptrag |>
     track.s.firstartist.id,
     track.s.firstartist.name,
     track.s.previewurl,
+    track.ab.genrerosamerica,
+    track.dz.album.firstgenre.name,
     artist.s.id,
     artist.s.name,
     artist.s.genres,
@@ -46,6 +48,17 @@ poptrag_selected <- poptrag |>
     n_trackartists = sapply(.data$track.s.artists, function(x) {
       as.integer(nrow(x))
     })
+  )
+
+# filter specific problematic entries and drop obviously wrong Deezer album for one entry
+poptrag_selected <- poptrag_selected |>
+  dplyr::filter(.data$album.s.id != "3GmZxNPKzyfiD0urTJFbi3") |>
+  dplyr::mutate(
+    track.dz.album.firstgenre.name = ifelse(
+      .data$album.s.id == "4zhRkgoZKC2xCPPys1gK4b",
+      NA,
+      .data$track.dz.album.firstgenre.name
+    )
   )
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
