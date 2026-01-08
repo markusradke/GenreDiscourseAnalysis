@@ -567,8 +567,8 @@ build_complexity_order <- function(model_type, tuned_params) {
   rda_priority <- c("gamma", "lambda")
   rda_desc <- c(FALSE, TRUE)
 
-  lightgbm_priority <- c("tree_depth", "min_n", "mtry", "trees", "learn_rate")
-  lightgbm_desc <- c(FALSE, TRUE, FALSE, FALSE, TRUE)
+  lightgbm_priority <- c("trees", "tree_depth", "min_n", "learn_rate", "mtry")
+  lightgbm_desc <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
 
   shared_priority <- c("target_ratio")
   shared_desc <- c(TRUE)

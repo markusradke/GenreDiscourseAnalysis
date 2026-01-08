@@ -255,7 +255,7 @@ create_lightgbm_params <- function(workflow, train_df, settings) {
 
   if (isTRUE(settings$tune_trees)) {
     params <- params |>
-      update(trees = dials::trees(range = c(1L, 1000L)))
+      update(trees = dials::trees(range = c(50L, 2000L)))
   }
 
   if (isTRUE(settings$tune_learn_rate)) {
@@ -275,7 +275,7 @@ create_lightgbm_params <- function(workflow, train_df, settings) {
 
   if (isTRUE(settings$tune_min_n)) {
     params <- params |>
-      update(min_n = dials::min_n(range = c(2L, 100L)))
+      update(min_n = dials::min_n(range = c(1L, 100L)))
   }
 
   if (isTRUE(settings$tune_sampling) && "target_ratio" %in% params$id) {
