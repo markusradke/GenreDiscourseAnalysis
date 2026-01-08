@@ -196,12 +196,7 @@ plot_metagenre_prevs(s_low)
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
 plot_metagenre_assignement_certainty(s_low)
 ```
-:::{.column-page-inset-right}
-```{r s low contingency, fig.height=6, fig.width=10}
-# | fig-cap: "Contingency table of genre category assignments between Spotify and predicted Rosamerica genres (Essentia) for the low-granularity solution for external validation"
-plot_external_contingency(s_low, poptrag, "track.ab.genrerosamerica", "Spotify")
-```
-:::
+
 ### Spotify `r s_medium$metagenre |> unique() |> length()` Metagenres
 ```{r s medium prev}
 #| fig-cap: "Assignement prevalences and corresponding number of tracks in the dataset per metagenre"
@@ -211,12 +206,7 @@ plot_metagenre_prevs(s_medium)
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
 plot_metagenre_assignement_certainty(s_medium)
 ```
-:::{.column-page-inset-right}
-```{r s medium contingency, fig.width=10, fig.height=8.6}
-# | fig-cap: "Contingency table of genre category assignments between Spotify and Discogs (first mentioned genre) for medium granularity solution for external validation"
-plot_external_contingency(s_medium, poptrag, "album.dc.firstgenre", "Spotify")
-```
-:::
+
 
 ### Spotify `r s_high$metagenre |> unique() |> length()` Metagenres
 ```{r s high prev}
@@ -227,13 +217,6 @@ plot_metagenre_prevs(s_high)
 # | fig-cap: "Median relative frequency of votes for assigned metagenres with interquartile range error bars"
 plot_metagenre_assignement_certainty(s_high)
 ```
-
-:::{.column-page-inset-right}
-```{r s high contingency, fig.width=10, fig.height=8.6}
-# | fig-cap: "Contingency table of genre category assignments between Spotify and Deezer (first mentioned genre) for the high granularity solution for external validation"
-plot_external_contingency(s_high, poptrag, "track.dz.album.firstgenre.name", "Spotify")
-```
-:::
 
 
 ### Spotify `r s_very_high$metagenre |> unique() |> length()` Metagenres

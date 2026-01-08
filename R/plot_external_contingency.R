@@ -26,8 +26,10 @@ plot_external_contingency <- function(
   )
   no_metagenres <- mb_meta$metagenre |> unique() |> length()
   comb <- join_and_filter(mb_meta, poptrag, ext_genre_col)
+  browser()
   relfreqs <- compute_relfreqs(comb, ext_genre_col)
-  padded <- relfreqs |>
+  filtered <- filter_low_frequency_columns(relfreqs, ext_genre_col)
+  padded <- filtered |>
     tidyr::complete(
       metagenre,
       .data[[ext_genre_col]],
@@ -69,24 +71,284 @@ compute_relfreqs <- function(comb, ext_genre_col = "album.dc.firstgenre") {
     )
 }
 
+filter_low_frequency_columns <- function(relfreqs, ext_genre_col) {
+  col_totals <- relfreqs |>
+    dplyr::group_by(.data[[ext_genre_col]]) |>
+    dplyr::summarize(total_relfreq = sum(relfreq), .groups = "drop")
+
+  kept_cols <- col_totals |>
+    dplyr::filter(total_relfreq >= 0.025) |>
+    dplyr::pull(.data[[ext_genre_col]])
+
+  removed_cols <- col_totals |>
+    dplyr::filter(total_relfreq < 0.025) |>
+    dplyr::pull(.data[[ext_genre_col]])
+
+  if (length(removed_cols) > 0) {
+    message(
+      sprintf(
+        "Removed %d column(s) from '%s' with <2%% total frequency: %s",
+        length(removed_cols),
+        ext_genre_col,
+        paste(removed_cols, collapse = ", ")
+      )
+    )
+  }
+
+  relfreqs |>
+    dplyr::filter(.data[[ext_genre_col]] %in% kept_cols)
+}
+
+translate_deezer_genres <- function(genres) {
+  genres <- as.character(genres)
+  mapping <- c(
+    "Klassik" = "Classical",
+    "Filme/Videospiele" = "Stage & Screen",
+    "Schlager & Volksmusik" = "Schlager & Volksmusik",
+    "Soul & Funk" = "Soul & Funk",
+    "Rap/Hip Hop" = "Rap/Hip Hop",
+    "Deutsche Musik" = "German Music",
+    "Brasilianische Musik" = "Brasilian Music",
+    "Asiatische Musik" = "Asian Music",
+    "Latin Musik" = "Latin Music",
+    "Afrikanische Musik" = "African Music",
+    "Türkische Volksmusik" = "Turkish Folk Music",
+    "Ranchera" = "Ranchera",
+    "Kids" = "Kids",
+    "Bolero" = "Bolero",
+    "Electro" = "Electro",
+    "Disco" = "Disco",
+    "R & B" = "R & B",
+    "Heavy Metal" = "Heavy Metal",
+    "Alternative" = "Alternative",
+    "Singer & Songwriter" = "Singer & Songwriter",
+    "Country" = "Country",
+    "Pop" = "Pop",
+    "Rock" = "Rock",
+    "Jazz" = "Jazz",
+    "Dance" = "Dance"
+  )
+  translated <- mapping[genres]
+  missing <- is.na(translated)
+  translated[missing] <- genres[missing]
+  unname(translated)
+}
+
+get_external_name <- function(ext_genre_col) {
+  switch(
+    ext_genre_col,
+    "track.ab.genrerosamerica" = "Essentia-Predicted Rosamerica Genre",
+    "album.dc.firstgenre" = "Discogs First Genre",
+    "track.dz.album.firstgenre.name" = "Deezer First Genre",
+    ""
+  )
+}
+
+get_target_colorder <- function(
+  ext_genre_col,
+  colorder_rosamerica,
+  colorder_discogs,
+  colorder_deezer
+) {
+  switch(
+    ext_genre_col,
+    "track.ab.genrerosamerica" = colorder_rosamerica,
+    "album.dc.firstgenre" = colorder_discogs,
+    "track.dz.album.firstgenre.name" = colorder_deezer,
+    character(0)
+  )
+}
+
+compute_final_levels <- function(padded, ext_genre_col, target_colorder) {
+  present <- padded |>
+    dplyr::pull(.data[[ext_genre_col]]) |>
+    as.character() |>
+    unique()
+
+  ordered_levels <- intersect(target_colorder, present)
+
+  remaining <- padded |>
+    dplyr::filter(!(.data[[ext_genre_col]] %in% ordered_levels)) |>
+    dplyr::group_by(.data[[ext_genre_col]]) |>
+    dplyr::summarize(sum_rel = sum(relfreq), .groups = "drop") |>
+    dplyr::arrange(dplyr::desc(sum_rel)) |>
+    dplyr::pull(.data[[ext_genre_col]]) |>
+    as.character()
+
+  c(ordered_levels, remaining)
+}
+
 build_plot_external_contingency <- function(
   padded,
   no_metagenres,
   ext_genre_col,
   name = "COMGET-G"
 ) {
-  external_name <- dplyr::case_when(
-    ext_genre_col == "album.dc.firstgenre" ~ "Discogs First Genre",
-    ext_genre_col == "track.dz.album.firstgenre.name" ~ "Deezer First Genre",
-    ext_genre_col ==
-      "track.ab.genrerosamerica" ~ "Essentia-Predicted Rosamerica Genre"
+  external_name <- get_external_name(ext_genre_col)
+
+  roworder_full <- c(
+    "rock",
+    "metal",
+    "death metal",
+    "heavy metal",
+    "power metal",
+    "alternative rock",
+    "pop rock",
+    "hard rock",
+    "indie rock",
+    "punk",
+    "progressive rock",
+    "folk",
+    "folk rock",
+    "classic rock",
+    "blues rock",
+    "singer-songwriter",
+    "blues",
+    "country",
+    "new wave",
+    "soft rock",
+    "pop",
+    "electronic",
+    "house",
+    "jazz",
+    "schlager",
+    "soul",
+    "classical",
+    "synth-pop",
+    "r&b",
+    "dance-pop",
+    "reggae",
+    "hip hop"
   )
+
+  colorder_rosamerica <- c(
+    "Rock",
+    "Pop",
+    "Dance",
+    "Rhythm and Blues",
+    "Jazz",
+    "Classical",
+    "Hiphop",
+    "Speech"
+  )
+
+  colorder_discogs <- c(
+    "Rock",
+    "Folk, World, & Country",
+    "Blues",
+    "Pop",
+    "Electronic",
+    "Funk / Soul",
+    "Jazz",
+    "Classical",
+    "Stage & Screen",
+    "Latin",
+    "Reggae",
+    "Hip Hop",
+    "Non-Music",
+    "Children's",
+    "Brass & Military"
+  )
+
+  colorder_deezer <- c(
+    "Rock",
+    "Heavy Metal",
+    "Alternative",
+    "Folk",
+    "Country",
+    "Singer & Songwriter",
+    "Pop",
+    "Electro",
+    "Dance",
+    "R&B",
+    "Disco",
+    "Jazz",
+    "Schlager & Volksmusik",
+    "Soul & Funk",
+    "Klassik",
+    "Filme/Videospiele",
+    "Rap/Hip Hop",
+    "Deutsche Musik",
+    "Brasilianische Musik",
+    "Asiatische Musik",
+    "Latin Musik",
+    "Afrikanische Musik",
+    "Türkische Volksmusik",
+    "Ranchera",
+    "Kids",
+    "Bolero"
+  )
+
+  if (ext_genre_col == "track.dz.album.firstgenre.name") {
+    padded <- padded |>
+      dplyr::mutate(
+        !!ext_genre_col := translate_deezer_genres(
+          as.character(.data[[ext_genre_col]])
+        )
+      )
+  }
+
+  target_colorder <- get_target_colorder(
+    ext_genre_col,
+    colorder_rosamerica,
+    colorder_discogs,
+    colorder_deezer
+  )
+
+  final_levels <- compute_final_levels(padded, ext_genre_col, target_colorder)
+
+  metagenre_freqs <- compute_genre_frequencies(padded, "metagenre")
+  external_freqs <- compute_genre_frequencies(padded, ext_genre_col)
+
+  gini_comget <- DescTools::Gini(metagenre_freqs$freq)
+  gini_external <- DescTools::Gini(external_freqs$freq)
+
+  external_short_name <- strsplit(external_name, " ")[[1]][1]
+
+  gini_label <- sprintf(
+    "Gini<sub>COMGET</sub> = %.3f<br>Gini<sub>%s</sub> = %.3f",
+    gini_comget,
+    external_short_name,
+    gini_external
+  )
+
+  padded <- add_frequency_labels(
+    padded,
+    metagenre_freqs,
+    external_freqs,
+    ext_genre_col
+  )
+
+  padded <- padded |>
+    dplyr::mutate(
+      !!ext_genre_col := factor(
+        as.character(.data[[paste0(ext_genre_col, "_label")]]),
+        levels = paste0(
+          final_levels,
+          " (",
+          external_freqs$relfreq_pct[match(final_levels, external_freqs$genre)],
+          "%)"
+        )
+      ),
+      metagenre = factor(
+        as.character(.data$metagenre_label),
+        levels = rev(paste0(
+          roworder_full,
+          " (",
+          metagenre_freqs$relfreq_pct[match(
+            roworder_full,
+            metagenre_freqs$genre
+          )],
+          "%)"
+        ))
+      )
+    )
 
   p <- ggplot2::ggplot(
     padded,
     ggplot2::aes(
       x = .data[[ext_genre_col]],
-      y = forcats::fct_rev(metagenre),
+      y = .data$metagenre,
       fill = relfreq
     )
   ) +
@@ -100,16 +362,27 @@ build_plot_external_contingency <- function(
       low = "white",
       high = "#3e578e",
       labels = scales::percent_format(accuracy = 1),
-      name = "",
+      name = ""
     ) +
     ggplot2::scale_color_manual(values = c("black", "white")) +
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::labs(
+      title = gini_label,
       x = external_name,
       y = sprintf("%s%d", name, no_metagenres)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
+      plot.title = ggtext::element_markdown(
+        size = 16,
+        face = "bold",
+        color = "black",
+        hjust = 0,
+        vjust = -0.5,
+        lineheight = 1.5,
+        margin = ggplot2::margin(b = -72)
+      ),
+      plot.title.position = "plot",
       legend.position = "right",
       legend.text = ggplot2::element_text(color = "grey45", size = 16),
       legend.title = ggplot2::element_text(color = "grey45", size = 16),
@@ -132,4 +405,45 @@ build_plot_external_contingency <- function(
       )
     )
   p
+}
+
+compute_genre_frequencies <- function(padded, genre_col) {
+  padded |>
+    dplyr::group_by(.data[[genre_col]]) |>
+    dplyr::summarize(freq = sum(Freq), .groups = "drop") |>
+    dplyr::mutate(
+      relfreq = freq / sum(freq),
+      relfreq_pct = round(relfreq * 100, 0)
+    ) |>
+    dplyr::rename(genre = .data[[genre_col]])
+}
+
+add_frequency_labels <- function(
+  padded,
+  metagenre_freqs,
+  external_freqs,
+  ext_genre_col
+) {
+  padded |>
+    dplyr::left_join(
+      metagenre_freqs |>
+        dplyr::select(genre, relfreq_pct) |>
+        dplyr::rename(metagenre_pct = relfreq_pct),
+      by = c("metagenre" = "genre")
+    ) |>
+    dplyr::left_join(
+      external_freqs |>
+        dplyr::select(genre, relfreq_pct) |>
+        dplyr::rename(external_pct = relfreq_pct),
+      by = setNames("genre", ext_genre_col)
+    ) |>
+    dplyr::mutate(
+      metagenre_label = paste0(metagenre, " (", metagenre_pct, "%)"),
+      !!paste0(ext_genre_col, "_label") := paste0(
+        .data[[ext_genre_col]],
+        " (",
+        external_pct,
+        "%)"
+      )
+    )
 }

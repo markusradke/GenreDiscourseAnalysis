@@ -8,8 +8,7 @@ settings <- list(
 )
 saveRDS(settings, "data/settings_data_prep.rds")
 
-# Import PopTraG datset and select relevant variables ----
-message("Importing PopTraG dataset and selecting variables ...")
+message("Importing POPTRAG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
 poptrag_selected <- poptrag |>
   dplyr::select(
@@ -50,6 +49,8 @@ poptrag_selected <- poptrag |>
     })
   )
 
+saveRDS(poptrag_selected, "data/poptrag_selected.rds")
+
 # filter specific problematic entries and drop obviously wrong Deezer album for one entry
 poptrag_selected <- poptrag_selected |>
   dplyr::filter(.data$album.s.id != "3GmZxNPKzyfiD0urTJFbi3") |>
@@ -61,7 +62,6 @@ poptrag_selected <- poptrag_selected |>
     )
   )
 
-saveRDS(poptrag_selected, "data/poptrag_selected.rds")
 
 # Prepare Musicbrainz ----
 mb_non_music_tags <- c(
