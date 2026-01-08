@@ -4,7 +4,7 @@ devtools::load_all()
 n_folds <- 5
 
 # prepare data ----
-# prepare_full_classification_data_all_levels(n_folds)
+prepare_full_classification_data_all_levels(n_folds)
 
 # train prototype models on subsample ----
 settings <- list(
