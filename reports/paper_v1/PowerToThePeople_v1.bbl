@@ -7,6 +7,12 @@ Airoldi, M., Beraldo, D., and Gandini, A. (2016).
 \newblock {\em Poetics}, 57:1--13.
 \newblock \url{https://doi.org/10.1016/j.poetic.2016.05.001}.
 
+\bibitem[Alonso-Jiménez et~al., 2020]{jimenez2020tensorflow}
+Alonso-Jiménez, P., Bogdanov, D., Pons, J., and Serra, X. (2020).
+\newblock Tensorflow audio models in essentia.
+\newblock In {\em ICASSP 2020 - 2020 IEEE International Conference on
+  Acoustics, Speech and Signal Processing}, pages 266--270.
+
 \bibitem[Bogdanov et~al., 2019]{bogdanovAcousticbrainzGenreDataset2019}
 Bogdanov, D., Porter, A., Schreiber, H., Urbano, J., and Oramas, S. (2019).
 \newblock The {Acousticbrainz} {Genre} {Dataset}: {Multi}-{Source}
@@ -57,6 +63,12 @@ Carbone, L., Alvarez-Cueva, P., and Vandenbosch, L. (2024).
   {Genre}, and {Capital} in {Music} {Lyrics}.
 \newblock {\em Sex Roles}, 90(7):891--909.
 \newblock \url{https://doi.org/10.1007/s11199-024-01483-0}.
+
+\bibitem[Deezer, nd]{Deezer_nodate}
+Deezer (n.d.).
+\newblock Deezer music streaming platform.
+\newblock Retrieved 2025-12-12 from
+  \url{https://developers.deezer.com/login?redirect=/api}.
 
 \bibitem[DiMaggio, 1987]{dimaggioClassificationArt1987}
 DiMaggio, P. (1987).
