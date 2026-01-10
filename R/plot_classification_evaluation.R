@@ -387,7 +387,7 @@ plot_learner_comparison <- function(chosen_models) {
         "Other"
       ),
       y_pos = dplyr::case_when(
-        grepl("lowres", detail) ~ 0.68,
+        grepl("lowres", detail) ~ 0.67,
         grepl("mediumres", detail) ~ 0.545,
         TRUE ~ 0.45
       )

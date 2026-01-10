@@ -305,7 +305,7 @@ learner_comp_plot
 
 
 # Final GBM Classifier Results
- ```{r setup_resolutions}
+```{r setup_resolutions}
 resolutions <- list(
   low = list(
     hash = "a6ea16c0",

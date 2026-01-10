@@ -183,6 +183,7 @@ track.s.timesignature_X5.4;Five Quarter Time (Ref Four)
 track.s.timesignature_other;Other Time (Ref Four Quarter Time)
 track.s.explicitlyrics_TRUE.;Are Lyrics Explicit?
 artist.mb.type_other;Is Single Artist? 
+artist.mb.gender_Male;Male Artist? 
 artist.mb.gender_other;Is Artist Non-Male? 
 artist.mb.area_AU;Artist Area AU (Ref US)
 artist.mb.area_CA;Artist Area CA (Ref US)
