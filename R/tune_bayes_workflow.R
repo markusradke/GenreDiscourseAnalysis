@@ -558,17 +558,18 @@ get_tuned_param_names <- function(tuning_results) {
 }
 
 build_complexity_order <- function(model_type, tuned_params) {
-  rf_priority <- c("max.depth", "min_n", "mtry")
-  rf_desc <- c(FALSE, TRUE, FALSE)
+  # usually, first parameter will be used for model selection, others are tie breakers
+  rf_priority <- c("min_n", "mtry", "max.depth")
+  rf_desc <- c(TRUE, FALSE, FALSE)
 
   glmnet_priority <- c("penalty", "mixture")
   glmnet_desc <- c(TRUE, FALSE)
 
-  rda_priority <- c("gamma", "lambda")
-  rda_desc <- c(FALSE, TRUE)
+  rda_priority <- c("frac_identity", "frac_common_cov")
+  rda_desc <- c(TRUE, FALSE)
 
-  lightgbm_priority <- c("trees", "tree_depth", "min_n", "learn_rate", "mtry")
-  lightgbm_desc <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+  lightgbm_priority <- c("trees", "tree_depth", "min_n", "mtry", "learn_rate")
+  lightgbm_desc <- c(FALSE, FALSE, TRUE, FALSE, FALSE)
 
   shared_priority <- c("target_ratio")
   shared_desc <- c(TRUE)

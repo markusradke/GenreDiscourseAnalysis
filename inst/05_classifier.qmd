@@ -258,9 +258,6 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
   if (learner == "GLMNET"){
     names(chosen_params) <- gsub("alpha", "mixture", names(chosen_params))
   }
-  if (learner == "RF"){
-    names(chosen_params) <- gsub("max_depth", "max.depth", names(chosen_params))
-  }
   prepare_tuning_topmodels(tuning, chosen_params, top_n = 100) |> 
     dplyr::filter(is_chosen) |>
     dplyr::select(
@@ -272,22 +269,22 @@ load_learner_f1_cv <- function(learner, resolution, hash, model_dir, param_names
 
 model_configs <- tibble::tribble(
   ~learner, ~resolution, ~hash, ~model_dir, ~param_names,
-  "GLMNET", "lowres", "840327ea", "glmnet", 
+  "GLMNET", "lowres", "75823717", "glmnet", 
     list(c("penalty", "alpha", "target_ratio")),
-  "GLMNET", "mediumres", "cfa828c6", "glmnet", 
+  "GLMNET", "mediumres", "87a95950", "glmnet", 
     list(c("penalty", "alpha", "target_ratio")),
-  "RDA", "lowres", "1f3e03f2", "rda", 
+  "RDA", "lowres", "15faf95f", "rda", 
     list(c("frac_common_cov", "frac_identity", "target_ratio")),
-  "RDA", "mediumres", "8f46a926", "rda", 
+  "RDA", "mediumres", "7c807acb", "rda", 
     list(c("frac_common_cov", "frac_identity", "target_ratio")),
-  "RF", "lowres", "06dd99f3", "rf", 
-    list(c("mtry", "min_n", "max_depth", "target_ratio")),
-  "RF", "mediumres", "7d30dfe4", "rf", 
-    list(c("mtry", "min_n", "max_depth", "target_ratio")),
-  "LightGBM", "lowres", "1de4a88a", "lightgbm", 
+  "RF", "lowres", "758ebcd1", "rf", 
+    list(c("mtry", "min_n", "target_ratio")),
+  "RF", "mediumres", "30333a7a", "rf", 
+    list(c("mtry", "min_n", "target_ratio")),
+  "LightGBM", "lowres", "f5e51455", "lightgbm", 
     list(c("tree_depth", "trees", "learn_rate", "mtry", 
            "min_n", "target_ratio")),
-  "LightGBM", "mediumres", "d56f9bfe", "lightgbm", 
+  "LightGBM", "mediumres", "5777e564", "lightgbm", 
     list(c("tree_depth", "trees", "learn_rate", "mtry", 
            "min_n", "target_ratio"))
 )
@@ -311,22 +308,22 @@ learner_comp_plot
  ```{r setup_resolutions}
 resolutions <- list(
   low = list(
-    hash = "dc8426d1",
+    hash = "a6ea16c0",
     certainty = lowres_certainty,
     title = "Low-detailed"
   ),
   medium = list(
-    hash = "811e1b4e",
+    hash = "f919e593",
     certainty = mediumres_certainty,
     title = "Medium-detailed"
   ),
   high = list(
-    hash = "de549d7b",
+    hash = "e89dc09c",
     certainty = highres_certainty,
     title = "High-detailed"
   ),
   veryhigh = list(
-    hash = "8b88c70b",
+    hash = "35b2d03f",
     certainty = veryhighres_certainty,
     title = "Very high-detailed"
   )

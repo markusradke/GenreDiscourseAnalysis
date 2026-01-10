@@ -1,16 +1,16 @@
 # Fdb version 4
-["bibtex PowerToThePeople_v1"] 1767969882 "PowerToThePeople_v1.aux" "PowerToThePeople_v1.bbl" "PowerToThePeople_v1" 1767969889 0
+["bibtex PowerToThePeople_v1"] 1767969882 "PowerToThePeople_v1.aux" "PowerToThePeople_v1.bbl" "PowerToThePeople_v1" 1767974775 0
   "./refs.bib" 1767966248 28994 20fd52f0f78b28bbdc7bdc50a9b0f54d ""
-  "PowerToThePeople_v1.aux" 1767969888 34688 636533629439126eb3385b680b6ec147 "pdflatex"
+  "PowerToThePeople_v1.aux" 1767974774 34688 636533629439126eb3385b680b6ec147 "pdflatex"
   "c:/texlive/2022/texmf-dist/bibtex/bst/base/apalike.bst" 1673948027 24635 604dafcc79f521a11ea73e506e1fbd98 ""
   (generated)
   "PowerToThePeople_v1.bbl"
   "PowerToThePeople_v1.blg"
   (rewritten before read)
-["pdflatex"] 1767969883 "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" "PowerToThePeople_v1.pdf" "PowerToThePeople_v1" 1767969889 0
-  "PowerToThePeople_v1.aux" 1767969888 34688 636533629439126eb3385b680b6ec147 "pdflatex"
+["pdflatex"] 1767974769 "n:/Materialien/Promotion/GenreDiscourseAnalysis/reports/paper_v1/PowerToThePeople_v1.tex" "PowerToThePeople_v1.pdf" "PowerToThePeople_v1" 1767974775 0
+  "PowerToThePeople_v1.aux" 1767974774 34688 636533629439126eb3385b680b6ec147 "pdflatex"
   "PowerToThePeople_v1.bbl" 1767969883 17747 6eb9a407ab0874b04982c10c936c8365 "bibtex PowerToThePeople_v1"
-  "PowerToThePeople_v1.out" 1767969888 5583 7168cab841e9bf832d72e1de845c9782 "pdflatex"
+  "PowerToThePeople_v1.out" 1767974774 5583 7168cab841e9bf832d72e1de845c9782 "pdflatex"
   "PowerToThePeople_v1.tex" 1767966248 65368 c7a7037d529a253a2eb812f6678a2ca8 ""
   "c:/Users/marku/.texlive2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1674402862 7877576 05b29992d99eb979939f0f842f21097e ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc" 1673948792 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -157,7 +157,7 @@
   "figures/balancing_gini_trajectory.png" 1767966248 145214 b69207b846fe6ded5172e244f3c1f028 ""
   "figures/dc_contingency.png" 1767966248 433955 6f65502b6c831304ac3dfaf5271ce41f ""
   "figures/folding_gini_trajectory.png" 1767966248 184330 6ab319ceb6e7ef75a604cfa017a60c84 ""
-  "figures/learner_comparison.png" 1767966248 104433 d10386b086078d32287db82e3baeaec4 ""
+  "figures/learner_comparison.png" 1767974768 101975 e1fa666711c13cde40f8b82631597135 ""
   "figures/lightgbm_lowres_cm.png" 1767966248 232734 a2aa175dd6dcca80596448fdeafa8f5d ""
   "figures/lightgbm_lowres_varimp.png" 1767966248 262683 0d10fbd5860be8e74c1d738e0e632e38 ""
   "figures/lightgbm_mediumres_cm.png" 1767966248 525985 e3e68d4aaa8b853ca3f3eed88e3a9b2f ""

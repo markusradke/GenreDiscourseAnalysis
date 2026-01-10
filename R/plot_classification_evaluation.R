@@ -366,6 +366,13 @@ render_glmnet_varimp_table <- function(model, n_top = 5, caption = NULL) {
 
 
 plot_learner_comparison <- function(chosen_models) {
+  learner_order <- c("GLMNET", "RDA", "RF", "LightGBM")
+
+  chosen_models <- chosen_models |>
+    dplyr::mutate(
+      learner = factor(learner, levels = learner_order)
+    )
+
   label_df <- chosen_models |>
     dplyr::distinct(
       learner,
@@ -374,36 +381,56 @@ plot_learner_comparison <- function(chosen_models) {
       macro_f1_with_zeros_std_err
     ) |>
     dplyr::mutate(
-      color_group = ifelse(learner == "LightGBM", "LightGBM", "Other"),
+      color_group = ifelse(
+        as.character(learner) == "LightGBM",
+        "LightGBM",
+        "Other"
+      ),
       y_pos = dplyr::case_when(
-        grepl("lowres", detail) ~ 0.65,
-        grepl("mediumres", detail) ~ 0.52,
+        grepl("lowres", detail) ~ 0.68,
+        grepl("mediumres", detail) ~ 0.545,
         TRUE ~ 0.45
       )
     )
 
-  suppressWarnings(
+  p <- suppressWarnings(
     ggplot2::ggplot(
       chosen_models,
       ggplot2::aes(
         x = detail,
         y = macro_f1_with_zeros_mean,
-        color = ifelse(learner == "LightGBM", "LightGBM", "Other"),
+        color = ifelse(
+          as.character(learner) == "LightGBM",
+          "LightGBM",
+          "Other"
+        ),
         group = learner
       )
     ) +
       ggplot2::geom_point(
         position = ggplot2::position_dodge(width = 0.5),
         ggplot2::aes(
-          size = ifelse(learner == "LightGBM", "LightGBM", "Other")
-        ),
+          size = ifelse(
+            as.character(learner) == "LightGBM",
+            "LightGBM",
+            "Other"
+          )
+        )
       ) +
       ggplot2::geom_errorbar(
         ggplot2::aes(
           ymin = macro_f1_with_zeros_mean - macro_f1_with_zeros_std_err,
           ymax = macro_f1_with_zeros_mean + macro_f1_with_zeros_std_err,
-          color = ifelse(learner == "LightGBM", "LightGBM", "Other"),
-          linewidth = ifelse(learner == "LightGBM", "LightGBM", "Other")
+          color = ifelse(
+            as.character(learner) == "LightGBM",
+            "LightGBM",
+            "Other"
+          ),
+          linewidth = ifelse(
+            as.character(learner) == "LightGBM",
+            "LightGBM",
+            "Other"
+          )
         ),
         width = 0.2,
         position = ggplot2::position_dodge(width = 0.5)
@@ -413,9 +440,13 @@ plot_learner_comparison <- function(chosen_models) {
         ggplot2::aes(
           x = detail,
           y = y_pos,
-          label = learner,
+          label = as.character(learner),
           color = color_group,
-          fontface = ifelse(learner == "LightGBM", "bold", "plain"),
+          fontface = ifelse(
+            as.character(learner) == "LightGBM",
+            "bold",
+            "plain"
+          )
         ),
         vjust = 0.5,
         position = ggplot2::position_dodge(width = 0.5),
@@ -423,7 +454,7 @@ plot_learner_comparison <- function(chosen_models) {
         show.legend = FALSE,
         angle = 45
       ) +
-      ggplot2::scale_size_discrete(range = c(4, 3)) +
+      ggplot2::scale_size_discrete(range = c(3, 2)) +
       ggplot2::scale_linewidth_discrete(range = c(1.5, 0.5)) +
       ggplot2::scale_color_manual(
         values = c("LightGBM" = "#3e578e", "Other" = "grey45")
@@ -452,6 +483,7 @@ plot_learner_comparison <- function(chosen_models) {
         axis.text.x = ggplot2::element_text(size = 18)
       )
   )
+  p
 }
 
 plot_gbm_varimp <- function(varimp, n_top) {
