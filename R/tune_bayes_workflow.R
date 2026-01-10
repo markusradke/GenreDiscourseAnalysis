@@ -445,15 +445,25 @@ tune_bayes_workflow <- function(
     current_results <- bayes_checkpoint$tuning_results
     start_iter <- bayes_checkpoint$completed_iter + 1
     remaining_iter <- bayes_iterations - bayes_checkpoint$completed_iter
+    no_improve_limit <- bayescontrol$no_improve %||% Inf
 
     if (remaining_iter <= 0) {
       message("Bayesian optimization already complete from checkpoint")
       tuning_results <- current_results
+    } else if (bayes_checkpoint$no_improve_counter >= no_improve_limit) {
+      message(sprintf(
+        "Early stopping criterion already fulfilled in checkpoint (no improvement for %d/%d iterations)",
+        bayes_checkpoint$no_improve_counter,
+        no_improve_limit
+      ))
+      tuning_results <- current_results
     } else {
       message(sprintf(
-        "Continuing Bayesian optimization: %d more iterations (starting from %d)",
+        "Continuing Bayesian optimization: %d more iterations (starting from %d, no_improve: %d/%d)",
         remaining_iter,
-        start_iter
+        start_iter,
+        bayes_checkpoint$no_improve_counter,
+        no_improve_limit
       ))
       tuning_results <- tune_bayes_with_checkpoints_resume(
         workflow,
