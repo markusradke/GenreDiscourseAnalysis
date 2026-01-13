@@ -212,6 +212,11 @@ Jiang, J., Ponnada, A., Li, A., Lacker, B., and Way, S.~F. (2024).
   pages 191--201, New York. Association for Computing Machinery.
 \newblock \url{https://dl.acm.org/doi/10.1145/3614419.3644002}.
 
+\bibitem[Jockers, 2015]{Jockers2015-fv}
+Jockers, M.~L. (2015).
+\newblock Syuzhet: {{Extract}} sentiment and plot arcs from text.
+\newblock \url{https://github.com/mjockers/syuzhet}.
+
 \bibitem[Lange et~al., 2025]{langeCategorizingMusicGenres2025}
 Lange, E.~B., Gernandt, E., and Merrill, J. (2025).
 \newblock Categorizing music by genres.
@@ -243,6 +248,11 @@ Merlini, M. (2020).
   theories.
 \newblock {\em Interdisciplinary Studies in Musicology}, 20:79--94.
 \newblock \url{https://www.ceeol.com/search/article-detail?id=1105289}.
+
+\bibitem[Mohammad and Turney, 2013]{Mohammad13}
+Mohammad, S.~M. and Turney, P.~D. (2013).
+\newblock Crowdsourcing a word-emotion association lexicon.
+\newblock {\em Computational Intelligence}, 29(3):436--465.
 
 \bibitem[MusicBrainz, nd]{MusicBrainz_nodate}
 MusicBrainz (n.d.).
@@ -309,6 +319,11 @@ Rentfrow, P.~J., Goldberg, L.~R., and Levitin, D.~J. (2011).
 \newblock {\em Journal of Personality and Social Psychology},
   100(6):1139--1157.
 \newblock \url{https://doi.org/10.1037/a0022406}.
+
+\bibitem[Rinker, 2021]{rinkerSentimentrCalculateText2021}
+Rinker, T.~W. (2021).
+\newblock {{sentimentr}}: {{Calculate}} text polarity sentiment.
+\newblock \url{https://github.com/trinker/sentimentr}.
 
 \bibitem[Schreiber, 2015]{schreiberImprovingGenreAnnotations2015}
 Schreiber, H. (2015).
