@@ -18,7 +18,7 @@ plot_cm <- function(evaluation, certainty, set = "test") {
   cm_df <- cm_df |>
     dplyr::mutate(
       Actual_label = sprintf(
-        "%s (F1: %.3f, Certain: %.0f%%)",
+        "%s (F1: %.3f, Certainty: %.0f%%)",
         Actual,
         f1_scores[Actual],
         certainty_vec[Actual] * 100
