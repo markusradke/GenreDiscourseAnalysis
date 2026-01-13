@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  10 JAN 2026 16:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  13 JAN 2026 11:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -621,7 +621,10 @@ LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-<tismir.png, id=98, 534.99875pt x 134.5025pt>
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+<tismir.png, id=106, 534.99875pt x 134.5025pt>
 File: tismir.png Graphic file (type png)
 <use tismir.png>
 Package pdftex.def Info: tismir.png  used on input line 59.
@@ -662,7 +665,7 @@ Package fancyhdr Warning: \headheight is too small (40.0pt):
 
 
  <./tismir.png>]
-Underfull \vbox (badness 2538) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Underfull \hbox (badness 2173) in paragraph at lines 67--68
@@ -670,51 +673,96 @@ Underfull \hbox (badness 2173) in paragraph at lines 67--68
  []
 
 
-Underfull \vbox (badness 2538) has occurred while \output is active []
+Underfull \vbox (badness 1297) has occurred while \output is active []
 
  [2]
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
-
-Underfull \hbox (badness 2229) in paragraph at lines 88--89
-[]\T1/bch/b/n/10 RQ1 \T1/bch/m/n/10 How can we con-struct an em-pir-i-cally
+Underfull \hbox (badness 2012) in paragraph at lines 75--76
+\T1/bch/m/n/10 For the ap-pli-ca-tion of genre tax-onomies in MIR
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--94
+Underfull \hbox (badness 7081) in paragraph at lines 75--76
+\T1/bch/m/n/10 re-search and com-pu-ta-tional mu-si-col-ogy, sev-eral
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 75--76
+\T1/bch/m/n/10 research-pragmatic re-quire-ments have to be taken
+ []
+
+
+Underfull \vbox (badness 2538) has occurred while \output is active []
+
+
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+ [3]
+Underfull \hbox (badness 10000) in paragraph at lines 95--97
 []\T1/bch/b/n/10 RQ3 \T1/bch/m/n/10 How valid and gen-er-al-iz-able are
  []
 
-[3] [4]
-<figures/balancing_gini_trajectory.png, id=258, 511.9125pt x 327.1422pt>
+
+Underfull \hbox (badness 1540) in paragraph at lines 98--99
+\T1/bch/m/n/10 dict community-derived genre cat-e-gories
+ []
+
+
+Underfull \hbox (badness 4084) in paragraph at lines 106--106
+|[]\T1/QuattroSans-LF/bold/n/12 RQ1: Cre-at-ing a Bal-anced Hi-er-ar-chi-cal
+ []
+
+
+Underfull \hbox (badness 1142) in paragraph at lines 116--116
+|[]\T1/QuattroSans-LF/bold/n/10 Methods: Hi-er-ar-chi-cal Genre Tree Con-struc-tion
+ []
+
+
+Underfull \hbox (badness 1281) in paragraph at lines 117--118
+\T1/bch/m/n/10 structed a weighted co-occurrence net-work where
+ []
+
+[4]
+<figures/balancing_gini_trajectory.png, id=270, 511.9125pt x 327.1422pt>
 File: figures/balancing_gini_trajectory.png Graphic file (type png)
 <use figures/balancing_gini_trajectory.png>
-Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 139.
+Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 145.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-<figures/folding_gini_trajectory.png, id=262, 511.9125pt x 327.1422pt>
+ [5 <./figures/balancing_gini_trajectory.png>]
+Underfull \hbox (badness 1655) in paragraph at lines 172--172
+|[]\T1/QuattroSans-LF/bold/n/12 RQ2: Cre-at-ing Genre Cat-e-gory Sys-tems
+ []
+
+
+Underfull \vbox (badness 1616) has occurred while \output is active []
+
+<figures/folding_gini_trajectory.png, id=282, 511.9125pt x 327.1422pt>
 File: figures/folding_gini_trajectory.png Graphic file (type png)
 <use figures/folding_gini_trajectory.png>
-Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 177.
+Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 186.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
 
-Underfull \hbox (badness 5985) in paragraph at lines 178--178
+Underfull \hbox (badness 5985) in paragraph at lines 187--187
 [] []|\T1/bch/m/n/10 Weighted Gini co-ef-fi-cient (0--1) across
  []
 
-[5 <./figures/balancing_gini_trajectory.png>]
-<figures/supergenre_hierarchy.png, id=272, 746.03719pt x 840.89156pt>
+
+Underfull \hbox (badness 1205) in paragraph at lines 191--192
+\T1/bch/m/n/10 iden-ti-fied mul-ti-ple locally-optimal cat-e-gor-i-cal so-lu-
+ []
+
+<figures/supergenre_hierarchy.png, id=285, 746.03719pt x 840.89156pt>
 File: figures/supergenre_hierarchy.png Graphic file (type png)
 <use figures/supergenre_hierarchy.png>
-Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 187.
+Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 196.
 (pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
-
-Underfull \hbox (badness 1178) in paragraph at lines 199--200
-\T1/bch/m/n/10 To com-pare the COMGET-G genre as-sign-ments to
+[6 <./figures/folding_gini_trajectory.png>]
+Underfull \hbox (badness 1436) in paragraph at lines 206--206
+|[]\T1/QuattroSans-LF/bold/n/12 RQ3: Demon-strat-ing Va-lid-ity, Re-li-a-bil-ity
  []
 
-[6 <./figures/folding_gini_trajectory.png> <./figures/supergenre_hierarchy.png>]
-Underfull \hbox (badness 1540) in paragraph at lines 201--202
-\T1/bch/m/n/10 dict the COMGET-G \T1/bch/m/it/10 genre cat-e-gories \T1/bch/m/n/10 iden-ti-fied by
+[7 <./figures/supergenre_hierarchy.png>]
+Underfull \hbox (badness 1112) in paragraph at lines 220--221
+[]\T1/bch/m/n/10 Further pre-pro-cess-ing was ap-plied in se-quence
  []
 
 
@@ -723,242 +771,225 @@ Underfull \vbox (badness 3068) has occurred while \output is active []
 
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
- [7]
-<figures/rosa_contingency.png, id=317, 511.9125pt x 455.0601pt>
+ [8]
+<figures/rosa_contingency.png, id=341, 511.9125pt x 455.0601pt>
 File: figures/rosa_contingency.png Graphic file (type png)
 <use figures/rosa_contingency.png>
-Package pdftex.def Info: figures/rosa_contingency.png  used on input line 217.
+Package pdftex.def Info: figures/rosa_contingency.png  used on input line 232.
 (pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
-<figures/dc_contingency.png, id=318, 511.9125pt x 455.0601pt>
+<figures/dc_contingency.png, id=342, 511.9125pt x 455.0601pt>
 File: figures/dc_contingency.png Graphic file (type png)
 <use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 225.
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 240.
 (pdftex.def)             Requested size: 237.5805pt x 211.19109pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 239--240
+Underfull \hbox (badness 10000) in paragraph at lines 253--254
 []\T1/bch/m/it/10 Discogs' \T1/bch/m/n/10 15-genre tax-on-omy ap-prox-i-mates
  []
 
 
-Underfull \hbox (badness 1418) in paragraph at lines 239--240
+Underfull \hbox (badness 1418) in paragraph at lines 253--254
 \T1/bch/m/n/10 widely across \T1/bch/m/it/10 Discogs gen-res \T1/bch/m/n/10 (\T1/bch/m/it/10 Elec-tronic \T1/bch/m/n/10 30%, \T1/bch/m/it/10 Pop
+ []
+
+
+Underfull \hbox (badness 1454) in paragraph at lines 253--254
+\T1/bch/m/it/10 Rock\T1/bch/m/n/10 , sug-gest-ing \T1/bch/m/it/10 Discogs \T1/bch/m/n/10 lacks gran-u-lar rock sub-
+ []
+
+
+Underfull \hbox (badness 1152) in paragraph at lines 253--254
+\T1/bch/m/n/10 a much more bal-anced dis-tri-bu-tion for POP-TRAG
+ []
+
+
+Underfull \hbox (badness 1831) in paragraph at lines 253--254
+\T1/bch/m/n/10 than \T1/bch/m/it/10 Discogs' \T1/bch/m/n/10 as-sign-ments ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 540$\T1/bch/m/n/10 ,
  []
 
 
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
-<figures/learner_comparison.png, id=321, 511.9125pt x 327.1422pt>
+<figures/learner_comparison.png, id=345, 511.9125pt x 327.1422pt>
 File: figures/learner_comparison.png Graphic file (type png)
 <use figures/learner_comparison.png>
-Package pdftex.def Info: figures/learner_comparison.png  used on input line 247.
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 261.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
-
-Underfull \hbox (badness 1087) in paragraph at lines 252--253
-\T1/bch/m/n/10 sub-sam-ple (mean $[][] \FMS/futm/m/n/10 Å$ \T1/bch/m/n/10 0.717 -- 0.758 for
- []
-
-
-Underfull \hbox (badness 1418) in paragraph at lines 252--253
-\T1/bch/m/n/10 COMGET-G5 and $[][] \FMS/futm/m/n/10 Å$ \T1/bch/m/n/10 0.468 -- 0.503 for
- []
-
-
-Underfull \hbox (badness 1953) in paragraph at lines 252--253
-\T1/bch/m/n/10 COMGET-G12). How-ever, Light-GBM dis-tinc-tively
- []
-
-<figures/lightgbm_lowres_cm.png, id=323, 511.9125pt x 284.5029pt>
+<figures/lightgbm_lowres_cm.png, id=347, 511.9125pt x 284.5029pt>
 File: figures/lightgbm_lowres_cm.png Graphic file (type png)
 <use figures/lightgbm_lowres_cm.png>
-Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 258.
+Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 272.
 (pdftex.def)             Requested size: 278.95439pt x 155.03146pt.
-<figures/lightgbm_mediumres_cm.png, id=324, 682.7106pt x 426.6339pt>
+<figures/lightgbm_mediumres_cm.png, id=348, 682.7106pt x 426.6339pt>
 File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
 <use figures/lightgbm_mediumres_cm.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 266.
+Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 280.
 (pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 293--294
-[]\T1/bch/m/n/10 COMGET-G12 per-for-mance de-graded to
+Underfull \vbox (badness 2538) has occurred while \output is active []
+
+ [9] [10 <./figures/rosa_contingency.png> <./figures/dc_contingency.png>]
+Underfull \hbox (badness 3128) in paragraph at lines 307--308
+\T1/bch/m/n/10 G12 we achieved $[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 519 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 007$ \T1/bch/m/n/10 and
  []
 
-
-Underfull \hbox (badness 1616) in paragraph at lines 293--294
-\T1/bch/m/n/10 The con-fu-sion ma-trix (Fig-ure []6b[]) shows pri-mary
- []
-
-
-Underfull \hbox (badness 1533) in paragraph at lines 293--294
-\T1/bch/m/n/10 am-bigu-ous char-ac-ter-is-tics with both. Con-versely,
- []
-
-
-Underfull \vbox (badness 1297) has occurred while \output is active []
-
- [8] [9 <./figures/rosa_contingency.png> <./figures/dc_contingency.png>]
-Underfull \hbox (badness 6173) in paragraph at lines 295--296
-[]\T1/bch/m/n/10 COMGET-G25 showed fur-ther loss in clas-si-
- []
-
-
-Underfull \hbox (badness 6961) in paragraph at lines 295--296
-\T1/bch/m/n/10 fi-ca-tion per-for-mance ($[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 354 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 006$\T1/bch/m/n/10 ;
- []
-
-
-Underfull \hbox (badness 1270) in paragraph at lines 297--298
-[]\T1/bch/m/n/10 Consistent with de-creased com-mu-nity cer-tainty
- []
-
-<figures/lightgbm_lowres_varimp.png, id=344, 511.9125pt x 426.6339pt>
+<figures/lightgbm_lowres_varimp.png, id=372, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
 <use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 303.
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 317.
 (pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
-<figures/lightgbm_mediumres_varimp.png, id=345, 511.9125pt x 426.6339pt>
+<figures/lightgbm_mediumres_varimp.png, id=373, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
 <use figures/lightgbm_mediumres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 311.
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 325.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
-Underfull \hbox (badness 1092) in paragraph at lines 325--326
-\T1/bch/m/n/10 at user-specified gran-u-lar-i-ties from such trees; fi-
+Underfull \hbox (badness 1248) in paragraph at lines 339--340
+\T1/bch/m/n/10 an al-go-rithm to con-struct a bal-anced hi-er-ar-chi-cal
  []
 
 
 Underfull \vbox (badness 1448) has occurred while \output is active []
 
- [10 <./figures/learner_comparison.png>] [11 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_mediumres_cm.png>]
-Underfull \hbox (badness 1968) in paragraph at lines 332--333
-\T1/bch/m/n/10 sures epis-temic con-sis-tency. Mixed-source meth-
+ [11 <./figures/learner_comparison.png>] [12 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_mediumres_cm.png>]
+Underfull \hbox (badness 1509) in paragraph at lines 346--347
+\T1/bch/m/n/10 nealo-gies ([]Pa-chet and Cazaly[], []2000[]) do. While
  []
 
 
-Underfull \hbox (badness 2057) in paragraph at lines 332--333
-\T1/bch/m/n/10 tro-duc-ing un-con-trolled vari-ance ([]Schreiber[], []2015[];
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+ [13 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
+Underfull \hbox (badness 4752) in paragraph at lines 348--349
+\T1/bch/m/n/10 nman kat-e-gorien-zahl f¸r Di-ver-sit‰t-s-anal-y-sen von
  []
 
 
-Underfull \hbox (badness 4048) in paragraph at lines 340--341
-\T1/bch/m/n/10 COMGET and FOLD-CAT con-se-quently im-ple-ment
+Underfull \hbox (badness 4108) in paragraph at lines 348--349
+\T1/bch/m/n/10 kann, das man in-ter-estes-sant Subgenre-Analysen
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 4467) in paragraph at lines 348--349
+\T1/bch/m/n/10 machen kann, his-torische En-twick-lung des Auf-
+ []
 
- [12 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \vbox (badness 1297) has occurred while \output is active []
+
+Underfull \vbox (badness 3068) has occurred while \output is active []
+
+
+Underfull \hbox (badness 1320) in paragraph at lines 362--363
+\T1/bch/m/n/10 sys-tem-atic con-fu-sion pat-terns re-veal fuzzy bound-
+ []
 
 
 Underfull \vbox (badness 2538) has occurred while \output is active []
 
- [13] (./PowerToThePeople_v1.bbl
-Underfull \hbox (badness 2229) in paragraph at lines 52--58
+ [14] (./PowerToThePeople_v1.bbl
+Underfull \hbox (badness 2229) in paragraph at lines 57--63
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., PÈrez-Molina, L., and
  []
 
 
-Underfull \hbox (badness 5231) in paragraph at lines 52--58
+Underfull \hbox (badness 5231) in paragraph at lines 57--63
 \T1/bch/m/n/10 sic tax-on-omy.  \T1/bch/m/it/10 Jour-nal of New Mu-sic Re-
  []
 
-
-Underfull \hbox (badness 1253) in paragraph at lines 60--66
+[15]
+Underfull \hbox (badness 1253) in paragraph at lines 65--71
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
 
-Underfull \hbox (badness 1009) in paragraph at lines 68--72
+Underfull \hbox (badness 1009) in paragraph at lines 78--82
 []\T1/bch/m/n/10 Deezer (n.d.).  Deezer mu-sic stream-ing plat-form.
  []
 
 
-Underfull \hbox (badness 2310) in paragraph at lines 68--72
+Underfull \hbox (badness 2310) in paragraph at lines 78--82
 \T1/bch/m/n/10 Re-trieved 2025-12-12 from []$https : / / developers .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--84
+Underfull \hbox (badness 10000) in paragraph at lines 90--94
 []\T1/bch/m/n/10 Discogs (2024).  Database guide-lines.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--84
+Underfull \hbox (badness 10000) in paragraph at lines 90--94
 \T1/bch/m/n/10 9. gen-res and styles.  []$https : / /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--84
+Underfull \hbox (badness 10000) in paragraph at lines 90--94
 \T1/bch/m/n/10 support . discogs . com / hc / en-[]us / articles /
  []
 
 
-Overfull \hbox (15.3492pt too wide) in paragraph at lines 80--84
+Overfull \hbox (15.3492pt too wide) in paragraph at lines 90--94
 \T1/bch/m/n/10 360005055213-[]Database-[]Guidelines-[]9-[]Genres-[]Styles$[]. 
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 99--105
+Underfull \hbox (badness 1038) in paragraph at lines 109--115
 \T1/bch/m/n/10 (2018).  Hub-ness as a Case of Tech-ni-cal Al-
  []
 
 
-Underfull \hbox (badness 1742) in paragraph at lines 107--112
+Underfull \hbox (badness 1742) in paragraph at lines 117--122
 \T1/bch/m/n/10 251.  []$https : / / doi . org / 10 . 1080 / 09298215 . 2016 .
  []
 
 
-Underfull \hbox (badness 2181) in paragraph at lines 153--160
+Underfull \hbox (badness 2181) in paragraph at lines 168--175
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-[14]
-Underfull \hbox (badness 2608) in paragraph at lines 226--231
+[16]
+Underfull \hbox (badness 2608) in paragraph at lines 241--246
 []\T1/bch/m/n/10 Merlini, M. (2020).  A crit-i-cal (and in-ter-dis-ci-
  []
 
 
-Underfull \hbox (badness 1616) in paragraph at lines 226--231
+Underfull \hbox (badness 1616) in paragraph at lines 241--246
 \T1/bch/m/n/10 plinary) sur-vey of pop-u-lar mu-sic genre the-o-
  []
 
 
-Underfull \hbox (badness 4913) in paragraph at lines 233--236
+Underfull \hbox (badness 4913) in paragraph at lines 248--251
 []\T1/bch/m/n/10 MusicBrainz (n.d.).  Database statis-tics.  Re-
  []
 
 
-Underfull \hbox (badness 1043) in paragraph at lines 318--322
+Underfull \hbox (badness 1043) in paragraph at lines 333--337
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
 
-Underfull \hbox (badness 3547) in paragraph at lines 318--322
+Underfull \hbox (badness 3547) in paragraph at lines 333--337
 \T1/bch/m/n/10 Genre Com-plexes in Pop-u-lar Mu-sic.  \T1/bch/m/it/10 PLOS
  []
 
-[15]) [16
-
-] (./PowerToThePeople_v1.aux)
+) [17] (./PowerToThePeople_v1.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
-(rerunfilecheck)             Checksum: 7168CAB841E9BF832D72E1DE845C9782;5583.
+(rerunfilecheck)             Checksum: 7F674E9B11357340E93E05B1C1FF7462;7032.
  ) 
 Here is how much of TeX's memory you used:
- 14878 strings out of 476091
- 251723 string characters out of 5795540
- 1894324 words of memory out of 5000000
- 34859 multiletter control sequences out of 15000+600000
+ 14899 strings out of 476091
+ 252092 string characters out of 5795540
+ 1892324 words of memory out of 5000000
+ 34874 multiletter control sequences out of 15000+600000
  677541 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,2060b,683s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,2066b,653s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (16 pages, 2266226 bytes).
+Output written on PowerToThePeople_v1.pdf (17 pages, 2275908 bytes).
 PDF statistics:
- 604 PDF objects out of 1000 (max. 8388607)
- 544 compressed objects within 6 object streams
- 106 named destinations out of 1000 (max. 500000)
- 214 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 644 PDF objects out of 1000 (max. 8388607)
+ 583 compressed objects within 6 object streams
+ 112 named destinations out of 1000 (max. 500000)
+ 230 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -3,44 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: PowerToThePeople_v1.aux
 The style file: apalike.bst
 Database file #1: refs.bib
-You've used 58 entries,
+You've used 61 entries,
             1935 wiz_defined-function locations,
-            898 strings with 18611 characters,
-and the built_in function-call counts, 24671 in all, are:
-= -- 2474
-> -- 992
-< -- 49
-+ -- 349
-- -- 327
-* -- 1935
-:= -- 4202
-add.period$ -- 222
-call.type$ -- 58
-change.case$ -- 437
-chr.to.int$ -- 58
-cite$ -- 58
-duplicate$ -- 1023
-empty$ -- 1742
-format.name$ -- 409
-if$ -- 4982
+            913 strings with 18914 characters,
+and the built_in function-call counts, 25510 in all, are:
+= -- 2562
+> -- 1013
+< -- 52
++ -- 357
+- -- 333
+* -- 1994
+:= -- 4360
+add.period$ -- 231
+call.type$ -- 61
+change.case$ -- 455
+chr.to.int$ -- 61
+cite$ -- 61
+duplicate$ -- 1057
+empty$ -- 1800
+format.name$ -- 418
+if$ -- 5139
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 59
-newline$ -- 329
-num.names$ -- 186
-pop$ -- 414
+missing$ -- 60
+newline$ -- 344
+num.names$ -- 195
+pop$ -- 423
 preamble$ -- 1
-purify$ -- 443
+purify$ -- 461
 quote$ -- 0
-skip$ -- 756
+skip$ -- 785
 stack$ -- 0
-substring$ -- 1582
-swap$ -- 196
+substring$ -- 1639
+swap$ -- 197
 text.length$ -- 16
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 334
+type$ -- 352
 warning$ -- 0
-while$ -- 200
+while$ -- 208
 width$ -- 0
-write$ -- 837
+write$ -- 874
