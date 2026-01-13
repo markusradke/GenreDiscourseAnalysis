@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Markus Radke">
-<meta name="dcterms.date" content="2026-01-08">
+<meta name="dcterms.date" content="2026-01-13">
 
 <title>Metagenre Mapping - Genre Discourse Analysis</title>
 <style>
@@ -304,7 +304,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 8, 2026</p>
+      <p class="date">January 13, 2026</p>
     </div>
   </div>
   
@@ -439,7 +439,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">plot_external_contingency</span>(mb_low, poptrag, <span class="st">"track.ab.genrerosamerica"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Removed 1 column(s) from 'track.ab.genrerosamerica' with &lt;2% total frequency: Speech</code></pre>
+<pre><code>Removed 1 rows(s) from 'track.ab.genrerosamerica' with &lt;2% total frequency: Speech</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
@@ -447,7 +447,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"../reports/paper_v1/figures/rosa_contingency.png"</span>, </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  plot, </span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">180</span>, </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">160</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">180</span>,</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">units =</span> <span class="st">"mm"</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -500,15 +500,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">plot_external_contingency</span>(mb_medium, poptrag, <span class="st">"album.dc.firstgenre"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Removed 5 column(s) from 'album.dc.firstgenre' with &lt;2% total frequency: Blues, Brass &amp; Military, Children's, Non-Music, Stage &amp; Screen</code></pre>
+<pre><code>Removed 5 rows(s) from 'album.dc.firstgenre' with &lt;2% total frequency: Blues, Brass &amp; Military, Children's, Non-Music, Stage &amp; Screen</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"../reports/paper_v1/figures/dc_contingency.png"</span>, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  plot, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">180</span>, </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">160</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">220</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">180</span>,</span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">units =</span> <span class="st">"mm"</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -547,7 +547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plot <span class="ot">&lt;-</span> <span class="fu">plot_external_contingency</span>(mb_high, poptrag, <span class="st">"track.dz.album.firstgenre.name"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>Removed 7 column(s) from 'track.dz.album.firstgenre.name' with &lt;2% total frequency: Afrikanische Musik, Bolero, Disco, Latin Musik, Ranchera, Soul &amp; Funk, Türkische Volksmusik</code></pre>
+<pre><code>Removed 16 rows(s) from 'track.dz.album.firstgenre.name' with &lt;2% total frequency: Afrikanische Musik, Asiatische Musik, Bolero, Brasilianische Musik, Deutsche Musik, Disco, Filme/Videospiele, Folk, Hörbücher, Kids, Klassik, Latin Musik, Ranchera, Singer &amp; Songwriter, Soul &amp; Funk, Türkische Volksmusik</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show/Hide Code</summary>
@@ -555,7 +555,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"../reports/paper_v1/figures/dz_contingency.png"</span>, </span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  plot, </span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="dv">320</span>, </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">220</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">200</span>,</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">units =</span> <span class="st">"mm"</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

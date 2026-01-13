@@ -118,7 +118,7 @@ ggplot2::ggsave(
   "../reports/paper_v1/figures/rosa_contingency.png", 
   plot, 
   width = 180, 
-  height = 160,
+  height = 180,
   units = "mm"
 )
 plot
@@ -141,8 +141,8 @@ plot <- plot_external_contingency(mb_medium, poptrag, "album.dc.firstgenre")
 ggplot2::ggsave(
   "../reports/paper_v1/figures/dc_contingency.png", 
   plot, 
-  width = 180, 
-  height = 160,
+  width = 220, 
+  height = 180,
   units = "mm"
 )
 plot
@@ -162,7 +162,7 @@ ggplot2::ggsave(
   "../reports/paper_v1/figures/dz_contingency.png", 
   plot, 
   width = 320, 
-  height = 220,
+  height = 200,
   units = "mm"
 )
 plot

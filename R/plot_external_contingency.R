@@ -26,9 +26,9 @@ plot_external_contingency <- function(
   )
   no_metagenres <- mb_meta$metagenre |> unique() |> length()
   comb <- join_and_filter(mb_meta, poptrag, ext_genre_col)
-  browser()
   relfreqs <- compute_relfreqs(comb, ext_genre_col)
-  filtered <- filter_low_frequency_columns(relfreqs, ext_genre_col)
+
+  filtered <- filter_low_frequency_rows(relfreqs, ext_genre_col)
   padded <- filtered |>
     tidyr::complete(
       metagenre,
@@ -40,7 +40,13 @@ plot_external_contingency <- function(
         labelcolor = "black"
       )
     )
-  build_plot_external_contingency(padded, no_metagenres, ext_genre_col, name)
+  build_plot_external_contingency(
+    padded,
+    relfreqs,
+    no_metagenres,
+    ext_genre_col,
+    name
+  )
 }
 
 join_and_filter <- function(mb_meta, poptrag, ext_genre_col) {
@@ -55,9 +61,9 @@ join_and_filter <- function(mb_meta, poptrag, ext_genre_col) {
 
 compute_relfreqs <- function(comb, ext_genre_col = "album.dc.firstgenre") {
   comb |>
-    dplyr::group_by(metagenre, .data[[ext_genre_col]]) |>
+    dplyr::group_by(.data[[ext_genre_col]], metagenre) |>
     dplyr::tally(name = "Freq") |>
-    dplyr::group_by(metagenre) |>
+    dplyr::group_by(.data[[ext_genre_col]]) |>
     dplyr::mutate(
       relfreq = Freq / sum(Freq),
       relfreq_label = round(relfreq * 100, 0)
@@ -71,32 +77,33 @@ compute_relfreqs <- function(comb, ext_genre_col = "album.dc.firstgenre") {
     )
 }
 
-filter_low_frequency_columns <- function(relfreqs, ext_genre_col) {
-  col_totals <- relfreqs |>
+filter_low_frequency_rows <- function(relfreqs, ext_genre_col) {
+  total_n <- sum(relfreqs$Freq)
+  row_totals <- relfreqs |>
     dplyr::group_by(.data[[ext_genre_col]]) |>
-    dplyr::summarize(total_relfreq = sum(relfreq), .groups = "drop")
+    dplyr::summarize(total_relfreq = sum(Freq) / total_n, .groups = "drop")
 
-  kept_cols <- col_totals |>
-    dplyr::filter(total_relfreq >= 0.025) |>
+  kept_rows <- row_totals |>
+    dplyr::filter(total_relfreq >= 0.005) |>
     dplyr::pull(.data[[ext_genre_col]])
 
-  removed_cols <- col_totals |>
-    dplyr::filter(total_relfreq < 0.025) |>
+  removed_rows <- row_totals |>
+    dplyr::filter(total_relfreq < 0.005) |>
     dplyr::pull(.data[[ext_genre_col]])
 
-  if (length(removed_cols) > 0) {
+  if (length(removed_rows) > 0) {
     message(
       sprintf(
-        "Removed %d column(s) from '%s' with <2%% total frequency: %s",
-        length(removed_cols),
+        "Removed %d rows(s) from '%s' with <2%% total frequency: %s",
+        length(removed_rows),
         ext_genre_col,
-        paste(removed_cols, collapse = ", ")
+        paste(removed_rows, collapse = ", ")
       )
     )
   }
 
   relfreqs |>
-    dplyr::filter(.data[[ext_genre_col]] %in% kept_cols)
+    dplyr::filter(.data[[ext_genre_col]] %in% kept_rows)
 }
 
 translate_deezer_genres <- function(genres) {
@@ -146,15 +153,15 @@ get_external_name <- function(ext_genre_col) {
 
 get_target_colorder <- function(
   ext_genre_col,
-  colorder_rosamerica,
-  colorder_discogs,
-  colorder_deezer
+  roworder_rosamerica,
+  roworder_discogs,
+  roworder_deezer
 ) {
   switch(
     ext_genre_col,
-    "track.ab.genrerosamerica" = colorder_rosamerica,
-    "album.dc.firstgenre" = colorder_discogs,
-    "track.dz.album.firstgenre.name" = colorder_deezer,
+    "track.ab.genrerosamerica" = roworder_rosamerica,
+    "album.dc.firstgenre" = roworder_discogs,
+    "track.dz.album.firstgenre.name" = roworder_deezer,
     character(0)
   )
 }
@@ -180,13 +187,14 @@ compute_final_levels <- function(padded, ext_genre_col, target_colorder) {
 
 build_plot_external_contingency <- function(
   padded,
+  relfreqs,
   no_metagenres,
   ext_genre_col,
   name = "COMGET-G"
 ) {
   external_name <- get_external_name(ext_genre_col)
 
-  roworder_full <- c(
+  colorder_full <- c(
     "rock",
     "metal",
     "death metal",
@@ -221,7 +229,7 @@ build_plot_external_contingency <- function(
     "hip hop"
   )
 
-  colorder_rosamerica <- c(
+  roworder_rosamerica <- c(
     "Rock",
     "Pop",
     "Dance",
@@ -232,7 +240,7 @@ build_plot_external_contingency <- function(
     "Speech"
   )
 
-  colorder_discogs <- c(
+  roworder_discogs <- c(
     "Rock",
     "Folk, World, & Country",
     "Blues",
@@ -250,7 +258,7 @@ build_plot_external_contingency <- function(
     "Brass & Military"
   )
 
-  colorder_deezer <- c(
+  roworder_deezer <- c(
     "Rock",
     "Heavy Metal",
     "Alternative",
@@ -290,15 +298,15 @@ build_plot_external_contingency <- function(
 
   target_colorder <- get_target_colorder(
     ext_genre_col,
-    colorder_rosamerica,
-    colorder_discogs,
-    colorder_deezer
+    roworder_rosamerica,
+    roworder_discogs,
+    roworder_deezer
   )
 
   final_levels <- compute_final_levels(padded, ext_genre_col, target_colorder)
 
-  metagenre_freqs <- compute_genre_frequencies(padded, "metagenre")
-  external_freqs <- compute_genre_frequencies(padded, ext_genre_col)
+  metagenre_freqs <- compute_genre_frequencies(relfreqs, "metagenre")
+  external_freqs <- compute_genre_frequencies(relfreqs, ext_genre_col)
 
   gini_comget <- DescTools::Gini(metagenre_freqs$freq)
   gini_external <- DescTools::Gini(external_freqs$freq)
@@ -323,32 +331,32 @@ build_plot_external_contingency <- function(
     dplyr::mutate(
       !!ext_genre_col := factor(
         as.character(.data[[paste0(ext_genre_col, "_label")]]),
-        levels = paste0(
+        levels = rev(paste0(
           final_levels,
           " (",
           external_freqs$relfreq_pct[match(final_levels, external_freqs$genre)],
           "%)"
-        )
+        ))
       ),
       metagenre = factor(
         as.character(.data$metagenre_label),
-        levels = rev(paste0(
-          roworder_full,
+        levels = paste0(
+          colorder_full,
           " (",
           metagenre_freqs$relfreq_pct[match(
-            roworder_full,
+            colorder_full,
             metagenre_freqs$genre
           )],
           "%)"
-        ))
+        )
       )
     )
 
   p <- ggplot2::ggplot(
     padded,
     ggplot2::aes(
-      x = .data[[ext_genre_col]],
-      y = .data$metagenre,
+      x = .data$metagenre,
+      y = .data[[ext_genre_col]],
       fill = relfreq
     )
   ) +
@@ -368,8 +376,8 @@ build_plot_external_contingency <- function(
     ggplot2::scale_x_discrete(position = "top") +
     ggplot2::labs(
       title = gini_label,
-      x = external_name,
-      y = sprintf("%s%d", name, no_metagenres)
+      x = sprintf("%s%d", name, no_metagenres),
+      y = external_name
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
