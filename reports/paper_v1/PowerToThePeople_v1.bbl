@@ -13,6 +13,13 @@ Alonso-Jiménez, P., Bogdanov, D., Pons, J., and Serra, X. (2020).
 \newblock In {\em ICASSP 2020 - 2020 IEEE International Conference on
   Acoustics, Speech and Signal Processing}, pages 266--270.
 
+\bibitem[Anderson et~al., 2021]{andersonJustWayYou2021}
+Anderson, I., Gil, S., Gibson, C., Wolf, S., Shapiro, W., Semerci, O., and
+  Greenberg, D.~M. (2021).
+\newblock ``{{Just}} the {{Way You Are}}'': {{Linking Music Listening}} on
+  {{Spotify}} and {{Personality}}.
+\newblock {\em Social Psychological and Personality Science}, 12(4):561--572.
+
 \bibitem[Bogdanov et~al., 2019]{bogdanovAcousticbrainzGenreDataset2019}
 Bogdanov, D., Porter, A., Schreiber, H., Urbano, J., and Oramas, S. (2019).
 \newblock The {Acousticbrainz} {Genre} {Dataset}: {Multi}-{Source}
@@ -79,6 +86,12 @@ Deezer (n.d.).
 \newblock Deezer music streaming platform.
 \newblock Retrieved 2025-12-12 from
   \url{https://developers.deezer.com/login?redirect=/api}.
+
+\bibitem[Deldjoo et~al., 2024]{deldjoo2024}
+Deldjoo, Y., Schedl, M., and Knees, P. (2024).
+\newblock Content-driven music recommendation: Evolution, state of the art, and
+  challenges.
+\newblock {\em Computer Science Review}, 51:100618.
 
 \bibitem[DiMaggio, 1987]{dimaggioClassificationArt1987}
 DiMaggio, P. (1987).
@@ -284,12 +297,38 @@ Pachet, F. and Cazaly, D. (2000).
   {Volume} 2}, RIAO '00, pages 1238--1245, Paris, FRA.
 \newblock \url{https://dl.acm.org/doi/10.5555/2856151.2856177}.
 
+\bibitem[Peterson, 1992]{peterson1992understanding}
+Peterson, R.~A. (1992).
+\newblock Understanding audience segmentation: From elite and mass to omnivore
+  and univore.
+\newblock {\em Poetics}, 21(4):243--258.
+
+\bibitem[Petitbon and Hitchcock, 2022]{petitbon_hitchcock_2022}
+Petitbon, A.~M. and Hitchcock, D.~B. (2022).
+\newblock What kind of music do you like? a statistical analysis of music genre
+  popularity over time.
+\newblock {\em Journal of Data Science}, 20(2):168--187.
+
 \bibitem[Pichl et~al., 2017]{pichlMiningCultureSpecificMusic2017}
 Pichl, M., Zangerle, E., Specht, G., and Schedl, M. (2017).
 \newblock Mining {Culture}-{Specific} {Music} {Listening} {Behavior} from
   {Social} {Media} {Data}.
 \newblock In {\em {IEEE} {International} {Symposium} on {Multimedia} ({ISM})},
   pages 208--215.
+
+\bibitem[Porcaro et~al., 2021]{porcaroDiversityDesignMusic2021}
+Porcaro, L., Castillo, C., and G{\'o}mez, E. (2021).
+\newblock Diversity by {{Design}} in {{Music Recommender Systems}}.
+\newblock {\em Transactions of the International Society for Music Information
+  Retrieval}, 4(1).
+
+\bibitem[Porcaro and G{\'o}mez~Guti{\'e}rrez,
+  2019]{porcaro20YearsPlaylists2019}
+Porcaro, L. and G{\'o}mez~Guti{\'e}rrez, E. (2019).
+\newblock 20 years of playlists: {{A}} statistical analysis on popularity and
+  diversity.
+\newblock In {\em 20th International Society for Music Information Retrieval
+  Conference}, Deflt.
 
 \bibitem[Porcaro et~al., 2024]{porcaroAssessingImpactMusic2024}
 Porcaro, L., Gómez, E., and Castillo, C. (2024).
@@ -363,6 +402,12 @@ Sordo, M. (2008).
   crowds agree?
 \newblock In {\em 9th {International} {Society} for {Music} {Information}
   {Retrieval} {Conference}}, Philadelphia.
+
+\bibitem[Sturm, 2014]{sturmGTZANDatasetIts2014}
+Sturm, B.~L. (2014).
+\newblock The {{GTZAN}} dataset: {{Its}} contents, its faults, their effects on
+  evaluation, and its future use.
+\newblock {\em Journal of New Music Research}, 43(2):147--172.
 
 \bibitem[Sturm and Flexer, 2023]{sturmReviewValidityIts2023}
 Sturm, B. L.~T. and Flexer, A. (2023).

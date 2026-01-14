@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  13 JAN 2026 18:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  14 JAN 2026 14:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -822,7 +822,7 @@ File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
 Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 288.
 (pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
 
-Underfull \hbox (badness 3128) in paragraph at lines 317--318
+Underfull \hbox (badness 3128) in paragraph at lines 315--316
 \T1/bch/m/n/10 G12 we achieved $[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 519 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 007$ \T1/bch/m/n/10 and
  []
 
@@ -830,144 +830,131 @@ Underfull \hbox (badness 3128) in paragraph at lines 317--318
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10 <./figures/rosa_contingency.png> <./figures/dc_contingency.png> <./figures/learner_comparison.png>] [11 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_mediumres_cm.png>]
-<figures/lightgbm_lowres_varimp.png, id=395, 511.9125pt x 426.6339pt>
+<figures/lightgbm_lowres_varimp.png, id=393, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
 <use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 327.
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 325.
 (pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
-<figures/lightgbm_mediumres_varimp.png, id=396, 511.9125pt x 426.6339pt>
+<figures/lightgbm_mediumres_varimp.png, id=394, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
 <use figures/lightgbm_mediumres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 335.
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 333.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [12 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \hbox (badness 1248) in paragraph at lines 349--350
+Underfull \hbox (badness 1248) in paragraph at lines 347--348
 \T1/bch/m/n/10 an al-go-rithm to con-struct a bal-anced hi-er-ar-chi-cal
- []
-
-
-Underfull \hbox (badness 1509) in paragraph at lines 356--357
-\T1/bch/m/n/10 nealo-gies ([]Pa-chet and Cazaly[], []2000[]) do. While
- []
-
-
-Underfull \hbox (badness 4752) in paragraph at lines 358--359
-\T1/bch/m/n/10 nman kat-e-gorien-zahl f¸r Di-ver-sit‰t-s-anal-y-sen von
- []
-
-
-Underfull \hbox (badness 4108) in paragraph at lines 358--359
-\T1/bch/m/n/10 kann, das man in-ter-estes-sant Subgenre-Analysen
- []
-
-
-Underfull \hbox (badness 4467) in paragraph at lines 358--359
-\T1/bch/m/n/10 machen kann, his-torische En-twick-lung des Auf-
  []
 
 
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [13]
-Underfull \vbox (badness 2538) has occurred while \output is active []
-
-
-Underfull \hbox (badness 1320) in paragraph at lines 372--373
-\T1/bch/m/n/10 sys-tem-atic con-fu-sion pat-terns re-veal fuzzy bound-
+Underfull \hbox (badness 1577) in paragraph at lines 367--368
+\T1/bch/m/n/10 out us-ing any nu-meric thresh-olds, ren-der-ing our
  []
 
 
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
+
+Underfull \hbox (badness 1199) in paragraph at lines 373--376
+\T1/bch/m/n/10 olog-i-cal draw-back in MIR: most genre-recognition
+ []
+
+
+Underfull \vbox (badness 3068) has occurred while \output is active []
+
  [14] (./PowerToThePeople_v1.bbl
-Underfull \hbox (badness 2229) in paragraph at lines 57--63
+Underfull \hbox (badness 2229) in paragraph at lines 64--70
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., PÈrez-Molina, L., and
  []
 
 
-Underfull \hbox (badness 5231) in paragraph at lines 57--63
+Underfull \hbox (badness 5231) in paragraph at lines 64--70
 \T1/bch/m/n/10 sic tax-on-omy.  \T1/bch/m/it/10 Jour-nal of New Mu-sic Re-
  []
 
-
-Underfull \hbox (badness 1253) in paragraph at lines 65--71
+[15]
+Underfull \hbox (badness 1253) in paragraph at lines 72--78
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
 
-Underfull \hbox (badness 1009) in paragraph at lines 78--82
+Underfull \hbox (badness 1009) in paragraph at lines 85--89
 []\T1/bch/m/n/10 Deezer (n.d.).  Deezer mu-sic stream-ing plat-form.
  []
 
 
-Underfull \hbox (badness 2310) in paragraph at lines 78--82
+Underfull \hbox (badness 2310) in paragraph at lines 85--89
 \T1/bch/m/n/10 Re-trieved 2025-12-12 from []$https : / / developers .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--94
+Underfull \hbox (badness 10000) in paragraph at lines 103--107
 []\T1/bch/m/n/10 Discogs (2024).  Database guide-lines.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--94
+Underfull \hbox (badness 10000) in paragraph at lines 103--107
 \T1/bch/m/n/10 9. gen-res and styles.  []$https : / /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--94
+Underfull \hbox (badness 10000) in paragraph at lines 103--107
 \T1/bch/m/n/10 support . discogs . com / hc / en-[]us / articles /
  []
 
 
-Overfull \hbox (15.3492pt too wide) in paragraph at lines 90--94
+Overfull \hbox (15.3492pt too wide) in paragraph at lines 103--107
 \T1/bch/m/n/10 360005055213-[]Database-[]Guidelines-[]9-[]Genres-[]Styles$[]. 
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 109--115
+Underfull \hbox (badness 1038) in paragraph at lines 122--128
 \T1/bch/m/n/10 (2018).  Hub-ness as a Case of Tech-ni-cal Al-
  []
 
 
-Underfull \hbox (badness 1742) in paragraph at lines 117--122
+Underfull \hbox (badness 1742) in paragraph at lines 130--135
 \T1/bch/m/n/10 251.  []$https : / / doi . org / 10 . 1080 / 09298215 . 2016 .
  []
 
-[15]
-Underfull \hbox (badness 2181) in paragraph at lines 168--175
+
+Underfull \hbox (badness 2181) in paragraph at lines 181--188
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-
-Underfull \hbox (badness 2608) in paragraph at lines 246--251
+[16]
+Underfull \hbox (badness 2608) in paragraph at lines 259--264
 []\T1/bch/m/n/10 Merlini, M. (2020).  A crit-i-cal (and in-ter-dis-ci-
  []
 
 
-Underfull \hbox (badness 1616) in paragraph at lines 246--251
+Underfull \hbox (badness 1616) in paragraph at lines 259--264
 \T1/bch/m/n/10 plinary) sur-vey of pop-u-lar mu-sic genre the-o-
  []
 
 
-Underfull \hbox (badness 4913) in paragraph at lines 258--261
+Underfull \hbox (badness 4913) in paragraph at lines 271--274
 []\T1/bch/m/n/10 MusicBrainz (n.d.).  Database statis-tics.  Re-
  []
 
-[16]
-Underfull \hbox (badness 1043) in paragraph at lines 348--352
+
+Underfull \hbox (badness 1043) in paragraph at lines 387--391
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
 
-Underfull \hbox (badness 3547) in paragraph at lines 348--352
+Underfull \hbox (badness 3547) in paragraph at lines 387--391
 \T1/bch/m/n/10 Genre Com-plexes in Pop-u-lar Mu-sic.  \T1/bch/m/it/10 PLOS
  []
 
-) [17] (./PowerToThePeople_v1.aux)
+[17]) [18
+
+] (./PowerToThePeople_v1.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -975,18 +962,18 @@ Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B0017BF3D03946143F890FE61F3F55FB;7370.
  ) 
 Here is how much of TeX's memory you used:
- 14917 strings out of 476091
- 252480 string characters out of 5795540
- 1895324 words of memory out of 5000000
- 34887 multiletter control sequences out of 15000+600000
+ 14948 strings out of 476091
+ 253357 string characters out of 5795540
+ 1893324 words of memory out of 5000000
+ 34910 multiletter control sequences out of 15000+600000
  677541 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,1982b,675s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,1982b,711s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (17 pages, 2327990 bytes).
+Output written on PowerToThePeople_v1.pdf (18 pages, 2332858 bytes).
 PDF statistics:
- 671 PDF objects out of 1000 (max. 8388607)
- 609 compressed objects within 7 object streams
- 117 named destinations out of 1000 (max. 500000)
+ 708 PDF objects out of 1000 (max. 8388607)
+ 645 compressed objects within 7 object streams
+ 125 named destinations out of 1000 (max. 500000)
  246 words of extra memory for PDF output out of 10000 (max. 10000000)
 
