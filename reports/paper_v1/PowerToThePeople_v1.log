@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  14 JAN 2026 14:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.1.22)  15 JAN 2026 17:14
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -504,7 +504,7 @@ Package: subcaption 2022/01/07 v1.5 Sub-captions (AR)
 \c@subfigure=\count307
 \c@subtable=\count308
 ) (./metadata.tex)
-LaTeX Font Info:    Trying to load font information for T1+bch on input line 31.
+LaTeX Font Info:    Trying to load font information for T1+bch on input line 32.
  (c:/texlive/2022/texmf-dist/tex/latex/psnfss/t1bch.fd
 File: t1bch.fd 2004/10/18 font definitions for T1/bch.
 ) (./PowerToThePeople_v1.aux
@@ -514,42 +514,42 @@ LaTeX Warning: Label `fig:rq3_cm_low_medium' multiply defined.
 )
 \openout1 = `PowerToThePeople_v1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 31.
-LaTeX Font Info:    Trying to load font information for FML+futm on input line 31.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 32.
+LaTeX Font Info:    Trying to load font information for FML+futm on input line 32.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 31.
-LaTeX Font Info:    Trying to load font information for FMS+futm on input line 31.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 32.
+LaTeX Font Info:    Trying to load font information for FMS+futm on input line 32.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmsfutm.fd
 File: fmsfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FMS/futm.
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 31.
-LaTeX Font Info:    Trying to load font information for FMX+futm on input line 31.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 32.
+LaTeX Font Info:    Trying to load font information for FMX+futm on input line 32.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmxfutm.fd
 File: fmxfutm.fd futm-extension
 )
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 32.
+LaTeX Font Info:    ... okay on input line 32.
  (c:/texlive/2022/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
 )
@@ -558,7 +558,7 @@ Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbat
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 31.
+Package hyperref Info: Link coloring OFF on input line 32.
  (./PowerToThePeople_v1.out) (./PowerToThePeople_v1.out)
 \@outlinefile=\write4
 \openout4 = `PowerToThePeople_v1.out'.
@@ -582,42 +582,42 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (c:/texlive/2022/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 48.
+LaTeX Font Info:    Trying to load font information for T1+QuattroSans-LF on input line 49.
  (c:/texlive/2022/texmf-dist/tex/latex/quattrocento/T1QuattroSans-LF.fd
 File: T1QuattroSans-LF.fd 2020/07/28 (autoinst) Font definitions for T1/QuattroSans-LF.
 )
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 10.0pt on input line 48.
+(Font)              scaled to size 10.0pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 10.0pt on input line 48.
+(Font)              scaled to size 10.0pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 12.0pt on input line 48.
+(Font)              scaled to size 12.0pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/b/n' aliased to
-(Font)              `T1/QuattroSans-LF/bold/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/bold/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/bold/n' will be
-(Font)              scaled to size 20.74pt on input line 48.
+(Font)              scaled to size 20.74pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 14.4pt on input line 48.
+(Font)              scaled to size 14.4pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 12.0pt on input line 48.
+(Font)              scaled to size 12.0pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
-(Font)              `T1/QuattroSans-LF/regular/it' on input line 48.
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
-(Font)              scaled to size 12.0pt on input line 48.
+(Font)              scaled to size 12.0pt on input line 49.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 55.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 56.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 6.0pt on input line 55.
+(Font)              scaled to size 6.0pt on input line 56.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
@@ -627,32 +627,32 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 <tismir.png, id=114, 534.99875pt x 134.5025pt>
 File: tismir.png Graphic file (type png)
 <use tismir.png>
-Package pdftex.def Info: tismir.png  used on input line 59.
+Package pdftex.def Info: tismir.png  used on input line 60.
 (pdftex.def)             Requested size: 145.59631pt x 36.60347pt.
-LaTeX Font Info:    Trying to load font information for FML+futmi on input line 59.
+LaTeX Font Info:    Trying to load font information for FML+futmi on input line 60.
  (c:/texlive/2022/texmf-dist/tex/latex/fourier/fmlfutmi.fd
 File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 59.
+(Font)              scaled to size 9.19998pt on input line 60.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 59.
+(Font)              scaled to size 6.99199pt on input line 60.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 59.
+(Font)              scaled to size 5.51999pt on input line 60.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 59.
+(Font)              scaled to size 9.19998pt on input line 60.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 6.99199pt on input line 59.
+(Font)              scaled to size 6.99199pt on input line 60.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 5.51999pt on input line 59.
+(Font)              scaled to size 5.51999pt on input line 60.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/n' aliased to
-(Font)              `T1/QuattroSans-LF/regular/n' on input line 59.
+(Font)              `T1/QuattroSans-LF/regular/n' on input line 60.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/n' will be
-(Font)              scaled to size 9.0pt on input line 59.
+(Font)              scaled to size 9.0pt on input line 60.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/m/it' aliased to
-(Font)              `T1/QuattroSans-LF/regular/it' on input line 59.
+(Font)              `T1/QuattroSans-LF/regular/it' on input line 60.
 LaTeX Font Info:    Font shape `T1/QuattroSans-LF/regular/it' will be
-(Font)              scaled to size 9.0pt on input line 59.
+(Font)              scaled to size 9.0pt on input line 60.
 
 
 Package fancyhdr Warning: \headheight is too small (40.0pt): 
@@ -668,7 +668,7 @@ Package fancyhdr Warning: \headheight is too small (40.0pt):
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Underfull \hbox (badness 2173) in paragraph at lines 67--68
+Underfull \hbox (badness 2173) in paragraph at lines 68--69
 \T1/bch/m/n/10 si-fi-ca-tions of-ten di-verge from lis-tener com-mu-nity
  []
 
@@ -676,17 +676,17 @@ Underfull \hbox (badness 2173) in paragraph at lines 67--68
 Underfull \vbox (badness 1297) has occurred while \output is active []
 
  [2]
-Underfull \hbox (badness 2012) in paragraph at lines 75--76
+Underfull \hbox (badness 2012) in paragraph at lines 76--77
 \T1/bch/m/n/10 For the ap-pli-ca-tion of genre tax-onomies in MIR
  []
 
 
-Underfull \hbox (badness 7081) in paragraph at lines 75--76
+Underfull \hbox (badness 7081) in paragraph at lines 76--77
 \T1/bch/m/n/10 re-search and com-pu-ta-tional mu-si-col-ogy, sev-eral
  []
 
 
-Underfull \hbox (badness 1127) in paragraph at lines 75--76
+Underfull \hbox (badness 1127) in paragraph at lines 76--77
 \T1/bch/m/n/10 research-pragmatic re-quire-ments have to be taken
  []
 
@@ -697,27 +697,27 @@ Underfull \vbox (badness 2538) has occurred while \output is active []
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
  [3]
-Underfull \hbox (badness 10000) in paragraph at lines 95--97
+Underfull \hbox (badness 10000) in paragraph at lines 96--98
 []\T1/bch/b/n/10 RQ3 \T1/bch/m/n/10 How valid and gen-er-al-iz-able are
  []
 
 
-Underfull \hbox (badness 1540) in paragraph at lines 98--99
+Underfull \hbox (badness 1540) in paragraph at lines 99--100
 \T1/bch/m/n/10 dict community-derived genre cat-e-gories
  []
 
 
-Underfull \hbox (badness 4084) in paragraph at lines 106--106
+Underfull \hbox (badness 4084) in paragraph at lines 107--107
 |[]\T1/QuattroSans-LF/bold/n/12 RQ1: Cre-at-ing a Bal-anced Hi-er-ar-chi-cal
  []
 
 
-Underfull \hbox (badness 1142) in paragraph at lines 116--116
+Underfull \hbox (badness 1142) in paragraph at lines 117--117
 |[]\T1/QuattroSans-LF/bold/n/10 Methods: Hi-er-ar-chi-cal Genre Tree Con-struc-tion
  []
 
 
-Underfull \hbox (badness 1281) in paragraph at lines 117--118
+Underfull \hbox (badness 1281) in paragraph at lines 118--119
 \T1/bch/m/n/10 structed a weighted co-occurrence net-work where
  []
 
@@ -725,10 +725,10 @@ Underfull \hbox (badness 1281) in paragraph at lines 117--118
 <figures/balancing_gini_trajectory.png, id=278, 511.9125pt x 327.1422pt>
 File: figures/balancing_gini_trajectory.png Graphic file (type png)
 <use figures/balancing_gini_trajectory.png>
-Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 145.
+Package pdftex.def Info: figures/balancing_gini_trajectory.png  used on input line 146.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
  [5 <./figures/balancing_gini_trajectory.png>]
-Underfull \hbox (badness 1655) in paragraph at lines 172--172
+Underfull \hbox (badness 1655) in paragraph at lines 173--173
 |[]\T1/QuattroSans-LF/bold/n/12 RQ2: Cre-at-ing Genre Cat-e-gory Sys-tems
  []
 
@@ -738,30 +738,30 @@ Underfull \vbox (badness 1616) has occurred while \output is active []
 <figures/folding_gini_trajectory.png, id=290, 511.9125pt x 327.1422pt>
 File: figures/folding_gini_trajectory.png Graphic file (type png)
 <use figures/folding_gini_trajectory.png>
-Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 186.
+Package pdftex.def Info: figures/folding_gini_trajectory.png  used on input line 187.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
 
-Underfull \hbox (badness 5985) in paragraph at lines 187--187
+Underfull \hbox (badness 5985) in paragraph at lines 188--188
 [] []|\T1/bch/m/n/10 Weighted Gini co-ef-fi-cient (0--1) across
  []
 
 
-Underfull \hbox (badness 1205) in paragraph at lines 191--192
+Underfull \hbox (badness 1205) in paragraph at lines 192--193
 \T1/bch/m/n/10 iden-ti-fied mul-ti-ple locally-optimal cat-e-gor-i-cal so-lu-
  []
 
 <figures/supergenre_hierarchy.png, id=293, 746.03719pt x 840.89156pt>
 File: figures/supergenre_hierarchy.png Graphic file (type png)
 <use figures/supergenre_hierarchy.png>
-Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 196.
+Package pdftex.def Info: figures/supergenre_hierarchy.png  used on input line 197.
 (pdftex.def)             Requested size: 237.5805pt x 267.78203pt.
 [6 <./figures/folding_gini_trajectory.png>]
-Underfull \hbox (badness 1436) in paragraph at lines 206--206
+Underfull \hbox (badness 1436) in paragraph at lines 207--207
 |[]\T1/QuattroSans-LF/bold/n/12 RQ3: Demon-strat-ing Va-lid-ity, Re-li-a-bil-ity
  []
 
 [7 <./figures/supergenre_hierarchy.png>]
-Underfull \hbox (badness 1112) in paragraph at lines 226--227
+Underfull \hbox (badness 1112) in paragraph at lines 227--228
 []\T1/bch/m/n/10 Further pre-pro-cess-ing was ap-plied in se-quence
  []
 
@@ -769,41 +769,41 @@ Underfull \hbox (badness 1112) in paragraph at lines 226--227
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [8]
-<figures/rosa_contingency.png, id=360, 511.9125pt x 511.9125pt>
+<figures/rosa_contingency.png, id=362, 511.9125pt x 511.9125pt>
 File: figures/rosa_contingency.png Graphic file (type png)
 <use figures/rosa_contingency.png>
-Package pdftex.def Info: figures/rosa_contingency.png  used on input line 238.
+Package pdftex.def Info: figures/rosa_contingency.png  used on input line 239.
 (pdftex.def)             Requested size: 210.43298pt x 210.43227pt.
-<figures/dc_contingency.png, id=361, 625.8582pt x 511.9125pt>
+<figures/dc_contingency.png, id=363, 625.8582pt x 511.9125pt>
 File: figures/dc_contingency.png Graphic file (type png)
 <use figures/dc_contingency.png>
-Package pdftex.def Info: figures/dc_contingency.png  used on input line 246.
+Package pdftex.def Info: figures/dc_contingency.png  used on input line 247.
 (pdftex.def)             Requested size: 269.16455pt x 220.15714pt.
 
-Underfull \hbox (badness 3148) in paragraph at lines 257--258
+Underfull \hbox (badness 3148) in paragraph at lines 258--259
 \T1/bch/m/n/10 eight cat-e-gories, mak-ing it most com-pa-ra-ble to
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 260--261
+Underfull \hbox (badness 10000) in paragraph at lines 261--262
 []\T1/bch/m/it/10 Discogs' \T1/bch/m/n/10 15-genre tax-on-omy ap-prox-i-mates
  []
 
 
 Underfull \vbox (badness 2538) has occurred while \output is active []
 
-<figures/learner_comparison.png, id=364, 511.9125pt x 327.1422pt>
+<figures/learner_comparison.png, id=366, 511.9125pt x 327.1422pt>
 File: figures/learner_comparison.png Graphic file (type png)
 <use figures/learner_comparison.png>
-Package pdftex.def Info: figures/learner_comparison.png  used on input line 269.
+Package pdftex.def Info: figures/learner_comparison.png  used on input line 270.
 (pdftex.def)             Requested size: 237.5805pt x 151.82503pt.
 
-Underfull \hbox (badness 1418) in paragraph at lines 274--275
-[][] \FMS/futm/m/n/10 Å$ \T1/bch/m/n/10 0.717 -- 0.758 for COMGET-G5 and
+Underfull \hbox (badness 2376) in paragraph at lines 275--276
+\T1/bch/m/n/10 per-vised ma-chine learn-ing al-go-rithms tested per-
  []
 
 
-Underfull \hbox (badness 1527) in paragraph at lines 274--275
+Underfull \hbox (badness 1527) in paragraph at lines 275--276
 \T1/bch/m/n/10 per-former at both gran-u-lar-i-ties (COMGET-G5 and
  []
 
@@ -811,18 +811,18 @@ Underfull \hbox (badness 1527) in paragraph at lines 274--275
 Underfull \vbox (badness 6016) has occurred while \output is active []
 
  [9]
-<figures/lightgbm_lowres_cm.png, id=374, 511.9125pt x 284.5029pt>
+<figures/lightgbm_lowres_cm.png, id=376, 511.9125pt x 284.5029pt>
 File: figures/lightgbm_lowres_cm.png Graphic file (type png)
 <use figures/lightgbm_lowres_cm.png>
-Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 280.
+Package pdftex.def Info: figures/lightgbm_lowres_cm.png  used on input line 281.
 (pdftex.def)             Requested size: 278.95439pt x 155.03146pt.
-<figures/lightgbm_mediumres_cm.png, id=375, 682.7106pt x 426.6339pt>
+<figures/lightgbm_mediumres_cm.png, id=377, 682.7106pt x 426.6339pt>
 File: figures/lightgbm_mediumres_cm.png Graphic file (type png)
 <use figures/lightgbm_mediumres_cm.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 288.
+Package pdftex.def Info: figures/lightgbm_mediumres_cm.png  used on input line 289.
 (pdftex.def)             Requested size: 391.5114pt x 244.66159pt.
 
-Underfull \hbox (badness 3128) in paragraph at lines 315--316
+Underfull \hbox (badness 3128) in paragraph at lines 316--317
 \T1/bch/m/n/10 G12 we achieved $[][] \FMS/futm/m/n/10 Å \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 519 \FMS/futm/m/n/10 ^^F \T1/futs/m/n/10 0\FML/futmi/m/it/10 :\T1/futs/m/n/10 007$ \T1/bch/m/n/10 and
  []
 
@@ -830,21 +830,21 @@ Underfull \hbox (badness 3128) in paragraph at lines 315--316
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [10 <./figures/rosa_contingency.png> <./figures/dc_contingency.png> <./figures/learner_comparison.png>] [11 <./figures/lightgbm_lowres_cm.png> <./figures/lightgbm_mediumres_cm.png>]
-<figures/lightgbm_lowres_varimp.png, id=393, 511.9125pt x 426.6339pt>
+<figures/lightgbm_lowres_varimp.png, id=395, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_lowres_varimp.png Graphic file (type png)
 <use figures/lightgbm_lowres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 325.
+Package pdftex.def Info: figures/lightgbm_lowres_varimp.png  used on input line 326.
 (pdftex.def)             Requested size: 237.5805pt x 197.99861pt.
-<figures/lightgbm_mediumres_varimp.png, id=394, 511.9125pt x 426.6339pt>
+<figures/lightgbm_mediumres_varimp.png, id=396, 511.9125pt x 426.6339pt>
 File: figures/lightgbm_mediumres_varimp.png Graphic file (type png)
 <use figures/lightgbm_mediumres_varimp.png>
-Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 333.
+Package pdftex.def Info: figures/lightgbm_mediumres_varimp.png  used on input line 334.
 (pdftex.def)             Requested size: 237.5805pt x 178.19145pt.
 
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [12 <./figures/lightgbm_mediumres_varimp.png> <./figures/lightgbm_lowres_varimp.png>]
-Underfull \hbox (badness 1248) in paragraph at lines 347--348
+Underfull \hbox (badness 1248) in paragraph at lines 348--349
 \T1/bch/m/n/10 an al-go-rithm to con-struct a bal-anced hi-er-ar-chi-cal
  []
 
@@ -852,109 +852,163 @@ Underfull \hbox (badness 1248) in paragraph at lines 347--348
 Underfull \vbox (badness 3068) has occurred while \output is active []
 
  [13]
-Underfull \hbox (badness 1577) in paragraph at lines 367--368
-\T1/bch/m/n/10 out us-ing any nu-meric thresh-olds, ren-der-ing our
- []
+Underfull \vbox (badness 2538) has occurred while \output is active []
 
 
-Underfull \vbox (badness 6016) has occurred while \output is active []
-
-
-Underfull \hbox (badness 1199) in paragraph at lines 373--376
+Underfull \hbox (badness 1199) in paragraph at lines 374--377
 \T1/bch/m/n/10 olog-i-cal draw-back in MIR: most genre-recognition
  []
 
 
-Underfull \vbox (badness 3068) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [14] (./PowerToThePeople_v1.bbl
-Underfull \hbox (badness 2229) in paragraph at lines 64--70
+ [14]
+Underfull \hbox (badness 4024) in paragraph at lines 387--388
+\T1/bch/m/n/10 di-tional method-olog-i-cal chal-lenges. Collinear-ity
+ []
+
+
+Underfull \vbox (badness 1297) has occurred while \output is active []
+
+
+Underfull \hbox (badness 6876) in paragraph at lines 393--394
+\T1/bch/m/n/10 Future re-search should pur-sue sev-eral com-ple-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 393--394
+\T1/bch/m/n/10 men-tary di-rec-tions to strengthen and ex-tend
+ []
+
+
+Underfull \hbox (badness 1571) in paragraph at lines 393--394
+\T1/bch/m/n/10 this frame-work. First, sys-tem-atic com-par-i-son of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 393--394
+\T1/bch/m/n/10 COMGET-G with al-ter-na-tive folk-son-omy hi-er-ar-
+ []
+
+
+Underfull \hbox (badness 1783) in paragraph at lines 393--394
+\T1/bch/m/n/10 pop-u-lar mu-sic ex-perts to re-view COMGET-G and
+ []
+
+
+Underfull \hbox (badness 1412) in paragraph at lines 393--394
+\T1/bch/m/n/10 ap-pli-ca-ble across all mu-si-cal do-mains re-leased in
+ []
+
+
+Underfull \hbox (badness 1348) in paragraph at lines 393--394
+\T1/bch/m/n/10 cul-tures re-shape genre struc-tures and bound-aries.
+ []
+
+(./PowerToThePeople_v1.bbl
+Underfull \vbox (badness 6493) has occurred while \output is active []
+
+ [15]
+Underfull \hbox (badness 2229) in paragraph at lines 65--71
 []\T1/bch/m/n/10 Caparrini, A., Ar-royo, J., PÈrez-Molina, L., and
  []
 
 
-Underfull \hbox (badness 5231) in paragraph at lines 64--70
+Underfull \hbox (badness 5231) in paragraph at lines 65--71
 \T1/bch/m/n/10 sic tax-on-omy.  \T1/bch/m/it/10 Jour-nal of New Mu-sic Re-
  []
 
-[15]
-Underfull \hbox (badness 1253) in paragraph at lines 72--78
+
+Underfull \hbox (badness 1253) in paragraph at lines 73--79
 \T1/bch/m/n/10 L. (2024).  Sta-tus Mark-ers in Pop-u-lar Mu-sic
  []
 
 
-Underfull \hbox (badness 1009) in paragraph at lines 85--89
+Underfull \hbox (badness 1009) in paragraph at lines 86--90
 []\T1/bch/m/n/10 Deezer (n.d.).  Deezer mu-sic stream-ing plat-form.
  []
 
 
-Underfull \hbox (badness 2310) in paragraph at lines 85--89
+Underfull \hbox (badness 2310) in paragraph at lines 86--90
 \T1/bch/m/n/10 Re-trieved 2025-12-12 from []$https : / / developers .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--107
+Underfull \hbox (badness 10000) in paragraph at lines 105--109
 []\T1/bch/m/n/10 Discogs (2024).  Database guide-lines.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--107
+Underfull \hbox (badness 10000) in paragraph at lines 105--109
 \T1/bch/m/n/10 9. gen-res and styles.  []$https : / /
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--107
+Underfull \hbox (badness 10000) in paragraph at lines 105--109
 \T1/bch/m/n/10 support . discogs . com / hc / en-[]us / articles /
  []
 
 
-Overfull \hbox (15.3492pt too wide) in paragraph at lines 103--107
+Overfull \hbox (15.3492pt too wide) in paragraph at lines 105--109
 \T1/bch/m/n/10 360005055213-[]Database-[]Guidelines-[]9-[]Genres-[]Styles$[]. 
  []
 
 
-Underfull \hbox (badness 1038) in paragraph at lines 122--128
+Underfull \hbox (badness 1038) in paragraph at lines 124--130
 \T1/bch/m/n/10 (2018).  Hub-ness as a Case of Tech-ni-cal Al-
  []
 
 
-Underfull \hbox (badness 1742) in paragraph at lines 130--135
+Underfull \hbox (badness 1742) in paragraph at lines 132--137
 \T1/bch/m/n/10 251.  []$https : / / doi . org / 10 . 1080 / 09298215 . 2016 .
  []
 
-
-Underfull \hbox (badness 2181) in paragraph at lines 181--188
+[16]
+Underfull \hbox (badness 2181) in paragraph at lines 183--190
 []\T1/bch/m/n/10 Han, H., Wang, W.-Y., and Mao, B.-H. (2005).
  []
 
-[16]
-Underfull \hbox (badness 2608) in paragraph at lines 259--264
+
+Underfull \hbox (badness 2608) in paragraph at lines 270--275
 []\T1/bch/m/n/10 Merlini, M. (2020).  A crit-i-cal (and in-ter-dis-ci-
  []
 
 
-Underfull \hbox (badness 1616) in paragraph at lines 259--264
+Underfull \hbox (badness 1616) in paragraph at lines 270--275
 \T1/bch/m/n/10 plinary) sur-vey of pop-u-lar mu-sic genre the-o-
  []
 
 
-Underfull \hbox (badness 4913) in paragraph at lines 271--274
+Underfull \hbox (badness 4913) in paragraph at lines 283--286
 []\T1/bch/m/n/10 MusicBrainz (n.d.).  Database statis-tics.  Re-
  []
 
 
-Underfull \hbox (badness 1043) in paragraph at lines 387--391
+Underfull \hbox (badness 1552) in paragraph at lines 299--305
+[]\T1/bch/m/n/10 Nie, K. (2022).  In-ac-cu-rate Pre-dic-tion or Genre
+ []
+
+
+Underfull \hbox (badness 4832) in paragraph at lines 299--305
+\T1/bch/m/n/10 Evo-lu-tion? Re-think-ing Genre Clas-si-fi-ca-tion.
+ []
+
+
+Underfull \hbox (badness 1478) in paragraph at lines 299--305
+\T1/bch/m/it/10 Re-trieval Con-fer-ence\T1/bch/m/n/10 .  []$https : / / doi . org / 10 . 5281 /
+ []
+
+[17]
+Underfull \hbox (badness 1043) in paragraph at lines 402--406
 []\T1/bch/m/n/10 Silver, D., Lee, M., and Chil-dress, C. C. (2016).
  []
 
 
-Underfull \hbox (badness 3547) in paragraph at lines 387--391
+Underfull \hbox (badness 3547) in paragraph at lines 402--406
 \T1/bch/m/n/10 Genre Com-plexes in Pop-u-lar Mu-sic.  \T1/bch/m/it/10 PLOS
  []
 
-[17]) [18
-
-] (./PowerToThePeople_v1.aux)
+) [18] (./PowerToThePeople_v1.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -962,18 +1016,18 @@ Package rerunfilecheck Info: File `PowerToThePeople_v1.out' has not changed.
 (rerunfilecheck)             Checksum: B0017BF3D03946143F890FE61F3F55FB;7370.
  ) 
 Here is how much of TeX's memory you used:
- 14948 strings out of 476091
- 253357 string characters out of 5795540
- 1893324 words of memory out of 5000000
- 34910 multiletter control sequences out of 15000+600000
+ 14953 strings out of 476091
+ 253534 string characters out of 5795540
+ 1896324 words of memory out of 5000000
+ 34914 multiletter control sequences out of 15000+600000
  677541 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,17n,131p,1982b,711s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,17n,131p,1982b,687s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_rf6b27.enc}{c:/texlive/2022/texmf-dist/fonts/enc/dvips/quattrocento/qcntr_tldjzh.enc}<c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Bold.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Italic.pfb><c:/texlive/2022/texmf-dist/fonts/type1/impallari/quattrocento/QuattroSans-Regular.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchb8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/bitstrea/charter/bchri8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-mlit.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/fourier/fourier-ms.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb><c:/texlive/2022/texmf-dist/fonts/type1/adobe/utopia/putri8a.pfb>
-Output written on PowerToThePeople_v1.pdf (18 pages, 2332858 bytes).
+Output written on PowerToThePeople_v1.pdf (18 pages, 2335945 bytes).
 PDF statistics:
- 708 PDF objects out of 1000 (max. 8388607)
- 645 compressed objects within 7 object streams
- 125 named destinations out of 1000 (max. 500000)
+ 729 PDF objects out of 1000 (max. 8388607)
+ 666 compressed objects within 7 object streams
+ 126 named destinations out of 1000 (max. 500000)
  246 words of extra memory for PDF output out of 10000 (max. 10000000)
 

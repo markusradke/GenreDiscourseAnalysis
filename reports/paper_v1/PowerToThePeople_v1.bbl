@@ -10,8 +10,8 @@ Airoldi, M., Beraldo, D., and Gandini, A. (2016).
 \bibitem[Alonso-Jiménez et~al., 2020]{jimenez2020tensorflow}
 Alonso-Jiménez, P., Bogdanov, D., Pons, J., and Serra, X. (2020).
 \newblock Tensorflow audio models in essentia.
-\newblock In {\em ICASSP 2020 - 2020 IEEE International Conference on
-  Acoustics, Speech and Signal Processing}, pages 266--270.
+\newblock In {\em 2020 IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}, pages 266--270.
 
 \bibitem[Anderson et~al., 2021]{andersonJustWayYou2021}
 Anderson, I., Gil, S., Gibson, C., Wolf, S., Shapiro, W., Semerci, O., and
@@ -45,6 +45,7 @@ Bonini, T. and Magaudda, P. (2024).
 Bourdieu, P. (1985).
 \newblock The market of symbolic goods.
 \newblock {\em Poetics}, 14(1):13--44.
+\newblock \url{https://doi.org/10.1016/0304-422X(85)90003-8}.
 
 \bibitem[Brackett, 2016]{brackettCategorizingSoundGenre2016}
 Brackett, D. (2016).
@@ -92,6 +93,7 @@ Deldjoo, Y., Schedl, M., and Knees, P. (2024).
 \newblock Content-driven music recommendation: Evolution, state of the art, and
   challenges.
 \newblock {\em Computer Science Review}, 51:100618.
+\newblock \url{https://doi.org/10.1016/j.cosrev.2024.100618}.
 
 \bibitem[DiMaggio, 1987]{dimaggioClassificationArt1987}
 DiMaggio, P. (1987).
@@ -207,6 +209,14 @@ Holt, F. (2007).
 \newblock In {\em Genre in {Popular} {Music}}. University of Chicago Press.
 \newblock \url{https://doi.org/10.7208/9780226350400}.
 
+\bibitem[Huang et~al., 2023]{huangDiverseDatasetsResponsible2023}
+Huang, R.~S., Holzapfel, A., Sturm, B. L.~T., and Kaila, A.-K. (2023).
+\newblock Beyond diverse datasets: Responsible mir, interdisciplinarity, and
+  the fractured worlds of music.
+\newblock {\em Transactions of the International Society for Music Information
+  Retrieval}.
+\newblock \url{https://doi.org/10.5334/tismir.141}.
+
 \bibitem[Husslage et~al., 2011]{husslageSpacefillingLatinHypercube2011}
 Husslage, B. G.~M., Rennen, G., van Dam, E.~R., and den Hertog, D. (2011).
 \newblock Space-filling {Latin} hypercube designs for computer experiments.
@@ -217,6 +227,7 @@ Husslage, B. G.~M., Rennen, G., van Dam, E.~R., and den Hertog, D. (2011).
 Japkowicz, N. and Stephen, S. (2002).
 \newblock The class imbalance problem: {A} systematic study.
 \newblock {\em Intelligent Data Analysis}, 6(5):429--449.
+\newblock \url{https://doi.org/10.3233/IDA-2002-6504}.
 
 \bibitem[Jiang et~al., 2024]{jiangGenreBasedAnalysisNew2024}
 Jiang, J., Ponnada, A., Li, A., Lacker, B., and Way, S.~F. (2024).
@@ -266,6 +277,7 @@ Merlini, M. (2020).
 Mohammad, S.~M. and Turney, P.~D. (2013).
 \newblock Crowdsourcing a word-emotion association lexicon.
 \newblock {\em Computational Intelligence}, 29(3):436--465.
+\newblock \url{https://doi.org/10.1111/j.1467-8640.2012.00460.x}.
 
 \bibitem[MusicBrainz, nd]{MusicBrainz_nodate}
 MusicBrainz (n.d.).
@@ -287,14 +299,15 @@ Negus, K. (1999).
 Nie, K. (2022).
 \newblock Inaccurate {Prediction} or {Genre} {Evolution}? {Rethinking} {Genre}
   {Classification}.
-\newblock {\em Zenodo}.
+\newblock {\em 23th International Society for Music Information Retrieval
+  Conference}.
 \newblock \url{https://doi.org/10.5281/zenodo.7316661}.
 
 \bibitem[Pachet and Cazaly, 2000]{pachetTaxonomyMusicalGenres2000}
 Pachet, F. and Cazaly, D. (2000).
 \newblock A taxonomy of musical genres.
 \newblock In {\em Content-{Based} {Multimedia} {Information} {Access} -
-  {Volume} 2}, RIAO '00, pages 1238--1245, Paris, FRA.
+  {Volume} 2}, RIAO '00, pages 1238--1245, Paris.
 \newblock \url{https://dl.acm.org/doi/10.5555/2856151.2856177}.
 
 \bibitem[Peterson, 1992]{peterson1992understanding}
@@ -302,12 +315,14 @@ Peterson, R.~A. (1992).
 \newblock Understanding audience segmentation: From elite and mass to omnivore
   and univore.
 \newblock {\em Poetics}, 21(4):243--258.
+\newblock \url{https://doi.org/10.1016/0304-422X(92)90008-Q}.
 
 \bibitem[Petitbon and Hitchcock, 2022]{petitbon_hitchcock_2022}
 Petitbon, A.~M. and Hitchcock, D.~B. (2022).
 \newblock What kind of music do you like? a statistical analysis of music genre
   popularity over time.
 \newblock {\em Journal of Data Science}, 20(2):168--187.
+\newblock \url{10.6339/22-JDS1040}.
 
 \bibitem[Pichl et~al., 2017]{pichlMiningCultureSpecificMusic2017}
 Pichl, M., Zangerle, E., Specht, G., and Schedl, M. (2017).
@@ -321,6 +336,7 @@ Porcaro, L., Castillo, C., and G{\'o}mez, E. (2021).
 \newblock Diversity by {{Design}} in {{Music Recommender Systems}}.
 \newblock {\em Transactions of the International Society for Music Information
   Retrieval}, 4(1).
+\newblock \url{https://doi.org/10.5334/tismir.106}.
 
 \bibitem[Porcaro and G{\'o}mez~Guti{\'e}rrez,
   2019]{porcaro20YearsPlaylists2019}
@@ -345,7 +361,6 @@ Prevedello, G., Blin, I., Monechi, B., and Ubaldi, E. (2024).
   S., Won, M., Manco, I., and Meseguer-Brocal, G., editors, {\em Proceedings of
   the 3rd {Workshop} on {NLP} for {Music} and {Audio} ({NLP4MusA})}, pages
   75--80, Oakland. Association for Computational Lingustics.
-\newblock \url{https://aclanthology.org/2024.nlp4musa-1.13/}.
 
 \bibitem[RateYourMusic, nd]{RateYourMusic_nodate}
 RateYourMusic (n.d.).
@@ -368,7 +383,7 @@ Rinker, T.~W. (2021).
 Schreiber, H. (2015).
 \newblock Improving {Genre} {Annotations} for the {Million} {Song} {Dataset}.
 \newblock In {\em 16th {International} {Society} for {Music} {Information}
-  {Retrieval} {Conference}}.
+  {Retrieval} {Conference}}, Malaga.
 
 \bibitem[Schreiber, 2016]{schreiberGenreOntologyLearning2016}
 Schreiber, H. (2016).
@@ -408,6 +423,7 @@ Sturm, B.~L. (2014).
 \newblock The {{GTZAN}} dataset: {{Its}} contents, its faults, their effects on
   evaluation, and its future use.
 \newblock {\em Journal of New Music Research}, 43(2):147--172.
+\newblock \url{https://10.1080/09298215.2014.894533}.
 
 \bibitem[Sturm and Flexer, 2023]{sturmReviewValidityIts2023}
 Sturm, B. L.~T. and Flexer, A. (2023).
@@ -415,12 +431,12 @@ Sturm, B. L.~T. and Flexer, A. (2023).
   {Information} {Research}.
 \newblock In {\em 24th International Society for Music Information Retrieval
   Conference}, Milan.
-\newblock \url{https://doi.org/10.5281/ZENODO.10265219}.
 
 \bibitem[Tay et~al., 2023]{tayetalElasticNet2023}
 Tay, J.~K., Narasimhan, B., and Hastie, T. (2023).
 \newblock Elastic net regularization paths for all generalized linear models.
 \newblock {\em Journal of Statistical Software}, 106(1):1--31.
+\newblock \url{https://10.18637/jss.v106.i01}.
 
 \bibitem[Tzanetakis and Cook, 2002]{tzanetakisMusicalGenreClassification2002}
 Tzanetakis, G. and Cook, P. (2002).
@@ -456,6 +472,7 @@ Wright, M.~N. and Ziegler, A. (2017).
 \newblock {ranger}: A fast implementation of random forests for high
   dimensional data in {C++} and {R}.
 \newblock {\em Journal of Statistical Software}, 77(1):1--17.
+\newblock \url{10.18637/jss.v077.i01}.
 
 \bibitem[Zhang and Mani, 2003]{zhangKNNApproachUnbalanced2003}
 Zhang, J. and Mani, I. (2003).
@@ -463,6 +480,5 @@ Zhang, J. and Mani, I. (2003).
   {Study} involving {Information} {Extraction}.
 \newblock In {\em Proceedings of workshop on learning from imbalanced
   datasets}, pages 1--7, Ottawa. ICML.
-\newblock \url{https://www.site.uottawa.ca/~nat/Workshop2003/jzhang.pdf}.
 
 \end{thebibliography}
