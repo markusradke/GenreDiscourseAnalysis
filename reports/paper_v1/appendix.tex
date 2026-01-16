@@ -296,7 +296,7 @@
 
 \newpage
 \normalsize
-\section{RQ3 outcomes for higher granularities}
+\section{RQ3 classification hyperparmeters and outcomes for higher granularities}
 
 \begin{figure}[H]
     \centering
@@ -304,6 +304,24 @@
     \caption{Contingency tables comparing COMGET-G25 to release genres from the \textit{Deezer} API; 27 genres were found in the data set; values show $P(\text{COMGET} \mid \text{External})$. Discarded 15 genres for visualization with less than 0.5\% relative freuqency: \textit{African Music, Asian Music, Bolero, Brasilian Music, Classical, Disco, Film / Video Games, Folk, German Music, Kids, Latin Music, Ranchera, Singer \& Songwriter, Soul \& Funk, Turkish Folk Music}.}
     \label{fig:placeholder}
 \end{figure}
+
+
+\vspace{2 cm}
+\setcounter{table}{0} 
+\begin{table*}[htbp]
+\centering
+\begin{tabular}{lllllll}
+\# genres & boosting rounds & tree depth & feature fraction & leaf size & learning rate & target ratio \\
+& [50, 2000] & [3, 15] & [1, \# of predictors] & [1, 100] & [0.001, 0.1] & [1, max/min] \\
+\hline
+5 & 93 & 12 & 68 & 46 & 0.072 & 4.815 \\
+12 & 1145 & 10 & 5 & 28 & 0.046 & 2.116\\
+25 & 1512 & 9 & 85 & 91 & 0.005 & 2.641\\ 
+32 & 176 & 9 & 55 & 15 & 0.0182 & 4.589
+\end{tabular}
+\caption{Hyperparameter settings for final LightGBM models at different granularity levels.}
+\label{tab:rq3_hyperparams}
+\end{table*}
 \newpage    
 
 \begin{figure}[H]

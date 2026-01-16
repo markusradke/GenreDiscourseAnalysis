@@ -14,7 +14,11 @@ plot_tuning_results_tree <- function(
     dplyr::arrange(-n_metagenres, -min_n) |>
     dplyr::distinct(n_metagenres, .keep_all = T) |>
     dplyr::mutate(
-      label = sprintf('%d categories\nmin n: %d', n_metagenres, min_n)
+      label = sprintf(
+        '%d categories\n min s: %s',
+        n_metagenres,
+        format(min_n, big.mark = ",")
+      )
     )
   gini_trajectory <- ginis |>
     dplyr::distinct(n_metagenres, weighted_gini, .keep_all = T)
