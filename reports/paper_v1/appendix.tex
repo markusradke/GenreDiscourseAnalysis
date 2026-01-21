@@ -129,18 +129,18 @@
     \node[terminator] (A) {POPTRAG enriched with predictor features};
     \node[process, right=of A] (B) {join targets at specified granularity from FOLDCAT};
     \node[process, right=of B] (C) {drop observations with more than 40\% missing on any of the variables};
-    \node[process, below=8.5mm of A] (D) {dummy code categorical features, reference level: most common level};
-    \node[process, below=8.5mm of B] (E) {seeded split into train and holdout set (80/20) on artist level};
-    \node[process, below=of C] (F) {draw seeded and outcome-stratified 20\% subsample from training data and create 5 seeded CV folds from subsampled training data};
-    \node[process, below=10 mmof D] (G) {remove dummy-coded categorical features with less than 100 observations in any level in any fold on the subsample in full training and holdout set};
-    \node[terminator, below=13.5mm of E] (H) {Training-ready train and holdout data set};
+    \node[process, below=10.5mm of A] (D) {dummy code categorical features, reference level: most common level};
+    \node[process, below=8.5mm of B] (E) {seeded split into train and holdout set (80/20) on artist level to mitigate artist effects~\citep{flexerEffectsAlbumArtist2010}};
+    \node[process, below=of C] (F) {draw seeded and outcome-stratified 20\% subsample from training data and create 5 seeded CV folds from subsampled training data on artist level~\citep{flexerEffectsAlbumArtist2010}};
+    \node[process, below=13mm of D] (G) {remove dummy-coded categorical features with less than 100 observations in any level in any fold on the subsample in full training and holdout set};
+    \node[terminator, below=12.5mm of E] (H) {Training-ready train and holdout data set};
     
     \draw[->] (A) -- (B);
     \draw[->] (B) -- (C);
     \draw[->] (C.south) --+ (0,-0.2) -| (D);
     \draw[->] (D) -- (E);
     \draw[->] (E) -- (F);
-    \draw[->] (F.south) --+ (0,-0.2) -| (G);
+    \draw[->] (F.south) --+ (0,-0.4) -| (G);
     \draw[->] (G) -- (H);
 \end{tikzpicture}
 
@@ -154,15 +154,15 @@
 
     \node[terminator] (A) {training data};
     \node[process, right=of A] (B) {draw seeded and outcome-stratified 20\% sample from training data};
-    \node[process, right=of B] (C) {create 5 seeded CV folds from subsampled training data for lower levelsl of granunarlity (5, 12)};
-    \node[process, below=of A] (D) {perform hyperparameter search individually for GLMNET, RDA, RF, and lightGBM learner: Bayesian optimization with 10x inital grid and max. 25 iterations, 10x no improvement stop criterion, 5x no improvement jump to max. uncertainty};
-    \node[process, below=15mm of B] (E) {select best learner hyperparameters based on $\text{F1}_{\text{macro}}$ and one standard error rule};
-    \node[process, below=12.5mm of C] (F) {evaluate and compare performance across CV folds and select best learner};
+    \node[process, right=of B] (C) {create 5 seeded CV folds from subsampled training data on artist level~\citep{flexerEffectsAlbumArtist2010} for lower levelsl of granunarlity (5, 12)};
+    \node[process, below=10mm of A] (D) {perform hyperparameter search individually for GLMNET, RDA, RF, and lightGBM learner: Bayesian optimization~\citep{snoekPracticalBayesianOptimization2012a} with 10x inital latin hypercube grid~\citep{husslageSpacefillingLatinHypercube2011} and max. 25 iterations, 10x no improvement stop criterion, 5x no improvement jump to max. uncertainty};
+    \node[process, below=19mm of B] (E) {select best learner hyperparameters based on $\text{F1}_{\text{macro}}$ and one standard error rule};
+    \node[process, below=16.5mm of C] (F) {evaluate and compare performance across CV folds and select best learner};
     \node[terminator, below=of F] (G) {Best learner for final modeling};
 
     \draw[->] (A) -- (B);
     \draw[->] (B) -- (C);
-    \draw[->] (C.south) --+ (0, -0.2) -| (D);
+    \draw[->] (C.south) --+ (0, -0.25) -| (D);
     \draw[->] (D) -- (E);
     \draw[->] (E) -- (F);
     \draw[->] (F) -- (G);
@@ -179,11 +179,11 @@
 
     \node[terminator] (A) {training data and holdout set};
     \node[process, right=of A] (B) {create 5 seeded CV folds from full training data for all levels of granuarlity (5, 12, 25, 32)};
-    \node[process, right=of B] (C) {perform hyperparameter search for selected learner: Bayesian optimization with 20x initial grid and max. 50 iterations, 10x no improvement stop criterion, 5x no improvement jump to max. uncertainty};
-    \node[process, below=14 mmof A] (D) {select best learner hyperparameters based on $\text{F1}_{\text{macro}}$ and one standard error rule};
-    \node[process, below=14 mmof B] (E) {train final models on full data set with chosen hyperparameters};
-    \node[terminator, below=8mm of C] (F) {evaluate final models on holdout set};
-    \node[terminator, below=of F] (G) {model evaluations};
+    \node[process, right=of B] (C) {perform hyperparameter search for selected learner: Bayesian optimization~\citep{snoekPracticalBayesianOptimization2012a} with 20x initial latin hypercube grid~\citep{husslageSpacefillingLatinHypercube2011} and max. 50 iterations, 10x no improvement stop criterion, 5x no improvement jump to max. uncertainty};
+    \node[process, below=16mm of A] (D) {select best learner hyperparameters based on $\text{F1}_{\text{macro}}$ and one standard error rule~\citep{hastieModelAssessmentSelection2009}};
+    \node[process, below=16mm of B] (E) {train final models on full data set with chosen hyperparameters};
+    \node[terminator, below=10mm of C] (F) {evaluate final models on holdout set};
+    \node[terminator, below=of F] (G) {model evaluation };
 
     \draw[->] (A) -- (B);
     \draw[->] (B) -- (C);
@@ -193,7 +193,7 @@
     \draw[->] (F) -- (G);
 \end{tikzpicture}
 
-\newpage
+\vspace{1 cm}
 \subsection{Data preprocessing recipe during training and evalutation}
 
 \begin{tikzpicture}[
@@ -206,8 +206,8 @@
     \node[terminator] (A) {input data batch};
     \node[process, right=of A] (B) {impute variable median for all missing data};
     \node[decision, right=of B] (C) {training or evaluation? };
-    \node[process, below=14mm of A] (D) {NearMiss downsample according to tuned target ratio};
-    \node[process, below=12mm of B] (E) {Borderline SMOTE upsample (non-sufficient danger observations: regular SMOTE upsample) according to tuned target ratio};
+    \node[process, below=14mm of A] (D) {NearMiss~\citep{zhangKNNApproachUnbalanced2003} downsampling according to tuned target ratio};
+    \node[process, below=12mm of B] (E) {Borderline SMOTE upsample~\citep{hanBorderlineSMOTENewOverSampling2005} (non-sufficient danger observations: regular SMOTE upsample) according to tuned target ratio};
     \node[process, below=10.5mm of C, text width=3 cm] (F) {normalize variables (z-score)};
     \node[terminator, below=of F] (G) {preprocessed data batch}; 
     
@@ -220,6 +220,9 @@
     \draw[->] (E) -- (F);
     \draw[->] (F) -- (G);
 \end{tikzpicture}
+
+\subsubsection*{Note on Adaptive Class Balancing During Data Prepreprocessing}
+Adaptive class balancing employed a single tunable \textit{target-ratio} parameter governing rebalancing degree. The algorithm computed a reference count from outcome class frequencies (median for $\leq$ 10 classes; 60th percentile for 11–20 classes; 65th percentile for $>$ 20 classes), then downsampled classes exceeding reference $\times$ \textit{target ratio} and upsampled classes below reference $\div$ \textit{target ratio}. This approach preserved more data than fixed-ratio sampling while remaining tunable: \textit{target ratio} = 1 enforced perfect balance; higher values retained original imbalance. The reference-count heuristic scaled to problem complexity, preventing excessive downsampling at higher resolutions.
 
 \newpage
 \section{RQ3 features}
@@ -371,4 +374,6 @@ Please find further details and the complete code for reproduction hosted on \te
 \noindent
 Data is available from the authors on request.
 
+\newpage
+\bibliography{refs}
 \end{document}
