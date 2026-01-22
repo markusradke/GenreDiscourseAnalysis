@@ -4,9 +4,6 @@ let searchedNode = null;
 let actualHeight, actualWidth, currentHeight;
 let currentData, hierarchyRoot, isFirstRender;
 let zoom, container;
-let edgeThreshold = 0;
-let originalTreeData = null;
-let edgeWeights = {};
 
 function render() {
     initLayout();
@@ -62,7 +59,6 @@ function createUI() {
     createButton(20, 60, "Expand All", "#28a745", "#1e7e34", expandAll);
     createButton(20, 100, "Fold All", "#dc3545", "#c82333", foldAll);
     createSearchBar();
-    createEdgeSlider();
 }
 
 function createButton(x, y, label, fill, stroke, callback) {
@@ -125,188 +121,6 @@ function createSearchBar() {
         .forEach(name => dl.append("xhtml:option").attr("value", name));
 }
 
-function createEdgeSlider() {
-    const config = {
-        x: actualWidth / 2 - 530,
-        y: 20
-    };
-
-    const g = svg.append("g")
-        .attr("transform", `translate(${config.x}, ${config.y})`);
-
-    // Label
-    g.append("text")
-        .attr("x", 40)
-        .attr("y", 20)
-        .style("font-size", "11px")
-        .style("font-weight", "bold")
-        .text("Edge Threshold:");
-
-    // Numeric input via foreignObject
-    const inputFo = g.append("foreignObject")
-        .attr("x", 120)
-        .attr("y", 0)
-        .attr("width", 120)
-        .attr("height", 35);
-
-    const input = inputFo.append("xhtml:input")
-        .attr("type", "number")
-        .attr("min", "0")
-        .attr("max", "1")
-        .attr("step", "0.001")
-        .style("width", "100px")
-        .style("height", "26px")
-        .style("margin", "2px 5px")
-        .style("border", "1px solid #ccc")
-        .style("border-radius", "4px")
-        .style("padding", "0 6px")
-        .style("font-size", "12px")
-        .style("outline", "none")
-        .property("value", edgeThreshold.toFixed(3))
-        .on("input", function() {
-            const val = parseFloat(this.value);
-            if (!Number.isNaN(val)) {
-                edgeThreshold = Math.max(0, Math.min(1, val));
-            }
-        })
-        .on("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                submitThreshold();
-            }
-        });
-
-    const submitThreshold = () => {
-        const val = parseFloat(input.node().value);
-        edgeThreshold = Number.isNaN(val) ? 0 : Math.max(0, Math.min(1, val));
-        input.node().value = edgeThreshold.toFixed(3);
-        applyEdgeThreshold();
-    };
-
-    // Submit button
-    const btnG = g.append("g")
-        .attr("transform", "translate(260, 0)")
-        .style("cursor", "pointer")
-        .on("click", submitThreshold);
-
-    btnG.append("rect")
-        .attr("width", 80)
-        .attr("height", 30)
-        .attr("rx", 5)
-        .style("fill", "#28a745")
-        .style("stroke", "#1e7e34")
-        .style("stroke-width", 1);
-
-    btnG.append("text")
-        .attr("x", 40)
-        .attr("y", 20)
-        .attr("text-anchor", "middle")
-        .style("fill", "white")
-        .style("font-size", "12px")
-        .style("font-weight", "bold")
-        .style("pointer-events", "none")
-        .text("Submit");
-}
-
-function applyEdgeThreshold() {
-    // ALWAYS start with a fresh copy of the original tree
-    currentData = JSON.parse(JSON.stringify(originalTreeData));
-
-    console.log("Applying threshold:", edgeThreshold);
-    console.log("Edge weights available:", Object.keys(edgeWeights).length);
-
-    if (edgeThreshold > 0 && Object.keys(edgeWeights).length > 0) {
-        // STEP 1: Identify ALL weak edges in the original tree
-        const weakEdges = [];
-
-        function identifyWeakEdges(node) {
-            if (!node.children || node.children.length === 0) return;
-
-            for (const child of node.children) {
-                const edgeKey = `${child.name}->${node.name}`;
-                const weight = edgeWeights[edgeKey];
-
-                if (weight != null && weight < edgeThreshold) {
-                    weakEdges.push({
-                        childName: child.name,
-                        parentName: node.name,
-                        edgeKey: edgeKey,
-                        weight: weight
-                    });
-                    console.log(`Identified weak edge: ${edgeKey} (weight ${weight})`);
-                }
-
-                // Continue checking deeper
-                identifyWeakEdges(child);
-            }
-        }
-
-        identifyWeakEdges(currentData);
-        console.log(`Found ${weakEdges.length} weak edges to cut`);
-
-        // STEP 2: For each weak edge, cut and reattach to root
-        for (let i = 0; i < weakEdges.length; i++) {
-            const weakEdge = weakEdges[i];
-            console.log(`Processing edge ${i + 1}/${weakEdges.length}: ${weakEdge.edgeKey}`);
-
-            // Find the parent node and child node in current temp_tree
-            let parentNode = null;
-            let childNode = null;
-
-            function findNodes(node) {
-                if (node.name === weakEdge.parentName) {
-                    parentNode = node;
-                }
-                if (node.name === weakEdge.childName && !childNode) {
-                    childNode = node;
-                }
-                if (node.children) {
-                    for (const child of node.children) {
-                        findNodes(child);
-                    }
-                }
-            }
-
-            findNodes(currentData);
-
-            if (parentNode && childNode && parentNode.children) {
-                // Remove child from parent's children array
-                const childIndex = parentNode.children.findIndex(c => c.name === weakEdge.childName);
-                if (childIndex !== -1) {
-                    parentNode.children.splice(childIndex, 1);
-                    if (parentNode.children.length === 0) {
-                        parentNode.children = undefined;
-                    }
-                    console.log(`  Cut: removed ${weakEdge.childName} from ${weakEdge.parentName}`);
-
-                    // Add child to root's children
-                    if (!currentData.children) {
-                        currentData.children = [];
-                    }
-                    currentData.children.push(childNode);
-
-                    // Create new edge weight of 0 for root connection
-                    const newEdgeKey = `${childNode.name}->${currentData.name}`;
-                    edgeWeights[newEdgeKey] = 0;
-                    console.log(`  Reattached: ${childNode.name} to root with weight 0`);
-                }
-            }
-        }
-
-        console.log(`Processed ${weakEdges.length} weak edges`);
-        console.log(`Root now has ${currentData.children ? currentData.children.length : 0} children`);
-    }
-
-    // Force complete reset: clear hierarchy and re-render from scratch
-    isFirstRender = true;
-    hierarchyRoot = null;
-    searchedNode = null;
-
-    // Clear and rebuild the visualization
-    update();
-    setTimeout(centerOnRoot, 100);
-}
-
 function focusOnNode(name) {
     if (!hierarchyRoot) return;
 
@@ -347,20 +161,10 @@ function expandPathToNode(root, targetName) {
 }
 
 function prepareState() {
-    // Store original tree data for threshold filtering
-    originalTreeData = JSON.parse(JSON.stringify(data.tree));
     currentData = JSON.parse(JSON.stringify(data.tree));
     hierarchyRoot = null;
     isFirstRender = true;
     currentHeight = actualHeight;
-
-    // Build edge weights lookup
-    edgeWeights = {};
-    if (data.weights && data.weights.key) {
-        data.weights.key.forEach((k, i) => {
-            edgeWeights[k] = data.weights.weight[i];
-        });
-    }
 
     allNodeNames = [];
     (function collect(node) {
