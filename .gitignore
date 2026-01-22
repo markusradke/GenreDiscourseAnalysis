@@ -11,3 +11,4 @@ data-raw/*.rds
 !data-raw/musicbrainz_genre_whitelist_20250616.rds
 models
 scripts/sync_overleaf_from_desktop.sh
+reports/paper_v1/first_submission
