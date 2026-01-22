@@ -34,9 +34,52 @@
 \renewcommand\thefigure{\thesection.\arabic{figure}}    
 \renewcommand\thetable{\thesection.\arabic{table}}    
 \setcounter{figure}{0} 
-\section{Detailed FOLDCAT flowchart for folding COMGET to identify genre categories}
-\vspace{0.5cm}
+\section{RQ1 Detailed COMGET Algorithm For Constructing Balanced Hierarchical Trees}
+\vspace{1.5cm}
+\begin{tikzpicture}[
+    node distance=6mm and 5mm,
+    terminator/.style = {rectangle, draw, align=flush left, text width = 4.5cm, rounded corners, minimum height=2em, font = \footnotesize},
+    process/.style = {rectangle, draw, align=flush left, text width = 4.5cm, minimum height=2em, font = \footnotesize},
+    decision/.style = {diamond, draw, aspect=2, text centered, inner sep=1pt, text width = 3 cm, minimum height=2em, font = \footnotesize},
+    >=Stealth]
 
+    \node[terminator, fill = red!60] (A) {\textbf{Start from} popular music corpus with multilabel \textit{genre} tags assigned to all tracks};
+    \node[process, right=of A, text width = 10cm] (B) {Build a weighted co-ocurrence network of \textit{genres} with directed edges \textit{e}. For each ordered pair of \textit{genres} $(A,B)$ compute vote-weighted conditional frequency:\\\begin{equation*}\label{eq:initial_network}
+        e_{A\rightarrow B} = P(B \mid A)\ \times\ \frac{1}{|T_{A,B}|}\sum_{t\in T_{A,B}}
+        \frac{v_{t,B}}{v_{t,\text{total}}}
+    \end{equation*} with $T_{A,B}$ the tracks tagged with both $A$ and $B$, $v_{t,B}$ the votes for $B$ on track $t$, and $v_{t,\text{total}}$ the total votes on $t$};
+    \node[process, below=of B, text width = 10cm] (C) {Resolve reciprocal links and keep only the positive residual of the stronger direction:\begin{align*}\label{eq:remove_weaker_edge}
+    e'_{A\to B} &= \big(e_{A\to B}-e_{B\to A}\big)_+ \\
+    e'_{B\to A} &= \big(e_{B\to A}-e_{A\to B}\big)_+
+    \end{align*}};
+    \node[process, below=of C, text width = 10cm] (D) {Enforce a strict tree by assigning each node its single strongest outgoing edge as its \textit{supergenre}, discarding all other edges. Attach components lacking a \textit{supergenre} to an artificial root descriptive of the corpus};
+    \node[process, below left=6mm and -47.5 mm of D, fill=blue!40] (E) {For each edge $e_i$ in tree (from weakest to strongest):};
+    \node[process, right=7.5 mm of E] (F) {Remove $e_i$ from tree};
+    \node[process, below=12mm of F] (G) {Attach dangling subtree to artificial root};
+    \node[process, below=11mm of G] (H) {Calculate \textit{imbalance score} as weighted average of Gini within hierarchy levels};
+    \node[process, left=7.5 mm of H] (I) {Store \textit{imbalance score} and current tree state for later reference};
+    \node[decision, below=of E] (J) {Are all edges connected to the artificial root?};
+    \node[process, left=of J] (K) {Choose tree state with lowest \textit{imbalance score}};
+    \node[terminator, fill=green!60, below=12mm of K] (L) {COMGET};
+ 
+    \draw[->] (A) -- (B);
+    \draw[->] (B) -- (C);
+    \draw[->] (C) -- (D);
+    \draw[->] (D.south) --+ (0, -0.2) -| (E);
+    \draw[->] (E) -- (F);
+    \draw[->] (F) -- (G);
+    \draw[->] (G) -- (H);
+    \draw[->] (H) -- (I);
+    \draw[->] (I) -- (J);
+    \draw[->] (J) -- node[anchor=north] {Yes} (K);
+    \draw[->] (J) -- node[anchor=east] {No} (E);
+    \draw[->] (K) -- (L);
+    
+\end{tikzpicture}
+
+\newpage
+\section{RQ2 Detailed FOLDCAT Flowchart for Folding COMGET to Identify Genre Categories}
+\vspace{0.5cm}
 \noindent\makebox[\textwidth][l]{%
   \hspace*{-0.9cm}%
 \begin{tikzpicture}[
@@ -112,14 +155,16 @@
 
     \node[terminator, fill=red!30] (A) {\textbf{Data preperation / split} for chosen level of granularity (5, 12, 25, 32)};
     \node[process, right=of A, fill=blue!15] (B) {\textbf{Learner choice}: coarse hyperparameter tuning for different learners on 20\% subsample};
-    \node[terminator, fill=green!30, right=of B] (C) {\textbf{Final hyperparameter tuning and model evaluation} on full data set with chosen learner};
+    \node[process, fill=green!30, right=of B] (C) {\textbf{Final hyperparameter tuning} on full data set with chosen learner};
+    \node[terminator, fill=yellow!30, below=of C] (D) {\textbf{Final model training and evaluation} on full data set with chosen learner};
 
     \draw[->] (A) -- (B);
     \draw[->] (B) -- (C);
+    \draw[->] (C) -- (D); 
 \end{tikzpicture}
 
 \vspace{1 cm}
-\subsection{Data preperation / split}
+\subsection{Data Preperation / Split}
 \begin{tikzpicture}[
     node distance=6mm and 5mm,
     terminator/.style = {rectangle, draw, align=flush left, text width = 4.5cm, rounded corners, minimum height=2em, font = \footnotesize, fill=red!30},
@@ -170,7 +215,7 @@
 \end{tikzpicture}
 
 \vspace{1 cm}
-\subsection{Final Hyperparameter tuning and model evaluation}
+\subsection{Final Hyperparameter Tuning}
 \begin{tikzpicture}[
     node distance=6mm and 5mm,
     terminator/.style = {rectangle, draw, align=flush left, text width = 4.5cm, rounded corners, minimum height=2em, font = \footnotesize, fill=green!30},
@@ -181,20 +226,35 @@
     \node[process, right=of A] (B) {create 5 seeded CV folds from full training data for all levels of granuarlity (5, 12, 25, 32)};
     \node[process, right=of B] (C) {perform hyperparameter search for selected learner: Bayesian optimization~\citep{snoekPracticalBayesianOptimization2012a} with 20x initial latin hypercube grid~\citep{husslageSpacefillingLatinHypercube2011} and max. 50 iterations, 10x no improvement stop criterion, 5x no improvement jump to max. uncertainty};
     \node[process, below=16mm of A] (D) {select best learner hyperparameters based on $\text{F1}_{\text{macro}}$ and one standard error rule~\citep{hastieModelAssessmentSelection2009}};
-    \node[process, below=16mm of B] (E) {train final models on full data set with chosen hyperparameters};
-    \node[terminator, below=10mm of C] (F) {evaluate final models on holdout set};
-    \node[terminator, below=of F] (G) {model evaluation };
+    \node[terminator, below=16mm of B] (E) {hyperparameters used for final model training};
+
 
     \draw[->] (A) -- (B);
     \draw[->] (B) -- (C);
     \draw[->] (C.south) --+ (0, -0.3) -| (D);
     \draw[->] (D) -- (E);
-    \draw[->] (E) -- (F);
-    \draw[->] (F) -- (G);
+
 \end{tikzpicture}
 
 \vspace{1 cm}
-\subsection{Data preprocessing recipe during training and evalutation}
+\subsection{Final Model Training and Evaluation}
+\begin{tikzpicture}[
+    node distance=6mm and 5mm,
+    terminator/.style = {rectangle, draw, align=flush left, text width = 4.5cm, rounded corners, minimum height=2em, font = \footnotesize, fill=yellow!30},
+    process/.style = {rectangle, draw, align=flush left, text width = 4.5cm, minimum height=2em, font = \footnotesize, fill=yellow!30},
+    >=Stealth]
+\node[terminator] (A) {full training data and selected hyperparemters};
+\node[process, right=of A] (B) {train final models on full training data with chosen hyperparameters};
+\node[process, right=of B] (C) {evaluate final models on holdout set};
+\node[terminator, below=of C] (D) {model evaluation };
+    \draw[->] (A) -- (B);
+    \draw[->] (B) -- (C);
+    \draw[->] (C) -- (D);
+\end{tikzpicture}
+
+
+\vspace{1 cm}
+\subsection{Data Preprocessing Recipe During Training and Evalutation}
 
 \begin{tikzpicture}[
     node distance=6mm and 5mm,
@@ -225,7 +285,19 @@
 Adaptive class balancing employed a single tunable \textit{target-ratio} parameter governing rebalancing degree. The algorithm computed a reference count from outcome class frequencies (median for $\leq$ 10 classes; 60th percentile for 11–20 classes; 65th percentile for $>$ 20 classes), then downsampled classes exceeding reference $\times$ \textit{target ratio} and upsampled classes below reference $\div$ \textit{target ratio}. This approach preserved more data than fixed-ratio sampling while remaining tunable: \textit{target ratio} = 1 enforced perfect balance; higher values retained original imbalance. The reference-count heuristic scaled to problem complexity, preventing excessive downsampling at higher resolutions.
 
 \newpage
-\section{RQ3 features}
+\normalsize
+\section{RQ3 Comparison COMGET-G25 Against \textit{Deezer}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/dz_contingency.png}
+    \caption{Contingency tables comparing COMGET-G25 to release genres from the \textit{Deezer} API; 27 genres were found in the data set; values show $P(\text{COMGET} \mid \text{External})$. Discarded 15 genres for visualization with less than 0.5\% relative freuqency: \textit{African Music, Asian Music, Bolero, Brasilian Music, Classical, Disco, Film / Video Games, Folk, German Music, Kids, Latin Music, Ranchera, Singer \& Songwriter, Soul \& Funk, Turkish Folk Music}.}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\newpage
+\section{RQ3 Features}
 \begin{table}[!h]
   \centering
   \footnotesize
@@ -297,18 +369,9 @@ Adaptive class balancing employed a single tunable \textit{target-ratio} paramet
 \end{table}
 
 
+
 \newpage
-\normalsize
-\section{RQ3 classification hyperparmeters and outcomes for higher granularities}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figures/dz_contingency.png}
-    \caption{Contingency tables comparing COMGET-G25 to release genres from the \textit{Deezer} API; 27 genres were found in the data set; values show $P(\text{COMGET} \mid \text{External})$. Discarded 15 genres for visualization with less than 0.5\% relative freuqency: \textit{African Music, Asian Music, Bolero, Brasilian Music, Classical, Disco, Film / Video Games, Folk, German Music, Kids, Latin Music, Ranchera, Singer \& Songwriter, Soul \& Funk, Turkish Folk Music}.}
-    \label{fig:placeholder}
-\end{figure}
-
-
+\section{RQ3 Classification Hyperparmeters and Outcomes for Higher Granularities}
 \vspace{2 cm}
 \setcounter{table}{0} 
 \begin{table*}[htbp]
@@ -322,7 +385,7 @@ Adaptive class balancing employed a single tunable \textit{target-ratio} paramet
 25 & 1512 & 9 & 85 & 91 & 0.005 & 2.641\\ 
 32 & 176 & 9 & 55 & 15 & 0.0182 & 4.589
 \end{tabular}
-\caption{Hyperparameter settings for final LightGBM models at different granularity levels.}
+\caption{Hyperparameter settings for final LightGBM model training at different granularity levels.}
 \label{tab:rq3_hyperparams}
 \end{table*}
 \newpage    
@@ -341,7 +404,7 @@ Adaptive class balancing employed a single tunable \textit{target-ratio} paramet
     \includegraphics[width=\linewidth]{figures/lightgbm_veryhighres_cm.png}
     \caption{COMGET-G32}
   \end{subfigure}
-  \caption{Confusion matrices for the final GBM models on the hold-out set. Values show $P(\text{Predicted}|\text{Actual})$; \textit{certainty} indicates the mean assignment probability for each \textit{genre category} across community votes.}
+  \caption{Confusion matrices for the final LightGBM genre classification models for COMGET-G25 and COMGET-G32 on the holdout set. Values show $P(\text{Predicted}|\text{Actual})$; \textit{certainty} indicates the mean assignment probability for each \textit{genre category} across community votes.}
 \label{fig:rq3_appendix_confmat_high_veryhighres}
 \end{figure}
 
@@ -359,7 +422,7 @@ Adaptive class balancing employed a single tunable \textit{target-ratio} paramet
     \includegraphics[width=0.6\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_veryhighres_varimp.png}
     \caption{COMGET-G32}
   \end{subfigure}
-  \caption{Top 20 most important features for automated classification at high and very high granularity. Values show relative feature importance from the final LightGBM models.}
+  \caption{Top 20 most important features for algorithmic genre classification of POPTRAG corpus at high (25) and very high (32) granularity of COMGET-G. Values show relative feature importance extracted from final LightGBM models.}
 \label{fig:rq3_appendix_varimp_highres_veryhighres}
 \end{figure}
 
@@ -368,7 +431,7 @@ Adaptive class balancing employed a single tunable \textit{target-ratio} paramet
 Please find further details and the complete code for reproduction hosted on \textit{Github}:
 
 \noindent
-\textit{Link is left out for the purpose of anonymization of authors}
+\textit{Link is left out for the purpose of anonymization of authors. Please find an interactive COMGET explorer .html file attached to this submission.}
 % \hyperref[https://github.com/markusradke/genrediscourseanalysis]{https://github.com/markusradke/genrediscourseanalysis}%Link would show identify of authors.
 
 \noindent
