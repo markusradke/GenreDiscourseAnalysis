@@ -1,0 +1,399 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template for TISMIR Papers
+% 2017 version, based on previous ISMIR conference template
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Sample Document LaTeX packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+% To remove the line numbers for the camera-ready version of your paper, remove
+% the `review` option from the tismir package
+\usepackage[review]{tismir}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lipsum}
+\usepackage{subcaption} 
+
+\graphicspath{ {./figures/} }
+\urlstyle{same}
+\input{metadata}
+
+%TC:incbib
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\twocolumn[{%
+%
+\maketitleblock
+%
+\begin{abstract}
+Despite popularity of playlists on streaming platforms, music genres remain a primary organizational tool among listeners, industry stakeholders, and researchers. Categorical genre assignments underpin music genre recognition in MIR and recommender systems research as well as foundational research on music preferences and functions. Yet `correct' genre labels for popular music and the structure of genre taxonomies are often contested, raising concerns about reliability, validity, and comparability of research results. Contrarily, popular music studies have long emphasized the listener-dependent and hierarchical nature of genre assignments - they may be considered as implicit majority voting results of a listener community. Adopting this notion to MIR, we present a methodology to construct balanced hierarchical genre trees from folksonomy genre votes and demonstrate its feasability for the \textit{MusicBrainz} folksonomy and 167,762 tracks frequently listened to in Germany across the past 50 years (POPTRAG). The resulting Community Music Genre Tree for popular music in Germany (COMGET-G) comprises 234 genres—valuable for cultural analyses, but too detailed for many applied research tasks. We tackle this with an algorithm that folds such trees to any desired number of categories (FOLDCAT). For tracks lacking community votes, we develop machine learning classifiers at multiple granularity levels using openly available music features and metadata from online databases. Exemplary results indicate that our approach can assign an appropriate genre category to virtually any popular music track, representing a multiple listeners' perspective  in a transparent, reproducible, and intersubjectively comprehensible way.
+\end{abstract}
+
+%
+\begin{keywords}
+music genre recognition, hierarchical taxonomy, folksonomy, network analysis, machine learning, German popular music
+\end{keywords}
+}]
+\saythanks{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main Content Start
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}\label{sec:intro}
+
+Although playlist-driven listening has grown with streaming platforms, genre labels remain the primary way people and institutions organize popular music: e.g., listeners search and browse by genre, and playlist editors and DJs assemble genre-based playlists~\citep{boniniPlatformedHowStreaming2024}. While some argue classificatory practices weakened since the late twentieth century~\citep{dimaggioClassificationArt1987} and certain genre boundaries are unstable~\citep{silverGenreComplexesPopular2016}, empirical evidence shows music listening and related social signaling remain organized around genres~\citep{airoldiFollowAlgorithmExploratory2016, lonsdaleMusicalTasteIngroup2021}. On commercial music streaming platforms, genre assignments are embedded in metadata and pipelines—used as search filters, playlist seeds, and recommender features. Thus, platform algorithms amplify genres' role in discovery and market positioning~\citep{valverdeInequityDesignMusic2025}. For academic researchers, genre labels serve theoretical and methodological roles: they form variables in preference and reception studies (anonymized authors, XXXX) %~\citep{lepaPopularMusicEntertainment2020}
+, inputs to recommender research~\citep{porcaroAssessingImpactMusic2024}, and aggregator variables for measuring diversity and mitigating hubness in high-dimensional audio and metadata spaces~\citep{flexerProblemLimitedInterrater2016, flexerHubnessCaseTechnical2018}.
+
+However, `correct' genre labels for individual popular music phenomena (i.e., tracks, artists, releases, scenes, market, playlists, labels, performances etc.) are frequently contested
+~\citep{palmasonMusicGenreClassification2018}:
+the same release may be labeled ``indie rock'' by listeners, ``alternative'' by distributors, and ``post‑punk'' by critics. Further, not only do chosen genre labels diverge, but employed taxonomies also vary strongly in degree of differentiation. For example, the music database \textit{Discogs}~(\citeyear{Discogs2024}) uses a compact set of 15 high-level genre tags, whereas \textit{Spotify} exposes many thousands of genre tags~\citep{mcdonaldEveryNoiseOnce_nodate}. Music databases and platforms also differ in target objects (track, release, or artist) and assignment strategies (single categorical genre versus multi‑label tag sets).
+
+These differences pose methodological challenges for music information retrieval (MIR) and computational musicology: inconsistent labels degrade generalizability of supervised models~\citep{bogdanovAcousticbrainzGenreDataset2019}, survey items are heterogeneously interpreted~\citep{langeCategorizingMusicGenres2025}, and, on a larger scale, noncomparability between studies undermines replication and meta-analyses~\citep{sturmReviewValidityIts2023}. Despite these well-known challenges, researchers often rely pragmatically on available taxonomies, without systematically engaging with the labels' actual sources or underlying theoretical assumptions~\citep{greenCriticalSurveyResearch2024}. To address this, the present paper presents a theory-based, reproducible, and transparent procedure to derive a scalable genre taxonomy for any corpus of popular music using community votes of a matching genre folksonomy. Paired with algorithmic genre recognition, this approach can (1) surface empirical regularities and disagreements in label to inform popular music studies, and (2) provide a shared, probabilistic `currency' for cross‑disciplinary work in computational musicology and MIR—so classifiers, preference studies, and sociological analyses may operate from a common, well‑documented genre mapping.
+
+\subsection{Musical Genres as Hierarchical Discourse Formation}
+While MIR and computational musicology often model genres as categories, popular-music studies more commonly treat them hierarchically. Describing existing taxonomies, \cite{pachetTaxonomyMusicalGenres2000} identified genealogical (e.g., \textit{rock} parent of \textit{alternative rock}), geographical (\textit{hip hop} supergenre of \textit{German hip hop}), and historical-period links (\textit{pop} supergenre of \textit{80s pop}). Brackett~(\citeyear[p. 8]{brackettCategorizingSoundGenre2016}) argues that hierarchy depth can extend virtually indefinitely. Hence, music enthusiasts often visualize music genres as trees or networks~\citep{musicmap}. However, apart from \cite{schreiberImprovingGenreAnnotations2015}, to our knowledge, no work has yet implemented a standardized approach to develop a genre hierarchy strictly from empirical data.
+
+
+The data challenge is foundational: there is little scientific consensus on which labels to select or how to relate them hierarchically. Even expert-constructed \textit{flat} taxonomies show limited agreement~\citep{pachetTaxonomyMusicalGenres2000}, and expert classifications often diverge from listener community norms~\citep{sordoQuestMusicalGenres2008}. Adopting a power-critical cultural-studies lens~\citep{dugayDoingCulturalStudies2013}, we read genre discourse through Foucault's~(\citeyear{foucaultArchaeologyKnowledge2013}) notion of \textit{discourse formation}: artists, musicologists, industry, and listeners exert unequal influence on which labels stabilize over time\citep{lenaClassificationCultureTypes2008}. Artists often self-assign genres as strategic acts of boundary-making to gain recognition and position themselves in scenes and markets~\citep{negusMusicGenresCorporate1999}. Musicologists' assignments reflect normative and pedagogical aims~\citep{bourdieuMarketSymbolicGoods1985}. Finally, industry actors' genre assignments typically reflect how the music industry strategically positions and markets artists and releases within the field which may diverge from listener perception ~\citep{valverdeInequityDesignMusic2025}. We term the industry-driven labels \textit{distribution genres}. By contrast, our approach of aggregating listener votes from \textit{folksonomies} treats genre assignment as implicit community majority judgment, privileging the perspective of those who engage with the music over distributors and cultural authorities. 
+
+
+Platforms such as \mbox{\textit{RateYourMusic}}~(\citeyear{RateYourMusic_nodate}), \mbox{\textit{Discogs}}~(\citeyear{Discogs2024}), or \mbox{\textit{MusicBrainz}}~(\citeyear{MusicBrainz_nodate}) provide such crowdsourced `ground truth' on the genre of musical objects - although mostly in non-hierarchical form. This paper proposes a new methodological approach that bases genre assignments on the digital traces of the underlying democratic voting practice and derives a bottom-up \textit{community music genre} tree hierarchy. \textit{MusicBrainz} seems particularly suitable for this endevour: it maintains a whitelist of $>$2,000 genre tags, supports tag assignment and voting at multiple levels (track/release/artist), and exposes individual votes via its open database. Additionally, we combine our popular music theory and ethical-driven approach of identifying listener perception of music genres identity and relationships with some research-pragmatic considerations developed in the next section. 
+
+\subsection{Genre Taxonomy Requirements for MIR and Computational Musicology}
+When empirically deriving genre taxonomies for future MIR and computational musicology research, several practical requirements apply: First, balanced genre distributions improve statistical power and machine learning (ML) performance~\citep{japkowiczClassImbalanceProblem2002}. However, subgenres typically have fewer track assignments than their supergenres~\citep{bogdanovAcousticbrainzGenreDataset2019}, producing imbalance across hierarchy levels. A novel method that derives taxonomies from hierarchical ground truth should therefore optimize balance within each hierarchy level, producing tree hierarchies in which peer genres have comparable sizes regardless of depth, ideally without information loss.
+
+Second, different research questions require different numbers of \textit{flat} \textit{genre categories}, i.e., different degrees of genre \textit{granularity}. Granularity denotes the detail of category distinctiveness: low granularity merges many subgenres into broad classes (e.g., \textit{rock}, \textit{pop}, \textit{electronic}), while high granularity preserves fine distinctions (e.g., \textit{death metal}, \textit{synthwave}, \textit{UK garage}). Surveys of musical taste may need moderate to high granularity~\citep[e.g., 24 genres]{langeCategorizingMusicGenres2025}, classification models often work better with fewer, broader categories~\citep{genussovMusicalGenreClassification2010}, and subcultural analyses can demand very fine-grained subgenre splits~\citep{caparriniAutomaticSubgenreClassification2020}. Therefore, a method allowing to extract category sets at multiple scales from a single underlying tree-hierarchy would be helpful.
+
+Third, derived category assignments at any granularity should demonstrate validity, consistency, and generalizability beyond the ground truth used to construct them~\citep{sturmReviewValidityIts2023}. Such external validation may be realized by comparing genre assignments with those commonly used in MIR and computational musicology. Additional validity and out-of-sample generalization checks can be performed by training classifiers on the new category systems at different granularities using openly available music features and metadata.
+
+\subsection{Suitable Feature Dimensions for Community Music Genre Classification}
+Algorithmic music-genre classification is a core MIR task. \cite{greenCriticalSurveyResearch2024} systematically reviewed the field and criticized a frequent neglect of genre theories from social sciences and humanities when selecting features, with performance often prioritized over theory (see Merlini, \citeyear{merliniCriticalInterdisciplinarySurvey2020}, for a review of genre theories). Problematically, MIR and music psychology researchers often also assume that genre can be inferred from audio features alone~\citep{tzanetakisMusicalGenreClassification2002,rentfrowStructureMusicalPreferences2011}, which conflicts with the sociological view we adopt: genres are ``systems of orientations, expectations and conventions that circulate between industry, text and subject''~\cite[p. 19]{nealeGenre1980}, which emphasizes that extra-musical context alongside sound matters for genre assignments. Fabbri's synthesis \citeyearpar{fabbriTheoryMusicalGenres1982} combines musical style (instrumentation, rhythm, harmony, timbre) and release milieu (subcultural context, artist positioning, market placement) as determinants of genre for listeners. While MIR toolboxes extract style features from audio signals~\citep{bogdanovESSENTIAOpensourceLibrary2013},  open music databases such as \textit{MusicBrainz} \citeyearpar{MusicBrainz_nodate} provide distributional metadata (label, chart performance, platform placement) for operationalizing release milieu. 
+
+
+Lyrics, which can be accessed on  \textit{Genius} \citeyearpar{genius}, occupy an intermediate position as feature dimension for genre recognition, conveying both, emotional expression and stylistic content~\citep{brandCulturalEvolutionEmotional2019}, and signaling release milieu via language codes and topics that signify artists' subcultural affiliation~\citep{carboneStatusMarkersPopular2024}. A further feature is needed for the \textit{mainstream pop} metagenre Fabbri \citeyearpar{fabbriTheoryMusicalGenres1982} describes—eclectic, commercially optimized works that defy specific milieu affiliation—since artists from niche scenes may be relabeled as \textit{pop} after commercial success~\cite[p. 20]{holtGenrePopularMusic2007}. Thus, popularity is a further relevant feature dimension. Altogether, the anonymized authors (XXXX) %(~\citeyear{lepaRadke2026})
+recently proposed four ideal-typical feature dimensions—musical style, release context, lyrical content, and popularity—to operationalize genre following Fabbri~\citeyearpar{fabbriTheoryMusicalGenres1982}; we use that feature set in the present analysis. 
+
+
+\subsection{Research Questions}
+
+Drawing on the above theoretical and methodological foundations, this work addressed three research questions: 
+\begin{itemize}
+  \item[] \textbf{RQ1} Can we construct an empirically grounded, theoretically valid and sufficiently balanced hierarchical genre tree from multi-tag folksonomy votes for a given popular music corpus?
+
+  \item[] \textbf{RQ2} Can we aggregate the inferred tree structure to a scalable number of distinct genre categories suitable for MIR, music recommendation and statistical applications in computational musicology? 
+
+  \item[] \textbf{RQ3} How valid and generalizable are such community-derived hierarchical genre category assignments for empirical music research?
+   \begin{itemize}
+       \item[a)] To what extend do the community-derived categories agree with existing taxonomies of comparable granularity (e.g., \textit{Rosamerica}, \textit{Discogs}, \textit{Deezer})?
+       \item[b)] Can algorithmic ML classifiers based on our approach reliably predict community-derived genre categories at multiple granularities employing only openly available and theory-derived music style, release-milieu, lyrical, and popularity features?
+   \end{itemize}
+\end{itemize}
+
+%%%
+\section{RQ1: Creating a Balanced Hierarchical Genre Tree}
+
+This section describes the method and exemplary results of the novel COMGET procedure, which creates a balanced hierarchical genre tree for popular music datasets using genre co-occurences from folksonomy tags.
+
+\subsection{Exemplary Data: Popular Tracks in Germany Dataset (POPTRAG) and \textit{MusicBrainz} Community Genre Tags}
+For demonstration we analyzed a corpus of 254,334 unique popular tracks released and frequently listened to in Germany over the past 50 years (POPTRAG). The corpus combines four sources: 215,702 tracks from weekly \textit{MediaControl} German single and album charts (18 Nov 1977–21 Nov 2024; reduced to ~75\% where linkage to \textit{Spotify} identifiers was successfull); 26,949 \textit{Spotify} track recommendations from 126 German-market genre seeds (retrieved 29 Nov 2024; median 325 per seed, IQR 25, range 49–343); 8,801 tracks from 100 top-featured \textit{Spotify} playlists for Germany (retrieved on 29 Nov 2024, median 90 tracks per playlist, IQR 42, range 28–750); and, finally, 11,994 unique track entries from \textit{Germany's Daily Top 200 Spotify} charts (01 Jan 2017–30 Nov 2024). We excluded tracks shorter than 30 seconds (853 tracks) and kept only unique title-artist combinations, preferring earlier release dates for duplicates.
+
+We then retrieved \textit{MusicBrainz}  genre tags for all POPTRAG tracks, using only labels from the the \textit{MusicBrainz} whitelist (snapshot 16 Jun 2025) and excluding non-popular-music tags (\textit{non-music}, \textit{interview}, \textit{comedy}, \textit{nature sounds}, \textit{children's music}, \textit{spoken word}, \textit{standup comedy}).  If track-level genre tags were missing we used release tags, then artist tags.
+For denoising, we  only kept genre tags occurring for at least 50 distinct artists in the corpus to ensure sufficient discursive support for any genre. Finally, we only retained tracks that received at least two community votes on genre tags fulfilling all of these criteria. This removed 86,613 tracks (34\%), yielding a \textit{MusicBrainz}-tagged subset of $N = 167,721$ tracks annotated with 234 distinct music genre tags spanning 1924–2024 (median 2012, IQR 16 years).  Community genre assignments ranged 1-22 tags per track (median 4, IQR 3) and 2-135 votes per track (median 6, IQR 7).  
+
+\subsection{Methods: Hierarchical Genre Tree Construction (COMGET)}
+Using the genre-tagged and denoised POPTRAG corpus, we algorithmically constructed a hierarchical genre tree from \textit{MusicBrainz} tag co-occurrences, extending the method of Schreiber~(\citeyear{schreiberImprovingGenreAnnotations2015}). First, we built a weighted co-occurrence network where nodes are \textit{genre} labels and directed edges $e_{A\rightarrow B}$ quantify how strongly \textit{genre} $A$ predicts \textit{genre} $B$ on the same track. For each ordered pair $(A,B)$, we computed a vote-weighted conditional frequency:
+
+
+\begin{align}\label{eq:initial_network}
+e_{A\rightarrow B} = P(B \mid A)\ \times\ \frac{1}{|T_{A,B}|}\sum_{t\in T_{A,B}}
+\frac{v_{t,B}}{v_{t,\text{total}}}
+\end{align}
+
+with $T_{A,B}$ the tracks tagged with both $A$ and $B$, $v_{t,B}$ the votes for $B$ on track $t$, and $v_{t,\text{total}}$ the total votes on $t$. This yields asymmetric edges ($e_{A\rightarrow B} \neq e_{B\rightarrow A}$) combining directional co-occurrence and community vote strength (e.g., if 1,000 tracks have \textit{metal} and 600 also have \textit{rock}, $P(\text{\textit{rock}}|\text{\textit{metal}})=0.6$; with average \textit{rock} vote share 0.5, $e_{\text{\textit{metal}}\rightarrow\text{\textit{rock}}}=0.3$, while $e_{\text{\textit{rock}}\rightarrow\text{\textit{metal}}}$ can differ, e.g., $0.05$).
+
+
+Second, to resolve reciprocal links we kept only the positive residual of the stronger direction:
+
+\begin{align}\label{eq:remove_weaker_edge}
+e'_{A\to B} &= \big(e_{A\to B}-e_{B\to A}\big)_+ \\
+e'_{B\to A} &= \big(e_{B\to A}-e_{A\to B}\big)_+
+\end{align}
+(e.g., $e'_{\text{\textit{metal}}\to\text{\textit{rock}}}=0.6-0.05=0.55$, $e'_{\text{\textit{rock}}\to\text{\textit{metal}}}=0$), producing a unidirectional scaffold.
+
+Third, to enforce a strict tree we assigned each node its single strongest outgoing edge as its \textit{supergenre}, discarding all other edges. Components lacking a \textit{supergenre} were attached to an artificial root, \textit{POPULAR MUSIC}, ensuring full connectivity (e.g., \textit{metal} would attach to \textit{rock} unless a stronger edge existed, and \textit{rock} would attach to the root if it had no \textit{supergenre}).
+
+\label{sec:gini_explanation}
+Finally, we balanced the tree by optimizing leaf-node populations per hierarchical level: We estimated each \textit{genre's size} as the sum of its assignment probabilities across tracks, computed the Gini coefficient per hierarchical level, and defined overall tree imbalance as the weighted mean tree-level Ginis. We then searched for the least-imbalanced tree by iteratively removing the weakest hierarchical link of the whole tree, reattaching the resulting dangling subtree to \textit{POPULAR MUSIC}, and recomped imbalance again; finally, we selected the iteration with minimal overall tree imbalance. See the Appendix for a detailed flowchart of the algorithm.
+
+\subsection{Results: Community Genre Tree for Popular Music in Germany (COMGET-G)}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/balancing_gini_trajectory.png}
+  \caption{Weighted Gini coefficient (0–1) across iterations of cutting weak genre links and reconnecting dangling subtrees to \textit{POPULAR MUSIC} during COMGET-G tree balance optimization.}
+\label{fig:rq1_gini_trajectory}
+\end{figure}
+
+\begin{table}[htpb]
+\centering
+\begin{tabular}{llll}
+Level & \# nodes & \# tracks & Gini   \\
+\hline
+1 & 3        & \begin{tabular}[c]{@{}l@{}}total: 47,846 (29\%)\\12,472; 16,401; \\and 18,973\end{tabular}                & 0.136  \\
+\hline
+2 & 119      & \begin{tabular}[c]{@{}l@{}}total: 90,381 (54\%)\\median: 263\\IQR: 789~\\range:10.4 to 5832\end{tabular} & 0.643  \\
+\hline
+3 & 110      & \begin{tabular}[c]{@{}l@{}}total: 29,343 (17\%)\\median: 156\\IQR: 259~\\range:14.7 to 1496\end{tabular} & 0.531  \\
+\hline
+4 & 2        & \begin{tabular}[c]{@{}l@{}}total: 192 (0.1\%)~\\55.6 and 136\end{tabular}                                 & 0.420 
+\end{tabular}  
+\caption{Structure of COMGET-G at different hierarchy levels; track counts are sums of genre tag assignment probabilities in POPTRAG.}
+\label{tab:rq1_structure}
+\end{table}
+
+The initial POPTRAG \textit{genre} co-occurrence network comprised 234 \textit{genre} nodes forming a single connected component with 45.14\% network density, indicating high inter-tag connectivity. Median co-occurrence per genre was 97 (IQR 63.5; ranging from 3 for \textit{waltz} to 229 for \textit{pop}), showing large variation between niche and ubiquitous genre tags. After resolving reciprocal directions, each \textit{genre} had 29.5 incoming subgenre links on average (IQR 32; min 0; max 228 for \textit{pop rock}) and 55 outgoing supergenre links (IQR 32; min 0 for \textit{rock}; max 105 for \textit{dub}). 
+
+The balance optimization (Figure \ref{fig:rq1_gini_trajectory}) reattached \textit{pop} and \textit{hip hop} directly to \textit{POPULAR MUSIC}—\textit{pop} had formerly been subordinate to \textit{rock}, and \textit{hip hop} to \textit{pop}. However, cutting these weakest links improved overall balance and aligns with common popular music taxonomies where these genres are typically considered supergenres.  The three weakest remaining links are \textit{electronic} to \textit{pop} (0.22), \textit{classical} to \textit{pop} (0.27), and \textit{jazz} to \textit{pop} (0.29). However, these lacked sufficient underlying corpus tracks to form independent supergenres at the root in terms of our approach. The resulting \textit{Community Music Genre Tree for popular music in Germany} (COMGET-G, see interactive html tree inspector submitted as ZIP file  with this manuscript) is leaf-heavy: 89.36\% of genre-nodes have no subgenres. \textit{Rock} is the largest \textit{supergenre} with 63 direct \textit{subgenres}. Only \textit{rock}, \textit{pop}, and \textit{hip hop} remain connected directly to \textit{POPULAR MUSIC}, forming three broad genre clusters. The tree exhibits four hierarchy levels (excluding the artificial root); see Table \ref{tab:rq1_structure} for structural details.  
+
+
+\section{RQ2: Creating Genre Category Systems with Scalable Granularity}
+
+This section describes procedure and exemplary results of the novel FOLDCAT tree folding algorithm that flexibly turns COMGET-type hierarchical genre trees into genre category systems with any desired level of granularity.
+
+\subsection{Methods: Hierarchical Tree Folding Algorithm (FOLDCAT)}
+To turn any hierarchical genre tree into a scalable number of broader \textit{genre categories} suitable for different research problems,  we developed a greedy folding algorithm (FOLDCAT) with three goals: optimal \textit{genre category} balance, a user-selectable number of \textit{genre categories}, and a minimum \textit{genre size} per category for robust ML and statistical analysis. \textit{Genre size} is the expected track count per \textit{category} (useful for single-label tagging).
+
+FOLDCAT iteratively processes leaf \textit{genres} beginning with those deepest in the hierarchy and with largest \textit{size}, continually moving upwards to the root. For each \textit{genre},  \textit{size} is computed as the sum of vote-weighted assignment probabilities across all tracks corresponding to the \textit{genre}. If \textit{size} meets a pragmatically-defined threshold  (e.g., s=100 for having enough exemplars in later ML classification), the leaf becomes a \textit{genre category}. Otherwise the leaf, its peers, and any already-processed descendants are absorbed into its \textit{supergenre} and their track assignments remapped upward. This \textit{folding procedure} continues until all remaining \textit{genres} meet the minimum threshold. To obtain a desired number of \textit{genre categories}, users pick the folding solution at a local Gini minimum using a hierarchy-weighted Gini coefficient (section~\ref{sec:gini_explanation}) from solutions for different \textit{size} thresholds, ensuring balanced categories across levels. A detailed flowchart of FOLDCAT is provided in the Appendix. For the exemplar COMGET-G derived from POPTRAG, we grid-searched minimum \textit{genre sizes} from 1,000 to 15,000 (stepsize 5) and selected four local Gini minima for comparison.
+
+Finally, \textit{Single-label genre categories} are assigned to tracks by majority voting: original tags are mapped to folded \textit{category assignments}, votes are summed per category for each track, and then the category with most votes is chosen. Ties are resolved by choosing the category with lower total assignment probability in the corpus, favoring more specific categories.
+
+\subsection{Results: Germany's Popular Music Genre Categories}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/folding_gini_trajectory.png}
+  \caption{Weighted Gini coefficient (0--1) across COMGET-G folding solutions for minimum genre sizes $s$ from 1,000 to 15,000 in increments of 5, using the POPTRAG corpus.}
+\label{fig:rq2_gini_trajectory}
+\end{figure}
+
+For the POPTRAG corpus, the folding algorithm found multiple locally-optimal categorical solutions for COMGET-G (Figure~\ref{fig:rq2_gini_trajectory}): a low-granularity solution with 5 \textit{genre categories} (min.\ 12,930 tracks, Gini 0.307); medium-granularity solutions with 10 and 12 \textit{genre categories} (min.\ 4,100 and 3,520 tracks; Gini 0.343 and 0.342); a high-granularity solution with 25 \textit{genre categories} (min.\ 1,485 tracks, Gini 0.367); and finer solutions with 32, 34, and 38 \textit{genre categories} (min.\ 1,195, 1,130, 1,020 tracks; Gini 0.376, 0.369, 0.375). We focussed subsequent analyses on solutions with 5, 12, 25, and 32 \textit{genre categories}, representing different granularities suitable for different types of research problems (Figure~\ref{fig:rq2_tree}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/supergenre_hierarchy.png}
+  \caption{Genre category systems for POPTRAG corpus at four different granularities (5, 12, 25, 32 \textit{genre categories}), projected onto the original COMGET-G tree hierarchy. Colors indicate additional categories introduced at each finer levels of granularity (blue = 5; red = 12; green = 25; grey = 32). Node size represents genre size in POPTRAG (sum of vote-weighted assignment probabilities).}
+\label{fig:rq2_tree}
+\end{figure}
+
+COMGET-G5 contains  \textit{rock}, \textit{pop}, \textit{hip hop}, \textit{electronic}, and \textit{metal} (descending by track count) as categories. In COMGET-G12, \textit{jazz} and \textit{schlager} appear as distinct \textit{pop subgenre categories}, while \textit{rock} splits into \textit{heavy metal}, \textit{alternative rock}, \textit{pop rock}, \textit{hard rock}, and \textit{indie rock}. Notably, the majority of \textit{MusicBrainz} contributers classified \textit{heavy metal} as a direct subcategory of \textit{rock} rather than of \textit{metal}.
+
+COMGET-G25 adds further \textit{rock  subgenre categories} (\textit{punk}, \textit{progressive rock}, \textit{folk}, \textit{folk rock}, \textit{classic rock}, \textit{blues rock}, \textit{singer-songwriter}) and \textit{pop subgenre categories} (\textit{soul}, \textit{classical}, \textit{synth-pop}, \textit{r\&b}).  A third hierarchy level emerges: \textit{death metal} as subgenre of \textit{metal} and \textit{power metal} as child node of \textit{heavy metal}. COMGET-G32 introduces \textit{house} as specific form of \textit{electronic} and additional \textit{rock} and \textit{pop subgenre categories} (\textit{blues}, \textit{country}, \textit{new wave}, \textit{soft rock}, \textit{dance-pop}, \textit{reggae}). \textit{Hip hop} subcategories appear only at higher granularities not shown here (\textit{pop rap} at 33 \textit{categories}; \textit{trap} at 38).
+
+
+\section{RQ3: Demonstrating Validity, Reliability and Generalizability of Results}
+
+Drawing on the POPTRAG corpus of German popular music and \textit{MusicBrainz} community genre tags, this section compares track genre assignments from our novel community categorization pipeline (COMGET + FOLDCAT) with those of \textit{genre category} systems commonly used in MIR and computational musicology. We also report genre classifier training results using the same community-derived category sets. For both analyses we assigned single-label \textit{categorical genres} to each track from the denoised \textit{MusicBrainz}-tagged POPTRAG track at four granularities (COMGET-G5, COMGET-G12, COMGET-G25, COMGET-G32) using COMGET and FOLDCAT.
+
+\subsection{Methods a: External Validation With Other Genre Category Systems}
+For a discussion of content validity of our community genre taxonomy solutions, we employed contingency tables to compare our results with genre classifactions of the same tracks in existing and frequently used taxonomies with similar granularity. For this, we retrieved \textit{Rosamerica} genre lables from \textit{AcousticBrainz}~\citep{jimenez2020tensorflow}, community genre assignments from \textit{Discogs}~(\citeyear{Discogs2024}), and genres assignments of the commercial music streaming platform \textit{Deezer}~(\citeyear{Deezer_nodate}) for each track using our own anonymized music-data linkage tool (XXXX).
+% \textit{spotilink}~\citep{radkeSpotilink2025}.
+We also computed category prevalences and overall Gini coefficients per taxonomy to compare genre balance and coverage. For better clarity in figures, categories representing $<2.5\%$ of corpus tracks were excluded.
+
+\subsection{Methods b: Genre Classification of Unseen Tracks}
+To evaluate how well an algorithmic classifier predicts COMGET-G \textit{genre categories} from FOLDCAT for unseen tracks, we trained independent classifiers for each of the four chosen granularities. To that end, we augmented POPTRAG with 192 descriptors of \textit{musical style}, \textit{release context}, \textit{lyrical content}, and \textit{popularity} using XXXX % \textit{spotilink}
+and matched records via ISRC or fuzzy string matching against \textit{Spotify}, \textit{MusicBrainz}, \textit{AcousticBrainz}, \textit{Genius}, and \textit{Deezer} (via API or scraping). Specifically, retrieved features include \textit{AcousticBrainz} high-level \textit{audio features}; \textit{artist demographics} from \textit{MusicBrainz}; \textit{popularity} metrics from \textit{Spotify} and \textit{Deezer}; and Echo-Nest \textit{high-level audio features} from \textit{Spotify}. For lyrics, we determined the \textit{language} and \textit{textual statistics} and calculated lexicon-based \textit{sentiment} and \textit{emotion} scores using a bag-of-words approach~\citep{rinkerSentimentrCalculateText2021, Jockers2015-fv, Mohammad13}. The full feature list is documented in Table E.1 (Appendix). To include the theorized influence of industry genre marketing on listener categorization, we derived \textit{distribution genres} by applying COMGET + FOLDCAT to artist-level \textit{Spotify} tags and included 27 resulting \textit{industry genre categories} as additional predictors.  %were reduced to 27 from 69 due to sparseness based on the min. 100 obs criterion
+
+For a detailed ML workflow see Appendix C. We initially compared four different supervised learners using a coarse hyperparameter search with 5-fold crossvalidation on a 20\% stratified subsample of the training data at low (5) and medium (12) granularity to identify the most suitable algorithm from: elastic net (GLMNET; Tay et al.,~\citeyear{tayetalElasticNet2023}), regularized discriminant analysis (RDA; Weihs et al.,~\citeyear{weihsetalKlaR2005}), random forest (RF; Wright and Ziegler,~\citeyear{wrightetalRanger2017}), and light gradient boosted machine (LightGBM; Shi et al.,~\citeyear{shietalLightgbm2025}). For each we tuned key hyperparameters: GLMNET — \textit{penalty} and \textit{mixture} in [0, 1]; RDA — \textit{covariance fraction} and \textit{identity fraction} in [0, 1]; RF — \textit{feature fraction considered at each split} in [1, \# predictors] and \textit{leaf node size} in [1, 100]; number of trees was set to 500; LightGBM — \textit{boosting rounds} in [50, 2000], \textit{learning rate} in [0.001, 0.1], \textit{leaf node size} in [1, 100], \textit{tree depth} in [3, 15], and \textit{feature fraction} in [1, \# predictors]. 
+
+To adress class imbalance, we used a tunable adaptive balancing that combined down- and upsampling towards a \textit{target ratio} tuned in [1, max(observations per class)/min(observations per class)]. Higher granularities (25, 32) were excluded from initial learner selection due to sparse outcome levels in the 20\% subsample. After choosing the best learner, we ran a more extensive hyperparameter search with 5-fold crossvalidation on the full training set for all four levels of genre granularity (5, 12, 25, 32).
+
+Finally, tuned classifiers were trained on the full training set and evaluated on the holdout set; we also calculated model-based feature importances and  confusion matrices for interpreting classification outcomes. For benchmarking, we compared classifier performance to \textit{Community certainty} (overall and per category), since models logically cannot exceed the consistency of human assignments~\citep{sturmReviewValidityIts2023}. \textit{Certainty} was computed as the mean assignment probability across all \textit{MusicBrainz} votes for each track mapped to the \textit{single-label genre} assigned by the FOLDCAT procedure. All random operations used seed 42.
+
+\begin{figure*}[htbp]
+  \centering
+  \begin{subfigure}[b]{0.43\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/rosa_contingency.png}
+    \caption{\textit{Rosamerica} Classification vs. COMGET-5}
+    \label{fig:rq3_rosa}
+  \end{subfigure}
+  \hfill
+  \vspace{0.5 cm}
+  \begin{subfigure}[b]{0.55\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/dc_contingency.png}
+    \caption{ \textit{Discogs} Genres vs. COMGET-12}
+    \label{fig:rq3_dc}
+  \end{subfigure}
+  \caption{Contingency tables comparing COMGET-G5 and COMGET-G12 genre assignments with  corresponding genre classification by taxonomies commonly used in MIR and computational musicology; values show $P(\text{COMGET} \mid \text{External})$.  Categories with less than 2.5\% relative frequency in the corpus were discarded.}
+\label{fig:rq3_cm_low_medium}
+\end{figure*}
+
+%%%
+\subsection{Results a: Comparison of COMGET-G Variants With Existing Genre Taxonomies}
+
+The \textit{Rosamerica} genre classification system comprises only eight categories, which is why we chose it for comparison to COMGET-G5; however, \textit{AcousticBrainz} lacked entries for 28\% of POPTRAG tracks, introducing a modest popularity bias into the analysis. The resulting contingency table (Figure~\ref{fig:rq3_rosa}) exhibits strongest alignment between \textit{Rosamerica}'s \textit{Rock} and COMGET-G5's \textit{rock} (70\%); \textit{Rock} also is the only \textit{Rosamerica genre} substantially associated with \textit{metal}. Every \textit{Rosamerica genres} is split across at least two COMGET-G5 genres ($\geq 10\%$): \textit{Pop} into \textit{rock} and \textit{pop} ; \textit{Dance} into \textit{electronic}, \textit{pop}, and \textit{rock}; \textit{Jazz} into \textit{pop}  and \textit{rock}; \textit{Classical} into \textit{rock}, \textit{pop}, and \textit{electonic}. \textit{Rhythm and Blues} and \textit{Hiphop} are evenly dispersed; \textit{Hiphop} aligns only 37\% with COMGET-G5's \textit{hip hop}. However, given COMGET-G5's broad categories and \textit{Rosamerica}'s purely feature-based method (which may be theoretically flawed), these mappings appear largely reasonable. COMGET-G5 genres are marginally more balanced on POPTRAG ($\textit{Gini}_{\text{COMGET-G5}}=0.487$ vs.\ $\textit{Gini}_{\text{Rosamerica}}=0.497$).
+
+\textit{Discogs'} 15-genre taxonomy approximates COMGET-G12 in scale.  About 5\% of tracks with COMGET-G labels had no \textit{Discogs} counterpart, causing minimal popularity bias.
+The contingency table (Figure~\ref{fig:rq3_dc}) reveals strong alignment ($>75\%$) for \textit{Discogs}' \textit{Funk / Soul}, \textit{Latin}, \textit{Reggae}, \textit{Classical}, \textit{Hip Hop}, and \textit{Funk, World \& Country}. \textit{Jazz}, \textit{Pop}, \textit{Rock}, and \textit{Electronic} map most strongly to similarly named COMGET-12 \textit{categories} (48\%--62\%). \textit{Jazz} is also frequently associated ($\geq 10\%$) with \textit{pop} and \textit{rock}. Besides \textit{pop}, \textit{Discogs}' \textit{Pop} also covers the \textit{schlager} category, a genre typical for German popular music~\citep{thiesenTakingStockDiscourse2023}. \textit{Rock} spreads ($\geq 2\%$) across \textit{pop} and seven COMGET-12 genres that have \textit{rock} or \textit{metal} in their name, suggesting \textit{Discogs} lacks the granular rock subgenre labels for adequate German popular music representation. \textit{Electronic} shows substantial association ($\geq 10\%$) with COMGET-12's \textit{pop} and \textit{rock}. Five \textit{Discogs} categories—\textit{Blues}, \textit{Brass \& Military}, \textit{Children's}, \textit{Non-music}, and \textit{Stage \& Screen}— account for $<0.5\%$ of POPTRAG, offering little discriminative value. \textit{Folk, World, \& Country}, \textit{Classical}, \textit{Latin}, and \textit{Reggae} are also weakly populated ($\leq1\%$ of tracks), limiting suitability for POPTRAG. In sum, COMGET-G12 exhibtis a much more balanced distribution for POPTRAG than \textit{Discogs} ($\textit{Gini}_{\text{COMGET-G12}}=0.542$ vs.\ $\textit{Gini}_{\text{Discogs}}=0.830$).
+
+Using the \textit{Deezer} taxonomy, 9\% of POPTRAG tracks received no assignment; 27 \textit{Deezer genres} appear in the corpus. Comparing to COMGET-G25, the contingency table (Appendix Figure~D.1) shows $>75\%$ alignment for \textit{Rap/Hip Hop}, \textit{Country}, \textit{Jazz}, \textit{Reggae}, \textit{Dance}, \textit{Electro}, and \textit{Schlager \& Volksmusik}. \textit{Rock} and \textit{Heavy Metal} distribute across COMGET-G25's \textit{rock} and \textit{metal} genres. \textit{Alternative} additionally shows overlap with \textit{pop} and \textit{electronic}. \textit{Pop} aligns mostly with \textit{pop} and \textit{rock}, but also weakly with many other genres. \textit{R\&B} overlaps most with \textit{pop}, \textit{soul}, \textit{r\&b}, and \textit{hip hop}. Overall, these overlaps appear theoretically reasonable. COMGET-G25 is substantially more balanced than \textit{Deezer} for POPTRAG ($\textit{Gini}_{\text{COMGET-G25}}=0.602$ vs.\ $\textit{Gini}_{\text{Deezer}}=0.822$). Fifteen out of 27 \textit{Deezer} categories each account for $<0.5\%$ of tracks; \textit{Country} and \textit{Reggae} $<1\%$.
+
+
+\subsection{Results b: Classification Performance for Four Different COMGET Granularities}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/learner_comparison.png}
+  \caption{Performance comparison for genre classification of different learners (GLMNET, RDA, RF, GBM) on 20\% of the POPTRAG data set for low (5) and medium (12) COMGET-G genre granularity; plots show mean and standard error of $\text{F1}_{\text{macro}}$ across CV folds.}
+\label{fig:rq3_proto}
+\end{figure}
+
+All four ML algorithms performed similarly well with low and medium granularity \textit{categories} (Figure~\ref{fig:rq3_proto}) on the 20\% subsample (mean $\text{F1}_{\text{macro; CV}} =$~0.717--0.758 for COMGET-G5 and 0.468--0.503 for COMGET-G12). LightGBM turned out as the best performer at both granularities and was hence selected for all subsequent training. GLMNET ranked second for COMGET-G5, but GLMNET and also  RDA underperformed relative to tree-based methods on COMGET-G12, suggesting models with mainly linear or low-order quadratic boundaries struggle with finer genre granularities.
+
+\begin{figure*}[htbp]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=0.57\linewidth]{figures/lightgbm_lowres_cm.png}
+    \caption{COMGET-G5}
+    \label{fig:rq3_cm_low}
+  \end{subfigure}
+  \hfill
+  \vspace{1.5 cm}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/lightgbm_mediumres_cm.png}
+    \caption{COMGET-G12}
+    \label{fig:rq3_cm_medium}
+  \end{subfigure}
+  \caption{Confusion matrices for the final LightGBM genre classification models for COMGET-G5 and COMGET-G12 on the holdout set. Values show $P(\text{Predicted}|\text{Actual})$; \textit{certainty} indicates the mean assignment probability for each \textit{genre category} across community votes.}
+\label{fig:rq3_cm_low_medium}
+\end{figure*}
+
+
+With regards to final training performance for POPTRAG categorized with COMGET-G5, LightGBM achieved $\text{F1}_{\text{macro; holdout}} = 0.743$ (hyperparameters in Appendix Table F.1). Per-class F1 correlates strongly with \textit{community assignment certainty} ($\text{Cor}_{\text{Kendall}} = 0.949$). Given average \textit{community certainty} of 90\%, classifier performance appears satisfactory. Cohen's $\kappa_{\text{holdout}} = 0.674$ approximates established inter-rater agreement standards ($\kappa = 0.7$) in social sciences~\citep[p. 327]{hildebrandtInhaltsanalyse2015}. The confusion matrix (Figure \ref{fig:rq3_cm_low}) shows most errors for \textit{electronic} (56\% TP), often confused with \textit{pop} and \textit{rock}; \textit{metal} (61\% TP) is frequently misclassified as \textit{rock}.
+
+For POPTRAG categorized with COMGET-G12 we achieved $\text{F1}_{\text{macro; holdout}} = 0.544$ ($\kappa_{\text{holdout}} = 0.551$), which parallels lower \textit{community certainty} (67\%), indicating greater classification difficulty for both, listener community and algorithmic classifier. Per-class F1 and certainty are highly correlated (Kendall $\tau = 0.721$). Confusions concentrate among rock subgenres (\textit{alternative rock}, \textit{hard rock}, \textit{indie rock}, \textit{pop rock}). \textit{Heavy metal} (56\% TP) is often confused with \textit{metal} (but less often vice versa) and sometimes with \textit{hard rock}, despite being recognized as distinct from \textit{rock}. \textit{indie rock} (49\% TP) and \textit{jazz} (61\% TP) are frequently misclassified as \textit{electronic}; \textit{jazz} also mixes with \textit{pop}. For \textit{pop rock} performance is worst (F1 = 0.182), matching its low \textit{community certainty} (50\%), tracks are often confused with those from \textit{rock} and \textit{pop}. Conversely, \textit{schlager} and \textit{hip hop} are classified well (F1 = 0.837 and 0.858, respectively) despite differing \textit{community certainties} (67\% and 100\%), indicating distinct feature signatures.
+
+For POPTRAG categorized with COMGET-G25, performance further drops to $\text{F1}_{\text{macro; holdout}} = 0.348$, $\kappa_{\text{holdout}} = 0.430$, alongside lower community certainty (56\%). The certainty–F1 correlation weakens (Kendall $\tau = 0.589$) but remains substantial, implying additional factors degrade performance at higher granularity. The confusion matrix (Appendix F.2a) again shows \textit{rock} subgenre and \textit{metal}-related confusions and a secondary confusion hub around \textit{pop}, which is often confused with multiple other genres. The model performs well ($\text{F1} > 0.6$) on distinct genres with high \textit{certainty} (\textit{classical}, \textit{electronic}, \textit{hip hop}, \textit{metal}); comparatively poor performers (F1 < 0.2) are fuzzy genres with low community certainty (33\%–50\%).
+
+For POPTRAG categorized with COMGET-G32, where we have the lowest community certainty of 54\% we also obtained lowest classification performance with $\text{F1}_{\text{macro; holdout}} = 0.332$, $\kappa_{\text{holdout}} = 0.339$ (Appendix F.2b). The certainty–F1 correlation declines further (Kendall $\tau = 0.560$), indicating community uncertainty is probably not the sole cause of reduced performance; confusion phenomena resemble those of COMGET-G25 (see Appendix for details).
+
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/lightgbm_lowres_varimp.png}
+    \caption{COMGET-G5}
+    \label{fig:rq3_varimp_low}
+  \end{subfigure}
+  \hfill
+  \vspace{0.25 cm}
+  \begin{subfigure}[b]{\columnwidth}
+    \centering
+    \includegraphics[width=\linewidth, trim={0 0 0 1.5cm}, clip]{figures/lightgbm_mediumres_varimp.png}
+    \caption{COMGET-G12}
+    \label{fig:rq3_varimp_medium}
+  \end{subfigure}
+  \caption{Top 20 most important features for algorithmic genre classification of POPTRAG corpus at low (5) and medium (12) granularity of COMGET-G. Values show relative feature importance extracted from final LightGBM models.}
+\label{fig:rq3_varimp}
+\end{figure}
+
+
+Figure \ref{fig:rq3_varimp} shows the top 20 most important features of the final COMGET-G5 and COMGET-G12 algorithmic classifiers (COMGET-G25/G32 in Appendix Figure F.3). Notably, similar features appear across different granularities (e.g., \textit{acousticness (Echo-Nest)}, \textit{artist labelled ``metal''}, \textit{artist age}), but relative importance shifts. Among top features for COMGET-G5, we find music-style features (e.g., \textit{acousticness}, \textit{speechiness}, \textit{explicitness}) and artist persona metadata (e.g., solo vs. band, artist age). For COMGET-G12, \textit{popularity} and \textit{release year} become more important. For COMGET-G25/32, top features are mainly artist metadata, indicating fine-grained distinctions rely more on release milieu signals than on high-level audio features. Lyrics features contribute minimally across all classifiers.
+
+\section{Discussion}
+
+With this contribution, we present a novel and transparent procedure for constructing balanced hierarchical genre taxonomies and category assignments based on listener-community genre discourse. Our three key methodological contributions are:  (RQ1) COMGET, an algorithm that builds a balanced hierarchical genre tree from tag co-occurrences; (RQ2) FOLDCAT, a folding algorithm that produces optimally balanced categories and final track assignments at user-specified granularities from such trees; and (RQ3) an empirical demonstration of the utility of our approach using a large German popular-music corpus (POPTRAG) and \textit{MusicBrainz} genre votes showing that derived genre category assignments (a) have a substantial overlap with genre taxonomies commonly used in MIR and computational musicoloy (e.g., \textit{Rosamerica, Discogs, Deezer}) while providing better category balance and coverage and (b) are well-learnable with supervised ML models using publicly available, interpretable music descriptors derived from genre theory. In result, we recommend our approach as a transparent, reproducible, and empirically grounded alternative to commercial genre tagging services or expert-curated genre taxonomies. The method should im principle generalize to a plethora of other music corpora and to tag systems that expose tag co-occurrences (e.g., \textit{Spotify}, \textit{YouTube}, \textit{SoundCloud}) and can either be applied to tracks, artists, or releases.
+
+
+\subsection{Interpretation From the Perspective of Computational Musicology and Cultural Analysis}
+
+Firtstly, our COMGET analysis of the POPTRAG dataset (RQ1) has demonstrated the method's ability to computationally unveil popular music genre discourse structures. \textit{Rock}, \textit{pop}, and \textit{hip hop} form three primary clusters in POPTRAG, partially aligning with \citet{silverGenreComplexesPopular2016} but differing in structure: \textit{rock} is a distinct cluster here (vs.\ Silver et al.'s scattered ``Niche''), \textit{hip hop} shows little internal differentiation (as in Silver et al.), and \textit{pop} is stylistically diverse (contrasting Silver et al.'s ``Rock 'n Roll''). However, direct comparison is limited by different units and contexts (\textit{MySpace} artist social networks in 2007 vs.\ POPTRAG's national listening corpus over five decades), but COMGET was designed excactly to allow future corpus- and context-sensitive comparisons of genre discourse
+% ~\citep{pichlMiningCultureSpecificMusic2017,nieInaccuratePredictionGenre2022}. 
+~\citep{pichlMiningCultureSpecificMusic2017}.
+
+Crucially, COMGET genre taxonomies primarily capture contemporary music listeners' categorization of popular music rather than strict musicological genealogies~\citep{pachetTaxonomyMusicalGenres2000}. While COMGET-G does capture some obviously genealogical links (e.g., \textit{rock} $\rightarrow$ \textit{alternative rock}), some placements appear counterintuitive at first glance - but only when viewed genealogically. From our point of view, they rather invite a popular music discourse interpretation with respect to the actual corpus and a strict listener perspective  than a musicological `correction':  For example, \textit{classical} and \textit{jazz} counter-intuitively appear as \textit{pop} subgenres. However, this makes sense considering that the employed POPTRAG corpus mainly contains accessible, crossover, and chart-oriented tracks from these fields. Another interesting case is the finding that \textit{heavy metal} and \textit{metal} appear in COMGET-G as peer \textit{rock} subgenres, which is reflecting shared 1970s roots, but also acknowledging a later stylistic divergence that is similarly reported in popular music literature ~\citep{gracykHeavyMetalGenre2016}.
+
+As demonstrated, the FOLDCAT algorithm (RQ2) provides scalable, coherent genre categories from the perspective of listerners' genre discourse without unnecessary information loss, enabling consistent genre categorization at multiple granularities. This allows future researchers to choose the best-suitable number of categories for studies of playlist diversity~\citep{porcaro20YearsPlaylists2019}, individual listening patterns~\citep{peterson1992understanding}, psychological links between personality and music choice~\citep{andersonJustWayYou2021}, as well as computational analyses of historical genre emergence and chart dynamics~\citep{petitbon_hitchcock_2022}.  
+
+From a philsophical point of view, both COMGET (RQ1) and FOLDCAT (RQ2) consequently implement power-critical concepts from popular music studies and cultural analysis~\citep{dugayDoingCulturalStudies2013} into computational methods for making them applicable with large popular music corpora. Specifically, our approach employs radically democratic principles throughout: community votes determine co-occurrences, strongest links define hierarchies, majority voting assigns single genre labels. Furthermore, resulting community genre taxonomies, genre categories, and genre category assignments reflect the majority opinion in collective listener discourse rather than industry or musicological expert impositions, thereby democratizing genre knowledge production for computational musicology. This should improve the ecological validity of  genre-related research endevours addressing the listener perspective.
+
+Feature importances obtained from classifiers of COMGET-G solutions (RQ3) help understanding the mechanisms by which listener communities attribute genres to music: artist-level metadata dominate predictions across granularities, with distribution genres (how music is positioned on the market) and artist demographics (who performs the music) strongly  outweighting music style attributes (how does it actually sound)— which is consistent with the emphasis on release milieu in sociological genre theories~\citep{nealeGenre1980}. Specifically, music style attributes do help distinguishing broad genre categories, while metadata and lyrics aid lower-level differentiation; finally, track popularity becomes a stronger genre signal at finer resolutions~\citep{holtGenrePopularMusic2007}. Disappointingly, bag-of-words and lexical lyric features performed weakly, suggesting LLM-based embeddings as a promising future improvement~\citep{prevedelloLyricsSuccessEmbedding2024}. 
+
+Furthermore, obtained classification confusion patterns demonstrate genre boundary issues that are also partly reflected in cultural sociology discourse \citet{silverGenreComplexesPopular2016} : An overlap among \textit{rock} subgenres (\textit{alternative}, \textit{pop rock}, \textit{indie}), as well as \textit{electronic}'s permeability with \textit{pop}, \textit{jazz}, and \textit{indie} reflect genuine and theoretically sound stylistic fuzziness, whereas clear separation (e.g., \textit{schlager} vs.\ \textit{hip hop}) occurs when also release milieu and stylistic markers are clearly distinct.
+ 
+
+
+\subsection{Benefits of the Approach for MIR Research and Music Recommendation}
+
+From the engineering perspective, our COMGET method (RQ1) advances the state of the art in MIR as far as it extends Schreiber's (\citeyear{schreiberImprovingGenreAnnotations2015}) approach by several improvements: For once, we enforce optimally structured and fully connected genre hierarchies by removing weak hierarchical links and introducing a corpus-root container node. Further, our balancing mechanism finds the optimal solution without arbitrary numeric thresholds, simplifying reproducibility and removing needs for idiosyncratic parameter tuning. Our open-source \textit{R} implementation (provided on GitHub) supports straightforward application to other corpora and tagging systems (demonstrated even in this work by using artist genre tags from \textit{Spotify} for deriving distribution genre for RQ3).
+
+As demonstrated, the FOLDCAT algorithm (RQ2) is able to reduce any hierarchical genre tree to managable, well-balanced categories for downstream MIR and recommender tasks. It allows researchers and practicioners to choose an appropriate granularity for their task and corpus size without the typical constraints of available external taxonomies and arbitrary subsets~\citep{greenCriticalSurveyResearch2024}. Hierarchical Gini-weighting then suggests optimally class-balanced solutions across a range of choices ~\citep{japkowiczClassImbalanceProblem2002}, akin to hyperparameter tuning. Furthermore, since full content consistency is archieved by mere folding of underlying COMGET ground-truth, it becomes possible to create comparable benchmarks at different levels of granularity for a target corpus given the research problem at hand. If needed, underlying category assignments can even be kept probabilistic instead of hard classes, representing actual listener community disagreement in genre assignments.
+
+As demonstrated, results from applying COMGET+FOLDCAT to a large popular music corpus such as POPTRAG generally align with those from commonly used genre taxonomies  (RQ3) but are better able to capture categories actually salient to a given corpus, thereby improving balance and coverage. In our examplary analysis, neither \textit{Discogs} nor \textit{Deezer} provided sufficient detail for rock subgenres contained in our corpus and also included many irrelevant categories. Capturing corpus-specific, audience-oriented categories should also improve recommender development and diversity comparisons across heterogeneous corpora, and help to tailo high-level audio descriptors better to listener perception~\citep{flexerProblemLimitedInterrater2016}. Generally, we think using audience-aligned genre labels in recommender benchmarking should lead to more realistic estimates~\citep{greenCriticalSurveyResearch2024}, likely improving real-world recommendation performance, and support building more listener-centered recommender systems~\citep{deldjoo2024,porcaroDiversityDesignMusic2021}.
+
+More broadly speaking, our approach addresses a core methodological gap in MIR: most genre-recognition methods lack explicit theoretical grounding~\citep{greenCriticalSurveyResearch2024}. In contrast, we operationalize genre-as-discourse \citep{foucaultArchaeologyKnowledge2013,nealeGenre1980}, treating genre assignment as an empirical question rather than an ontological given. In a prior work we have also provided extensive theoretical justification for our choice of audio features, metadata, and lyric features for the clasifiers in the present study (anonymous authors, XXXX)
+% ~\citep{lepaRadke2026}
+
+\subsection{Limitations}
+
+Several constraints affect the interpretations and generalizations conducted above. The \textit{MusicBrainz} platform (launched 2000) does not provide individual vote timestamps for genre tags~\citep{MusicBrainz_nodate}.  COMGET-G therefore aggregates roughly 25 years of listener votes across a period in which genre boundaries likely shifted, potentially misrepresenting historical perception for older tracks tagged much later~\citep{nieInaccuratePredictionGenre2022}. Timeline analysis, however, shows that a substantial portion of genre votes on MusicBrainz emerged shortly after Bogdanov et al.'s~(\citeyear{bogdanovAcousticbrainzGenreDataset2019}) efforts to  add more genre assignment to the database in 2021, which implies that COMGET-G mainly works based on listener votes from that time. The tagging community may also differ systematically from the broader listening public; editor identities are withheld ($\approx$1.2M anonymous editor accounts), preventing scientific assessment of  possible sociodemographic or expertise biases. 
+
+Furthermore, COMGET enforces strict supergenre–subgenre hierarchies with single-supergenre topology, which may oversimplify relationships where genres legitimately have multiple supergenres from the listeners' perspective~\citep{schreiberGenreOntologyLearning2016}.  Our strictly hierarchy-oriented approach also does not model peer-genre similarities (i.e., equal distance from common supergenre), potentially obscuring lateral relations that listeners perceive as equally salient as vertical hierarchical links. We deliberately accepted this constraint because alternative foldings would create logical inconsistencies when aiming at getting coherent flat categorization by FOLDCAT.
+
+The genre classification performance obtained for RQ3 is below what is typically considered state-of-the-art which can be rightfully criticized, but we intentionally used interpretable features and avoided any deep learning approach to preserve  interpretability and  ensure connectivity of our results with social science and cultural studies. However, given empirical limits set by community certainty and the dataset’s broad, 50-year popular-music coverage, achieved performance appears reasonable to us. The observed strong correlation between community certainty and classifier performance supports our approach of grounding MIR evaluation in listener-perception limits rather than arbitrary absolute numerical targets.
+
+Finally, while our method has proven to be fruitful for German popular music, generalizability beyond that population remains unclear. Schreiber~(\citeyear{schreiberImprovingGenreAnnotations2015}) demonstrated results for taggers using different languages may exhibit systematic differences, implying cultural and linguistic effects on genre discourse. Future work should therefore test COMGET + FOLDCAT across other cultural contexts, musical traditions, and listener communities beyond German and also Western popular music.
+
+\subsection{Future Directions}
+
+We will pursue several complementary directions to strengthen and extend the presented work. First, systematically comparing COMGET-G with alternative folksonomy hierarchies—including \textit{MusicBrainz}'s own editorial hierarchy and Schreiber's~(\citeyear{schreiberGenreOntologyLearning2016}) solution will provide an additional validity check. Convening German popular-music experts to review COMGET-G and label prototypical tracks at multiple granularities should provide a further evaluation of the validity of our method. Analyzing more comprehensive, less popularity-biased catalogues (e.g., \textit{German National Library}'s register of music released in Germany) will be tried to test applicability of the algorithm beyond very popular music. Replicating the pipeline with US and UK music corpora will finally reveal how national listening cultures reshape genre structures and boundaries.
+
+Beyond academia, our approach may also offer practical value for music-industry stakeholders. Radio programmers, playlist editors, and music librarians could employ it to better understand how audiences organize the collections they choose their repertoire from. A\&R teams might use it to detect gaps between industry positioning and listener reception. Marketing departments could assess which subcultural boundaries listeners perceive in comparison to industry-imposed categories. Finally, music journalists could ground their critical analyses on empirical listener consensus. In sum, these possible applications demonstrate how listener-centered hierarchical genre taxonomies may fruitfully bridge scholarly analysis and industry practice.
+
+
+% \section*{Author Contributions}
+% \textbf{MR} contributed to concept, methodology, data curation, coding and modeling, formal analysis, visualization, original manuscript, and editorial work.\\
+% \textbf{SL} contributed to concept, methodology, formal analysis, manuscript revision, and was a superviser for the work.
+
+
+\section*{Competing Interests}
+The authors have no competing interests to declare.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Please do not touch.
+% Print Endnotes
+\IfFileExists{\jobname.ent}{
+   \theendnotes
+}{
+   %no endnotes
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \section*{Acknowledgements}
+
+% Any acknowledgements must be headed and in a separate paragraph,
+% placed after the main text but before the reference list.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{refs}
+\end{document}

@@ -107,6 +107,39 @@ Artist-based statistics on tag assignement:
 * IQR `r IQR(artists_per_tag_mb)` artists per tag
 
 
+```{r musicbrainz_most_common_tags}
+most_common_tags <- mb_long |> 
+  dplyr::count(tag_name, sort = TRUE) |>
+  dplyr::slice_head(n = 20) |>
+  dplyr::mutate(perc = sprintf("%.0f%%",  n / n_mb * 100)) 
+# put Other level at the end of the factor
+most_common_tags$tag_name <- forcats::fct_reorder(most_common_tags$tag_name, most_common_tags$n, .desc = FALSE)
+most_common_tags$tag_name <- forcats::fct_relevel(most_common_tags$tag_name, "Other", after = 0)
+
+
+ggplot2::ggplot(most_common_tags, ggplot2::aes(y = tag_name, x = n)) +
+  ggplot2::geom_col(fill = 'grey65') +
+  ggplot2::geom_text(ggplot2::aes(label = ifelse(!is.na(perc), perc, "")), hjust = -0.2) +
+  ggplot2::labs(y = "", x = "Number of Track Assignments") +
+  ggplot2::geom_vline(xintercept = n_mb, linetype = "dashed", color = "#3e578e") +
+  ggplot2::annotate("text", x = n_mb, y = 1, label = sprintf("N = %s", format(n_mb, big.mark=",")), color = "#3e578e", hjust = 1.1) +
+  ggplot2::scale_x_continuous(
+    breaks = scales::pretty_breaks(n = 5),
+    labels = scales::comma, 
+    limits = c(0, n_mb),
+     expand = ggplot2::expansion(mult = c(0, 0.05))
+    ) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(
+    axis.text.y = ggplot2::element_text(color="black", size=12, face="bold"), 
+    axis.text.x = ggplot2::element_text(color="grey45", size=10),
+    axis.title.x = ggplot2::element_text(color="grey45")
+  )
+  ggplot2::ggsave("../reports/paper_v1_bdas/figures/fig01_most_common_tags.png", width = 6, height = 4)
+```
+
+
+
 ## Spotify network data
 
 ```{r spotify_genres}
@@ -157,3 +190,5 @@ Spotify genre tags are **assigned to artists, not to tracks**. Therefore, all tr
 :::{.callout-note}
 In addition to artists being the observational unit, Spotify provides no vote counts for tags on track basis. However, some track feature multiple artists. Thus, we calculated the vote for each track's tags by combining all track artists' tags and counting the number of tag appearences per track. `r format(n_multiple_artists, big.mark = ",")` tracks (`r round(n_multiple_artists / n_s* 100)`%) featured multiple artists.
 :::
+
+
