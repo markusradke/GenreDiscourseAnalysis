@@ -2,11 +2,7 @@
 rm(list = ls())
 gc()
 devtools::load_all()
-# minimum number of unique artists a genre tag must be associated with to not be considered noise
-settings <- list(
-  n_artists_threshold = 50
-)
-saveRDS(settings, "data/settings_data_prep.rds")
+
 
 message("Importing POPTRAG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
@@ -50,6 +46,13 @@ poptrag_selected <- poptrag |>
   )
 
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
+# minimum number of unique artists a genre tag must be associated with to not be considered noise
+settings <- list(
+  n_artists_threshold = round(
+    dplyr::n_distinct(poptrag_selected$track.s.firstartist.id) * 0.001
+  )
+)
+saveRDS(settings, "data/settings_data_prep.rds")
 
 # filter specific problematic entries and drop obviously wrong Deezer album for one entry
 poptrag_selected <- poptrag_selected |>
@@ -82,21 +85,13 @@ mb_non_valid_tags <- union(mb_non_music_tags, non_whitelist_genres)
 combined_mb_genres <- combine_mb_genres(poptrag_selected)
 mb_long <- get_long_genre_tags(combined_mb_genres, "mb.genres")
 mb_long_music <- filter_non_valid_tags(mb_long, mb_non_valid_tags)
-mb_long_denoise_tags <- filter_tags_by_artist_occurrences(
+
+mb_long_denoise <- filter_min_artists_and_min_votes(
   mb_long_music,
-  n_min_artists = settings$n_artists_threshold
+  n_min_artists = settings$n_artists_threshold,
+  n_min_votes = 2
 )
-# additional filtering for Musicbrainz: min 2 votes per trag
-mb_total_votes <- mb_long_denoise_tags |>
-  dplyr::group_by(.data$track.s.id) |>
-  dplyr::summarize(
-    n_votes = sum(.data$tag_count),
-    .groups = "drop"
-  ) |>
-  dplyr::filter(.data$n_votes > 1) |>
-  dplyr::select(track.s.id)
-mb_long_denoise <- mb_long_denoise_tags |>
-  dplyr::inner_join(mb_total_votes, by = "track.s.id")
+
 save_feather_with_lists(mb_long_denoise, "data/filtered_mb_long.feather")
 
 # Prepare Spotify ----
@@ -115,6 +110,7 @@ s_non_music_tags <- c(
   "escape room",
   "field recording ambient",
   "football",
+  "hoerspiel",
   "kabarett",
   "lo-fi sleep",
   "lo-fi study",

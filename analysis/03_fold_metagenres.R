@@ -28,7 +28,7 @@ tune_s <- tune_tree_folding(
   optimal_solution_range_n_metagenres = optimal_range
 )
 save_tuning(tune_s, "s")
-generate_report("03_metagenres")
+# generate_report("03_metagenres")
 
 # get static metagenre graph for paper
 mb_res <- readRDS("models/metagenres/tune_mb_metagenres.rds")

@@ -1,9 +1,10 @@
 build_genre_tree <- function(
   tags_long,
   platform_name,
+  min_cooc = 30,
   vote_weighted = TRUE
 ) {
-  basic_adjacency <- get_tag_cooccurrence_matrix(tags_long)
+  basic_adjacency <- get_tag_cooccurrence_matrix(tags_long, min_cooc)
 
   final_adjacency <- if (vote_weighted) {
     apply_vote_weighting(basic_adjacency, tags_long)
@@ -92,7 +93,7 @@ prune_ill_structured_tree <- function(graph, long) {
     genre = names(sizes),
     n = as.numeric(sizes)
   )
-  edges <- get_sorted_nonroot_edges(graph, root)
+  edges <- get_sorted_nonroot_edges(graph, root, sizes)
   ginis <- evaluate_gini_for_edges(graph, edges, root, n_songs)
   threshold <- get_best_gini_threshold(edges, ginis)
   graph <- remove_edges_below_threshold(graph, threshold)
@@ -100,11 +101,16 @@ prune_ill_structured_tree <- function(graph, long) {
   list(graph, ginis)
 }
 
-get_sorted_nonroot_edges <- function(graph, root) {
+get_sorted_nonroot_edges <- function(graph, root, sizes) {
   igraph::as_data_frame(graph, what = "edges") |>
-    dplyr::arrange(weight) |>
+    dplyr::mutate(
+      from_size = sizes[as.character(from)],
+      score_rank = 1 - weight
+    ) |>
+    dplyr::arrange(-score_rank) |>
     dplyr::filter(to != root)
 }
+
 
 evaluate_gini_for_edges <- function(graph, edges, root, n_songs) {
   current_graph <- graph
@@ -217,7 +223,7 @@ save_results <- function(
 }
 
 
-get_tag_cooccurrence_matrix <- function(tags) {
+get_tag_cooccurrence_matrix <- function(tags, min_cooc = 30) {
   message("CALCULATE BASIC ADJACENCY MATRIX:")
   message("Counting appearance of individual tags...")
   tag_counts <- tags |> dplyr::count(.data$tag_name)
@@ -234,9 +240,13 @@ get_tag_cooccurrence_matrix <- function(tags) {
   }
 
   cooccurrence_counts <- count_tag_cooccurrences(tag_combinations)
+  valid_coocurrence_counts <- dplyr::filter(
+    cooccurrence_counts,
+    count >= min_cooc
+  )
   tag_count_lookup <- create_tag_count_lookup(tag_counts)
   weighted_cooccurrences <- calculate_cooccurrence_weights(
-    cooccurrence_counts,
+    valid_coocurrence_counts,
     tag_count_lookup
   )
 
@@ -605,4 +615,18 @@ plot_gini_trajectory <- function(gini) {
       axis.text.x = ggplot2::element_text(size = 16, color = "grey35"),
       axis.text.y = ggplot2::element_text(size = 16, face = "bold")
     )
+}
+
+get_support_for_tree_edges <- function(tree, long) {
+  tag_combinations <- get_within_track_combinations(long)
+  cooccurrence_counts <- count_tag_cooccurrences(tag_combinations)
+
+  edges <- igraph::as_long_data_frame(tree) |>
+    filter(to_name != "POPULAR MUSIC") |>
+    transmute(edge_name = paste0(from_name, "_", to_name)) |>
+    pull(edge_name)
+
+  cooccurrence_counts_in_tree <- cooccurrence_counts |>
+    filter(paste0(tag_i, "_", tag_j) %in% edges)
+  cooccurrence_counts_in_tree
 }

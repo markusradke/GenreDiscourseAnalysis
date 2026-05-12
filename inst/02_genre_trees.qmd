@@ -171,7 +171,7 @@ Nodes with maximum in-degree:<br>*`r degree_stats_tree$node_in_degree_maxs`*
 mb_gini <- readRDS("../models/trees/MusicBrainz_gini_evaluation.rds")
 plot <- plot_gini_trajectory(mb_gini)
 ggplot2::ggsave(
-  "../reports/paper_v1/figures/balancing_gini_trajectory.png", 
+  "../reports/paper_v1_poetics/figures/balancing_gini_trajectory.png", 
   plot, 
   width = 180, 
   height = 115,

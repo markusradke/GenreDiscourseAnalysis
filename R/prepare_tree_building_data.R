@@ -353,6 +353,38 @@ filter_non_valid_tags <- function(long, non_music_tags) {
   )
 }
 
+filter_min_artists_and_min_votes <- function(
+  mb_long,
+  n_min_artists,
+  n_min_votes
+) {
+  i <- 0
+  while (TRUE) {
+    message(
+      sprintf(
+        "Denoising MusicBrainz tags: iteration %d, artists >= %d, votes >= %d",
+        i,
+        n_min_artists,
+        n_min_votes
+      )
+    )
+    mb_long_denoise_tags <- filter_tags_by_artist_occurrences(
+      mb_long,
+      n_min_artists = n_min_artists
+    )
+    mb_long_denoise_tracks <- filter_tracks_by_min_votes(
+      mb_long_denoise_tags,
+      min_votes = n_min_votes
+    )
+    if (nrow(mb_long_denoise_tracks) == nrow(mb_long)) {
+      break
+    }
+    mb_long <- mb_long_denoise_tracks
+    i <- i + 1
+  }
+  return(mb_long_denoise_tracks)
+}
+
 filter_tags_by_artist_occurrences <- function(long, n_min_artists) {
   tag_artist_counts <- long |>
     dplyr::group_by(.data$tag_name) |>
@@ -367,4 +399,20 @@ filter_tags_by_artist_occurrences <- function(long, n_min_artists) {
     tag_artist_counts,
     by = "tag_name"
   )
+}
+
+filter_tracks_by_min_votes <- function(mb_long, min_votes = 2) {
+  mb_total_votes <- mb_long |>
+    dplyr::group_by(.data$track.s.id) |>
+    dplyr::summarize(
+      n_votes = sum(.data$tag_count),
+      .groups = "drop"
+    ) |>
+    dplyr::filter(.data$n_votes >= min_votes) |>
+    dplyr::select(track.s.id)
+
+  mb_long_filtered <- mb_long |>
+    dplyr::inner_join(mb_total_votes, by = "track.s.id")
+
+  return(mb_long_filtered)
 }

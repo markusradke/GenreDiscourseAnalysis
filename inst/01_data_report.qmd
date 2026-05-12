@@ -135,7 +135,7 @@ ggplot2::ggplot(most_common_tags, ggplot2::aes(y = tag_name, x = n)) +
     axis.text.x = ggplot2::element_text(color="grey45", size=10),
     axis.title.x = ggplot2::element_text(color="grey45")
   )
-  ggplot2::ggsave("../reports/paper_v1_bdas/figures/fig01_most_common_tags.png", width = 6, height = 4)
+  ggplot2::ggsave("../reports/paper_v1_poetics/figures/fig01_most_common_tags.png", width = 6, height = 4)
 ```
 
 

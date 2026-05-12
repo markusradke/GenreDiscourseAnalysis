@@ -1,0 +1,36 @@
+---
+title: "COMGET-S Browser"
+format: 
+    html: 
+        code-fold: true
+        code-summary: "Show/Hide Code"
+        output-dir: reports
+        theme: cosmo
+        number-sections: false
+        css: 
+          styles.css
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+devtools::load_all()
+```	
+
+:::{.column-screen-inset-right}
+:::{.plot-container}
+**Navigation:** Click and drag to pan • Mouse wheel to zoom in/out • Use search bar to find and highlight genres (green) • Click blue nodes to expand/collapse
+
+**Controls:** "Center Root" - return to root | "Expand All" - show all genres | "Fold All" - collapse tree
+```{r musicbrainz-interactive-tree, echo=FALSE}
+s <- read_feather_with_lists("../data/filtered_s_long.feather")
+s <- dplyr::distinct(s, trackartists.s.id, tag_name, .keep_all = TRUE)
+plot_interactive_tree_graph(
+  readRDS("../models/trees/Spotify_graph.rds"),
+  get_sizes_lookup(s),
+  get_fills_lookup(s), 
+  height = 1000
+)
+```
+:::
+:::
+
+
