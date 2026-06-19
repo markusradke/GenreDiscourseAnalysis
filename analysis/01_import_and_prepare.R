@@ -1,63 +1,21 @@
 # Clean workspace and set parameters ----
 rm(list = ls())
 gc()
+library(dplyr)
+library(readr)
 devtools::load_all()
 
 
 message("Importing POPTRAG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
-poptrag_selected <- poptrag |>
-  dplyr::select(
-    track.s.id,
-    track.s.title,
-    track.s.artists,
-    track.s.firstartist.id,
-    track.s.firstartist.name,
-    track.s.previewurl,
-    track.ab.genrerosamerica,
-    track.dz.album.firstgenre.name,
-    artist.s.id,
-    artist.s.name,
-    artist.s.genres,
-    album.s.id,
-    album.s.title,
-    album.s.releaseyear,
-    album.s.coverurl,
-    album.dc.id,
-    album.dc.genres,
-    album.dc.styles,
-    album.dc.firstgenre,
-    track.mb.genres,
-    album.mb.genres,
-    artist.mb.genres,
-    track.mb.combinedgenre,
-    source.officialcharts,
-    source.recommendations,
-    source.featuredplaylists,
-    source.spotifycharts
-  ) |>
-  dplyr::mutate(
-    trackartists.s.id = sapply(.data$track.s.artists, function(x) {
-      paste(x$id, collapse = ";")
-    }),
-    n_trackartists = sapply(.data$track.s.artists, function(x) {
-      as.integer(nrow(x))
-    })
-  )
-
+poptrag_selected <- select_relevant_columns(poptrag)
 saveRDS(poptrag_selected, "data/poptrag_selected.rds")
-# minimum number of unique artists a genre tag must be associated with to not be considered noise
-settings <- list(
-  n_artists_threshold = round(
-    dplyr::n_distinct(poptrag_selected$track.s.firstartist.id) * 0.001
-  )
-)
-saveRDS(settings, "data/settings_data_prep.rds")
+poptrag_selected <- readRDS("data/poptrag_selected.rds")
 
 # filter specific problematic entries and drop obviously wrong Deezer album for one entry
 poptrag_selected <- poptrag_selected |>
-  dplyr::filter(.data$album.s.id != "3GmZxNPKzyfiD0urTJFbi3") |>
-  dplyr::mutate(
+  filter(.data$album.s.id != "3GmZxNPKzyfiD0urTJFbi3") |>
+  mutate(
     track.dz.album.firstgenre.name = ifelse(
       .data$album.s.id == "4zhRkgoZKC2xCPPys1gK4b",
       NA,
@@ -74,7 +32,8 @@ mb_non_music_tags <- c(
   "nature sounds",
   "children's music",
   "spoken word",
-  "standup comedy"
+  "standup comedy",
+  "audio drama"
 )
 saveRDS(mb_non_music_tags, "data/mb_non_music_tags.rds")
 mb_whitelist <- readRDS("data-raw/musicbrainz_genre_whitelist_20250616.rds")
@@ -86,53 +45,50 @@ combined_mb_genres <- combine_mb_genres(poptrag_selected)
 mb_long <- get_long_genre_tags(combined_mb_genres, "mb.genres")
 mb_long_music <- filter_non_valid_tags(mb_long, mb_non_valid_tags)
 
-mb_long_denoise <- filter_min_artists_and_min_votes(
+mb_long_denoise <- filter_min_votes(
   mb_long_music,
-  n_min_artists = settings$n_artists_threshold,
   n_min_votes = 2
 )
 
-save_feather_with_lists(mb_long_denoise, "data/filtered_mb_long.feather")
+mb_final <- mb_long_denoise |>
+  select(-dplyr::matches("genres$"))
+
+write_csv(mb_final, "data/filtered_mb_long.csv")
 
 # Prepare Spotify ----
+# TODO: FINISH
 # Combine the genre tags of all artists involved in a track
 # Infer votings based on the combination of artist genres
-spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
-s_non_music_tags <- c(
-  "432hz",
-  "528hz",
-  "asmr",
-  "binaural",
-  "children's folk",
-  "children's music",
-  "clean comedy",
-  "comic",
-  "escape room",
-  "field recording ambient",
-  "football",
-  "hoerspiel",
-  "kabarett",
-  "lo-fi sleep",
-  "lo-fi study",
-  "mediation",
-  "sleep",
-  "talent show",
-  "talentschau",
-  "kindermusik",
-  "rain",
-  "white noise"
-)
-saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
+# spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
+# s_non_music_tags <- c(
+#   "432hz",
+#   "528hz",
+#   "asmr",
+#   "binaural",
+#   "children's folk",
+#   "children's music",
+#   "clean comedy",
+#   "comic",
+#   "escape room",
+#   "field recording ambient",
+#   "football",
+#   "hoerspiel",
+#   "kabarett",
+#   "lo-fi sleep",
+#   "lo-fi study",
+#   "mediation",
+#   "sleep",
+#   "talent show",
+#   "talentschau",
+#   "kindermusik",
+#   "rain",
+#   "white noise"
+# )
+# saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
 
-combined_s_genres <- combine_s_genres(poptrag_selected, spotify_artist_genres)
-s_long <- get_long_genre_tags(combined_s_genres, "s.genres")
-s_long_music <- filter_non_valid_tags(s_long, s_non_music_tags)
-s_long_denoise <- filter_tags_by_artist_occurrences(
-  s_long_music,
-  n_min_artists = settings$n_artists_threshold
-)
-save_feather_with_lists(s_long_denoise, "data/filtered_s_long.feather")
-
-# Generate data report ----
-message("Generating data report ...")
-generate_report("01_data_report")
+# combined_s_genres <- combine_s_genres(poptrag_selected, spotify_artist_genres)
+# s_long <- get_long_genre_tags(combined_s_genres, "s.genres")
+# s_long_music <- filter_non_valid_tags(s_long, s_non_music_tags)
+# s_final <- mb_long_denoise |>
+#   dplyr::select(-dplyr::matches("genres$"))
+# readr::write_csv(s_final, "data/filtered_s_long.csv")

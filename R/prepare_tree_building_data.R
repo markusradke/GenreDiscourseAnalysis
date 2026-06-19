@@ -1,4 +1,88 @@
 # FUNCTIONS ----
+select_relevant_columns <- function(input) {
+  input |>
+    dplyr::select(
+      track.s.id,
+      track.s.title,
+      track.s.artists,
+      track.s.firstartist.id,
+      track.s.firstartist.name,
+      track.s.popularity,
+      track.s.previewurl,
+      track.ab.genrerosamerica,
+      track.dz.album.firstgenre.name,
+      artist.s.id,
+      artist.s.name,
+      artist.s.genres,
+      artist.s.popularity,
+      album.s.id,
+      album.s.title,
+      album.s.releaseyear,
+      album.s.popularity,
+      album.s.coverurl,
+      album.dc.id,
+      album.dc.genres,
+      album.dc.styles,
+      track.dz.album.genres,
+      track.mb.genres,
+      album.mb.genres,
+      artist.mb.genres,
+      track.mb.combinedgenre,
+      source.officialcharts,
+      source.recommendations,
+      source.featuredplaylists,
+      source.spotifycharts
+    ) |>
+    dplyr::mutate(
+      trackartists.s.id = sapply(.data$track.s.artists, function(x) {
+        paste(x$id, collapse = ";")
+      }),
+      n_trackartists = sapply(.data$track.s.artists, function(x) {
+        as.integer(nrow(x))
+      }),
+      album.dc.genres_str = sapply(.data$album.dc.genres, function(x) {
+        if (is.list(x)) {
+          paste(unlist(x), collapse = "; ")
+        } else {
+          NA
+        }
+      }),
+      album.dc.styles_str = sapply(.data$album.dc.styles, function(x) {
+        if (is.list(x)) {
+          paste(unlist(x), collapse = "; ")
+        } else {
+          NA
+        }
+      }),
+      album.dz.genres_str = sapply(.data$track.dz.album.genres, function(x) {
+        if (is.list(x) && length(x) > 0) {
+          genres <- sapply(x, function(genre_list) {
+            if (is.list(genre_list) && "name" %in% names(genre_list)) {
+              as.character(genre_list$name)
+            } else {
+              NULL
+            }
+          })
+          if (length(genres) == 1 && is.null(genres[[1]])) {
+            NA
+          } else {
+            paste(unlist(genres), collapse = "; ")
+          }
+        } else {
+          NA
+        }
+      })
+    ) |>
+    dplyr::select(
+      -dplyr::all_of(c(
+        "track.s.artists",
+        "album.dc.genres",
+        "album.dc.styles",
+        "track.dz.album.genres"
+      ))
+    )
+}
+
 combine_mb_genres <- function(input) {
   combine_genres(input, get_combined_mb_tags, "mb.genres")
 }
@@ -196,46 +280,14 @@ get_long_genre_tags <- function(
   source_col <- paste0(genrecol, ".source")
   has_source <- source_col %in% colnames(input)
 
-  join_mapping <- data.frame(
-    join_id = seq_len(nrow(input)),
-    track.s.id = input$track.s.id,
-    album.dc.id = input$album.dc.id,
-    trackartists.s.id = input$trackartists.s.id,
-    track.s.title = input$track.s.title,
-    track.s.firstartist.id = input$track.s.firstartist.id,
-    track.s.firstartist.name = input$track.s.firstartist.name,
-    n_trackartists = input$n_trackartists,
-    stringsAsFactors = FALSE
-  )
-
-  if (has_source) {
-    join_mapping$tag_source <- input[[source_col]]
-  }
+  input$join_id <- seq_len(nrow(input))
 
   message("Merging genre tags with track info ...")
   result <- dplyr::inner_join(
-    join_mapping,
+    input,
     unpacked_tags,
     by = "join_id"
   )
-
-  select_cols <- c(
-    "track.s.id",
-    "album.dc.id",
-    "trackartists.s.id",
-    "track.s.title",
-    "track.s.firstartist.id",
-    "track.s.firstartist.name",
-    "n_trackartists",
-    "tag_name",
-    "tag_count"
-  )
-
-  if (has_source) {
-    select_cols <- c(select_cols, "tag_source")
-  }
-
-  result <- result |> dplyr::select(dplyr::all_of(select_cols))
 
   if (length(caluclate_tag_count) > 0) {
     message("Calculating tag counts ...")
@@ -353,27 +405,21 @@ filter_non_valid_tags <- function(long, non_music_tags) {
   )
 }
 
-filter_min_artists_and_min_votes <- function(
+filter_min_votes <- function(
   mb_long,
-  n_min_artists,
   n_min_votes
 ) {
   i <- 0
   while (TRUE) {
     message(
       sprintf(
-        "Denoising MusicBrainz tags: iteration %d, artists >= %d, votes >= %d",
+        "Denoising MusicBrainz tags: iteration %d, votes >= %d",
         i,
-        n_min_artists,
         n_min_votes
       )
     )
-    mb_long_denoise_tags <- filter_tags_by_artist_occurrences(
-      mb_long,
-      n_min_artists = n_min_artists
-    )
     mb_long_denoise_tracks <- filter_tracks_by_min_votes(
-      mb_long_denoise_tags,
+      mb_long,
       min_votes = n_min_votes
     )
     if (nrow(mb_long_denoise_tracks) == nrow(mb_long)) {

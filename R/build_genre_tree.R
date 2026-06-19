@@ -17,7 +17,7 @@ build_genre_tree <- function(
   tree_structure <- select_strongest_parent(bidirectional_removed)
   igraph_tree <- create_igraph_from_matrix(tree_structure)
   connected_tree <- add_popmusic_as_metagerne(igraph_tree)
-  pruned <- prune_ill_structured_tree(
+  pruned <- find_wellbalanced_tree(
     connected_tree,
     tags_long
   )
@@ -85,7 +85,7 @@ add_popmusic_as_metagerne <- function(graph) {
   }
   graph
 }
-prune_ill_structured_tree <- function(graph, long) {
+find_wellbalanced_tree <- function(graph, long) {
   message("REMOVING EDGES TO OPTIMIZE TREE STRUCTURE...")
   root <- get_graph_root(graph)$name
   sizes <- get_sizes_lookup(long)
@@ -159,8 +159,17 @@ remove_and_reconnect_edge <- function(graph, edge, root) {
 }
 
 get_best_gini_threshold <- function(edges, ginis) {
-  best_gini_idx <- which.min(ginis$gini)
-  edges$weight[best_gini_idx]
+  local_minima <- which(diff(sign(diff(ginis$gini))) == 2) + 1
+  if (length(local_minima) == 0) {
+    warning("No local minima found in Gini trajectory. Using global minimum.")
+    return(min(ginis$gini))
+  }
+  best_local_minimum <- min(local_minima)
+  message(
+    "Optimal number of edges to remove based on Gini trajectory: ",
+    ginis$n_removed_edges[best_local_minimum]
+  )
+  edges$weight[best_local_minimum]
 }
 
 remove_edges_below_threshold <- function(graph, threshold) {

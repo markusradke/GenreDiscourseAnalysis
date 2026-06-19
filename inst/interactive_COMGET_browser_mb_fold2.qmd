@@ -21,9 +21,9 @@ devtools::load_all()
 
 **Controls:** "Center Root" - return to root | "Expand All" - show all genres | "Fold All" - collapse tree
 ```{r musicbrainz-interactive-tree, echo=FALSE}
-mb <- read_feather_with_lists("../data/filtered_mb_long.feather")
+mb <- readr::read_csv("../data/filtered_mb_long.csv") 
 plot_interactive_tree_graph(
-  readRDS("../models/trees/MusicBrainz_graph.rds"),
+  readRDS("../models/trees/mb_fold_2_graph.rds"),
   get_sizes_lookup(mb),
   get_fills_lookup(mb), 
   height = 1000
