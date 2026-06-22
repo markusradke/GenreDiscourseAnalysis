@@ -4,6 +4,7 @@ library(dplyr)
 library(data.table)
 library(ggplot2)
 library(igraph)
+library(Matrix)
 devtools::load_all()
 
 RANDOM_STATE <- 42
@@ -61,6 +62,7 @@ get_tag_dag_from_normalized_votes <- function(P) {
 
 
 get_genre_categories_from_graph <- function(g, P) {
+  P <- as(P, "sparseMatrix")
   weights <- t(igraph::as_adjacency_matrix(g, attr = "weight", sparse = FALSE))
   weights <- weights[order(colnames(weights)), order(colnames(weights))]
 
@@ -88,22 +90,14 @@ get_genre_categories_from_graph <- function(g, P) {
   weights <- weights_norm
   rownames(weights) <- colnames(weights)
 
-  winners <- apply(P, 1, which.max)
-  winners_names <- colnames(P)[winners]
-  sizes <- table(winners_names)
-  missing <- setdiff(colnames(P), names(sizes))
-  missing <- setNames(rep(0, length(missing)), missing)
-  sizes <- c(sizes, missing)
-
-  # process in order of initial sizes
-  order <- names(sizes |> sort(decreasing = FALSE))
-  order <- setNames(seq(ncol(P)), colnames(P))[order]
-  # TODO should be updated after each repetition
+  sizes <- calculate_sizes_from_track_mapping(P)
 
   mapping <- diag(nrow(weights)) # initialize mapping weights as identity
   colnames(mapping) <- colnames(weights)
   mapping
 
+  G <- ncol(P)
+  processed_genres <- c()
   ginis <- c()
   mappings_states <- list()
   weights_states <- list()
@@ -112,6 +106,7 @@ get_genre_categories_from_graph <- function(g, P) {
   current_gini <- DescTools::Gini(sizes[sizes > 0])
   current_weights <- weights
   current_mapping <- mapping
+  current_track_mapping <- P
   current_sizes <- sizes
 
   mappings_states[[1]] <- current_mapping
@@ -119,41 +114,63 @@ get_genre_categories_from_graph <- function(g, P) {
   sizes_states[[1]] <- current_sizes
   ginis[1] <- current_gini
 
+  # process in order of initial sizes
+  next_genre <- which.min(sizes)
   i <- 1
-  for (genre in order) {
+  while (length(processed_genres) < G) {
     message(sprintf(
       "Processing genre %d of %d: %s",
       i,
-      length(order),
-      colnames(weights)[genre]
+      G,
+      colnames(weights)[next_genre]
     ))
-    weight_column <- current_weights[, genre]
-    add_mapping <- weight_column %*% t(current_mapping[genre, ])
-    current_mapping[genre, ] <- 0
+    weight_column <- current_weights[, next_genre]
+    add_mapping <- weight_column %*% t(current_mapping[next_genre, ])
+    current_mapping[next_genre, ] <- 0
     current_mapping <- current_mapping + add_mapping
 
-    add_weights <- weight_column %*% t(current_weights[genre, ])
-    current_weights[genre, ] <- 0
+    add_weights <- weight_column %*% t(current_weights[next_genre, ])
+    current_weights[next_genre, ] <- 0
     current_weights <- current_weights + add_weights
 
-    current_sizes <- sizes %*% t(current_mapping) |> as.vector()
-    names(current_sizes) <- colnames(current_mapping)
-    current_gini <- DescTools::Gini(current_sizes[current_sizes > 0])
+    current_track_mapping <- P %*% t(current_mapping)
+    colnames(current_track_mapping) <- colnames(P)
+    current_sizes <- calculate_sizes_from_track_mapping(current_track_mapping)
+
     mappings_states[[i + 1]] <- current_mapping
     weights_states[[i + 1]] <- current_weights
-    ginis[i + 1] <- current_gini
     sizes_states[[i + 1]] <- current_sizes
+    processed_genres <- c(processed_genres, next_genre)
+    current_gini <- DescTools::Gini(current_sizes[-processed_genres])
+    ginis[i + 1] <- current_gini
+    next_genre_name <- which.min(current_sizes[-processed_genres]) |> names()
+    next_genre <- which(colnames(P) == next_genre_name)
     i <- i + 1
   }
   return(list(
     mappings = mappings_states,
     weights = weights_states,
     sizes = sizes_states,
-    ginis = ginis
+    ginis = ginis,
+    processing_order = colnames(P)[processed_genres]
   ))
 }
 
-plot_gini_genre_categories <- function(ginis) {
+calculate_sizes_from_track_mapping <- function(track_mapping) {
+  message("Calculating track mapping...")
+  winners <- apply(track_mapping, 1, which.max)
+  winners_names <- colnames(track_mapping)[winners]
+  sizes <- table(winners_names)
+  missing <- setdiff(colnames(track_mapping), names(sizes))
+  missing <- setNames(rep(0, length(missing)), missing)
+  sizes <- c(sizes, missing)
+  sizes <- sizes[colnames(track_mapping)]
+  message("Done.")
+  sizes
+}
+
+plot_gini_genre_categories <- function(ginis, xlim_max) {
+  xlim_max <- min(length(ginis), xlim_max)
   no_genres <- length(ginis):1
   ggplot(
     data.frame(no_genres, gini = ginis),
@@ -167,7 +184,7 @@ plot_gini_genre_categories <- function(ginis) {
       x = "Step",
       y = "Gini Coefficient"
     ) +
-    xlim(0, 50)
+    xlim(0, xlim_max)
 }
 
 inspect_k_categories_solution <- function(
@@ -204,10 +221,11 @@ inspect_k_categories_solution <- function(
   igraph::plot.igraph(cat_graph)
 }
 
-get_track_category_probabilities_and_ranks <- function(P, res_list, chosen_k) {
+get_track_category_probabilities <- function(P, res_list, chosen_k) {
   message(
     "Calculating track category probabilities and ranks; this might take up to one minute..."
   )
+  P <- as(P, "sparseMatrix")
   G <- nrow(res_list$mappings[[1]])
   final_mapping <- res_list$mappings[[G - chosen_k + 1]]
   final_sizes <- res_list$sizes[[G - chosen_k + 1]]
@@ -215,50 +233,14 @@ get_track_category_probabilities_and_ranks <- function(P, res_list, chosen_k) {
   prob_track_map <- P %*% t(final_mapping)
   colnames(prob_track_map) <- colnames(final_mapping)
   prob_track_map <- prob_track_map[, final_genres]
-  probs <- as.data.frame(prob_track_map)
-  rankings <- probs |>
-    as.matrix() |>
-    apply(1, rank) |>
-    t()
-  colnames(rankings) <- paste0("rank_", colnames(rankings))
-  rankings <- as.data.frame(chosen_k - rankings + 1)
-  res <- cbind(probs, rankings)
-  message("Done.")
-  res
+
+  cat <- colnames(prob_track_map)[apply(prob_track_map, 1, which.max)]
+  cat_prob <- apply(prob_track_map, 1, max)
+  prob_track_map <- as.data.frame(as.matrix(prob_track_map))
+  prob_track_map$cat <- cat
+  prob_track_map$cat_prob <- cat_prob
+  prob_track_map
 }
-
-# get_single_genres <- function(track_map, top_cat = 2) {
-#   sizes <- track_map |> select(-contains("rank")) |> summarize_all(sum)
-#   sizes <- t(sizes)[, 1]
-#   probs <- track_map |>
-#     select(-contains("rank")) |>
-#     mutate(id = seq(nrow(track_map))) |>
-#     select(id, everything())
-#   probs_long <- tidyr::pivot_longer(
-#     probs,
-#     2:ncol(probs),
-#     names_to = "cat",
-#     values_to = "prob"
-#   )
-#   ranks <- track_map |>
-#     select(contains("rank")) |>
-#     rename_all(~ stringr::str_sub(., start = 6)) |>
-#     mutate(id = seq(nrow(track_map))) |>
-#     select(id, everything())
-#   ranks_long <- tidyr::pivot_longer(
-#     ranks,
-#     2:ncol(ranks),
-#     names_to = "cat",
-#     values_to = "rank"
-#   )
-#   ranks_probs_long <- inner_join(probs_long, ranks_long, by = c("id", "cat"))
-
-#   ranks_probs_long |>
-#     filter(rank <= top_cat) |>
-#     mutate(size = sizes[cat]) |>
-#     group_by(id) |>
-#     slice_min(size, n = 1)
-# }
 
 inspect_posterior_track_cat_mapping <- function(track_map) {
   probs <- select(track_map, -cat, -cat_prob, -contains("rank"))
@@ -408,14 +390,16 @@ cat_states <- get_genre_categories_from_graph(dag$graph, P)
 
 # erste 9 der generalisierenden sind gleich
 
-plot_gini_genre_categories(cat_states$ginis)
-chosen_k <- 10
-inspect_k_categories_solution(cat_states, chosen_k, edgevis_thresh = 0.15)
+plot_gini_genre_categories(cat_states$ginis, xlim_max = 100)
+chosen_k <- 16
+inspect_k_categories_solution(cat_states, chosen_k, edgevis_thresh = 0.25)
 
-track_map <- get_track_category_probabilities_and_ranks(P, cat_states, chosen_k)
+saveRDS(cat_states, "tuning.rds")
+cat_states <- readRDS("tuning.rds") # TODO inspect examples
+track_map <- get_track_category_probabilities(P, cat_states, chosen_k)
 # inspect track mapping
 # track_map <- get_single_genres(track_map, top_cat = 2)
 # inspect_posterior_track_cat_mapping(track_map)
 
 mb_cat <- add_single_genre_categories_to_tracks(long, track_map)
-get_example_tracks_for_categories(mb_cat, nosinglecats = TRUE, n = 5) |> View()
+get_example_tracks_for_categories(mb_cat, nosinglecats = FALSE, n = 5) |> View()
