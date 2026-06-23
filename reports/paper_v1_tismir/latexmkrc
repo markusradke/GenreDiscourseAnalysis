@@ -1,1 +1,0 @@
-END { system('cp', 'output.bbl', 'PowerToThePeople_v1.bbl'); }

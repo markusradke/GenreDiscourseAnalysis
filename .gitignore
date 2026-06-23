@@ -13,3 +13,4 @@ models
 scripts/sync_overleaf_from_desktop.sh
 reports/paper_v1/first_submission
 tuning.rds
+_old
