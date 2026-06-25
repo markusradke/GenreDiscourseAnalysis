@@ -10,6 +10,7 @@ select_relevant_columns <- function(input) {
       track.s.popularity,
       track.s.previewurl,
       track.ab.genrerosamerica,
+      dplyr::contains("ab.p.rosa."),
       track.dz.album.firstgenre.name,
       artist.s.id,
       artist.s.name,
@@ -71,7 +72,24 @@ select_relevant_columns <- function(input) {
         } else {
           NA
         }
-      })
+      }),
+      # correct parsing error in spotilink
+      album.dz.genres_str = ifelse(
+        !is.na(.data$track.dz.album.firstgenre.name) &
+          !is.na(.data$album.dz.genres_str),
+        paste(
+          .data$track.dz.album.firstgenre.name,
+          .data$album.dz.genres_str,
+          sep = "; "
+        ),
+        .data$album.dz.genres_str
+      ),
+      album.dz.genres_str = ifelse(
+        !is.na(.data$track.dz.album.firstgenre.name) &
+          is.na(.data$album.dz.genres_str),
+        .data$track.dz.album.firstgenre.name,
+        .data$album.dz.genres_str
+      )
     ) |>
     dplyr::select(
       -dplyr::all_of(c(

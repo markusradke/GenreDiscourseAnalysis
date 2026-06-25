@@ -9,8 +9,6 @@ devtools::load_all()
 message("Importing POPTRAG dataset and selecting variables ...")
 poptrag <- readRDS("data-raw/poptrag.rds")
 poptrag_selected <- select_relevant_columns(poptrag)
-saveRDS(poptrag_selected, "data/poptrag_selected.rds")
-poptrag_selected <- readRDS("data/poptrag_selected.rds")
 
 # filter specific problematic entries and drop obviously wrong Deezer album for one entry
 poptrag_selected <- poptrag_selected |>
@@ -23,6 +21,8 @@ poptrag_selected <- poptrag_selected |>
     )
   )
 
+saveRDS(poptrag_selected, "data/poptrag_selected.rds")
+poptrag_selected <- readRDS("data/poptrag_selected.rds")
 
 # Prepare Musicbrainz ----
 mb_non_music_tags <- c(
@@ -54,6 +54,52 @@ mb_final <- mb_long_denoise |>
   select(-dplyr::matches("genres$"))
 
 write_csv(mb_final, "data/filtered_mb_long.csv")
+
+# Prepare Discogs ----
+dc <- poptrag_selected |>
+  filter(!is.na(album.dc.genres_str))
+dc_long <- dc |>
+  tidyr::separate_rows(album.dc.genres_str, sep = "; ") |>
+  rename(tag_name = album.dc.genres_str) |>
+  select(id = track.s.id, track.s.firstartist.id, tag_name) |>
+  mutate(tag_count = 1L) |>
+  filter(!tag_name %in% c("Non-Music", "Children's", ""))
+count(dc_long, tag_name, sort = TRUE)
+readr::write_csv(dc_long, "data/filtered_dc_long.csv")
+
+# Prepare Deezer ----
+dz <- poptrag_selected |>
+  filter(!is.na(album.dz.genres_str))
+dz_long <- dz |>
+  tidyr::separate_rows(album.dz.genres_str, sep = "; ") |>
+  rename(tag_name = album.dz.genres_str) |>
+  select(id = track.s.id, track.s.firstartist.id, tag_name) |>
+  mutate(tag_count = 1L) |>
+  filter(
+    !tag_name %in%
+      c("Comedy", "Hörbücher", "Kids", "Hörbücher auf Deutsch", "Schlaflieder")
+  )
+count(dz_long, tag_name, sort = TRUE) |> print(n = 100)
+readr::write_csv(dz_long, "data/filtered_dz_long.csv")
+
+# Prepare Rosamerika ----
+ab_long <- poptrag_selected |>
+  filter(
+    !is.na(track.ab.genrerosamerica) & track.ab.genrerosamerica != "speech" # discard speech tracks
+  ) |>
+  tidyr::pivot_longer(
+    cols = dplyr::contains("ab.p.rosa."),
+    names_to = "tag_name",
+    values_to = "tag_count"
+  ) |>
+  select(id = track.s.id, track.s.firstartist.id, tag_name, tag_count) |>
+  mutate(tag_name = stringr::str_remove(tag_name, "track.ab.p.rosa.")) |>
+  filter(tag_name != "speech") # discard probability for speech
+ab_long |>
+  group_by(tag_name) |>
+  summarise(n = sum(tag_count)) |>
+  arrange(desc(n))
+readr::write_csv(ab_long, "data/filtered_ab_long.csv")
 
 # Prepare Spotify ----
 # TODO: FINISH

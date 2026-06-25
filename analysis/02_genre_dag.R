@@ -76,6 +76,8 @@ validation <- mb |>
     track.s.firstartist.id %in% validation_artists$track.s.firstartist.id
   ) |>
   mutate(fold = 3)
+saveRDS(fold_1, "data/fold1.rds")
+saveRDS(fold_2, "data/fold2.rds")
 
 
 fold1_artist_thresh <- fold_1 |>
@@ -88,6 +90,7 @@ common_tags <- intersect(
   unique(fold2_artist_thresh$tag_name)
 )
 
+
 fold_1_filtered <- fold_1 |>
   filter(tag_name %in% common_tags)
 fold_2_filtered <- fold_2 |>
@@ -95,109 +98,44 @@ fold_2_filtered <- fold_2 |>
 validation_filtered <- validation |>
   filter(tag_name %in% common_tags)
 full_filtered <- mb |> filter(tag_name %in% common_tags)
+saveRDS(full_filtered, "data/mb_long_artist_treshholded.rds")
 
 
 # Build mapping ----
 P1 <- get_normalized_wide_vote_matrix(fold_1_filtered)
 P2 <- get_normalized_wide_vote_matrix(fold_2_filtered)
 Pval <- get_normalized_wide_vote_matrix(validation_filtered)
+readr::write_csv(as.data.frame(Pval), "data/Pval.csv")
 Pfull <- get_normalized_wide_vote_matrix(full_filtered)
+readr::write_csv(as.data.frame(Pfull), "data/Pfull.csv")
 
 dag1 <- get_tag_dag_from_normalized_votes(P1)
 dag2 <- get_tag_dag_from_normalized_votes(P2)
 dag_full <- get_tag_dag_from_normalized_votes(Pfull)
 
 
+# get models for robustness check ----
 # cat_states_1_order1 <- get_genre_categories_from_graph(dag1$graph, P1)
 # saveRDS(cat_states_1_order1, "models/dag/cat_states_1_order1.rds")
-cat_states_1_order1 <- readRDS("models/dag/cat_states_1_order1.rds")
 # cat_states_2_order1 <- get_genre_categories_from_graph(
 #   dag2$graph,
 #   P2,
 #   processing_order = cat_states_1_order1$processing_order
 # )
 # saveRDS(cat_states_2_order1, "models/dag/cat_states_2_order1.rds")
-cat_states_2_order1 <- readRDS("models/dag/cat_states_2_order1.rds")
+# cat_states_2_order2 <- get_genre_categories_from_graph(dag2$graph, P2)
+# saveRDS(cat_states_2_order2, "models/dag/cat_states_2_order2.rds")
+# cat_states_1_order2 <- get_genre_categories_from_graph(
+#   dag1$graph,
+#   P1,
+#   processing_order = cat_states_2_order2$processing_order
+# )
+# saveRDS(cat_states_1_order2, "models/dag/cat_states_1_order2.rds")
 
-k <- 25
-final_genres <- tail(cat_states_1_order1$processing_order, k)
-mapping11 <- cat_states_1_order1$mapping[[275 - k + 1]]
-mapping21 <- cat_states_2_order1$mapping[[275 - k + 1]]
-rownames(mapping11) <- colnames(mapping11)
-mapping11 <- mapping11[final_genres, ]
-rownames(mapping21) <- colnames(mapping21)
-mapping21 <- mapping21[final_genres, ]
-flat_differences <- c(mapping11 - mapping21)
-t.test(flat_differences) # im Mittel unterscheiden sich die Gewichte zu den Kategorien nicht
-row_jsds <- row_jsd(mapping11, mapping21)
-names(row_jsds) <- rownames(mapping11)
-row_jsds |> sort(decreasing = TRUE)
-mean(row_jsds)
-
-track_map_1_order1 <- get_track_category_probabilities(
-  Pval,
-  cat_states_1_order1,
-  k
-)
-track_map_2_order1 <- get_track_category_probabilities(
-  Pval,
-  cat_states_2_order1,
-  k
-)
-fac1 <- factor(track_map_1_order1$cat)
-fac2 <- factor(track_map_2_order1$cat, levels = levels(fac1))
-yardstick::f_meas_vec(fac1, fac2, estimator = "macro")
-
-
-cat_states_2_order2 <- get_genre_categories_from_graph(dag2$graph, P2)
-saveRDS(cat_states_2_order2, "models/dag/cat_states_2_order2.rds")
-cat_states_1_order2 <- get_genre_categories_from_graph(
-  dag1$graph,
-  P1,
-  processing_order = cat_states_2_order2$processing_order
-)
-saveRDS(cat_states_1_order2, "models/dag/cat_states_1_order2.rds")
-
-track_map_1_order2 <- get_track_category_probabilities(
-  Pval,
-  cat_states_1_order2,
-  75
-)
-track_map_2_order2 <- get_track_category_probabilities(
-  Pval,
-  cat_states_2_order2,
-  75
-)
-# count and pad
-fac1 <- factor(track_map_1_order2$cat)
-fac2 <- factor(track_map_2_order2$cat, levels = levels(fac1))
-yardstick::f_meas_vec(fac1, fac2, estimator = "macro")
-
-
+# get full model ----
 cat_states_full <- get_genre_categories_from_graph(dag_full$graph, Pfull)
 cat_states_full_wout_weights <- get_genre_categories_from_graph(
   dag_full$graph,
   Pfull
 )
 saveRDS(cat_states_full, "models/dag/cat_states_full.rds")
-
-
-# Inspection ----
-
-# content full data set
-plot_gini_genre_categories(cat_states_full_wout_weights$ginis, xlim_max = 30)
-chosen_k <- 16
-inspect_k_categories_solution(cat_states_full, chosen_k, edgevis_thresh = 0.25)
-inspect_k_categories_solution(
-  cat_states_full_wout_weights,
-  chosen_k,
-  edgevis_thresh = 0.25
-)
-
-track_map <- get_track_category_probabilities(Pfull, cat_states_full, chosen_k)
-# inspect track mapping
-# track_map <- get_single_genres(track_map, top_cat = 2)
-# inspect_posterior_track_cat_mapping(track_map)
-
-mb_cat <- add_single_genre_categories_to_tracks(long, track_map)
-get_example_tracks_for_categories(mb_cat, nosinglecats = FALSE, n = 5) |> View()
