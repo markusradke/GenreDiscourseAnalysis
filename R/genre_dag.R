@@ -83,11 +83,11 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
   weights_states <- list()
   sizes_states <- list()
 
-  current_gini <- DescTools::Gini(sizes[sizes > 0])
   current_weights <- weights
   current_mapping <- mapping
   current_track_mapping <- P
   current_sizes <- sizes
+  current_gini <- DescTools::Gini(sizes)
 
   mappings_states[[1]] <- current_mapping
   weights_states[[1]] <- weights
