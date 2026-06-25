@@ -5,7 +5,7 @@ get_normalized_wide_vote_matrix <- function(long_df) {
   #' @return A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track. Rows sum to 1, representing the distribution of votes across tags for each track.
   wide <- dcast(
     long_df,
-    id ~ tag_name,
+    track.s.id ~ tag_name,
     value.var = "tag_count",
     fill = 0
   )
@@ -204,10 +204,10 @@ add_track_map_to_long <- function(long_df, track_map) {
   #' @return A long data frame containing the original track-tag pairs along with the mapped genre assignment probabilities for each track. The resulting data frame will have columns: id, tag_name, tag_count, cat, cat_prob, and one column for each genre category representing the probability of that category for the given track. It will also contain all original columns from the long_df.
   wide <- dcast(
     long_df,
-    id ~ tag_name,
+    track.s.id ~ tag_name,
     value.var = "tag_count",
     fill = 0
   )
-  mapping <- cbind(id = wide$id, track_map)
-  left_join(long_df, mapping, by = "id")
+  mapping <- cbind(track.s.id = wide$track.s.id, track_map)
+  left_join(long_df, mapping, by = "track.s.id")
 }

@@ -1,5 +1,5 @@
-get_robustness_check <- function(states_1, states_2, Pval, k) {
-  G <- ncol(Pval)
+get_robustness_check <- function(states_1, states_2, P_holdout, k) {
+  G <- ncol(P_holdout)
   final_genres <- tail(states_1$processing_order, k)
   mapping1 <- states_1$mapping[[G - k + 1]]
   mapping2 <- states_2$mapping[[G - k + 1]]
@@ -31,12 +31,12 @@ get_robustness_check <- function(states_1, states_2, Pval, k) {
 
   # dominant genre F1
   trackmap_1 <- get_track_category_probabilities(
-    Pval,
+    P_holdout,
     states_1,
     k
   )
   trackmap_2 <- get_track_category_probabilities(
-    Pval,
+    P_holdout,
     states_2,
     k
   )

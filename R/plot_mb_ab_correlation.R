@@ -1,7 +1,7 @@
 plot_mb_ab_correlation <- function(mb, ab, P_mb, cat_states_mb) {
   chosen_k <- nrow(dplyr::distinct(dplyr::select(ab, tag_name)))
-  mb_wide <- prepare_mb_categories(mb, P_mb, cat_states_mb, chosen_k)
-  ab_wide <- prepare_ab_categories(ab)
+  mb_wide <- prepare_mb(mb, P_mb, cat_states_mb, chosen_k)
+  ab_wide <- prepare_ab(ab)
   x <- merge_mb_ab_data(ab_wide, mb_wide)
 
   gini_prevs_mb <- compute_gini_and_prevs_from_wide(mb_wide, x)
@@ -23,49 +23,49 @@ plot_mb_ab_correlation <- function(mb, ab, P_mb, cat_states_mb) {
   make_plot(plot_df, gini_label, mat_ord)
 }
 
-prepare_mb_categories <- function(mb, P_mb, cat_states_mb, chosen_k) {
+prepare_mb <- function(mb, P_mb, cat_states_mb, chosen_k) {
   mb_track_map <- get_track_category_probabilities(
     P_mb,
     cat_states_mb,
     chosen_k
   )
   add_track_map_to_long(mb, mb_track_map) |>
-    dplyr::select(colnames(mb_track_map), id) |>
-    dplyr::distinct(id, .keep_all = TRUE) |>
+    dplyr::select(colnames(mb_track_map), track.s.id) |>
+    dplyr::distinct(track.s.id, .keep_all = TRUE) |>
     dplyr::select(-cat, -cat_prob) |>
-    dplyr::rename_with(~ paste0("mb.", .), -id) |>
+    dplyr::rename_with(~ paste0("mb.", .), -track.s.id) |>
     as.data.frame()
 }
 
-prepare_ab_categories <- function(ab) {
+prepare_ab <- function(ab) {
   data.table::dcast(
     ab,
-    id ~ tag_name,
+    track.s.id ~ tag_name,
     value.var = "tag_count",
     fill = 0
   ) |>
-    dplyr::rename_with(~ paste0("ab.", .), -id) |>
+    dplyr::rename_with(~ paste0("ab.", .), -track.s.id) |>
     as.data.frame()
 }
 
 merge_mb_ab_data <- function(ab_wide, mb_wide) {
-  dplyr::inner_join(ab_wide, mb_wide, by = "id")
+  dplyr::inner_join(ab_wide, mb_wide, by = "track.s.id")
 }
 
 compute_gini_and_prevs_from_wide <- function(wide_df, x) {
   wide_df_filtered <- dplyr::inner_join(
     wide_df,
-    dplyr::select(x, id),
-    by = "id"
+    dplyr::select(x, track.s.id),
+    by = "track.s.id"
   ) |>
-    dplyr::select(-id)
+    dplyr::select(-track.s.id)
   cat <- colnames(wide_df_filtered)[apply(
     wide_df_filtered,
     1,
     which.max
   )]
   # pad with zeros if categories not present in the data
-  all_cats <- colnames(wide_df)[colnames(wide_df) != "id"]
+  all_cats <- colnames(wide_df)[colnames(wide_df) != "track.s.id"]
   prevs <- table(cat) |> prop.table()
   zero_prev_cats <- setdiff(all_cats, names(prevs))
   if (length(zero_prev_cats) > 0) {
@@ -85,8 +85,8 @@ format_gini_label <- function(n, gini_mb, gini_ab) {
 }
 
 compute_spearman_matrix <- function(x, ab_wide, mb_wide) {
-  c1 <- setdiff(names(ab_wide), "id")
-  c2 <- setdiff(names(mb_wide), "id")
+  c1 <- setdiff(names(ab_wide), "track.s.id")
+  c2 <- setdiff(names(mb_wide), "track.s.id")
   cor(
     x[c1],
     x[c2],

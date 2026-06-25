@@ -449,22 +449,6 @@ filter_min_votes <- function(
   return(mb_long_denoise_tracks)
 }
 
-filter_tags_by_artist_occurrences <- function(long, n_min_artists) {
-  tag_artist_counts <- long |>
-    dplyr::group_by(.data$tag_name) |>
-    dplyr::summarize(
-      n_artists = dplyr::n_distinct(.data$track.s.firstartist.id),
-      .groups = "drop"
-    ) |>
-    dplyr::filter(.data$n_artists >= n_min_artists)
-
-  dplyr::inner_join(
-    long,
-    tag_artist_counts,
-    by = "tag_name"
-  )
-}
-
 filter_tracks_by_min_votes <- function(mb_long, min_votes = 2) {
   mb_total_votes <- mb_long |>
     dplyr::group_by(.data$track.s.id) |>

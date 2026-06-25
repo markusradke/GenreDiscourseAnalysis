@@ -7,7 +7,7 @@ plot_mean_prob_mb_for_cat <- function(
   right_margin_pt = 0
 ) {
   chosen_k <- nrow(dplyr::distinct(dplyr::select(filtered_cat, tag_name)))
-  mb_wide <- prepare_mb_categories(mb, P_mb, cat_states_mb, chosen_k)
+  mb_wide <- prepare_mb_data(mb, P_mb, cat_states_mb, chosen_k)
   cat_wide <- prepare_single_category_data(filtered_cat, taxonomy_label)
   mean_probabilities <- compute_mean_probabilities(
     cat_wide,
@@ -30,21 +30,21 @@ plot_mean_prob_mb_for_cat <- function(
   )
 }
 
-prepare_mb_categories <- function(mb, P_mb, cat_states_mb, chosen_k) {
+prepare_mb_data <- function(mb, P_mb, cat_states_mb, chosen_k) {
   mb_track_map <- get_track_category_probabilities(
     P_mb,
     cat_states_mb,
     chosen_k
   )
   mb_cat <- add_track_map_to_long(mb, mb_track_map) |>
-    dplyr::select(dplyr::all_of(c(colnames(mb_track_map), "id"))) |>
+    dplyr::select(dplyr::all_of(c(colnames(mb_track_map), "track.s.id"))) |>
     as.data.frame()
 
-  mb_cat <- mb_cat[!duplicated(mb_cat$id), ]
+  mb_cat <- mb_cat[!duplicated(mb_cat$track.s.id), ]
   mb_cat$cat <- NULL
   mb_cat$cat_prob <- NULL
   names(mb_cat) <- sub("^", "mb.", names(mb_cat))
-  names(mb_cat)[names(mb_cat) == "mb.id"] <- "id"
+  names(mb_cat)[names(mb_cat) == "mb.track.s.id"] <- "track.s.id"
   mb_cat
 }
 
@@ -61,19 +61,19 @@ prepare_single_category_data <- function(filtered_cat, taxonomy_label) {
     order,
     by = "tag_name"
   ) |>
-    dplyr::group_by(id) |>
+    dplyr::group_by(track.s.id) |>
     dplyr::slice_min(rank, n = 1, with_ties = FALSE) |>
     dplyr::ungroup() |>
-    dplyr::select(id, tag_name) |>
+    dplyr::select(track.s.id, tag_name) |>
     dplyr::rename(!!cat_name := tag_name)
   cat_wide
 }
 
 compute_mean_probabilities <- function(cat_wide, mb_wide, taxonomy_label) {
   cat_name <- paste0(tolower(taxonomy_label), "_cat")
-  mb_genres <- setdiff(colnames(mb_wide), "id")
+  mb_genres <- setdiff(colnames(mb_wide), "track.s.id")
 
-  dplyr::inner_join(cat_wide, mb_wide, by = "id") |>
+  dplyr::inner_join(cat_wide, mb_wide, by = "track.s.id") |>
     dplyr::group_by(.data[[cat_name]]) |>
     dplyr::summarise(
       dplyr::across(
@@ -96,7 +96,7 @@ get_gini_and_prevalences_cat <- function(
   taxonomy_label,
   chosen_k
 ) {
-  merged <- dplyr::inner_join(cat_wide, mb_wide, by = "id")
+  merged <- dplyr::inner_join(cat_wide, mb_wide, by = "track.s.id")
   gini_prevs_mb <- compute_gini_and_prevs_from_wide(mb_wide, merged)
   prevs_mb <- gini_prevs_mb$prevs
   names(prevs_mb) <- stringr::str_remove(names(prevs_mb), "mb\\.")

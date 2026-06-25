@@ -8,21 +8,21 @@ cat_states_1_order1 <- readRDS("models/dag/cat_states_1_order1.rds")
 cat_states_2_order1 <- readRDS("models/dag/cat_states_2_order1.rds")
 cat_states_1_order2 <- readRDS("models/dag/cat_states_1_order2.rds")
 cat_states_2_order2 <- readRDS("models/dag/cat_states_2_order2.rds")
-Pval <- readr::read_csv("data/Pval.csv") |> as.matrix()
+P_holdout <- readr::read_csv("data/P_holdout.csv") |> as.matrix()
 
 # conduct checks ----
-k <- 8
+k <- 7
 check_order1 <- get_robustness_check(
   cat_states_1_order1,
   cat_states_2_order1,
-  Pval,
+  P_holdout,
   k
 )
 
 check_order2 <- get_robustness_check(
   cat_states_1_order2,
   cat_states_2_order2,
-  Pval,
+  P_holdout,
   k
 )
 
