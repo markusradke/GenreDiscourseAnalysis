@@ -115,22 +115,22 @@ dag_full <- get_tag_dag_from_normalized_votes(Pfull)
 
 
 # get models for robustness check ----
-# cat_states_1_order1 <- get_genre_categories_from_graph(dag1$graph, P1)
-# saveRDS(cat_states_1_order1, "models/dag/cat_states_1_order1.rds")
-# cat_states_2_order1 <- get_genre_categories_from_graph(
-#   dag2$graph,
-#   P2,
-#   processing_order = cat_states_1_order1$processing_order
-# )
-# saveRDS(cat_states_2_order1, "models/dag/cat_states_2_order1.rds")
-# cat_states_2_order2 <- get_genre_categories_from_graph(dag2$graph, P2)
-# saveRDS(cat_states_2_order2, "models/dag/cat_states_2_order2.rds")
-# cat_states_1_order2 <- get_genre_categories_from_graph(
-#   dag1$graph,
-#   P1,
-#   processing_order = cat_states_2_order2$processing_order
-# )
-# saveRDS(cat_states_1_order2, "models/dag/cat_states_1_order2.rds")
+cat_states_1_order1 <- get_genre_categories_from_graph(dag1$graph, P1)
+saveRDS(cat_states_1_order1, "models/dag/cat_states_1_order1.rds")
+cat_states_2_order1 <- get_genre_categories_from_graph(
+  dag2$graph,
+  P2,
+  processing_order = cat_states_1_order1$processing_order
+)
+saveRDS(cat_states_2_order1, "models/dag/cat_states_2_order1.rds")
+cat_states_2_order2 <- get_genre_categories_from_graph(dag2$graph, P2)
+saveRDS(cat_states_2_order2, "models/dag/cat_states_2_order2.rds")
+cat_states_1_order2 <- get_genre_categories_from_graph(
+  dag1$graph,
+  P1,
+  processing_order = cat_states_2_order2$processing_order
+)
+saveRDS(cat_states_1_order2, "models/dag/cat_states_1_order2.rds")
 
 # get full model ----
 cat_states_full <- get_genre_categories_from_graph(dag_full$graph, Pfull)
