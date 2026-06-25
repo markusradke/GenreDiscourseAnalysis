@@ -29,7 +29,7 @@ prepare_mb_categories <- function(mb, P_mb, cat_states_mb, chosen_k) {
     cat_states_mb,
     chosen_k
   )
-  add_single_genre_categories_to_tracks(mb, mb_track_map) |>
+  add_track_map_to_long(mb, mb_track_map) |>
     dplyr::select(colnames(mb_track_map), id) |>
     dplyr::distinct(id, .keep_all = TRUE) |>
     dplyr::select(-cat, -cat_prob) |>

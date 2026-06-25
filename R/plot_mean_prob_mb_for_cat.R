@@ -36,7 +36,7 @@ prepare_mb_categories <- function(mb, P_mb, cat_states_mb, chosen_k) {
     cat_states_mb,
     chosen_k
   )
-  mb_cat <- add_single_genre_categories_to_tracks(mb, mb_track_map) |>
+  mb_cat <- add_track_map_to_long(mb, mb_track_map) |>
     dplyr::select(dplyr::all_of(c(colnames(mb_track_map), "id"))) |>
     as.data.frame()
 

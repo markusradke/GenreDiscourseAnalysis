@@ -1,5 +1,8 @@
 get_normalized_wide_vote_matrix <- function(long_df) {
-  # TODO add doc
+  #' Get normalized wide vote matrix from long genre tag data frame
+  #'
+  #' @param long_df A long data frame containing columns: id, tag_name, tag_count
+  #' @return A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track. Rows sum to 1, representing the distribution of votes across tags for each track.
   wide <- dcast(
     long_df,
     id ~ tag_name,
@@ -14,8 +17,11 @@ get_normalized_wide_vote_matrix <- function(long_df) {
 
 
 get_tag_dag_from_normalized_votes <- function(P) {
-  # TODO add doc
-
+  #' Get directed acyclic graph (DAG) of genre tags based on normalized vote matrix representing a hierarchical mapping of genre tags based on their co-occurrence and generality.
+  #' @param P A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track.
+  #' @return A list containing:
+  #' - graph: An igraph object representing the directed acyclic graph of genre tags.
+  #' - generality: A named vector of generality scores for each genre tag, where higher values indicate more general tags. Generality is calculated based on the weighted number of indegrees in the DAG, reflecting how many other tags act as subgenres for a given tag.
   message("Calculating probabilities and building trees...")
   N <- nrow(P)
   G <- ncol(P)
@@ -43,14 +49,22 @@ get_tag_dag_from_normalized_votes <- function(P) {
     to = colnames(P)[edges[, 2]],
     weight = weights[edges]
   )
-  g <- graph_from_data_frame(E, directed = TRUE)
-  dangling <- V(g)[degree(g, mode = "out") == 0]$name
+  g <- igraph::graph_from_data_frame(E, directed = TRUE)
+  dangling <- igraph::V(g)[igraph::degree(g, mode = "out") == 0]$name
   message(sprintf("Nodes without any supergenres: \n%s", toString(dangling)))
   return(list(graph = g, generality = indegree_weights))
 }
 
 
 get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
+  #' Get genre categories from a directed acyclic graph (DAG) of genre tags based on normalized vote matrix representing a hierarchical mapping of genre tags based on their co-occurrence and generality.
+  #' @param g An igraph object representing the directed acyclic graph of genre tags.
+  #' @param P A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track.
+  #' @param processing_order An optional vector of genre tag names specifying the order in which to process the tags. If NULL, the function will determine the order based on the sizes of the genre categories. Size is calculated based on the number of tracks associated with each genre tag, where only the tags with highest probability for a track are counted counted as dominant genres.
+  #' @return A list containing:
+  #' - mappings: A list of mapping matrices representing the genre category mappings at each step of the folding process. Each mapping matrix has rows corresponding to genre tags and columns corresponding to genre categories, where each entry represents the weight of a genre tag in a given category.
+  #' - weights: A list of weight matrices representing the weights of the edges in the DAG at each step of the folding process. Each weight matrix has rows and columns corresponding to genre tags, where each entry represents the weight of the edge from one tag to another.
+  #' - sizes: A list of size vectors representing the sizes of the genre categories at each step of the folding process. Each size vector has entries corresponding to genre categories, where each entry represents the number of tracks associated with a given category.
   if (!is.null(processing_order)) {
     is_fixed_order <- TRUE
     processing_order <- match(processing_order, colnames(P))
@@ -157,59 +171,13 @@ calculate_sizes_from_track_mapping <- function(track_mapping) {
   sizes
 }
 
-plot_gini_genre_categories <- function(ginis, xlim_max) {
-  xlim_max <- min(length(ginis), xlim_max)
-  no_genres <- length(ginis):1
-  ggplot(
-    data.frame(no_genres, gini = ginis),
-    aes(x = no_genres, y = gini)
-  ) +
-    geom_line() +
-    geom_point() +
-    theme_minimal() +
-    labs(
-      title = "Gini Coefficient of Genre Size Distribution During Folding",
-      x = "Step",
-      y = "Gini Coefficient"
-    ) +
-    xlim(0, xlim_max)
-}
-
-inspect_k_categories_solution <- function(
-  res_list,
-  chosen_k,
-  edgevis_thresh = 0.3
-) {
-  G <- nrow(res_list$mappings[[1]])
-  message(sprintf(
-    "Gini Latent Genre Categories:\n%.3f",
-    res_list$ginis[[G - chosen_k]]
-  ))
-  final_mapping <- res_list$mappings[[G - chosen_k + 1]]
-  final_sizes <- res_list$sizes[[G - chosen_k + 1]]
-  final_sizes <- final_sizes[final_sizes > 0] |>
-    sort(decreasing = TRUE)
-  final_sizes_printout <- data.frame(
-    Size = final_sizes
-  )
-  message("Final Latent Genre Sizes:")
-  print(final_sizes_printout)
-
-  final_genres <- names(final_sizes)
-  final_weights <- res_list$weights[[G - chosen_k + 1]]
-  final_weights <- final_weights[final_genres, final_genres]
-  final_weights >= edgevis_thresh
-  pruned_final_weights <- final_weights
-  pruned_final_weights[is.na(pruned_final_weights)] <- 0
-  pruned_final_weights[pruned_final_weights < edgevis_thresh] <- 0
-  cat_graph <- igraph::graph_from_adjacency_matrix(
-    t(pruned_final_weights),
-    weighted = TRUE
-  )
-  igraph::plot.igraph(cat_graph)
-}
 
 get_track_category_probabilities <- function(P, res_list, chosen_k) {
+  #' Get the probabilities of each track belonging to each genre category based on the final mapping from the genre category extraction process.
+  #' @param P A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track. Rows sum to 1, representing the distribution of votes across tags for each track.
+  #' @param res_list A list containing the results of the genre category extraction process, including mappings, weights, sizes, and processing order.
+  #' @param chosen_k An integer specifying the number of genre categories to consider in the final mapping. The function will use the final mapping corresponding to the chosen_k value to calculate the probabilities of each track belonging to each genre category.
+  #' @return A data frame containing the probabilities of each track belonging to each genre category. The data frame also contains the most likely genre category for each track and the corresponding probability of that category.
   P <- as(P, "sparseMatrix")
   G <- nrow(res_list$mappings[[1]])
   final_mapping <- res_list$mappings[[G - chosen_k + 1]]
@@ -227,31 +195,13 @@ get_track_category_probabilities <- function(P, res_list, chosen_k) {
   prob_track_map
 }
 
-inspect_posterior_track_cat_mapping <- function(track_map) {
-  probs <- select(track_map, -cat, -cat_prob, -contains("rank"))
-  correlation <- cor(probs, method = "spearman")
-  hist(track_map$cat_prob * 100)
-  message(sprintf(
-    "Median max prob. per track:\n%.0f",
-    median(track_map$cat_prob) * 100
-  ))
-  message("Genre Category # of tracks:")
-  print(table(track_map$cat))
-  message(sprintf(
-    "Gini Single Categories:\n%.3f",
-    DescTools::Gini(table(track_map$cat))
-  ))
-  message("Plotting correlation of track category probabilities.")
-  corrplot::corrplot(
-    correlation,
-    method = "number",
-    diag = FALSE,
-    order = "AOE",
-    type = "lower"
-  )
-}
 
-add_single_genre_categories_to_tracks <- function(long_df, track_map) {
+add_track_map_to_long <- function(long_df, track_map) {
+  #' Add mapped genre assignment probabilities to long genre tag data frame based on the most likely genre category for each track.
+  #' @param long_df A long data frame containing columns: id, tag_name, tag
+  #' count. Each row represents a track-tag pair, where id is the track identifier, tag_name is the genre tag name, and tag_count is the count of votes for that tag for the given track.
+  #' @param track_map A data frame containing the probabilities of each track belonging to each genre category, as well as the most likely genre category and the corresponding probability for each track. The data frame should have columns: id, cat, cat_prob, and one column for each genre category representing the probability of that category for the given track.
+  #' @return A long data frame containing the original track-tag pairs along with the mapped genre assignment probabilities for each track. The resulting data frame will have columns: id, tag_name, tag_count, cat, cat_prob, and one column for each genre category representing the probability of that category for the given track. It will also contain all original columns from the long_df.
   wide <- dcast(
     long_df,
     id ~ tag_name,
@@ -260,33 +210,4 @@ add_single_genre_categories_to_tracks <- function(long_df, track_map) {
   )
   mapping <- cbind(id = wide$id, track_map)
   left_join(long_df, mapping, by = "id")
-}
-
-get_example_tracks_for_categories <- function(
-  long_cat,
-  n_per_cat = 2,
-  nosinglecats = FALSE
-) {
-  if (nosinglecats) {
-    long_cat <- filter(long_cat, cat_prob < 1)
-  }
-  long_cat |>
-    filter(!is.na(track.s.previewurl)) |>
-    group_by(cat) |>
-    arrange(desc(cat_prob), desc(track.s.popularity)) |>
-    distinct(track.s.firstartist.name, .keep_all = TRUE) |>
-    slice_head(n = n_per_cat) |>
-    ungroup() |>
-    select(
-      id,
-      cat,
-      cat_prob,
-      track.s.title,
-      track.s.firstartist.name,
-      track.s.title,
-      album.s.coverurl,
-      track.s.previewurl,
-      track.s.popularity,
-      album.s.releaseyear
-    )
 }
