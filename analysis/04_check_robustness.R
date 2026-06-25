@@ -4,24 +4,25 @@ devtools::load_all()
 
 
 # MAIN ----
-cat_states_1_order1 <- readRDS("models/dag/cat_states_1_order1.rds")
-cat_states_2_order1 <- readRDS("models/dag/cat_states_2_order1.rds")
-cat_states_1_order2 <- readRDS("models/dag/cat_states_1_order2.rds")
-cat_states_2_order2 <- readRDS("models/dag/cat_states_2_order2.rds")
-P_holdout <- readr::read_csv("data/P_holdout.csv") |> as.matrix()
+cat_states_11 <- readRDS("models/dag/cat_states_fold1_order1.rds")
+cat_states_21 <- readRDS("models/dag/cat_states_fold2_order1.rds")
+cat_states_12 <- readRDS("models/dag/cat_states_fold1_order2.rds")
+cat_states_22 <- readRDS("models/dag/cat_states_fold2_order2.rds")
+P_holdout <- readr::read_csv("data/normalized_voting_matrices/P_holdout.csv") |>
+  as.matrix()
 
 # conduct checks ----
-k <- 7
+k <- 7 # do for 7, 12, 34
 check_order1 <- get_robustness_check(
-  cat_states_1_order1,
-  cat_states_2_order1,
+  cat_states_11,
+  cat_states_21,
   P_holdout,
   k
 )
 
 check_order2 <- get_robustness_check(
-  cat_states_1_order2,
-  cat_states_2_order2,
+  cat_states_12,
+  cat_states_22,
   P_holdout,
   k
 )
