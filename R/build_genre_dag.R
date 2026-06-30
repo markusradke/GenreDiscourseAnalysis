@@ -225,10 +225,7 @@ get_track_category_probabilities <- function(
   prob_track_map <- P %*% t(final_mapping)
   colnames(prob_track_map) <- colnames(final_mapping)
 
-  final_genres <- setdiff(
-    colnames(P),
-    head(res_list$processing_order, G - chosen_k)
-  )
+  final_genres <- res_list$final_genres[[G - chosen_k + 1]]
   prob_track_map <- prob_track_map[, final_genres]
 
   cat <- colnames(prob_track_map)[apply(prob_track_map, 1, which.max)]

@@ -10,6 +10,7 @@ MIN_ARTISTS <- 10
 
 # LOAD DATA ----
 holdout <- fread("data/splits/holdout.csv")
+train <- fread("data/splits/train.csv")
 ab <- fread("data/long_data/ab_long.csv")
 dc <- fread("data/long_data/dc_long.csv")
 dz <- fread("data/long_data/dz_long.csv")
@@ -18,6 +19,8 @@ dag_fold1 <- readr::read_csv("data/splits/dag_fold1.csv")
 dag_fold2 <- readr::read_csv("data/splits/dag_fold2.csv")
 
 P_holdout <- readr::read_csv("data/normalized_voting_matrices/P_holdout.csv") |>
+  as.matrix()
+P_train <- readr::read_csv("data/normalized_voting_matrices/P_train.csv") |>
   as.matrix()
 cat_states <- readRDS("models/dag/cat_states.rds")
 
@@ -48,7 +51,7 @@ dc_filtered$tag_name |> unique() |> length()
 
 # INSPECT MB SOLUTION FOR MAX # OF GENRES ----
 G <- ncol(P_holdout)
-final_genres <- tail(cat_states$processing_order, chosen_k)
+final_genres <- cat_states$final_genres[[G - chosen_k + 1]]
 k_weights <- cat_states$weights[[G - chosen_k + 1]][
   final_genres,
   final_genres
@@ -84,7 +87,8 @@ plot_mean_prob_mb_for_cat(
   dc_filtered,
   P_holdout,
   cat_states,
-  taxonomy_label = "Discogs"
+  taxonomy_label = "Discogs",
+  right_margin_pt = 10
 )
 ggsave(
   "models/dag/mean_probabilities_mb_dc.png",
@@ -109,3 +113,20 @@ ggsave(
   height = 10,
   dpi = 600
 )
+
+# Prepare data for training and holdout ----
+train_probs <- get_track_category_probabilities(P_train, cat_states, chosen_k)
+holdout_probs <- get_track_category_probabilities(
+  P_holdout,
+  cat_states,
+  chosen_k
+)
+
+train_labels <- add_track_map_to_long(train, train_probs) |>
+  as.data.frame() |>
+  select(track.s.id, cat, cat_prob, all_of(final_genres)) |>
+  distinct(track.s.id, .keep_all = TRUE)
+holdout_labels <- add_track_map_to_long(holdout, holdout_probs) |>
+  as.data.frame() |>
+  select(track.s.id, cat, cat_prob, all_of(final_genres)) |>
+  distinct(track.s.id, .keep_all = TRUE)
