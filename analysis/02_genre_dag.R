@@ -98,3 +98,84 @@ saveRDS(cat_states_12, "models/dag/cat_states_fold1_order2.rds")
 # get full training set model ----
 cat_states <- get_genre_categories_from_graph(dag_train$graph, P_train)
 saveRDS(cat_states, "models/dag/cat_states.rds")
+
+# BUILD DAG FOR SPOTIFY ----
+s_long <- fread("data/long_data/s_long.csv")
+s_tags <- get_common_tags(
+  s_long,
+  dag_validation_split_ids$train_tracks,
+  dag_validation_split_ids$test_tracks,
+  min_artists = N_MIN_ARTISTS
+)
+s_train <- s_long |>
+  filter(track.s.id %in% initial_split_ids$train_tracks) |>
+  filter(tag_name %in% s_tags)
+# give me the columns of P_s_train where the entries are only ones and zeros, i.e. no fractional values
+P_s_train <- get_normalized_wide_vote_matrix(s_train)
+binary_columns <- colnames(P_s_train)[apply(P_s_train, 2, function(x) {
+  all(x %in% c(0, 1))
+})]
+# remove those columns from the training data: These genres do not cooccur with any other genres, so they are not useful for building a DAG
+s_train <- s_train |>
+  filter(!tag_name %in% binary_columns)
+P_s_train <- get_normalized_wide_vote_matrix(s_train)
+
+dag_s_train <- get_tag_dag_from_normalized_votes(P_s_train)
+
+cat_states_s <- get_genre_categories_from_graph(
+  dag_s_train$graph,
+  P_s_train,
+)
+saveRDS(cat_states_s, "models/dag/cat_states_spotify.rds")
+beepr::beep(3)
+plot_gini_genre_categories(cat_states_s, 100)
+chosen_k <- 28 # local minimum of gini index < 30
+
+G <- ncol(P_s_train)
+final_genres <- setdiff(
+  colnames(P_s_train),
+  head(cat_states_s$processing_order, G - chosen_k)
+)
+
+k_weights <- cat_states_s$weights[[G - chosen_k + 1]][
+  final_genres,
+  final_genres
+]
+# make graph and add sizes as node attributes
+k_graph <- igraph::graph_from_adjacency_matrix(
+  t(k_weights),
+  mode = "directed",
+  weighted = TRUE
+)
+# add sizes in gephi manually:
+(k_sizes <- cat_states_s$sizes[[G - chosen_k + 1]][final_genres])
+
+# inspect
+k_graph_filtered <- igraph::delete_edges(
+  k_graph,
+  E(k_graph)[is.nan(E(k_graph)$weight)]
+)
+k_graph_filtered <- igraph::delete_edges(
+  k_graph_filtered,
+  E(k_graph_filtered)[E(k_graph_filtered)$weight <= 0.1]
+)
+igraph::plot.igraph(k_graph_filtered, vertex.label.cex = 1)
+
+
+mapping <- get_track_category_probabilities(
+  P_s_train,
+  cat_states_s,
+  chosen_k
+)
+
+
+wide <- dcast(
+  s_train,
+  track.s.id ~ tag_name,
+  value.var = "tag_count",
+  fill = 0
+)
+s_mapping <- cbind(track.s.id = wide$track.s.id, mapping) |>
+  left_join(s_train, mapping, by = "track.s.id") |>
+  select(track.s.id, cat, cat_prob, tag_name, everything())
+readr::write_csv(s_mapping, "data/modeled_features/spotify_genres_mapping.csv")

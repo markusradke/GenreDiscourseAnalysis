@@ -102,39 +102,29 @@ count(dz_long, tag_name, sort = TRUE) |> print(n = 100)
 readr::write_csv(dz_long, "data/long_data/dz_long.csv")
 
 # Prepare Spotify ----
-# TODO: FINISH
-# Combine the genre tags of all artists involved in a track
-# Infer votings based on the combination of artist genres
-# spotify_artist_genres <- readRDS("data-raw/spotify_artist_genres_lookup.rds")
-# s_non_music_tags <- c(
-#   "432hz",
-#   "528hz",
-#   "asmr",
-#   "binaural",
-#   "children's folk",
-#   "children's music",
-#   "clean comedy",
-#   "comic",
-#   "escape room",
-#   "field recording ambient",
-#   "football",
-#   "hoerspiel",
-#   "kabarett",
-#   "lo-fi sleep",
-#   "lo-fi study",
-#   "mediation",
-#   "sleep",
-#   "talent show",
-#   "talentschau",
-#   "kindermusik",
-#   "rain",
-#   "white noise"
-# )
-# saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
+poptrag_selected$artist.s.genre_str <- sapply(
+  poptrag_selected$artist.s.genres,
+  function(x) paste(x$genre, collapse = "; ")
+)
+poptrag_selected$artist.s.genre_str[
+  poptrag_selected$artist.s.genre_str == ""
+] <- NA
+s_long <- select(
+  poptrag_selected,
+  track.s.id,
+  track.s.firstartist.id,
+  artist.s.genre_str
+) |>
+  tidyr::separate_rows(artist.s.genre_str, sep = "; ") |>
+  rename(tag_name = artist.s.genre_str) |>
+  mutate(tag_count = 1L) |>
+  filter(!is.na(tag_name))
 
-# combined_s_genres <- combine_s_genres(poptrag_selected, spotify_artist_genres)
-# s_long <- get_long_genre_tags(combined_s_genres, "s.genres")
-# s_long_music <- filter_non_valid_tags(s_long, s_non_music_tags)
-# s_final <- mb_long_denoise |>
-#   dplyr::select(-dplyr::matches("genres$"))
-# readr::write_csv(s_final, "data/filtered_s_long.csv")
+s_non_music_tags <- c(
+  "talent show"
+)
+saveRDS(s_non_music_tags, "data/s_non_music_tags.rds")
+s_long <- filter(s_long, !tag_name %in% s_non_music_tags)
+
+
+readr::write_csv(s_long, "data/long_data/s_long.csv")

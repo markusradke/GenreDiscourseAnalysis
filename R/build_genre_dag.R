@@ -34,9 +34,9 @@ get_tag_dag_from_normalized_votes <- function(P) {
   cond_b_given_a <- sweep(joint_raw, 1, P_g_smooth, FUN = "/") # P(B | A) = P(A, B) / P(B), rows correspond to A
   weights <- cond_b_given_a
   diag(weights) <- 0 # so self-loops
-
   # get weighted number of indegrees as a measure of globality for a tag
   indegree_weights <- colSums(weights, na.rm = TRUE)
+
   message(sprintf(
     "Tags with top 20 generality (descending order):\n%s",
     toString(names(indegree_weights |> sort(decreasing = TRUE) |> head(20)))
@@ -48,8 +48,16 @@ get_tag_dag_from_normalized_votes <- function(P) {
     from = colnames(P)[edges[, 1]],
     to = colnames(P)[edges[, 2]],
     weight = weights[edges]
-  )
+  ) |>
+    filter(weight > 0) # only keep edges with non-zero weight
+
   g <- igraph::graph_from_data_frame(E, directed = TRUE)
+  # add all nodes to the graph, even if they have no edges
+  g <- igraph::add_vertices(
+    g,
+    nv = G - igraph::vcount(g),
+    name = setdiff(colnames(P), igraph::V(g)$name)
+  )
   dangling <- igraph::V(g)[igraph::degree(g, mode = "out") == 0]$name
   message(sprintf("Nodes without any supergenres: \n%s", toString(dangling)))
   return(list(graph = g, generality = indegree_weights))
@@ -65,15 +73,20 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
   #' - mappings: A list of mapping matrices representing the genre category mappings at each step of the folding process. Each mapping matrix has rows corresponding to genre tags and columns corresponding to genre categories, where each entry represents the weight of a genre tag in a given category.
   #' - weights: A list of weight matrices representing the weights of the edges in the DAG at each step of the folding process. Each weight matrix has rows and columns corresponding to genre tags, where each entry represents the weight of the edge from one tag to another.
   #' - sizes: A list of size vectors representing the sizes of the genre categories at each step of the folding process. Each size vector has entries corresponding to genre categories, where each entry represents the number of tracks associated with a given category.
+  dangling <- igraph::V(g)[igraph::degree(g, mode = "out") == 0]$name
   if (!is.null(processing_order)) {
     is_fixed_order <- TRUE
+    processing_order <- setdiff(processing_order, dangling) # remove dangling nodes from processing order
     processing_order <- match(processing_order, colnames(P))
   } else {
     is_fixed_order <- FALSE
   }
+
+  tiebreak_oder <- get_tag_name_ranks_for_size_tiebreaking(P)
+  G <- ncol(P) - length(dangling) # number of genres to process
   P <- as(P, "sparseMatrix")
   weights <- t(igraph::as_adjacency_matrix(g, attr = "weight", sparse = FALSE))
-  weights <- weights[order(colnames(weights)), order(colnames(weights))]
+  weights <- weights[colnames(P), colnames(P)] # reorder weights to match P
 
   weights_norm <- sweep(
     weights,
@@ -84,35 +97,37 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
   weights <- weights_norm
   rownames(weights) <- colnames(weights)
 
-  sizes <- calculate_sizes_from_track_mapping(P)
+  sizes <- calculate_sizes_from_track_mapping(P, tiebreak_oder)
 
   mapping <- diag(nrow(weights)) # initialize mapping weights as identity
   colnames(mapping) <- colnames(weights)
-  mapping
 
-  G <- ncol(P)
   processed_genres <- c()
   ginis <- c()
   mappings_states <- list()
   weights_states <- list()
   sizes_states <- list()
+  final_genres_states <- list()
 
   current_weights <- weights
   current_mapping <- mapping
   current_track_mapping <- P
   current_sizes <- sizes
   current_gini <- DescTools::Gini(sizes)
+  current_final_genres <- colnames(P)
 
   mappings_states[[1]] <- current_mapping
   weights_states[[1]] <- weights
   sizes_states[[1]] <- current_sizes
   ginis[1] <- current_gini
+  final_genres_states[[1]] <- current_final_genres
 
   # process in order of initial sizes
   if (is_fixed_order) {
     next_genre <- processing_order[1]
   } else {
-    next_genre <- which.min(sizes)
+    sizes_wout_dangling <- sizes[setdiff(names(sizes), dangling)]
+    next_genre <- which.min(sizes_wout_dangling)
   }
   i <- 1
   while (length(processed_genres) < G) {
@@ -122,6 +137,7 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
       G,
       colnames(weights)[next_genre]
     ))
+
     weight_column <- current_weights[, next_genre]
     add_mapping <- weight_column %*% t(current_mapping[next_genre, ])
     current_mapping[next_genre, ] <- 0
@@ -130,19 +146,28 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
     add_weights <- weight_column %*% t(current_weights[next_genre, ])
     current_weights[next_genre, ] <- 0
     current_weights <- current_weights + add_weights
-
     current_track_mapping <- P %*% t(current_mapping)
     colnames(current_track_mapping) <- colnames(P)
-    current_sizes <- calculate_sizes_from_track_mapping(current_track_mapping)
-
+    current_sizes <- calculate_sizes_from_track_mapping(
+      current_track_mapping,
+      tiebreak_oder
+    )
     mappings_states[[i + 1]] <- current_mapping
     weights_states[[i + 1]] <- current_weights
     sizes_states[[i + 1]] <- current_sizes
     processed_genres <- c(processed_genres, next_genre)
+    current_final_genres <- setdiff(
+      colnames(P),
+      colnames(P)[processed_genres]
+    )
+    final_genres_states[[i + 1]] <- current_final_genres
     current_gini <- DescTools::Gini(current_sizes[-processed_genres])
     ginis[i + 1] <- current_gini
     if (!is_fixed_order) {
-      next_genre_name <- which.min(current_sizes[-processed_genres]) |> names()
+      next_genre_pool <- setdiff(1:ncol(P), processed_genres)
+      dangling_ids <- which(colnames(P) %in% dangling)
+      next_genre_pool <- setdiff(next_genre_pool, dangling_ids)
+      next_genre_name <- which.min(current_sizes[next_genre_pool]) |> names()
       next_genre <- which(colnames(P) == next_genre_name)
     } else {
       next_genre <- processing_order[i + 1]
@@ -154,13 +179,26 @@ get_genre_categories_from_graph <- function(g, P, processing_order = NULL) {
     weights = weights_states,
     sizes = sizes_states,
     ginis = ginis,
-    processing_order = colnames(P)[processed_genres]
+    processing_order = colnames(P)[processed_genres],
+    final_genres = final_genres_states
   ))
 }
 
-calculate_sizes_from_track_mapping <- function(track_mapping) {
+calculate_sizes_from_track_mapping <- function(track_mapping, tiebreak_order) {
   message("Calculating track mapping...")
-  winners <- apply(track_mapping, 1, which.max)
+  winners <- apply(track_mapping, 1, function(x) {
+    max_indices <- which(x == max(x))
+    if (length(max_indices) > 1) {
+      # tie breaker based on tiebreak_order
+      tiebreak_indices <- match(
+        colnames(track_mapping)[max_indices],
+        names(tiebreak_order)
+      )
+      return(max_indices[which.min(tiebreak_indices)])
+    } else {
+      return(max_indices)
+    }
+  })
   winners_names <- colnames(track_mapping)[winners]
   sizes <- table(winners_names)
   missing <- setdiff(colnames(track_mapping), names(sizes))
@@ -171,8 +209,11 @@ calculate_sizes_from_track_mapping <- function(track_mapping) {
   sizes
 }
 
-
-get_track_category_probabilities <- function(P, res_list, chosen_k) {
+get_track_category_probabilities <- function(
+  P,
+  res_list,
+  chosen_k
+) {
   #' Get the probabilities of each track belonging to each genre category based on the final mapping from the genre category extraction process.
   #' @param P A normalized wide vote matrix where rows correspond to tracks and columns correspond to genre tags. Each entry represents the normalized vote count for a tag for a given track. Rows sum to 1, representing the distribution of votes across tags for each track.
   #' @param res_list A list containing the results of the genre category extraction process, including mappings, weights, sizes, and processing order.
@@ -181,10 +222,13 @@ get_track_category_probabilities <- function(P, res_list, chosen_k) {
   P <- as(P, "sparseMatrix")
   G <- nrow(res_list$mappings[[1]])
   final_mapping <- res_list$mappings[[G - chosen_k + 1]]
-  final_sizes <- res_list$sizes[[G - chosen_k + 1]]
-  final_genres <- tail(res_list$processing_order, chosen_k)
   prob_track_map <- P %*% t(final_mapping)
   colnames(prob_track_map) <- colnames(final_mapping)
+
+  final_genres <- setdiff(
+    colnames(P),
+    head(res_list$processing_order, G - chosen_k)
+  )
   prob_track_map <- prob_track_map[, final_genres]
 
   cat <- colnames(prob_track_map)[apply(prob_track_map, 1, which.max)]
@@ -210,4 +254,11 @@ add_track_map_to_long <- function(long_df, track_map) {
   )
   mapping <- cbind(track.s.id = wide$track.s.id, track_map)
   left_join(long_df, mapping, by = "track.s.id")
+}
+
+get_tag_name_ranks_for_size_tiebreaking <- function(P) {
+  P_binary <- P
+  P_binary[P_binary > 0] <- 1 # convert to binary matrix for number of appearances
+  tag_name_counts <- colSums(P_binary)
+  rank(tag_name_counts) |> sort()
 }

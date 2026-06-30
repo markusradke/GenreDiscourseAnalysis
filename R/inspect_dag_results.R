@@ -1,6 +1,10 @@
-plot_gini_genre_categories <- function(ginis, xlim_max) {
+plot_gini_genre_categories <- function(cat_states, xlim_max) {
+  ginis <- cat_states$gini
+  g_out_sums <- cat_states_s$weights[[1]] |> colSums(na.rm = TRUE)
+  n_dangling <- length(g_out_sums[g_out_sums == 0])
+
   xlim_max <- min(length(ginis), xlim_max)
-  no_genres <- length(ginis):1
+  no_genres <- length(ginis):1 + n_dangling - 1
   ggplot(
     data.frame(no_genres, gini = ginis),
     aes(x = no_genres, y = gini)
@@ -10,7 +14,7 @@ plot_gini_genre_categories <- function(ginis, xlim_max) {
     theme_minimal() +
     labs(
       title = "Gini Coefficient of Genre Size Distribution During Folding",
-      x = "Step",
+      x = "Number of Latent Genres",
       y = "Gini Coefficient"
     ) +
     xlim(0, xlim_max)
